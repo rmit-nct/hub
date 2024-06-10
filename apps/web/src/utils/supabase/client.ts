@@ -3,8 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 
 export const createAdminClient = (): SupabaseClient | undefined => {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_KEY;
-
+  const key = process.env.SUPABASE_SERVICE_KEY;8
   if (!url || !key) {
     throw Error('Missing Supabase URL or key');
   }
