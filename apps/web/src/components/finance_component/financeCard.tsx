@@ -11,7 +11,7 @@ const FinanceCard = () => {
             <tbody>
               <tr className="border border-white">
                 <td className="px-4 py-2 flex items-center ">
-                  <Image src="/finance/income_finance.png" alt="Income Icon" width={32} height={32} className="inline-block mr-2" />
+                  <Image src="/image.png" alt="Income Icon" width={32} height={32} className="inline-block mr-2" />
                   <div className="border-l border-white pl-2 ml-2 text-left">
                     <div className="font-bold">Income:</div>
                     <div className="font-bold">-1,333,333 VND</div>
