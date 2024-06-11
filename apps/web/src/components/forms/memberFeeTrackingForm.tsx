@@ -1,5 +1,6 @@
-import React from 'react';
+import React,{useState} from 'react';
 import Image from 'next/image';
+import ImageModal from '../picture_zoom';
 interface User {
     id: number;
     name: string;
@@ -20,6 +21,19 @@ interface ModalProps {
 }
 
 const Modal: React.FC<ModalProps> = ({ show, user, onClose }) => {
+    const [showModal, setShowModal]= useState(false);
+    const [selected, setSelected] = useState(false);
+    const [imageURl, setImageURL]= useState('');
+    const handleClick =(imageURL: string)=>{
+        setShowModal(true);
+        setSelected(true);
+        setImageURL(imageURL);
+    }
+
+    const closeModel =() =>{
+        setShowModal(false);
+        setSelected(false);
+    }
   if (!show) return null;
 
   return (
@@ -124,7 +138,10 @@ const Modal: React.FC<ModalProps> = ({ show, user, onClose }) => {
               <label className="block text-white text-sm font-bold mb-2" htmlFor="type">
                 Image (Optional)
               </label>
-              <Image width={200} height={200} src={user.imageURL} alt='payment image' className=''/>
+              <button onClick={() => handleClick(user.imageURL)}>
+                <Image width={200} height={200} src={user.imageURL} alt='payment image' className='hover:w-[250px] hover:h-[250px]'/>
+              </button>
+              
             </div>
             </div>
             <div className="mb-4">
@@ -142,6 +159,7 @@ const Modal: React.FC<ModalProps> = ({ show, user, onClose }) => {
           </form>
         </div>
       </div>
+      {selected && <ImageModal show={showModal} imageURL={imageURl} onClose={closeModel} />}
     </div>
   );
 };
