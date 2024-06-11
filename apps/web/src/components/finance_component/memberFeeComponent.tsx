@@ -1,16 +1,32 @@
-import React from 'react';
+"use client"
+import React, { useState } from 'react';
+import Modal from '../forms/memberFeeTrackingForm';
 
-const UserDataTable = () => {
-  const users = [
+interface User {
+  id: number;
+  name: string;
+  type: string;
+  status: string;
+}
+
+const UserDataTable: React.FC = () => {
+  const users: User[] = [
     { id: 1, name: 'Huynh Tan Phat', type: 'Newbie', status: 'Not approved' },
     { id: 2, name: 'Phat Huynh', type: 'Oldbie', status: 'Not approved' },
     { id: 3, name: 'Phat Huynh', type: 'Oldbie', status: 'Not approved' }
     // Add more user data as needed
   ];
 
-  const handleRowClick = (user) => {
-    // Handle row click event
-    alert(`Clicked on ${user.name}`);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+
+  const handleRowClick = (user: User) => {
+    setSelectedUser(user);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
   };
 
   return (
@@ -66,15 +82,15 @@ const UserDataTable = () => {
         </div>
         <table className="min-w-full bg-gray-800 rounded-2xl">
           <thead>
-            <tr className='h-[70px] border-b border-gray-700'>
-              <th className='py-2 px-4 text-center' colSpan={5}>Member fee list</th>
+            <tr className='border-b border-gray-700'>
+              <th className='h-[70px] py-2 px-4 text-center' colSpan={5}>Member fee list</th>
             </tr>
           </thead>
           <tbody>
             {users.map((user, index) => (
               <tr
                 key={user.id}
-            
+                onClick={() => handleRowClick(user)}
                 className={`h-[60px] cursor-pointer hover:bg-gray-700 ${index === users.length - 1 ? '' : 'border-b border-gray-700'}`}
               >
                 <td className="py-2 px-4">{user.id}</td>
@@ -82,7 +98,7 @@ const UserDataTable = () => {
                 <td className="py-2 px-4">{user.type}</td>
                 <td className="py-2 px-4">{user.status}</td>
                 <td className="py-2 px-4 text-right">
-                  >
+                    >
                 </td>
               </tr>
             ))}
@@ -103,6 +119,7 @@ const UserDataTable = () => {
           </li>
         </ul>
       </div>
+      {selectedUser && <Modal show={showModal} user={selectedUser} onClose={closeModal} />}
     </div>
   );
 };
