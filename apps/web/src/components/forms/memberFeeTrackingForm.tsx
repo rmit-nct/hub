@@ -1,10 +1,16 @@
 import React from 'react';
-
+import Image from 'next/image';
 interface User {
-  id: number;
-  name: string;
-  type: string;
-  status: string;
+    id: number;
+    name: string;
+    dob: Date;
+    major: string;
+    numOfSem:Number;
+    year: string;
+    paymentMethod: string;
+    imageURL: string;
+    type: string;
+    status: string;
 }
 
 interface ModalProps {
@@ -54,6 +60,72 @@ const Modal: React.FC<ModalProps> = ({ show, user, onClose }) => {
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline"
                 disabled
               />
+            </div>
+            <div className="mb-4">
+              <label className="block text-white text-sm font-bold mb-2" htmlFor="type">
+                Date of birth
+              </label>
+              <input
+                type="text"
+                id="type"
+                defaultValue={user.dob.toISOString().substring(0, 10)}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline"
+                disabled
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-white text-sm font-bold mb-2" htmlFor="type">
+                Major
+              </label>
+              <input
+                type="text"
+                id="type"
+                defaultValue={user.major}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline"
+                disabled
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-white text-sm font-bold mb-2" htmlFor="type">
+                Number of Semester
+              </label>
+              <input
+                type="text"
+                id="type"
+                defaultValue={user.numOfSem.toString()}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline"
+                disabled
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-white text-sm font-bold mb-2" htmlFor="type">
+                Year of Enrollment
+              </label>
+              <input
+                type="text"
+                id="type"
+                defaultValue={user.year}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline"
+                disabled
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-white text-sm font-bold mb-2" htmlFor="type">
+                Payment Method
+              </label>
+              <input
+                type="text"
+                id="type"
+                defaultValue={user.paymentMethod}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline"
+                disabled
+              />
+              <div className="mb-4">
+              <label className="block text-white text-sm font-bold mb-2" htmlFor="type">
+                Image (Optional)
+              </label>
+              <Image width={200} height={200} src={user.imageURL} alt='payment image' className=''/>
+            </div>
             </div>
             <div className="mb-4">
               <label className="block text-white text-sm font-bold mb-2" htmlFor="status">

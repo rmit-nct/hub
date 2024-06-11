@@ -5,17 +5,80 @@ import Image from 'next/image';
 interface User {
   id: number;
   name: string;
+  dob: Date;
+  major: string;
+  numOfSem:Number;
+  year: string;
+  paymentMethod: string;
+  imageURL: string;
   type: string;
   status: string;
 }
 
 const UserDataTable: React.FC = () => {
-  const users: User[] = [
-    { id: 1, name: 'Huynh Tan Phat', type: 'Newbie', status: 'Not approved' },
-    { id: 2, name: 'Phat Huynh', type: 'Oldbie', status: 'Not approved' },
-    { id: 3, name: 'Phat Huynh', type: 'Oldbie', status: 'Not approved' }
-    // Add more user data as needed
-  ];
+    const users: User[] = [
+        {
+          id: 1,
+          name: 'Huynh Tan Phat',
+          dob: new Date('1998-05-20'),
+          major: 'Computer Science',
+          numOfSem: 6,
+          year: 'Junior',
+          paymentMethod: 'Credit Card',
+          imageURL: '/favicon-32x32.png',
+          type: 'Newbie',
+          status: 'Not approved'
+        },
+        {
+          id: 2,
+          name: 'Phat Huynh',
+          dob: new Date('1997-04-15'),
+          major: 'Mechanical Engineering',
+          numOfSem: 8,
+          year: 'Senior',
+          paymentMethod: 'PayPal',
+          imageURL: '/favicon-32x32.png',
+          type: 'Oldbie',
+          status: 'Not approved'
+        },
+        {
+          id: 3,
+          name: 'Nguyen Van A',
+          dob: new Date('1999-01-10'),
+          major: 'Electrical Engineering',
+          numOfSem: 4,
+          year: 'Sophomore',
+          paymentMethod: 'Bank Transfer',
+          imageURL: '/favicon-32x32.png',
+          type: 'Oldbie',
+          status: 'Not approved'
+        },
+        {
+          id: 4,
+          name: 'Tran Thi B',
+          dob: new Date('2000-12-30'),
+          major: 'Business Administration',
+          numOfSem: 5,
+          year: 'Junior',
+          paymentMethod: 'Credit Card',
+          imageURL: '/favicon-32x32.png',
+          type: 'Newbie',
+          status: 'Approved'
+        },
+        {
+          id: 5,
+          name: 'Le Thi C',
+          dob: new Date('1996-11-25'),
+          major: 'Information Technology',
+          numOfSem: 7,
+          year: 'Senior',
+          paymentMethod: 'PayPal',
+          imageURL: '/favicon-32x32.png',
+          type: 'Oldbie',
+          status: 'Approved'
+        }
+      ];
+      
 
   const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -40,9 +103,11 @@ const UserDataTable: React.FC = () => {
               className="p-2 pl-10 rounded-lg bg-gray-700 text-white w-full"
             />
             <Image
+            width={6}
+            height={6}
               src="/search-icon.png"
               alt="Search Icon"
-              className="w-6 h-6 absolute top-2 left-2"
+              className=" absolute top-2 left-2"
             />
           </div>
           <div className="flex items-center">
