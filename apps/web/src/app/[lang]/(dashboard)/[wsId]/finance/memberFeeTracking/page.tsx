@@ -1,12 +1,11 @@
 import React from 'react';
-
+import MemberFeeTracking from '@/components/finance_component/memberFeeComponent';
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>member fee!</h1>
-      </header>
-    </div>
+       <h1 className="text-3xl font-bold mb-8">Member fee tracking</h1>
+      <MemberFeeTracking></MemberFeeTracking>
+      </div>
   );
 }
 
