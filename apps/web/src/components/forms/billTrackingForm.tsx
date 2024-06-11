@@ -1,6 +1,6 @@
-import React,{useState} from "react";
-import Image from "next/image";
-import ImageModal from "../picture_zoom";
+import React from "react";
+// import Image from "next/image";
+// import ImageModal from "../picture_zoom";
 
 interface BillDetails {
     billName: string;
@@ -22,14 +22,14 @@ interface BillDetails {
     onClose: ()=> void;
   }
 
-  const Modal: React.FC<ModalProps> =({show, billDetail, onClose})=>{
-    const [showModal, setShowModal]= useState(false);
+  const Modal: React.FC<ModalProps> =()=>{
+    // const [showModal, setShowModal]= useState(false);
     
-    const closeModal=()=>{
-        setShowModal(false);
-    }
+    // const closeModal=()=>{
+    //     setShowModal(false);
+    // }
 
-    if(!show) return null;
+    // if(!show) return null;
 
     return(
         <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex justify-center items-center">
