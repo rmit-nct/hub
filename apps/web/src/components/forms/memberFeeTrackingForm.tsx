@@ -138,7 +138,9 @@ const Modal: React.FC<ModalProps> = ({ show, user, onClose }) => {
               <label className="block text-white text-sm font-bold mb-2" htmlFor="type">
                 Image (Optional)
               </label>
-              <button onClick={() => handleClick(user.imageURL)}>
+              <button onClick={(e) => {
+                e.preventDefault();
+                handleClick(user.imageURL)}}>
                 <Image width={200} height={200} src={user.imageURL} alt='payment image' className='hover:w-[250px] hover:h-[250px]'/>
               </button>
               
