@@ -1,7 +1,7 @@
 "use client"
 import React, { useState } from 'react';
 import Modal from '../forms/memberFeeTrackingForm';
-
+import Image from 'next/image';
 interface User {
   id: number;
   name: string;
@@ -39,7 +39,7 @@ const UserDataTable: React.FC = () => {
               placeholder="Search for name or sid"
               className="p-2 pl-10 rounded-lg bg-gray-700 text-white w-full"
             />
-            <img
+            <Image
               src="/search-icon.png"
               alt="Search Icon"
               className="w-6 h-6 absolute top-2 left-2"
@@ -98,7 +98,7 @@ const UserDataTable: React.FC = () => {
                 <td className="py-2 px-4">{user.type}</td>
                 <td className="py-2 px-4">{user.status}</td>
                 <td className="py-2 px-4 text-right">
-                    >
+                    {'>'}
                 </td>
               </tr>
             ))}
