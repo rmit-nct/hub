@@ -1,8 +1,8 @@
-import Link from 'next/link';
+import { Separator } from '../ui/separator';
 import { WorkspaceUser } from '@/types/primitives/WorkspaceUser';
 import { getGender } from '@/utils/gender-helper';
 import useTranslation from 'next-translate/useTranslation';
-import { Separator } from '../ui/separator';
+import Link from 'next/link';
 
 interface Props {
   wsId: string;
@@ -23,7 +23,7 @@ const WorkspaceUserCard = ({
 
   return (
     <Link
-      href={`/${wsId}/users/${user.id}`}
+      href={`/${wsId}/users/database/${user.id}`}
       className="border-border group flex flex-col items-center justify-center rounded-lg border bg-zinc-500/5 text-center transition hover:bg-zinc-500/10 dark:border-zinc-700/80 dark:bg-zinc-800/70 dark:hover:bg-zinc-800"
     >
       <div className="flex h-full w-full flex-col">

@@ -1,9 +1,10 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { Database } from '@/types/supabase';
-import { cookies } from 'next/headers';
 import { DataTable } from '@/components/ui/custom/tables/data-table';
 import { basicColumns } from '@/data/columns/basic';
+import { verifyHasSecrets } from '@/lib/workspace-helper';
 import { ProductSupplier } from '@/types/primitives/ProductSupplier';
+import { Database } from '@/types/supabase';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 
 interface Props {
   params: {
@@ -20,6 +21,7 @@ export default async function WorkspaceSuppliersPage({
   params: { wsId },
   searchParams,
 }: Props) {
+  await verifyHasSecrets(wsId, ['ENABLE_INVENTORY'], `/${wsId}`);
   const { data, count } = await getData(wsId, searchParams);
 
   return (

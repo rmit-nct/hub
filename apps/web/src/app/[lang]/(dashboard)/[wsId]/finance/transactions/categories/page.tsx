@@ -1,8 +1,8 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { Database } from '@/types/supabase';
-import { cookies } from 'next/headers';
-import { TransactionCategory } from '@/types/primitives/TransactionCategory';
 import TransactionCategoriesTable from './table';
+import { TransactionCategory } from '@/types/primitives/TransactionCategory';
+import { Database } from '@/types/supabase';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 
 interface Props {
   params: {
@@ -20,6 +20,7 @@ export default async function WorkspaceTransactionCategoriesPage({
   searchParams,
 }: Props) {
   const { data, count } = await getData(wsId, searchParams);
+
   return <TransactionCategoriesTable wsId={wsId} data={data} count={count} />;
 }
 

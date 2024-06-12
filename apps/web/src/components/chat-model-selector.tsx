@@ -1,6 +1,5 @@
-import { Check, ChevronsUpDown } from 'lucide-react';
-
-import { cn } from '@/lib/utils';
+import { ScrollArea } from './ui/scroll-area';
+import { Separator } from './ui/separator';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -8,16 +7,17 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
+  CommandList,
 } from '@/components/ui/command';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { useState } from 'react';
-import { ScrollArea } from './ui/scroll-area';
 import { Model, models, providers } from '@/data/models';
-import { Separator } from './ui/separator';
+import { cn } from '@/lib/utils';
+import { Check, ChevronsUpDown } from 'lucide-react';
+import { useState } from 'react';
 
 export function ChatModelSelector({
   model,
@@ -61,37 +61,43 @@ export function ChatModelSelector({
           <CommandInput placeholder="Search model..." />
           <ScrollArea className="h-48 md:h-64">
             <CommandEmpty>No model found.</CommandEmpty>
-            {providers.map((provider) => (
-              <CommandGroup key={provider} heading={provider}>
-                {models
-                  .filter((m) => m.provider === provider)
-                  .map((m) => (
-                    <CommandItem
-                      key={m.value}
-                      value={m.value}
-                      onSelect={(currentValue) => {
-                        onChange(
-                          models.find((m) => m.value === currentValue) as Model
-                        );
+            <CommandList>
+              {providers.map((provider) => (
+                <CommandGroup key={provider} heading={provider}>
+                  {models
+                    .filter((m) => m.provider === provider)
+                    .map((m) => (
+                      <CommandItem
+                        key={m.value}
+                        value={m.value}
+                        onSelect={(currentValue) => {
+                          onChange(
+                            models.find(
+                              (m) => m.value === currentValue
+                            ) as Model
+                          );
 
-                        setOpen(false);
-                      }}
-                      onMouseOver={() => setPreviewModel(m)}
-                      disabled={m.disabled}
-                    >
-                      <Check
-                        className={cn(
-                          'mr-2 h-4 w-4',
-                          model.value === m.value ? 'opacity-100' : 'opacity-0'
-                        )}
-                      />
-                      <div className="bg-foreground text-background rounded-full px-2 py-0.5">
-                        {m.label}
-                      </div>
-                    </CommandItem>
-                  ))}
-              </CommandGroup>
-            ))}
+                          setOpen(false);
+                        }}
+                        onMouseOver={() => setPreviewModel(m)}
+                        disabled={m.disabled}
+                      >
+                        <Check
+                          className={cn(
+                            'mr-2 h-4 w-4',
+                            model.value === m.value
+                              ? 'opacity-100'
+                              : 'opacity-0'
+                          )}
+                        />
+                        <div className="bg-foreground text-background rounded-full px-2 py-0.5">
+                          {m.label}
+                        </div>
+                      </CommandItem>
+                    ))}
+                </CommandGroup>
+              ))}
+            </CommandList>
           </ScrollArea>
         </Command>
 

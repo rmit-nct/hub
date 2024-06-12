@@ -1,14 +1,15 @@
-import useTranslation from 'next-translate/useTranslation';
-import { Separator } from '@/components/ui/separator';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { Database } from '@/types/supabase';
-import { cookies } from 'next/headers';
-import { DataTable } from '@/components/ui/custom/tables/data-table';
-import { TaskBoard } from '@/types/primitives/TaskBoard';
 import ProjectEditDialog from './_components/project-edit-dialog';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { DataTable } from '@/components/ui/custom/tables/data-table';
+import { Separator } from '@/components/ui/separator';
 import { projectColumns } from '@/data/columns/projects';
+import { verifyHasSecrets } from '@/lib/workspace-helper';
+import { TaskBoard } from '@/types/primitives/TaskBoard';
+import { Database } from '@/types/supabase';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { Plus } from 'lucide-react';
+import useTranslation from 'next-translate/useTranslation';
+import { cookies } from 'next/headers';
 
 export const dynamic = 'force-dynamic';
 
@@ -27,6 +28,8 @@ export default async function WorkspaceProjectsPage({
   params: { wsId },
   searchParams,
 }: Props) {
+  await verifyHasSecrets(wsId, ['ENABLE_PROJECTS'], `/${wsId}`);
+
   const { data: projects, count } = await getProjects(wsId, searchParams);
   const { t } = useTranslation('ws-projects');
 

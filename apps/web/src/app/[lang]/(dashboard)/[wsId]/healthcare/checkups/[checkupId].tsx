@@ -1,18 +1,18 @@
-import { useCallback, useEffect, useState } from 'react';
-import { Checkbox, Divider, Textarea } from '@mantine/core';
-import { Vital } from '@/types/primitives/Vital';
-import 'dayjs/locale/vi';
-import { VitalGroup } from '@/types/primitives/VitalGroup';
-import { DateTimePicker } from '@mantine/dates';
 import CheckupVitalGroupInput from '../../../../../../components/inputs/CheckupVitalGroupInput';
-import { useRouter } from 'next/router';
-import { Checkup } from '@/types/primitives/Checkup';
-import useSWR from 'swr';
 import CheckupVitalInput from '../../../../../../components/inputs/CheckupVitalInput';
-import { Diagnosis } from '@/types/primitives/Diagnosis';
 import { useSegments } from '@/hooks/useSegments';
 import { useWorkspaces } from '@/hooks/useWorkspaces';
+import { Checkup } from '@/types/primitives/Checkup';
+import { Diagnosis } from '@/types/primitives/Diagnosis';
+import { Vital } from '@/types/primitives/Vital';
+import { VitalGroup } from '@/types/primitives/VitalGroup';
+import { Checkbox, Divider, Textarea } from '@mantine/core';
+import { DateTimePicker } from '@mantine/dates';
+import 'dayjs/locale/vi';
 import moment from 'moment';
+import { useRouter } from 'next/router';
+import { useCallback, useEffect, useState } from 'react';
+import useSWR from 'swr';
 
 export default function CheckupDetailsPage() {
   const { setRootSegment } = useSegments();
@@ -236,7 +236,7 @@ export default function CheckupDetailsPage() {
   if (!ws) return null;
 
   return (
-    <div className="mt-2 flex min-h-full w-full flex-col ">
+    <div className="mt-2 flex min-h-full w-full flex-col">
       <div className="grid gap-x-8 gap-y-4 xl:gap-x-16">
         <div className="flex items-end justify-end gap-2">
           <button

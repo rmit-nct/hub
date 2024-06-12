@@ -1,9 +1,8 @@
-import { Navigation, NavLink } from '@/components/navigation';
-import { Separator } from '@/components/ui/separator';
-import { getSecret, getSecrets, getWorkspace } from '@/lib/workspace-helper';
-import useTranslation from 'next-translate/useTranslation';
 import FleetingNavigator from './fleeting-navigator';
-
+import { NavLink, Navigation } from '@/components/navigation';
+import { Separator } from '@/components/ui/separator';
+import { getSecrets, verifySecret } from '@/lib/workspace-helper';
+import useTranslation from 'next-translate/useTranslation';
 import { ReactNode } from 'react';
 
 export const dynamic = 'force-dynamic';
@@ -21,33 +20,27 @@ export default async function Layout({
 }: LayoutProps) {
   const { t } = useTranslation('sidebar-tabs');
 
-  const workspace = await getWorkspace(wsId);
-
   const secrets = await getSecrets({
     wsId,
     requiredSecrets: [
       'ENABLE_AI',
-      'ENABLE_BLACKBOX',
       'ENABLE_CHAT',
       'ENABLE_CALENDAR',
       'ENABLE_USERS',
       'ENABLE_PROJECTS',
       'ENABLE_DOCS',
+      'ENABLE_DRIVE',
       'ENABLE_INVENTORY',
       'ENABLE_HEALTHCARE',
-      'ENABLE_FINANCE',
     ],
     forceAdmin: true,
   });
-
-  const verifySecret = (secret: string, value: string) =>
-    getSecret(secret, secrets)?.value === value;
 
   const navLinks: NavLink[] = [
     {
       name: t('chat'),
       href: `/${wsId}/chat`,
-      disabled: !verifySecret('ENABLE_CHAT', 'true'),
+      disabled: !verifySecret('ENABLE_CHAT', 'true', secrets),
     },
     {
       name: t('common:dashboard'),
@@ -57,48 +50,53 @@ export default async function Layout({
     {
       name: t('ai'),
       href: `/${wsId}/ai`,
-      disabled: !verifySecret('ENABLE_AI', 'true'),
+      disabled: !verifySecret('ENABLE_AI', 'true', secrets),
     },
     {
       name: t('blackbox'),
       href: `/${wsId}/blackbox`,
-      disabled: !verifySecret('ENABLE_BLACKBOX', 'true'),
+      disabled: true,
     },
     {
       name: t('calendar'),
       href: `/${wsId}/calendar`,
-      disabled: !verifySecret('ENABLE_CALENDAR', 'true'),
+      disabled: !verifySecret('ENABLE_CALENDAR', 'true', secrets),
     },
     {
       name: t('projects'),
       href: `/${wsId}/projects`,
-      disabled: !verifySecret('ENABLE_PROJECTS', 'true'),
+      disabled: !verifySecret('ENABLE_PROJECTS', 'true', secrets),
     },
     {
       name: t('documents'),
       href: `/${wsId}/documents`,
-      disabled: !verifySecret('ENABLE_DOCS', 'true'),
+      disabled: !verifySecret('ENABLE_DOCS', 'true', secrets),
+    },
+    {
+      name: t('drive'),
+      href: `/${wsId}/drive`,
+      disabled: !verifySecret('ENABLE_DRIVE', 'true', secrets),
     },
     {
       name: t('users'),
-      href: `/${wsId}/users`,
-      disabled: !verifySecret('ENABLE_USERS', 'true'),
+      aliases: [`/${wsId}/users`],
+      href: `/${wsId}/users/database`,
+      disabled: !verifySecret('ENABLE_USERS', 'true', secrets),
     },
     {
       name: t('inventory'),
       href: `/${wsId}/inventory`,
-      disabled: !verifySecret('ENABLE_INVENTORY', 'true'),
+      disabled: !verifySecret('ENABLE_INVENTORY', 'true', secrets),
     },
     {
       name: t('healthcare'),
       href: `/${wsId}/healthcare`,
-      allowedPresets: ['ALL', 'PHARMACY'],
-      disabled: !verifySecret('ENABLE_HEALTHCARE', 'true'),
+      disabled: !verifySecret('ENABLE_HEALTHCARE', 'true', secrets),
     },
     {
       name: t('finance'),
-      href: `/${wsId}/finance`,
-      disabled: !verifySecret('ENABLE_FINANCE', 'true'),
+      aliases: [`/${wsId}/finance`],
+      href: `/${wsId}/finance/transactions`,
     },
     {
       name: t('common:settings'),
@@ -116,19 +114,17 @@ export default async function Layout({
 
   return (
     <>
-      <div className="px-4 py-2 font-semibold md:px-8 lg:px-16 xl:px-32">
+      <div className="px-4 pb-2 font-semibold md:px-8 lg:px-16 xl:px-32">
         <div className="scrollbar-none flex gap-1 overflow-x-auto">
-          <Navigation
-            currentWsId={wsId}
-            currentPreset={workspace?.preset ?? 'GENERAL'}
-            navLinks={navLinks}
-          />
+          <Navigation currentWsId={wsId} navLinks={navLinks} />
         </div>
       </div>
       <Separator className="opacity-50" />
 
       <div className="p-4 pt-2 md:px-8 lg:px-16 xl:px-32">{children}</div>
-      {verifySecret('ENABLE_CHAT', 'true') && <FleetingNavigator wsId={wsId} />}
+      {verifySecret('ENABLE_CHAT', 'true', secrets) && (
+        <FleetingNavigator wsId={wsId} />
+      )}
     </>
   );
 }

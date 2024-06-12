@@ -1,11 +1,10 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { Database } from '@/types/supabase';
-import { cookies } from 'next/headers';
 import { DataTable } from '@/components/ui/custom/tables/data-table';
 import { invoiceColumns } from '@/data/columns/invoices';
+import { verifyHasSecrets } from '@/lib/workspace-helper';
 import { Invoice } from '@/types/primitives/Invoice';
-import { getSecrets } from '@/lib/workspace-helper';
-import { redirect } from 'next/navigation';
+import { Database } from '@/types/supabase';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 
 interface Props {
   params: {
@@ -22,22 +21,8 @@ export default async function WorkspaceInvoicesPage({
   params: { wsId },
   searchParams,
 }: Props) {
+  await verifyHasSecrets(wsId, ['ENABLE_INVOICES'], `/${wsId}`);
   const { data, count } = await getData(wsId, searchParams);
-
-  const secrets = await getSecrets({
-    wsId,
-    requiredSecrets: ['ENABLE_FINANCE', 'ENABLE_INVOICE'],
-    forceAdmin: true,
-  });
-
-  const verifySecret = (secret: string, value: string) =>
-    secrets.find((s) => s.name === secret)?.value === value;
-
-  const enableFinance = verifySecret('ENABLE_FINANCE', 'true');
-  const enableInvoice = verifySecret('ENABLE_INVOICE', 'true');
-
-  if (!enableFinance) redirect(`/${wsId}`);
-  if (!enableInvoice) redirect(`/${wsId}/finance`);
 
   return (
     <DataTable
@@ -51,7 +36,6 @@ export default async function WorkspaceInvoicesPage({
         price: false,
         total_diff: false,
         note: false,
-        created_at: false,
       }}
     />
   );
@@ -72,7 +56,8 @@ async function getData(
     .select('*, customer:workspace_users!customer_id(full_name)', {
       count: 'exact',
     })
-    .eq('ws_id', wsId);
+    .eq('ws_id', wsId)
+    .order('created_at', { ascending: false });
 
   if (q) queryBuilder.ilike('name', `%${q}%`);
 

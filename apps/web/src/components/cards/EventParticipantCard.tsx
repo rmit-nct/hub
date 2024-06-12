@@ -1,9 +1,9 @@
-import { CheckIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/solid';
-import { useEffect, useState } from 'react';
 import { EventParticipant } from '@/types/primitives/EventParticipant';
+import { CheckIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import { Button, Loader } from '@mantine/core';
-import useSWR, { mutate } from 'swr';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import useSWR, { mutate } from 'swr';
 
 interface Props {
   wsId: string;
@@ -104,7 +104,7 @@ const EventParticipantCard = ({
     >
       {participant.type === 'virtual_user' ? (
         <Link
-          href={`/${wsId}/users/${participant.participant_id}`}
+          href={`/${wsId}/users/database/${participant.participant_id}`}
           className="line-clamp-1 font-semibold underline-offset-1 hover:underline"
         >
           {participant.display_name || participant.handle}

@@ -1,11 +1,11 @@
-import { User } from '@/types/primitives/User';
 import UserCard from '../../../../../../../components/cards/UserCard';
 import GeneralSearchBar from '../../../../../../../components/inputs/GeneralSearchBar';
-import { enforceRootWorkspaceAdmin } from '@/lib/workspace-helper';
+import PaginationIndicator from '@/components/pagination/PaginationIndicator';
 import { Separator } from '@/components/ui/separator';
+import { enforceRootWorkspaceAdmin } from '@/lib/workspace-helper';
+import { User } from '@/types/primitives/User';
 import { createAdminClient } from '@/utils/supabase/client';
 import { notFound } from 'next/navigation';
-import PaginationIndicator from '@/components/pagination/PaginationIndicator';
 
 interface Props {
   params: {
@@ -26,7 +26,7 @@ export default async function InfrastructureUsersPage({
   const count = await getUserCount();
 
   return (
-    <div className="flex min-h-full w-full flex-col ">
+    <div className="flex min-h-full w-full flex-col">
       <div className="grid items-end gap-4 md:grid-cols-2 xl:grid-cols-4">
         <GeneralSearchBar />
       </div>

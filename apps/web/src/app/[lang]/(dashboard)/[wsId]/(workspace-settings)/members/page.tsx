@@ -1,14 +1,15 @@
-import { Separator } from '@/components/ui/separator';
-import useTranslation from 'next-translate/useTranslation';
 import InviteMemberButton from './_components/invite-member-button';
-import MemberTabs from './_components/member-tabs';
 import MemberList from './_components/member-list';
-import { getWorkspace } from '@/lib/workspace-helper';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import MemberTabs from './_components/member-tabs';
+import { Separator } from '@/components/ui/separator';
 import { getCurrentUser } from '@/lib/user-helper';
+import { getWorkspace, verifyHasSecrets } from '@/lib/workspace-helper';
 import { User } from '@/types/primitives/User';
 import { createAdminClient } from '@/utils/supabase/client';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import useTranslation from 'next-translate/useTranslation';
+import { cookies } from 'next/headers';
+import { Suspense } from 'react';
 
 export const dynamic = 'force-dynamic';
 
@@ -32,26 +33,44 @@ export default async function WorkspaceMembersPage({
 
   const { t } = useTranslation('ws-members');
 
-  const membersLabel = t('workspace-settings-layout:members');
-  const inviteLabel = t('invite_member');
+  const disableInvite = await verifyHasSecrets(wsId, ['DISABLE_INVITE']);
 
   return (
     <>
       <div className="border-border bg-foreground/5 flex flex-col justify-between gap-4 rounded-lg border p-4 md:flex-row md:items-start">
         <div>
-          <h1 className="text-2xl font-bold">{membersLabel}</h1>
+          <h1 className="text-2xl font-bold">
+            {t('workspace-settings-layout:members')}
+          </h1>
           <p className="text-foreground/80">{t('description')}</p>
         </div>
 
         <div className="flex flex-col items-center justify-center gap-2 md:flex-row">
-          <InviteMemberButton
-            wsId={wsId}
-            currentUser={{
-              ...user!,
-              role: ws?.role,
-            }}
-            label={inviteLabel}
-          />
+          <Suspense
+            fallback={
+              <InviteMemberButton
+                wsId={wsId}
+                currentUser={{
+                  id: '',
+                  role: 'MEMBER',
+                }}
+                label={t('invite_member')}
+                disabled
+              />
+            }
+          >
+            <InviteMemberButton
+              wsId={wsId}
+              currentUser={{
+                ...user!,
+                role: ws?.role,
+              }}
+              label={
+                disableInvite ? t('invite_member_disabled') : t('invite_member')
+              }
+              disabled={disableInvite}
+            />
+          </Suspense>
           <MemberTabs value={searchParams?.status || 'all'} />
         </div>
       </div>
@@ -59,11 +78,25 @@ export default async function WorkspaceMembersPage({
 
       <div className="flex min-h-full w-full flex-col">
         <div className="grid items-end gap-4 lg:grid-cols-2">
-          <MemberList
-            workspace={ws}
-            members={members}
-            invited={searchParams?.status === 'invited'}
-          />
+          <Suspense
+            fallback={
+              <MemberList
+                members={Array.from({ length: 10 }).map((_, i) => ({
+                  id: i.toString(),
+                  display_name: 'Unknown',
+                  role: 'MEMBER',
+                  pending: true,
+                }))}
+                loading
+              />
+            }
+          >
+            <MemberList
+              workspace={ws}
+              members={members}
+              invited={searchParams?.status === 'invited'}
+            />
+          </Suspense>
         </div>
       </div>
     </>

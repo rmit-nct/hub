@@ -1,16 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Divider, NumberInput, Textarea } from '@mantine/core';
-import { Product } from '@/types/primitives/Product';
 import InvoiceProductInput from '../../../../../../../components/inputs/InvoiceProductInput';
-import useSWR, { mutate } from 'swr';
-import 'dayjs/locale/vi';
-import { DateTimePicker } from '@mantine/dates';
-import useTranslation from 'next-translate/useTranslation';
 import { Invoice } from '@/types/primitives/Invoice';
+import { Product } from '@/types/primitives/Product';
 import { Transaction } from '@/types/primitives/Transaction';
+import { Divider, NumberInput, Textarea } from '@mantine/core';
+import { DateTimePicker } from '@mantine/dates';
+import 'dayjs/locale/vi';
 import moment from 'moment';
+import useTranslation from 'next-translate/useTranslation';
+import { useEffect, useState } from 'react';
+import useSWR, { mutate } from 'swr';
 
 interface Props {
   params: {
@@ -159,7 +159,7 @@ export default function InvoiceDetailsPage({
   const { lang } = useTranslation();
 
   return (
-    <div className="mt-2 flex min-h-full w-full flex-col ">
+    <div className="mt-2 flex min-h-full w-full flex-col">
       <div className="grid gap-x-8 gap-y-4 xl:grid-cols-2 xl:gap-x-16">
         <button
           className={`w-fit rounded border px-4 py-1 font-semibold transition ${

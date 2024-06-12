@@ -1,4 +1,4 @@
-import { Navigation, NavLink } from '@/components/navigation';
+import { NavLink, Navigation } from '@/components/navigation';
 import useTranslation from 'next-translate/useTranslation';
 import React from 'react';
 
@@ -24,6 +24,10 @@ export default async function Layout({
       matchExact: true,
     },
     {
+      name: t('attendance'),
+      href: `/${wsId}/users/attendance`,
+    },
+    {
       name: t('database'),
       href: `/${wsId}/users/database`,
     },
@@ -32,10 +36,12 @@ export default async function Layout({
       href: `/${wsId}/users/groups`,
     },
     {
+      name: t('group_tags'),
+      href: `/${wsId}/users/group-tags`,
+    },
+    {
       name: t('reports'),
       href: `/${wsId}/users/reports`,
-      allowedPresets: ['EDUCATION'],
-      disabled: true,
     },
     {
       name: t('fields'),

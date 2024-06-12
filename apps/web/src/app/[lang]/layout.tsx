@@ -1,18 +1,17 @@
 import '../../styles/globals.css';
-import { ReactNode } from 'react';
-
-import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
-import { SpeedInsights as VercelInsights } from '@vercel/speed-insights/next';
-import { TailwindIndicator } from '@/components/tailwind-indicator';
+import Navbar from './navbar';
+import NavbarPadding from './navbar-padding';
+import { StaffToolbar } from './staff-toolbar';
 import { Providers } from '@/components/providers';
+import { TailwindIndicator } from '@/components/tailwind-indicator';
 import { Toaster } from '@/components/ui/toaster';
 import { siteConfig } from '@/constants/configs';
-import { StaffToolbar } from './staff-toolbar';
-import NavbarPadding from './navbar-padding';
+import { cn } from '@/lib/utils';
+import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
+import { SpeedInsights as VercelInsights } from '@vercel/speed-insights/next';
 import { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
-import { cn } from '@/lib/utils';
-import Navbar from './navbar';
+import { ReactNode } from 'react';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,10 +25,8 @@ interface Props {
 export async function generateMetadata({
   params: { lang },
 }: Props): Promise<Metadata> {
-  const enDescription =
-    'The best tech club for SSET students at RMIT University.';
-  const viDescription =
-    'Câu lạc bộ công nghệ hàng đầu dành cho sinh viên SSET tại Đại học RMIT.';
+  const enDescription = 'Take control of your workflow, supercharged by AI.';
+  const viDescription = 'Quản lý công việc của bạn, siêu tốc độ cùng AI.';
 
   const description = lang === 'vi' ? viDescription : enDescription;
 
@@ -56,7 +53,7 @@ export async function generateMetadata({
     creator: 'vohoangphuc',
     openGraph: {
       type: 'website',
-      locale: 'en_US',
+      locale: lang,
       url: siteConfig.url,
       title: siteConfig.name,
       description,
@@ -105,7 +102,7 @@ export async function generateStaticParams() {
 
 export default async function RootLayout({ children, params }: Props) {
   return (
-    <html lang={params.lang}>
+    <html lang={params.lang} className="dark">
       <body
         className={cn(
           'bg-background min-h-screen font-sans antialiased',

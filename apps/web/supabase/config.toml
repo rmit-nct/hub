@@ -1,13 +1,14 @@
 # A string used to distinguish different Supabase projects on the same host. Defaults to the
 # working directory name when running `supabase init`.
-project_id = "nct"
+project_id = "tuturuuu"
 
 [api]
+enabled = true
 # Port to use for the API URL.
 port = 8001
 # Schemas to expose in your API. Tables, views and stored procedures in this schema will get API
 # endpoints. public and storage are always included.
-schemas = ["public", "storage", "graphql_public"]
+schemas = ["public", "storage"]
 # Extra schemas to add to the search_path of every request. public is always included.
 extra_search_path = ["public", "extensions"]
 # The maximum number of rows returns from a view, table, or stored procedure. Limits payload size
@@ -92,7 +93,7 @@ auth_token = "env(SUPABASE_AUTH_SMS_TWILIO_AUTH_TOKEN)"
 
 # Auth templates
 [auth.email.template.confirmation]
-subject = "Confirm your NCT Hub account"
+subject = "Confirm your Tuturuuu account"
 content_path = "./supabase/templates/confirmation.html"
 
 [auth.email.template.email_change]
@@ -100,15 +101,15 @@ subject = "Email Change Confirmation"
 content_path = "./supabase/templates/email_change.html"
 
 [auth.email.template.invite]
-subject = "Invitation to NCT Hub"
+subject = "Invitation to Tuturuuu"
 content_path = "./supabase/templates/invite.html"
 
 [auth.email.template.magic_link]
-subject = "NCT Hub Verification Code"
+subject = "Tuturuuu Verification Code"
 content_path = "./supabase/templates/magic_link.html"
 
 [auth.email.template.recovery]
-subject = "NCT Hub Password Recovery"
+subject = "Tuturuuu Password Recovery"
 content_path = "./supabase/templates/recovery.html"
 
 # Use an external OAuth provider. The full list of providers are: `apple`, `azure`, `bitbucket`,

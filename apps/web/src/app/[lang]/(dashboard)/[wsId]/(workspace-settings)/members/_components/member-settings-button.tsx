@@ -1,6 +1,8 @@
 'use client';
 
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { SelectField } from '@/components/ui/custom/select-field';
 import {
   Dialog,
   DialogContent,
@@ -9,7 +11,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
 import {
   Form,
   FormControl,
@@ -19,21 +20,20 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Cog6ToothIcon } from '@heroicons/react/24/solid';
-import { toast } from '@/components/ui/use-toast';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import * as z from 'zod';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User } from '@/types/primitives/User';
-import { getInitials } from '@/utils/name-helper';
-import { SelectField } from '@/components/ui/custom/select-field';
+import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import useTranslation from 'next-translate/useTranslation';
+import { toast } from '@/components/ui/use-toast';
+import { User } from '@/types/primitives/User';
 import { Workspace } from '@/types/primitives/Workspace';
+import { getInitials } from '@/utils/name-helper';
+import { Cog6ToothIcon } from '@heroicons/react/24/solid';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { User as UserIcon } from 'lucide-react';
+import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { User as UserIcon } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
 
 interface Props {
   workspace: Workspace;
@@ -70,7 +70,7 @@ export function MemberSettingsButton({
     const invited = user?.pending;
 
     const response = await fetch(
-      `/api/workspaces/${ws.id}/members/${user.id}`,
+      `/api/workspaces/${ws.id}/members${user.id ? `?id=${user.id}` : `?email=${user.email}`}`,
       {
         method: 'DELETE',
       }
@@ -104,7 +104,7 @@ export function MemberSettingsButton({
 
   const updateMember = async (data: z.infer<typeof FormSchema>) => {
     const response = await fetch(
-      `/api/workspaces/${ws.id}/members/${user.id}`,
+      `/api/workspaces/${ws.id}/members${user.id ? `?id=${user.id}` : `?email=${user.email}`}`,
       {
         method: 'PUT',
         headers: {

@@ -1,10 +1,15 @@
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import * as z from 'zod';
-
 import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
 import {
   Form,
   FormControl,
@@ -14,32 +19,27 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import useTranslation from 'next-translate/useTranslation';
-import { Transaction } from '@/types/primitives/Transaction';
-import useSWR from 'swr';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from '@/components/ui/command';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { toast } from '@/components/ui/use-toast';
-import { TransactionCategory } from '@/types/primitives/TransactionCategory';
-import { fetcher } from '@/utils/fetcher';
-import { cn } from '@/lib/utils';
-import { CalendarIcon, CheckIcon, ChevronsUpDown } from 'lucide-react';
-import { Wallet } from '@/types/primitives/Wallet';
 import { Separator } from '@/components/ui/separator';
-import { Calendar } from '@/components/ui/calendar';
+import { toast } from '@/components/ui/use-toast';
+import { cn } from '@/lib/utils';
+import { Transaction } from '@/types/primitives/Transaction';
+import { TransactionCategory } from '@/types/primitives/TransactionCategory';
+import { Wallet } from '@/types/primitives/Wallet';
+import { fetcher } from '@/utils/fetcher';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
+import { CalendarIcon, CheckIcon, ChevronsUpDown } from 'lucide-react';
+import useTranslation from 'next-translate/useTranslation';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import useSWR from 'swr';
+import * as z from 'zod';
 
 interface Props {
   wsId: string;
@@ -142,105 +142,6 @@ export function TransactionForm({
       >
         <FormField
           control={form.control}
-          name="amount"
-          disabled={loading}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Amount</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  placeholder="0"
-                  {...field}
-                  value={Math.abs(field.value)}
-                  onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="category_id"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Category</FormLabel>
-              <Popover open={showCategories} onOpenChange={setShowCategories}>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      className={cn(
-                        'justify-between',
-                        !field.value && 'text-muted-foreground'
-                      )}
-                      disabled={categoriesLoading}
-                    >
-                      {field.value
-                        ? categories?.find((c) => c.id === field.value)?.name
-                        : categoriesLoading
-                          ? 'Fetching...'
-                          : 'Select category'}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-full p-0">
-                  <Command
-                    filter={(value, search) => {
-                      if (value.includes(search)) return 1;
-                      return 0;
-                    }}
-                  >
-                    <CommandInput
-                      placeholder="Search category..."
-                      disabled={categoriesLoading}
-                    />
-                    <CommandEmpty>No category found.</CommandEmpty>
-                    <CommandGroup>
-                      {(categories?.length || 0) > 0
-                        ? categories?.map((category) => (
-                            <CommandItem
-                              key={category.id}
-                              value={category.name}
-                              onSelect={() => {
-                                form.setValue(
-                                  'category_id',
-                                  category?.id || ''
-                                );
-                                setShowCategories(false);
-                              }}
-                            >
-                              <CheckIcon
-                                className={cn(
-                                  'mr-2 h-4 w-4',
-                                  category.id === field.value
-                                    ? 'opacity-100'
-                                    : 'opacity-0'
-                                )}
-                              />
-                              {category.name}
-                            </CommandItem>
-                          ))
-                        : null}
-                    </CommandGroup>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className="h-2" />
-        <Separator />
-        <div className="h-2" />
-
-        <FormField
-          control={form.control}
           name="origin_wallet_id"
           render={({ field }) => (
             <FormItem className="flex flex-col">
@@ -255,7 +156,8 @@ export function TransactionForm({
                         'justify-between',
                         !field.value && 'text-muted-foreground'
                       )}
-                      disabled={walletsLoading}
+                      // disabled={walletsLoading}
+                      disabled
                     >
                       {field.value
                         ? wallets?.find((c) => c.id === field.value)?.name
@@ -315,6 +217,107 @@ export function TransactionForm({
 
         <FormField
           control={form.control}
+          name="category_id"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel>Category</FormLabel>
+              <Popover open={showCategories} onOpenChange={setShowCategories}>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      className={cn(
+                        'justify-between',
+                        !field.value && 'text-muted-foreground'
+                      )}
+                      disabled={categoriesLoading}
+                    >
+                      {field.value
+                        ? categories?.find((c) => c.id === field.value)?.name
+                        : categoriesLoading
+                          ? 'Fetching...'
+                          : 'Select category'}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0">
+                  <Command
+                    filter={(value, search) => {
+                      if (value.includes(search)) return 1;
+                      return 0;
+                    }}
+                  >
+                    <CommandInput
+                      placeholder="Search category..."
+                      disabled={categoriesLoading}
+                    />
+                    <CommandEmpty>No category found.</CommandEmpty>
+                    <CommandList>
+                      <CommandGroup>
+                        {(categories?.length || 0) > 0
+                          ? categories?.map((category) => (
+                              <CommandItem
+                                key={category.id}
+                                value={category.name}
+                                onSelect={() => {
+                                  form.setValue(
+                                    'category_id',
+                                    category?.id || ''
+                                  );
+                                  setShowCategories(false);
+                                }}
+                              >
+                                <CheckIcon
+                                  className={cn(
+                                    'mr-2 h-4 w-4',
+                                    category.id === field.value
+                                      ? 'opacity-100'
+                                      : 'opacity-0'
+                                  )}
+                                />
+                                {category.name}
+                              </CommandItem>
+                            ))
+                          : null}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="h-2" />
+        <Separator />
+        <div className="h-2" />
+
+        <FormField
+          control={form.control}
+          name="amount"
+          disabled={loading}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Amount</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  placeholder="0"
+                  {...field}
+                  value={Math.abs(field.value)}
+                  onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
           name="description"
           disabled={loading}
           render={({ field }) => (
@@ -327,6 +330,10 @@ export function TransactionForm({
             </FormItem>
           )}
         />
+
+        <div className="h-2" />
+        <Separator />
+        <div className="h-2" />
 
         <FormField
           control={form.control}

@@ -1,113 +1,210 @@
-'use client';
-
-import { useState } from 'react';
-import SettingItemCard from '../../../../../../../components/settings/SettingItemCard';
+import { UserDatabaseFilter } from '../../filters';
+import { DataTable } from '@/components/ui/custom/tables/data-table';
+import { getUserColumns } from '@/data/columns/users';
+import { verifyHasSecrets } from '@/lib/workspace-helper';
 import { UserGroup } from '@/types/primitives/UserGroup';
-import useSWR from 'swr';
-import useTranslation from 'next-translate/useTranslation';
-import { useLocalStorage } from '@mantine/hooks';
 import { WorkspaceUser } from '@/types/primitives/WorkspaceUser';
-import PaginationIndicator from '../../../../../../../components/pagination/PaginationIndicator';
-import { Divider, Switch } from '@mantine/core';
-import WorkspaceUserCard from '../../../../../../../components/cards/WorkspaceUserCard';
-import GeneralSearchBar from '../../../../../../../components/inputs/GeneralSearchBar';
+import { WorkspaceUserField } from '@/types/primitives/WorkspaceUserField';
+import { MinusCircledIcon } from '@radix-ui/react-icons';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import useTranslation from 'next-translate/useTranslation';
+import { cookies } from 'next/headers';
+
+interface SearchParams {
+  q?: string;
+  page?: string;
+  pageSize?: string;
+  excludedGroups?: string | string[];
+}
 
 interface Props {
   params: {
     wsId: string;
     groupId: string;
   };
+  searchParams: SearchParams;
 }
 
-export default function UserGroupDetailsPage({
+export default async function UserGroupDetailsPage({
   params: { wsId, groupId },
+  searchParams,
 }: Props) {
-  const { t } = useTranslation('ws-user-groups-details');
+  await verifyHasSecrets(wsId, ['ENABLE_USERS'], `/${wsId}`);
+  const { t } = useTranslation('user-data-table');
 
-  const untitledLabel = t('common:untitled');
+  const group = await getData(wsId, groupId);
 
-  const apiPath =
-    wsId && groupId ? `/api/workspaces/${wsId}/users/groups/${groupId}` : null;
-
-  const { data: group } = useSWR<UserGroup>(apiPath);
-
-  const [query] = useState('');
-  const [activePage] = useState(1);
-
-  const [itemsPerPage] = useLocalStorage({
-    key: 'workspace-user-groups-items-per-page',
-    defaultValue: 16,
-  });
-
-  const usersApiPath =
-    wsId && groupId
-      ? `/api/workspaces/${wsId}/users?query=${query}&page=${activePage}&itemsPerPage=${itemsPerPage}&groupId=${groupId}`
-      : null;
-
-  const { data } = useSWR<{ data: WorkspaceUser[]; count: number }>(
-    usersApiPath
+  const { data: rawUsers, count: usersCount } = await getUserData(
+    wsId,
+    groupId,
+    searchParams
   );
 
-  const users = data?.data;
-  // const count = data?.count;
+  const { data: extraFields } = await getUserFields(wsId);
 
-  const [showPhone, setShowPhone] = useLocalStorage({
-    key: 'workspace-user-groups-showPhone',
-    defaultValue: true,
-  });
+  const { data: excludedUserGroups } = await getExcludedUserGroups(
+    wsId,
+    groupId
+  );
 
-  const [showGender, setShowGender] = useLocalStorage({
-    key: 'workspace-user-groups-showGender',
-    defaultValue: true,
-  });
-
-  const [showAddress, setShowAddress] = useLocalStorage({
-    key: 'workspace-user-groups-showAddress',
-    defaultValue: true,
-  });
+  const users = rawUsers.map((u) => ({
+    ...u,
+    href: `/${wsId}/users/database/${u.id}`,
+  }));
 
   return (
-    <div className="flex min-h-full w-full flex-col ">
-      <SettingItemCard title={group?.name || untitledLabel} />
-
-      <div className="mt-4 grid items-end gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <GeneralSearchBar />
-        <div className="hidden xl:block" />
-        <Divider variant="dashed" className="col-span-full" />
-        <Switch
-          label={t('ws-users-list-configs:show-phone')}
-          checked={showPhone}
-          onChange={(event) => setShowPhone(event.currentTarget.checked)}
-        />
-        <Switch
-          label={t('ws-users-list-configs:show-gender')}
-          checked={showGender}
-          onChange={(event) => setShowGender(event.currentTarget.checked)}
-        />
-        <Switch
-          label={t('ws-users-list-configs:show-address')}
-          checked={showAddress}
-          onChange={(event) => setShowAddress(event.currentTarget.checked)}
-        />
+    <>
+      <div className="mb-2 flex flex-col items-center justify-center gap-2 text-lg font-semibold">
+        {group.name && <div>{group.name}</div>}
       </div>
 
-      <Divider className="mt-4" />
-      <PaginationIndicator totalItems={0} />
+      <DataTable
+        data={users}
+        namespace="user-data-table"
+        columnGenerator={getUserColumns}
+        extraColumns={extraFields}
+        count={usersCount}
+        filters={[
+          <UserDatabaseFilter
+            key="excluded-user-groups-filter"
+            tag="excludedGroups"
+            title={t('excluded_groups')}
+            icon={<MinusCircledIcon className="mr-2 h-4 w-4" />}
+            options={excludedUserGroups.map((group) => ({
+              label: group.name || 'No name',
+              value: group.id,
+              count: group.amount,
+            }))}
+          />,
+        ]}
+        defaultVisibility={{
+          id: false,
+          gender: false,
+          avatar_url: false,
+          display_name: false,
+          ethnicity: false,
+          guardian: false,
+          address: false,
+          national_id: false,
+          note: false,
+          linked_users: false,
+          group_count: false,
+          created_at: false,
+          updated_at: false,
 
-      <div className={`grid gap-4 ${'md:grid-cols-2 xl:grid-cols-4'}`}>
-        {/* <PlusCardButton onClick={() => {}} /> */}
-        {users &&
-          users?.map((p) => (
-            <WorkspaceUserCard
-              key={p.id}
-              wsId={wsId}
-              user={p}
-              showAddress={showAddress}
-              showGender={showGender}
-              showPhone={showPhone}
-            />
-          ))}
-      </div>
-    </div>
+          // Extra columns
+          ...Object.fromEntries(extraFields.map((field) => [field.id, false])),
+        }}
+      />
+    </>
   );
+}
+
+async function getData(wsId: string, groupId: string) {
+  const supabase = createServerComponentClient({ cookies });
+
+  const { data, error } = await supabase
+    .from('workspace_user_groups')
+    .select('*')
+    .eq('ws_id', wsId)
+    .eq('id', groupId)
+    .single();
+
+  if (error) throw error;
+
+  return data as WorkspaceUser;
+}
+
+async function getUserData(
+  wsId: string,
+  groupId: string,
+  {
+    q,
+    page = '1',
+    pageSize = '10',
+    excludedGroups = [],
+    retry = true,
+  }: SearchParams & { retry?: boolean } = {}
+) {
+  const supabase = createServerComponentClient({ cookies });
+
+  const queryBuilder = supabase
+    .rpc(
+      'get_workspace_users',
+      {
+        _ws_id: wsId,
+        included_groups: [groupId],
+        excluded_groups: Array.isArray(excludedGroups)
+          ? excludedGroups
+          : [excludedGroups],
+        search_query: q || null,
+      },
+      {
+        count: 'exact',
+      }
+    )
+    .select('*')
+    .order('full_name', { ascending: true, nullsFirst: false });
+
+  if (page && pageSize) {
+    const parsedPage = parseInt(page);
+    const parsedSize = parseInt(pageSize);
+    const start = (parsedPage - 1) * parsedSize;
+    const end = parsedPage * parsedSize;
+    queryBuilder.range(start, end).limit(parsedSize);
+  }
+
+  const { data, error, count } = await queryBuilder;
+
+  if (error) {
+    if (!retry) throw error;
+    return getUserData(wsId, groupId, {
+      q,
+      pageSize,
+      excludedGroups,
+      retry: false,
+    });
+  }
+
+  return { data, count } as { data: WorkspaceUser[]; count: number };
+}
+
+async function getUserFields(wsId: string) {
+  const supabase = createServerComponentClient({ cookies });
+
+  const queryBuilder = supabase
+    .from('workspace_user_fields')
+    .select('*', {
+      count: 'exact',
+    })
+    .eq('ws_id', wsId)
+    .order('created_at', { ascending: false });
+
+  const { data, error, count } = await queryBuilder;
+  if (error) throw error;
+
+  return { data, count } as { data: WorkspaceUserField[]; count: number };
+}
+
+async function getExcludedUserGroups(wsId: string, groupId: string) {
+  const supabase = createServerComponentClient({ cookies });
+
+  const queryBuilder = supabase
+    .rpc(
+      'get_possible_excluded_groups',
+      {
+        _ws_id: wsId,
+        included_groups: [groupId],
+      },
+      {
+        count: 'exact',
+      }
+    )
+    .select('id, name, amount')
+    .order('name');
+
+  const { data, error, count } = await queryBuilder;
+  if (error) throw error;
+
+  return { data, count } as { data: UserGroup[]; count: number };
 }

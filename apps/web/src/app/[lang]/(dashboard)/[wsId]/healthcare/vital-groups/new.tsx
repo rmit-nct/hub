@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
-import { Divider, TextInput, Textarea } from '@mantine/core';
-import { Vital } from '@/types/primitives/Vital';
-import 'dayjs/locale/vi';
-import { TrashIcon } from '@heroicons/react/24/solid';
-import { useWorkspaces } from '@/hooks/useWorkspaces';
 import { useSegments } from '@/hooks/useSegments';
+import { useWorkspaces } from '@/hooks/useWorkspaces';
+import { Vital } from '@/types/primitives/Vital';
+import { TrashIcon } from '@heroicons/react/24/solid';
+import { Divider, TextInput, Textarea } from '@mantine/core';
+import 'dayjs/locale/vi';
+import { useEffect, useState } from 'react';
 
 export default function NewVitalGroupPage() {
   const { setRootSegment } = useSegments();
@@ -61,7 +61,7 @@ export default function NewVitalGroupPage() {
   };
 
   return (
-    <div className="mt-2 flex min-h-full w-full flex-col ">
+    <div className="mt-2 flex min-h-full w-full flex-col">
       <div className="grid gap-x-8 gap-y-4 xl:gap-x-16">
         <div className="flex items-end justify-end">
           <button

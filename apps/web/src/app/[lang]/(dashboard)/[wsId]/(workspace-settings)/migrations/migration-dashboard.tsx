@@ -1,16 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { MigrationModule, ModulePackage, generateModules } from './modules';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Progress } from '@/components/ui/progress';
+import { Separator } from '@/components/ui/separator';
 import { ArrowPathIcon, PlayIcon } from '@heroicons/react/24/solid';
 import { useLocalStorage } from '@mantine/hooks';
 import { IconGitMerge } from '@tabler/icons-react';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { Card } from '@/components/ui/card';
-import { MigrationModule, ModulePackage, generateModules } from './modules';
+import { useState } from 'react';
 
 export default function MigrationDashboard() {
   const [apiEndpoint, setApiEndpoint] = useLocalStorage({
@@ -378,7 +378,7 @@ export default function MigrationDashboard() {
   };
 
   return (
-    <div className="flex flex-col gap-4 ">
+    <div className="flex flex-col gap-4">
       <div className="flex h-full flex-col gap-2">
         <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
           <div className="grid w-full items-center gap-1.5">

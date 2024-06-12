@@ -1,11 +1,12 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { AI_PROMPT, HUMAN_PROMPT } from '@anthropic-ai/sdk';
-import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { Message } from 'ai';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { Message } from 'ai';
+import { cookies } from 'next/headers';
+import { NextResponse } from 'next/server';
 
 export const runtime = 'edge';
+export const maxDuration = 60;
 export const preferredRegion = 'sin1';
 export const dynamic = 'force-dynamic';
 
@@ -47,7 +48,6 @@ export async function POST(req: Request) {
       .generateContent(prompt);
 
     const title = geminiRes.response.candidates?.[0].content.parts[0].text;
-    console.log({ title });
 
     if (!title) {
       return NextResponse.json(

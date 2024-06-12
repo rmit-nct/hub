@@ -1,14 +1,14 @@
-import useTranslation from 'next-translate/useTranslation';
-import { Separator } from '@/components/ui/separator';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { Database } from '@/types/supabase';
-import { cookies } from 'next/headers';
-import { DataTable } from '@/components/ui/custom/tables/data-table';
-import { TaskBoard } from '@/types/primitives/TaskBoard';
-import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
-import { projectColumns } from '@/data/columns/projects';
 import ProjectEditDialog from '../../projects/_components/project-edit-dialog';
+import { Button } from '@/components/ui/button';
+import { DataTable } from '@/components/ui/custom/tables/data-table';
+import { Separator } from '@/components/ui/separator';
+import { projectColumns } from '@/data/columns/projects';
+import { TaskBoard } from '@/types/primitives/TaskBoard';
+import { Database } from '@/types/supabase';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { Plus } from 'lucide-react';
+import useTranslation from 'next-translate/useTranslation';
+import { cookies } from 'next/headers';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,11 +23,11 @@ interface Props {
   };
 }
 
-export default async function WorkspaceProjectsPage({
+export default async function WorkspaceAIWorkflowsPage({
   params: { wsId },
   searchParams,
 }: Props) {
-  const { data: projects, count } = await getProjects(wsId, searchParams);
+  const { data: projects, count } = await getWorkflows(wsId, searchParams);
   const { t } = useTranslation('ws-ai-workflows');
 
   return (
@@ -68,7 +68,7 @@ export default async function WorkspaceProjectsPage({
   );
 }
 
-async function getProjects(
+async function getWorkflows(
   wsId: string,
   {
     q,
@@ -96,8 +96,9 @@ async function getProjects(
     queryBuilder.range(start, end).limit(parsedSize);
   }
 
-  const { data, error, count } = await queryBuilder;
-  if (error) throw error;
+  // const { data, error, count } = await queryBuilder;
+  // if (error) throw error;
 
-  return { data, count } as { data: TaskBoard[]; count: number };
+  // return { data, count } as { data: TaskBoard[]; count: number };
+  return { data: [], count: 0 } as { data: TaskBoard[]; count: number };
 }

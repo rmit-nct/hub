@@ -1,5 +1,16 @@
 'use client';
 
+import { DataTablePagination } from './data-table-pagination';
+import { DataTableToolbar } from './data-table-toolbar';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import useSearchParams from '@/hooks/useSearchParams';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -13,22 +24,9 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-
-import { DataTablePagination } from './data-table-pagination';
-import { DataTableToolbar } from './data-table-toolbar';
-import { ReactNode, useState } from 'react';
-import useQuery from '@/hooks/useQuery';
-import useTranslation from 'next-translate/useTranslation';
 import { Translate } from 'next-translate';
+import useTranslation from 'next-translate/useTranslation';
+import { ReactNode, useState } from 'react';
 
 interface DataTableProps<TData, TValue> {
   columns?: ColumnDef<TData, TValue>[];
@@ -36,26 +34,34 @@ interface DataTableProps<TData, TValue> {
     t: Translate,
     extraColumns?: any[]
   ) => ColumnDef<TData, TValue>[];
+  filters?: ReactNode[];
   extraColumns?: any[];
+  newObjectTitle?: string;
   editContent?: ReactNode;
   namespace?: string;
   data?: TData[];
   count?: number;
   defaultVisibility?: VisibilityState;
+  noBottomPadding?: boolean;
+  disableSearch?: boolean;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   columnGenerator,
+  filters,
   extraColumns,
+  newObjectTitle,
   editContent,
   namespace = 'common',
   data,
   count,
   defaultVisibility = {},
+  noBottomPadding,
+  disableSearch,
 }: DataTableProps<TData, TValue>) {
   const { t } = useTranslation(namespace);
-  const query = useQuery();
+  const searchParams = useSearchParams();
 
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] =
@@ -63,8 +69,8 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  const pageIndex = (Number(query.get('page')) || 1) - 1;
-  const pageSize = Number(query.get('pageSize')) || 10;
+  const pageIndex = (Number(searchParams.get('page')) || 1) - 1;
+  const pageSize = Number(searchParams.get('pageSize')) || 10;
 
   const table = useReactTable({
     data: data || [],
@@ -101,8 +107,11 @@ export function DataTable<TData, TValue>({
       <DataTableToolbar
         namespace={namespace}
         table={table}
+        newObjectTitle={newObjectTitle}
         editContent={editContent}
+        filters={filters}
         extraColumns={extraColumns}
+        disableSearch={disableSearch}
       />
       <div className="rounded-md border">
         <Table>
@@ -156,15 +165,19 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination
-        table={table}
-        className="pointer-events-none hidden opacity-0 lg:block"
-      />
-      <DataTablePagination
-        table={table}
-        count={count}
-        className="bg-foreground/[0.025] dark:bg-foreground/5 inset-x-0 bottom-0 z-50 rounded-lg border px-4 py-2 backdrop-blur-xl lg:fixed lg:rounded-none lg:border-0 lg:border-t"
-      />
+      {noBottomPadding || count === undefined || (
+        <DataTablePagination
+          table={table}
+          className="pointer-events-none hidden opacity-0 lg:block"
+        />
+      )}
+      {count !== undefined && (
+        <DataTablePagination
+          table={table}
+          count={count}
+          className="bg-foreground/[0.025] dark:bg-foreground/5 inset-x-0 bottom-0 z-50 rounded-lg border px-4 py-2 backdrop-blur-xl lg:fixed lg:rounded-none lg:border-0 lg:border-t"
+        />
+      )}
     </div>
   );
 }

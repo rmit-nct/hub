@@ -1,9 +1,6 @@
 'use client';
 
-import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
-import { MixerHorizontalIcon } from '@radix-ui/react-icons';
-import { Table } from '@tanstack/react-table';
-
+import { ScrollArea } from '../../scroll-area';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -12,9 +9,12 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
-import useTranslation from 'next-translate/useTranslation';
-import { ScrollArea } from '../../scroll-area';
+import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
+import { MixerHorizontalIcon } from '@radix-ui/react-icons';
+import { Table } from '@tanstack/react-table';
 import { UserCog } from 'lucide-react';
+import useTranslation from 'next-translate/useTranslation';
+import { Fragment } from 'react';
 
 interface DataTableViewOptionsProps<TData> {
   namespace: string;
@@ -57,17 +57,17 @@ export function DataTableViewOptions<TData>({
             )
             .map((column, idx) => {
               return (
-                <>
+                <Fragment key={column.id}>
                   {/* If this item is the last system column before the extra
                   columns start (if there is any), add a separator */}
                   {extraColumns?.length &&
                   extraColumns[0].id === column.id &&
                   idx !== 0 ? (
-                    <DropdownMenuSeparator />
+                    <DropdownMenuSeparator key={`${column.id}-separator`} />
                   ) : null}
 
                   <DropdownMenuCheckboxItem
-                    key={column.id}
+                    key={`${column.id}-checkbox`}
                     checked={column.getIsVisible()}
                     onCheckedChange={(value) => column.toggleVisibility(value)}
                   >
@@ -81,7 +81,7 @@ export function DataTableViewOptions<TData>({
                       (extraColumn) => extraColumn.id === column.id
                     )?.name || t(column.id)}
                   </DropdownMenuCheckboxItem>
-                </>
+                </Fragment>
               );
             })}
         </ScrollArea>

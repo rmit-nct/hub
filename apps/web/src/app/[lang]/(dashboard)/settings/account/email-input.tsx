@@ -1,10 +1,7 @@
 'use client';
 
-import { InputField } from '@/components/ui/custom/input-field';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import * as z from 'zod';
 import { Button } from '@/components/ui/button';
+import { InputField } from '@/components/ui/custom/input-field';
 import {
   Form,
   FormControl,
@@ -14,21 +11,25 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { toast } from '@/components/ui/use-toast';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Check, Loader2 } from 'lucide-react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
 
 interface Props {
   oldEmail?: string;
   newEmail?: string | null;
+  disabled?: boolean;
 }
 
 const FormSchema = z.object({
   email: z.string().email(),
 });
 
-export default function EmailInput({ oldEmail, newEmail }: Props) {
+export default function EmailInput({ oldEmail, newEmail, disabled }: Props) {
   const router = useRouter();
   const { t } = useTranslation('settings-account');
 
@@ -103,6 +104,7 @@ export default function EmailInput({ oldEmail, newEmail }: Props) {
                         : undefined
                     }
                     className="w-full"
+                    disabled={disabled}
                     {...field}
                   />
                 </FormControl>
@@ -115,7 +117,7 @@ export default function EmailInput({ oldEmail, newEmail }: Props) {
             type="submit"
             size="icon"
             onClick={form.handleSubmit(onSubmit)}
-            disabled={!oldEmail || oldEmail === email || saving}
+            disabled={!oldEmail || oldEmail === email || saving || disabled}
           >
             {saving ? (
               <Loader2 className="h-5 w-5 animate-spin" />

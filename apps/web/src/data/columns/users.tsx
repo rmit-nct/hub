@@ -1,48 +1,47 @@
 'use client';
 
-import { ColumnDef } from '@tanstack/react-table';
-
-import { Checkbox } from '@/components/ui/checkbox';
+import { UserRowActions } from '@/components/row-actions/users';
 import { DataTableColumnHeader } from '@/components/ui/custom/tables/data-table-column-header';
-import { WorkspaceUser } from '@/types/primitives/WorkspaceUser';
-import moment from 'moment';
-import { Translate } from 'next-translate';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { WorkspaceUser } from '@/types/primitives/WorkspaceUser';
+import { WorkspaceUserField } from '@/types/primitives/WorkspaceUserField';
+import { ColumnDef } from '@tanstack/react-table';
+import moment from 'moment';
+import { Translate } from 'next-translate';
 import Image from 'next/image';
 import Link from 'next/link';
-import { UserRowActions } from '@/components/row-actions/users';
-import { WorkspaceUserField } from '@/types/primitives/WorkspaceUserField';
+import { Fragment } from 'react';
 
 export const getUserColumns = (
   t: Translate,
   extraFields?: WorkspaceUserField[]
 ): ColumnDef<WorkspaceUser>[] => [
-  {
-    id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-        className="translate-y-[2px]"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-        className="translate-y-[2px]"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
+  // {
+  //   id: 'select',
+  //   header: ({ table }) => (
+  //     <Checkbox
+  //       checked={table.getIsAllPageRowsSelected()}
+  //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+  //       aria-label="Select all"
+  //       className="translate-y-[2px]"
+  //     />
+  //   ),
+  //   cell: ({ row }) => (
+  //     <Checkbox
+  //       checked={row.getIsSelected()}
+  //       onCheckedChange={(value) => row.toggleSelected(!!value)}
+  //       aria-label="Select row"
+  //       className="translate-y-[2px]"
+  //     />
+  //   ),
+  //   enableSorting: false,
+  //   enableHiding: false,
+  // },
   {
     accessorKey: 'id',
     header: ({ column }) => (
@@ -94,17 +93,17 @@ export const getUserColumns = (
                   {row
                     .getValue<WorkspaceUser[]>('linked_users')
                     .map((u, idx) => (
-                      <>
+                      <Fragment key={u.id}>
                         <span
-                          key={u.id}
+                          key={`${u.id}-name`}
                           className="font-semibold hover:underline"
                         >
                           {u.display_name}
                         </span>
                         {idx !==
                           row.getValue<WorkspaceUser[]>('linked_users').length -
-                            1 && <span>, </span>}
-                      </>
+                            1 && <span key={`${u.id}-separator`}>, </span>}
+                      </Fragment>
                     ))}
                 </div>
               </TooltipContent>
@@ -253,6 +252,17 @@ export const getUserColumns = (
     ),
     cell: ({ row }) => (
       <div className="line-clamp-1 w-[8rem]">{row.getValue('note') || '-'}</div>
+    ),
+  },
+  {
+    accessorKey: 'group_count',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title={t('group_count')} />
+    ),
+    cell: ({ row }) => (
+      <div className="line-clamp-1 w-[8rem]">
+        {row.getValue('group_count') || '-'}
+      </div>
     ),
   },
   {

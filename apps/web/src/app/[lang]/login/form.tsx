@@ -1,9 +1,5 @@
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import * as z from 'zod';
-
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -15,10 +11,22 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from '@/components/ui/input-otp';
 import { toast } from '@/components/ui/use-toast';
-import { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { DEV_MODE } from '@/constants/common';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { IconBrandGmail, IconBrandWindows } from '@tabler/icons-react';
+import { Mail } from 'lucide-react';
 import useTranslation from 'next-translate/useTranslation';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
 
 const FormSchema = z.object({
   email: z.string().email(),
@@ -44,6 +52,8 @@ export default function LoginForm() {
   // Resend cooldown
   const cooldown = 60;
   const [resendCooldown, setResendCooldown] = useState(0);
+
+  const maxOTPLength = 6;
 
   // Update resend cooldown OTP is sent
   useEffect(() => {
@@ -77,7 +87,12 @@ export default function LoginForm() {
       });
 
       // OTP has been sent
+      form.setValue('otp', '');
+      form.clearErrors('otp');
       setOtpSent(true);
+
+      // Reset cooldown
+      setResendCooldown(cooldown);
     } else {
       toast({
         title: t('failed'),
@@ -102,6 +117,10 @@ export default function LoginForm() {
       router.refresh();
     } else {
       setLoading(false);
+
+      form.setError('otp', { message: t('invalid_verification_code') });
+      form.setValue('otp', '');
+
       toast({
         title: t('failed'),
         description: t('failed_to_verify'),
@@ -157,11 +176,27 @@ export default function LoginForm() {
               <FormLabel>{t('otp_code')}</FormLabel>
               <FormControl>
                 <div className="flex flex-col gap-2 md:flex-row">
-                  <Input placeholder="••••••" {...field} disabled={loading} />
+                  <InputOTP
+                    maxLength={maxOTPLength}
+                    {...field}
+                    onChange={(value) => {
+                      form.setValue('otp', value);
+                      if (value.length === maxOTPLength)
+                        form.handleSubmit(onSubmit)();
+                    }}
+                    disabled={loading}
+                  >
+                    <InputOTPGroup className="w-full justify-center">
+                      {Array.from({ length: maxOTPLength }).map((_, index) => (
+                        <InputOTPSlot key={index} index={index} />
+                      ))}
+                    </InputOTPGroup>
+                  </InputOTP>
+
                   <Button
                     onClick={() => sendOtp({ email: form.getValues('email') })}
                     disabled={loading || resendCooldown > 0}
-                    className="md:w-40"
+                    className="md:w-full"
                     variant="secondary"
                     type="button"
                   >
@@ -171,24 +206,85 @@ export default function LoginForm() {
                   </Button>
                 </div>
               </FormControl>
+              {form.formState.errors.otp && (
+                <FormMessage>{form.formState.errors.otp.message}</FormMessage>
+              )}
               <FormDescription>{t('otp_description')}</FormDescription>
-              <FormMessage />
             </FormItem>
           )}
         />
 
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={
-            loading ||
-            form.formState.isSubmitting ||
-            !form.formState.isValid ||
-            (otpSent && !form.formState.dirtyFields.otp)
-          }
-        >
-          {loading ? t('processing') : t('continue')}
-        </Button>
+        {otpSent && (
+          <div className="grid gap-2 md:grid-cols-2">
+            {DEV_MODE ? (
+              <Link
+                href="http://localhost:8004/monitor"
+                target="_blank"
+                className="col-span-full"
+                aria-disabled={loading}
+              >
+                <Button
+                  type="button"
+                  className="w-full"
+                  variant="outline"
+                  disabled={loading}
+                >
+                  <Mail size={18} className="mr-1" />
+                  {t('open_inbucket')}
+                </Button>
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="https://mail.google.com/mail/u/0/#inbox"
+                  target="_blank"
+                  aria-disabled={loading}
+                >
+                  <Button
+                    type="button"
+                    className="w-full"
+                    variant="outline"
+                    disabled={loading}
+                  >
+                    <IconBrandGmail size={18} className="mr-1" />
+                    {t('open_gmail')}
+                  </Button>
+                </Link>
+
+                <Link
+                  href="https://outlook.live.com/mail/inbox"
+                  target="_blank"
+                  aria-disabled={loading}
+                >
+                  <Button
+                    type="button"
+                    className="w-full"
+                    variant="outline"
+                    disabled={loading}
+                  >
+                    <IconBrandWindows size={18} className="mr-1" />
+                    {t('open_outlook')}
+                  </Button>
+                </Link>
+              </>
+            )}
+          </div>
+        )}
+
+        <div className="grid gap-2">
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={
+              loading ||
+              form.formState.isSubmitting ||
+              !form.formState.isValid ||
+              (otpSent && !form.formState.dirtyFields.otp)
+            }
+          >
+            {loading ? t('processing') : t('continue')}
+          </Button>
+        </div>
       </form>
     </Form>
   );

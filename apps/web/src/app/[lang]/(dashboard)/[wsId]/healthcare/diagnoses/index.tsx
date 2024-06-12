@@ -1,14 +1,14 @@
-import { useEffect, useState } from 'react';
-import { Divider, Switch } from '@mantine/core';
-import PlusCardButton from '../../../../../../components/common/PlusCardButton';
-import { useLocalStorage } from '@mantine/hooks';
 import GeneralItemCard from '../../../../../../components/cards/GeneralItemCard';
-import { Diagnosis } from '@/types/primitives/Diagnosis';
-import useSWR from 'swr';
+import PlusCardButton from '../../../../../../components/common/PlusCardButton';
+import GeneralSearchBar from '../../../../../../components/inputs/GeneralSearchBar';
+import PaginationIndicator from '../../../../../../components/pagination/PaginationIndicator';
 import { useSegments } from '@/hooks/useSegments';
 import { useWorkspaces } from '@/hooks/useWorkspaces';
-import PaginationIndicator from '../../../../../../components/pagination/PaginationIndicator';
-import GeneralSearchBar from '../../../../../../components/inputs/GeneralSearchBar';
+import { Diagnosis } from '@/types/primitives/Diagnosis';
+import { Divider, Switch } from '@mantine/core';
+import { useLocalStorage } from '@mantine/hooks';
+import { useEffect, useState } from 'react';
+import useSWR from 'swr';
 
 export default function HealthcareDiagnosesPage() {
   const { setRootSegment } = useSegments();
@@ -66,7 +66,7 @@ export default function HealthcareDiagnosesPage() {
   if (!ws) return null;
 
   return (
-    <div className="flex min-h-full w-full flex-col ">
+    <div className="flex min-h-full w-full flex-col">
       <div className="grid items-end gap-4 md:grid-cols-2 xl:grid-cols-4">
         <GeneralSearchBar />
         <div className="hidden xl:block" />

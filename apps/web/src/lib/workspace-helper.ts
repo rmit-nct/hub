@@ -1,11 +1,11 @@
-import { notFound, redirect } from 'next/navigation';
-import { cookies } from 'next/headers';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { Workspace } from '@/types/primitives/Workspace';
 import { ROOT_WORKSPACE_ID } from '@/constants/common';
-import { Database } from '@/types/supabase';
+import { Workspace } from '@/types/primitives/Workspace';
 import { WorkspaceSecret } from '@/types/primitives/WorkspaceSecret';
+import { Database } from '@/types/supabase';
 import { createAdminClient } from '@/utils/supabase/client';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
+import { notFound, redirect } from 'next/navigation';
 
 export async function getWorkspace(id?: string) {
   if (!id) return null;
@@ -21,7 +21,7 @@ export async function getWorkspace(id?: string) {
   const { data, error } = await supabase
     .from('workspaces')
     .select(
-      'id, name, preset, avatar_url, logo_url, created_at, workspace_members!inner(role)'
+      'id, name, avatar_url, logo_url, created_at, workspace_members!inner(role)'
     )
     .eq('id', id)
     .eq('workspace_members.user_id', user.id)
@@ -53,7 +53,7 @@ export async function getWorkspaces(noRedirect?: boolean) {
   const { data, error } = await supabase
     .from('workspaces')
     .select(
-      'id, name, preset, avatar_url, logo_url, created_at, workspace_members!inner(role)'
+      'id, name, avatar_url, logo_url, created_at, workspace_members!inner(role)'
     )
     .eq('workspace_members.user_id', user.id);
 
@@ -71,12 +71,28 @@ export async function getWorkspaceInvites() {
 
   if (!user) redirect('/login');
 
-  const { data, error } = await supabase
+  const invitesQuery = supabase
     .from('workspace_invites')
     .select('workspaces(id, name), created_at')
     .eq('user_id', user.id);
 
-  if (error) throw error;
+  const emailInvitesQuery = user.email
+    ? supabase
+        .from('workspace_email_invites')
+        .select('workspaces(id, name), created_at')
+        .eq('email', user.email)
+    : null;
+
+  // use promise.all to run both queries in parallel
+  const [invites, emailInvites] = await Promise.all([
+    invitesQuery,
+    emailInvitesQuery,
+  ]);
+
+  if (invites.error || emailInvites?.error)
+    throw invites.error || emailInvites?.error;
+
+  const data = [...invites.data, ...(emailInvites?.data || [])];
 
   const workspaces = data.map(({ workspaces, created_at }) => ({
     ...workspaces,
@@ -144,18 +160,33 @@ export async function getSecrets({
     : createServerComponentClient<Database>({ cookies });
 
   if (!supabase) throw new Error('Supabase client not initialized');
-
-  const queryBuilder = supabase
-    .from('workspace_secrets')
-    .select('*')
-    .order('created_at', { ascending: false });
+  const queryBuilder = supabase.from('workspace_secrets').select('*');
 
   if (wsId) queryBuilder.eq('ws_id', wsId);
   if (requiredSecrets) queryBuilder.in('name', requiredSecrets);
 
-  const { data, error } = await queryBuilder;
+  const { data, error } = await queryBuilder.order('created_at', {
+    ascending: false,
+  });
+
   if (error) throw error;
   return data as WorkspaceSecret[];
+}
+
+export async function verifyHasSecrets(
+  wsId: string,
+  requiredSecrets: string[],
+  redirectPath?: string
+) {
+  const secrets = await getSecrets({ wsId, requiredSecrets, forceAdmin: true });
+
+  const allSecretsVerified = requiredSecrets.every((secret) => {
+    const { value } = getSecret(secret, secrets) || {};
+    return value === 'true';
+  });
+
+  if (!allSecretsVerified && redirectPath) redirect(redirectPath);
+  return allSecretsVerified;
 }
 
 export function getSecret(
@@ -163,4 +194,13 @@ export function getSecret(
   secrets: WorkspaceSecret[]
 ): WorkspaceSecret | undefined {
   return secrets.find(({ name }) => name === secretName);
+}
+
+export function verifySecret(
+  secretName: string,
+  secretValue: string,
+  secrets: WorkspaceSecret[]
+) {
+  const secret = getSecret(secretName, secrets);
+  return secret?.value === secretValue;
 }

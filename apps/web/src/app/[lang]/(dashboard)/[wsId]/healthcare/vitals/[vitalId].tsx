@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useSegments } from '@/hooks/useSegments';
+import { useWorkspaces } from '@/hooks/useWorkspaces';
+import { Vital } from '@/types/primitives/Vital';
 import { Divider, TextInput } from '@mantine/core';
 import { useRouter } from 'next/router';
-import { Vital } from '@/types/primitives/Vital';
+import { useEffect, useState } from 'react';
 import useSWR from 'swr';
-import { useWorkspaces } from '@/hooks/useWorkspaces';
-import { useSegments } from '@/hooks/useSegments';
 
 export default function NewVitalPage() {
   const { setRootSegment } = useSegments();
@@ -56,7 +56,7 @@ export default function NewVitalPage() {
   const hasRequiredFields = () => vital && name.length > 0;
 
   return (
-    <div className="mt-2 flex min-h-full w-full flex-col ">
+    <div className="mt-2 flex min-h-full w-full flex-col">
       <div className="grid gap-x-8 gap-y-4 xl:gap-x-16">
         <div className="flex items-end justify-end gap-2">
           <button

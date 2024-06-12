@@ -1,13 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import AuditLogCard from '../../../../../components/cards/AuditLogCard';
+import { useUser } from '@/hooks/useUser';
+import { AuditLog } from '@/types/primitives/audit-log';
 import { Accordion, Divider } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
-import AuditLogCard from '../../../../../components/cards/AuditLogCard';
-import useSWR from 'swr';
-import { AuditLog } from '@/types/primitives/audit-log';
 import useTranslation from 'next-translate/useTranslation';
-import { useUser } from '@/hooks/useUser';
+import { useState } from 'react';
+import useSWR from 'swr';
 
 export default function UserActivitiesPage() {
   const { t } = useTranslation('settings-tabs');
@@ -51,7 +51,7 @@ export default function UserActivitiesPage() {
         </>
       )}
 
-      <div className="flex min-h-full w-full flex-col ">
+      <div className="flex min-h-full w-full flex-col">
         <Divider className="mt-4" variant="dashed" />
         {/* <PaginationIndicator
           activePage={activePage}

@@ -1,14 +1,14 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { getInitials } from '@/utils/name-helper';
-import { User } from '@/types/primitives/User';
-import moment from 'moment';
-import useTranslation from 'next-translate/useTranslation';
-import { MemberSettingsButton } from './member-settings-button';
-import { Workspace } from '@/types/primitives/Workspace';
 import InviteMemberButton from './invite-member-button';
-import { User as UserIcon } from 'lucide-react';
+import { MemberSettingsButton } from './member-settings-button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { getCurrentUser } from '@/lib/user-helper';
 import { cn } from '@/lib/utils';
+import { User } from '@/types/primitives/User';
+import { Workspace } from '@/types/primitives/Workspace';
+import { getInitials } from '@/utils/name-helper';
+import { User as UserIcon } from 'lucide-react';
+import moment from 'moment';
+import useTranslation from 'next-translate/useTranslation';
 
 interface Props {
   workspace?: Workspace | null;
@@ -32,15 +32,18 @@ export default async function MemberList({
         <p className="text-foreground/80 text-center">
           {invited ? t('no_invited_members_found') : t('no_members_match')}.
         </p>
-        <InviteMemberButton
-          wsId={workspace?.id}
-          currentUser={{
-            ...user!,
-            role: workspace?.role,
-          }}
-          label={t('invite_member')}
-          variant="outline"
-        />
+
+        {!!workspace?.id && (
+          <InviteMemberButton
+            wsId={workspace?.id}
+            currentUser={{
+              ...user!,
+              role: workspace?.role,
+            }}
+            label={t('invite_member')}
+            variant="outline"
+          />
+        )}
       </div>
     );
   }

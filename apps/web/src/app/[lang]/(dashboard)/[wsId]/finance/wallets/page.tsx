@@ -1,10 +1,8 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { Database } from '@/types/supabase';
-import { cookies } from 'next/headers';
-import { Wallet } from '@/types/primitives/Wallet';
-import { redirect } from 'next/navigation';
-import { getSecrets } from '@/lib/workspace-helper';
 import WalletsTable from './table';
+import { Wallet } from '@/types/primitives/Wallet';
+import { Database } from '@/types/supabase';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 
 interface Props {
   params: {
@@ -22,18 +20,6 @@ export default async function WorkspaceWalletsPage({
   searchParams,
 }: Props) {
   const { data, count } = await getData(wsId, searchParams);
-
-  const secrets = await getSecrets({
-    wsId,
-    requiredSecrets: ['ENABLE_FINANCE'],
-    forceAdmin: true,
-  });
-
-  const verifySecret = (secret: string, value: string) =>
-    secrets.find((s) => s.name === secret)?.value === value;
-
-  const enableFinance = verifySecret('ENABLE_FINANCE', 'true');
-  if (!enableFinance) redirect(`/${wsId}`);
 
   return <WalletsTable wsId={wsId} data={data} count={count} />;
 }

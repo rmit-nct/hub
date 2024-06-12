@@ -1,10 +1,11 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { AnthropicStream, Message, StreamingTextResponse } from 'ai';
 import { createAdminClient } from '@/utils/supabase/client';
 import { AI_PROMPT, HUMAN_PROMPT } from '@anthropic-ai/sdk';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { AnthropicStream, Message, StreamingTextResponse } from 'ai';
 import { cookies } from 'next/headers';
 
 export const runtime = 'edge';
+export const maxDuration = 60;
 export const preferredRegion = 'sin1';
 export const dynamic = 'force-dynamic';
 

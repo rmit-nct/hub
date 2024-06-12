@@ -1,13 +1,13 @@
-import { useCallback, useEffect, useState } from 'react';
-import { Checkbox, Divider, Textarea } from '@mantine/core';
-import { Vital } from '@/types/primitives/Vital';
-import { VitalGroup } from '@/types/primitives/VitalGroup';
-import { DateTimePicker } from '@mantine/dates';
 import CheckupVitalGroupInput from '../../../../../../components/inputs/CheckupVitalGroupInput';
 import CheckupVitalInput from '../../../../../../components/inputs/CheckupVitalInput';
-import { Diagnosis } from '@/types/primitives/Diagnosis';
-import { useWorkspaces } from '@/hooks/useWorkspaces';
 import { useSegments } from '@/hooks/useSegments';
+import { useWorkspaces } from '@/hooks/useWorkspaces';
+import { Diagnosis } from '@/types/primitives/Diagnosis';
+import { Vital } from '@/types/primitives/Vital';
+import { VitalGroup } from '@/types/primitives/VitalGroup';
+import { Checkbox, Divider, Textarea } from '@mantine/core';
+import { DateTimePicker } from '@mantine/dates';
+import { useCallback, useEffect, useState } from 'react';
 
 export default function NewCheckupPage() {
   const { setRootSegment } = useSegments();
@@ -159,7 +159,7 @@ export default function NewCheckupPage() {
   if (!ws) return null;
 
   return (
-    <div className="mt-2 flex min-h-full w-full flex-col ">
+    <div className="mt-2 flex min-h-full w-full flex-col">
       <div className="grid gap-x-8 gap-y-4 xl:gap-x-16">
         <div className="flex items-end justify-end">
           <button

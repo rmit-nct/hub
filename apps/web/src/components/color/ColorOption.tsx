@@ -1,5 +1,5 @@
-import { Tooltip } from '@mantine/core';
 import { SupportedColor } from '@/types/primitives/SupportedColors';
+import { Tooltip } from '@mantine/core';
 import useTranslation from 'next-translate/useTranslation';
 
 interface ColorOptionProps {
@@ -148,7 +148,7 @@ const ColorOption = ({
           className={`h-full w-full ${
             isSelected || 'opacity-50 hover:opacity-80'
           } ${
-            variant === 'default' ? 'rounded-full' : ' rounded-sm'
+            variant === 'default' ? 'rounded-full' : 'rounded-sm'
           } ${getBackgroundColor()} transition`}
         />
       </button>

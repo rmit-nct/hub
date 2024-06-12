@@ -1,10 +1,10 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { Database } from '@/types/supabase';
-import { cookies } from 'next/headers';
-import { getSecrets } from '@/lib/workspace-helper';
-import { redirect } from 'next/navigation';
-import { Transaction } from '@/types/primitives/Transaction';
+import { DailyTotalChart, MonthlyTotalChart } from './charts';
 import TransactionsTable from './table';
+import { Separator } from '@/components/ui/separator';
+import { Transaction } from '@/types/primitives/Transaction';
+import { Database } from '@/types/supabase';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 
 interface Props {
   params: {
@@ -23,27 +23,24 @@ export default async function WorkspaceTransactionsPage({
 }: Props) {
   const { data, count } = await getData(wsId, searchParams);
 
-  const secrets = await getSecrets({
-    wsId,
-    requiredSecrets: ['ENABLE_FINANCE'],
-    forceAdmin: true,
-  });
-
-  const verifySecret = (secret: string, value: string) =>
-    secrets.find((s) => s.name === secret)?.value === value;
-
-  const enableFinance = verifySecret('ENABLE_FINANCE', 'true');
-  if (!enableFinance) redirect(`/${wsId}`);
+  const { data: dailyData } = await getDailyData(wsId);
+  const { data: monthlyData } = await getMonthlyData(wsId);
 
   return (
-    <TransactionsTable
-      wsId={wsId}
-      data={data.map((t) => ({
-        ...t,
-        ws_id: wsId,
-      }))}
-      count={count}
-    />
+    <>
+      <DailyTotalChart data={dailyData} />
+      <Separator className="my-4" />
+      <MonthlyTotalChart data={monthlyData} />
+      <Separator className="my-4" />
+      <TransactionsTable
+        wsId={wsId}
+        data={data.map((t) => ({
+          ...t,
+          ws_id: wsId,
+        }))}
+        count={count}
+      />
+    </>
   );
 }
 
@@ -93,4 +90,30 @@ async function getData(
     data: Transaction[];
     count: number;
   };
+}
+
+async function getDailyData(wsId: string) {
+  const supabase = createServerComponentClient<Database>({ cookies });
+
+  const queryBuilder = supabase.rpc('get_daily_income_expense', {
+    _ws_id: wsId,
+  });
+
+  const { data, error, count } = await queryBuilder;
+  if (error) throw error;
+
+  return { data, count };
+}
+
+async function getMonthlyData(wsId: string) {
+  const supabase = createServerComponentClient<Database>({ cookies });
+
+  const queryBuilder = supabase.rpc('get_monthly_income_expense', {
+    _ws_id: wsId,
+  });
+
+  const { data, error, count } = await queryBuilder;
+  if (error) throw error;
+
+  return { data, count };
 }

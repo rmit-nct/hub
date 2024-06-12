@@ -1,4 +1,4 @@
-import { Navigation, NavLink } from '@/components/navigation';
+import { NavLink, Navigation } from '@/components/navigation';
 import { getCurrentUser } from '@/lib/user-helper';
 import { getWorkspace } from '@/lib/workspace-helper';
 import useTranslation from 'next-translate/useTranslation';
@@ -29,18 +29,27 @@ export default async function Layout({
       matchExact: true,
     },
     {
+      name: t('textract'),
+      href: `/${wsId}/ai/textract`,
+    },
+    {
       name: t('prompts'),
       href: `/${wsId}/ai/prompts`,
-      // disabled: true,
     },
     {
       name: t('workflows'),
       href: `/${wsId}/ai/workflows`,
+      disabled: true,
     },
     {
       name: t('pipelines'),
       href: `/${wsId}/ai/pipelines`,
-      // disabled: true,
+      disabled: true,
+    },
+    {
+      name: t('test_generation'),
+      href: `/${wsId}/ai/test-generation`,
+      disabled: true,
     },
   ];
 

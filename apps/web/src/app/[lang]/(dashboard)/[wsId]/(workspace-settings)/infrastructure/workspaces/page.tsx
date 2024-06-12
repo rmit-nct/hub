@@ -1,9 +1,9 @@
-import PaginationIndicator from '../../../../../../../components/pagination/PaginationIndicator';
-import { Workspace } from '@/types/primitives/Workspace';
 import WorkspaceCard from '../../../../../../../components/cards/WorkspaceCard';
 import GeneralSearchBar from '../../../../../../../components/inputs/GeneralSearchBar';
-import { enforceRootWorkspaceAdmin } from '@/lib/workspace-helper';
+import PaginationIndicator from '../../../../../../../components/pagination/PaginationIndicator';
 import { Separator } from '@/components/ui/separator';
+import { enforceRootWorkspaceAdmin } from '@/lib/workspace-helper';
+import { Workspace } from '@/types/primitives/Workspace';
 import { createAdminClient } from '@/utils/supabase/client';
 import { notFound } from 'next/navigation';
 
@@ -26,7 +26,7 @@ export default async function InfrastructureWorkspacesPage({
   const count = await getWorkspaceCount();
 
   return (
-    <div className="flex min-h-full w-full flex-col ">
+    <div className="flex min-h-full w-full flex-col">
       <div className="grid items-end gap-4 md:grid-cols-2 xl:grid-cols-4">
         <GeneralSearchBar />
       </div>

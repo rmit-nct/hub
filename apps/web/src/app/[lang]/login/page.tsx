@@ -1,14 +1,14 @@
-import Link from 'next/link';
 import LoginForm from './form';
 import { Separator } from '@/components/ui/separator';
-import Image from 'next/image';
 import useTranslation from 'next-translate/useTranslation';
+import Image from 'next/image';
+import Link from 'next/link';
 
 export default async function Login() {
   const { t } = useTranslation('auth');
 
   return (
-    <div className="relative flex w-full flex-col items-center justify-center p-8">
+    <div className="relative flex h-full w-full flex-col items-center justify-center p-8">
       <Link
         href="/"
         className="text-foreground bg-btn-background hover:bg-btn-background-hover group absolute left-8 top-8 flex items-center rounded-md px-4 py-2 text-sm no-underline"
@@ -49,6 +49,7 @@ export default async function Login() {
           {t('notice-p1')}{' '}
           <Link
             href="/terms"
+            target="_blank"
             className="text-foreground/70 decoration-foreground/70 hover:text-foreground hover:decoration-foreground underline underline-offset-2 transition"
           >
             {t('tos')}
@@ -56,6 +57,7 @@ export default async function Login() {
           {t('common:and')}{' '}
           <Link
             href="/privacy"
+            target="_blank"
             className="text-foreground/70 decoration-foreground/70 hover:text-foreground hover:decoration-foreground underline underline-offset-2 transition"
           >
             {t('privacy')}

@@ -1,8 +1,8 @@
+import LogList from './log-list';
+import { AuditLog } from '@/types/primitives/audit-log';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
-import { AuditLog } from '@/types/primitives/audit-log';
-import LogList from './log-list';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 
 export const dynamic = 'force-dynamic';
 
@@ -25,7 +25,7 @@ export default async function WorkspaceActivitiesPage({
 
   return (
     <>
-      <div className="flex min-h-full w-full flex-col ">
+      <div className="flex min-h-full w-full flex-col">
         <LogList logs={logs} />
       </div>
     </>

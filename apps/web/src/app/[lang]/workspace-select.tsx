@@ -21,8 +21,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
   Popover,
   PopoverContent,
@@ -36,23 +43,32 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
+import { toast } from '@/components/ui/use-toast';
 import { cn } from '@/lib/utils';
 import { User } from '@/types/primitives/User';
 import { Workspace } from '@/types/primitives/Workspace';
 import { getInitials } from '@/utils/name-helper';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { CaretSortIcon, PlusCircledIcon } from '@radix-ui/react-icons';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { RealtimeChannel } from '@supabase/supabase-js';
 import { CheckIcon } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import useTranslation from 'next-translate/useTranslation';
-import { useRouter, useParams, usePathname } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 interface Props {
   user: User | null;
   workspaces: Workspace[] | null;
 }
+
+const FormSchema = z.object({
+  name: z.string().min(1).max(100),
+  plan: z.enum(['FREE', 'PRO', 'ENTERPRISE']),
+});
 
 export default function WorkspaceSelect({ user, workspaces }: Props) {
   const { t } = useTranslation();
@@ -61,10 +77,54 @@ export default function WorkspaceSelect({ user, workspaces }: Props) {
   const params = useParams();
   const pathname = usePathname();
 
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      name: '',
+      plan: 'FREE',
+    },
+  });
+
+  const [open, setOpen] = useState(false);
+  const [showNewWorkspaceDialog, setShowNewWorkspaceDialog] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+
+  async function onSubmit(formData: z.infer<typeof FormSchema>) {
+    setLoading(true);
+
+    const res = await fetch(`/api/v1/workspaces`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    });
+
+    if (res.ok) {
+      form.reset();
+
+      const { id } = await res.json();
+
+      router.push(`/${id}`);
+      router.refresh();
+
+      setShowNewWorkspaceDialog(false);
+      setLoading(false);
+      setOpen(false);
+    } else {
+      setLoading(false);
+      toast({
+        title: 'Error creating workspace',
+        description: 'An error occurred while creating the workspace',
+      });
+    }
+  }
+
   const groups = [
     {
       id: 'personal',
-      label: 'Personal Account',
+      label: t('common:personal_account'),
       teams: [
         {
           label:
@@ -75,7 +135,7 @@ export default function WorkspaceSelect({ user, workspaces }: Props) {
     },
     {
       id: 'workspaces',
-      label: 'Workspaces',
+      label: t('common:workspaces'),
       teams:
         workspaces?.map((workspace) => ({
           label: workspace.name || 'Untitled',
@@ -83,9 +143,6 @@ export default function WorkspaceSelect({ user, workspaces }: Props) {
         })) || [],
     },
   ];
-
-  const [open, setOpen] = useState(false);
-  const [showNewWorkspaceDialog, setShowNewWorkspaceDialog] = useState(false);
 
   const onValueChange = (wsId: string) => {
     const newPathname = pathname?.replace(/^\/[^/]+/, `/${wsId}`);
@@ -188,10 +245,13 @@ export default function WorkspaceSelect({ user, workspaces }: Props) {
 
   return (
     <>
-      <div className="bg-foreground/20 mx-2 hidden h-4 w-[1px] rotate-[30deg] md:block" />
+      <div className="bg-foreground/20 mx-2 h-4 w-[1px] rotate-[30deg]" />
       <Dialog
         open={showNewWorkspaceDialog}
-        onOpenChange={setShowNewWorkspaceDialog}
+        onOpenChange={(open) => {
+          form.reset();
+          setShowNewWorkspaceDialog(open);
+        }}
       >
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
@@ -200,7 +260,7 @@ export default function WorkspaceSelect({ user, workspaces }: Props) {
               role="combobox"
               aria-expanded={open}
               aria-label="Select a workspace"
-              className={cn('w-full max-w-[16rem] justify-between')}
+              className={cn('w-full justify-between md:max-w-[16rem]')}
             >
               <Avatar className="mr-2 h-5 w-5">
                 <AvatarImage
@@ -209,15 +269,17 @@ export default function WorkspaceSelect({ user, workspaces }: Props) {
                 />
                 <AvatarFallback>{getInitials(workspace.name)}</AvatarFallback>
               </Avatar>
-              <span className="line-clamp-1">{workspace.name}</span>
+              <span className="line-clamp-1 hidden md:block">
+                {workspace.name}
+              </span>
               <CaretSortIcon className="ml-1 h-4 w-4 shrink-0 opacity-50" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-full max-w-[16rem] p-0">
             <Command>
-              <CommandList>
-                <CommandInput placeholder="Search workspace..." />
-                <CommandEmpty>No workspace found.</CommandEmpty>
+              <CommandInput placeholder="Search workspace..." />
+              <CommandEmpty>No workspace found.</CommandEmpty>
+              <CommandList className="max-h-64">
                 {groups.map((group) => (
                   <CommandGroup key={group.label} heading={group.label}>
                     {group.teams.map((ws) => (
@@ -258,68 +320,113 @@ export default function WorkspaceSelect({ user, workspaces }: Props) {
                 ))}
               </CommandList>
               <CommandSeparator />
-              <CommandGroup>
-                <DialogTrigger asChild>
+              <DialogTrigger asChild>
+                <CommandGroup>
                   <CommandItem
                     onSelect={() => {
                       setOpen(false);
                       setShowNewWorkspaceDialog(true);
                     }}
-                    disabled
                   >
                     <PlusCircledIcon className="mr-2 h-5 w-5" />
-                    Create new workspace
+                    {t('common:create_new_workspace')}
                   </CommandItem>
-                </DialogTrigger>
-              </CommandGroup>
+                </CommandGroup>
+              </DialogTrigger>
             </Command>
           </PopoverContent>
         </Popover>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Create workspace</DialogTitle>
+            <DialogTitle>{t('common:create_workspace')}</DialogTitle>
             <DialogDescription>
-              Add a new workspace to easily manage everything that matters to
-              you, and collaborate with your team as you go.
+              {t('common:create_workspace_description')}
             </DialogDescription>
           </DialogHeader>
-          <div>
-            <div className="space-y-4 py-2 pb-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Workspace name</Label>
-                <Input id="name" placeholder="Acme Inc." />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="plan">Subscription plan</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a plan" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="free">
-                      <span className="font-medium">Free</span> -{' '}
-                      <span className="text-muted-foreground">
-                        $0/month per user
-                      </span>
-                    </SelectItem>
-                    <SelectItem value="pro" disabled>
-                      <span className="font-medium">Pro</span> -{' '}
-                      <span className="text-muted-foreground">Coming soon</span>
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setShowNewWorkspaceDialog(false)}
-            >
-              Cancel
-            </Button>
-            <Button type="submit">Continue</Button>
-          </DialogFooter>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-2">
+              <FormField
+                control={form.control}
+                name="name"
+                disabled={loading}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('common:workspace_name')}</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Acme Inc." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="plan"
+                disabled={loading}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('common:subscription_plan')}</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a plan" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="FREE">
+                            <span className="font-medium">
+                              {t('common:free')}
+                            </span>{' '}
+                            -{' '}
+                            <span className="text-muted-foreground">
+                              {t('common:0_usd_per_month')}
+                            </span>
+                          </SelectItem>
+                          <SelectItem value="PRO" disabled>
+                            <span className="font-medium">
+                              {t('common:pro')}
+                            </span>{' '}
+                            -{' '}
+                            <span className="text-muted-foreground">
+                              {t('common:coming_soon')}
+                            </span>
+                          </SelectItem>
+                          <SelectItem value="ENTERPRISE" disabled>
+                            <span className="font-medium">
+                              {t('common:enterprise')}
+                            </span>{' '}
+                            -{' '}
+                            <span className="text-muted-foreground">
+                              {t('common:coming_soon')}
+                            </span>
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <DialogFooter>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowNewWorkspaceDialog(false)}
+                >
+                  {t('common:cancel')}
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={loading || !form.formState.isValid}
+                >
+                  {t('common:continue')}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
         </DialogContent>
       </Dialog>
 
@@ -328,7 +435,7 @@ export default function WorkspaceSelect({ user, workspaces }: Props) {
           <Button
             variant="outline"
             aria-label="Online users"
-            className="flex items-center gap-1 px-2"
+            className="flex flex-none items-center gap-1 px-2"
             disabled={!onlineUsers}
           >
             {onlineUsers && (onlineUsers?.length || 0) > 0 ? (

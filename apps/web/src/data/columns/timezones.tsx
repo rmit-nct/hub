@@ -1,37 +1,35 @@
 'use client';
 
-import { ColumnDef } from '@tanstack/react-table';
-
-import { Checkbox } from '@/components/ui/checkbox';
+import { TimezoneRowActions } from '@/components/row-actions/timezones';
 import { DataTableColumnHeader } from '@/components/ui/custom/tables/data-table-column-header';
+import { Timezone, TimezoneStatus } from '@/types/primitives/Timezone';
+import { ColumnDef } from '@tanstack/react-table';
+import { Check, Clock, RefreshCw, RefreshCwOff, X } from 'lucide-react';
 import moment from 'moment';
 import { Translate } from 'next-translate';
-import { Timezone, TimezoneStatus } from '@/types/primitives/Timezone';
-import { TimezoneRowActions } from '@/components/row-actions/timezones';
-import { Check, Clock, RefreshCw, RefreshCwOff, X } from 'lucide-react';
 
 export const timezoneColumns = (t: Translate): ColumnDef<Timezone>[] => [
-  {
-    id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-        className="translate-y-[2px]"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-        className="translate-y-[2px]"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
+  // {
+  //   id: 'select',
+  //   header: ({ table }) => (
+  //     <Checkbox
+  //       checked={table.getIsAllPageRowsSelected()}
+  //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+  //       aria-label="Select all"
+  //       className="translate-y-[2px]"
+  //     />
+  //   ),
+  //   cell: ({ row }) => (
+  //     <Checkbox
+  //       checked={row.getIsSelected()}
+  //       onCheckedChange={(value) => row.toggleSelected(!!value)}
+  //       aria-label="Select row"
+  //       className="translate-y-[2px]"
+  //     />
+  //   ),
+  //   enableSorting: false,
+  //   enableHiding: false,
+  // },
   {
     accessorKey: 'value',
     header: ({ column }) => (

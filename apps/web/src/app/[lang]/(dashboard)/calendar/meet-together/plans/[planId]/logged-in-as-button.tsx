@@ -1,9 +1,9 @@
-import useTranslation from 'next-translate/useTranslation';
-import { useTimeBlocking } from './time-blocking-provider';
-import { Separator } from '@/components/ui/separator';
-import { Button } from '@/components/ui/button';
-import { User as PlatformUser } from '@/types/primitives/User';
 import AccountBadge from './account-badge';
+import { useTimeBlocking } from './time-blocking-provider';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { User as PlatformUser } from '@/types/primitives/User';
+import useTranslation from 'next-translate/useTranslation';
 
 export default function LoggedInAsButton({
   platformUser,
@@ -11,11 +11,7 @@ export default function LoggedInAsButton({
   platformUser: PlatformUser | null;
 }) {
   const { t } = useTranslation('meet-together-plan-details');
-  const {
-    user: guestUser,
-    setShowLogin,
-    setShowAccountSwitcher,
-  } = useTimeBlocking();
+  const { user: guestUser, setDisplayMode } = useTimeBlocking();
 
   const user = guestUser ?? platformUser;
 
@@ -27,7 +23,7 @@ export default function LoggedInAsButton({
       <div
         className={`${user?.id ? '' : 'opacity-50'} line-clamp-1 break-all font-semibold`}
       >
-        {user?.display_name ?? t('anonymous')}{' '}
+        {user?.display_name || platformUser?.email || t('anonymous')}{' '}
       </div>
 
       {user?.id ? (
@@ -45,8 +41,7 @@ export default function LoggedInAsButton({
       <Button
         className="w-full"
         onClick={() => {
-          setShowLogin(true);
-          setShowAccountSwitcher(true);
+          setDisplayMode('account-switcher');
         }}
       >
         {user?.id ? t('switch_account') : t('common:login')}
