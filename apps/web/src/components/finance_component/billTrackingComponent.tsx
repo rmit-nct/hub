@@ -3,18 +3,59 @@ import React from "react";
 import ToDoList from "../toDoList";
 import SearchBar from "../searchBar";
 
-interface BillData {
-  no: number;
-  bill: string;
-  event: string;
-  date: string;
-  redBill: boolean;
-  whiteBill: boolean;
+interface BillDetails {
+  id: string;
+  item_id: string;
+  event_id: string;
+  bill_name:string;
+  member_in_charge: string;
+  image_link_red: string;
+  image_link_white: string;
+  total_price: number;
+  paid_amount: number;
+  total_diff: number;
+  tnote: string;
+  noticre: string;
+  completed_at: string;
+  created_at: string;
+  updated_at: string;
 }
 
-const bills: BillData[] = [
-  { no: 1, bill: "Lotte Mart", event: "Bonding", date: "17/06/2024", redBill: true, whiteBill: false },
-  { no: 2, bill: "Super store", event: "Guest speaker", date: "17/06/2024", redBill: false, whiteBill: true },
+const bills: BillDetails[] = [
+  {
+    id: "1",
+    item_id: "item_1",
+    event_id: "event_1",
+    bill_name:"lotte",
+    member_in_charge: "member_1",
+    image_link_red: "https://example.com/images/red_bill_1.png",
+    image_link_white: "https://example.com/images/white_bill_1.png",
+    total_price: 1000,
+    paid_amount: 800,
+    total_diff: 200,
+    tnote: "Note 1",
+    noticre: "Notice 1",
+    completed_at: "2024-06-18T00:00:00Z",
+    created_at: "2024-06-15T00:00:00Z",
+    updated_at: "2024-06-16T00:00:00Z",
+  },
+  {
+    id: "2",
+    item_id: "item_2",
+    event_id: "event_2",
+    member_in_charge: "member_2",
+    bill_name:"rice",
+    image_link_red: "https://example.com/images/red_bill_2.png",
+    image_link_white: "",
+    total_price: 2000,
+    paid_amount: 1500,
+    total_diff: 500,
+    tnote: "Note 2",
+    noticre: "Notice 2",
+    completed_at: "2024-06-18T00:00:00Z",
+    created_at: "2024-06-15T00:00:00Z",
+    updated_at: "2024-06-16T00:00:00Z",
+  },
 ];
 
 const BillDataTable: React.FC = () => {
@@ -72,21 +113,23 @@ const BillDataTable: React.FC = () => {
           </thead>
           <tbody>
             {bills.map((bill, index) => (
-              <tr key={bill.no} 
-              className={` ${index === bills.length - 1 ? '' : 'border-b border-gray-700'}`}>
-                <td className="border border-r py-2 px-4">{bill.no}</td>
-                <td className="border border-r py-2 px-4">{bill.bill}</td>
-                <td className="border border-r py-2 px-4">{bill.event}</td>
-                <td className="border border-r py-2 px-4">{bill.date}</td>
+              <tr
+                key={bill.id}
+                className={`${index === bills.length - 1 ? '' : 'border-b border-gray-700'}`}
+              >
+                <td className="border border-r py-2 px-4">{index + 1}</td>
+                <td className="border border-r py-2 px-4">{bill.bill_name}</td>
+                <td className="border border-r py-2 px-4">{bill.event_id}</td>
+                <td className="border border-r py-2 px-4">{new Date(bill.completed_at).toLocaleDateString()}</td>
                 <td className="border border-r py-2 px-4 text-center">
-                  {bill.redBill ? (
+                  {bill.image_link_red ? (
                     <span className="text-green-500">✅</span>
                   ) : (
                     <span className="text-red-500">❌</span>
                   )}
                 </td>
                 <td className="border border-r py-2 px-4 text-center">
-                  {bill.whiteBill ? (
+                  {bill.image_link_white ? (
                     <span className="text-green-500">✅</span>
                   ) : (
                     <span className="text-red-500">❌</span>
