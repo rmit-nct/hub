@@ -1,11 +1,11 @@
 "use client"
-import React from "react";
+import React,{useState} from "react";
 import ToDoList from "../toDoList";
 import SearchBar from "../searchBar";
-
+import Modal from "../forms/billTrackingForm";
 interface BillDetails {
   id: string;
-  item_id: string;
+  item_list: string[];
   event_id: string;
   bill_name:string;
   member_in_charge: string;
@@ -22,43 +22,54 @@ interface BillDetails {
 }
 
 const bills: BillDetails[] = [
-  {
-    id: "1",
-    item_id: "item_1",
-    event_id: "event_1",
-    bill_name:"lotte",
-    member_in_charge: "member_1",
-    image_link_red: "https://example.com/images/red_bill_1.png",
-    image_link_white: "https://example.com/images/white_bill_1.png",
-    total_price: 1000,
-    paid_amount: 800,
-    total_diff: 200,
-    tnote: "Note 1",
-    noticre: "Notice 1",
-    completed_at: "2024-06-18T00:00:00Z",
-    created_at: "2024-06-15T00:00:00Z",
-    updated_at: "2024-06-16T00:00:00Z",
-  },
-  {
-    id: "2",
-    item_id: "item_2",
-    event_id: "event_2",
-    member_in_charge: "member_2",
-    bill_name:"rice",
-    image_link_red: "https://example.com/images/red_bill_2.png",
-    image_link_white: "",
-    total_price: 2000,
-    paid_amount: 1500,
-    total_diff: 500,
-    tnote: "Note 2",
-    noticre: "Notice 2",
-    completed_at: "2024-06-18T00:00:00Z",
-    created_at: "2024-06-15T00:00:00Z",
-    updated_at: "2024-06-16T00:00:00Z",
-  },
-];
-
+    {
+      id: "1",
+      item_list: ["Item 1", "Item 2", "Item 3"],
+      event_id: "event1",
+      bill_name: "Lotte Mart",
+      member_in_charge: "Marcus Martin",
+      image_link_red: "",
+      image_link_white: "",
+      total_price: 1000,
+      paid_amount: 800,
+      total_diff: 200,
+      tnote: "Some note",
+      noticre: "Some notice",
+      completed_at: new Date().toISOString(),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+    {
+      id: "2",
+      item_list: ["Item A", "Item B", "Item C"],
+      event_id: "event2",
+      bill_name: "Super store",
+      member_in_charge: "John Doe",
+      image_link_red: "",
+      image_link_white: "",
+      total_price: 1500,
+      paid_amount: 1500,
+      total_diff: 0,
+      tnote: "Another note",
+      noticre: "Another notice",
+      completed_at: new Date().toISOString(),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+  ];
+  
 const BillDataTable: React.FC = () => {
+    const[showModal, setShowModal]= useState(false);
+    const [selectedBill, setSelectedBill] = useState<BillDetails | null>(null);
+
+    const handleRowClick= (bill: BillDetails)=>{
+        setSelectedBill(bill);
+        setShowModal(true);
+    }
+
+    const closeModal= ()=>{
+        setShowModal(false);
+    }
   return (
     <div className="text-white min-h-screen flex flex-col items-start">
       <div className="p-6 rounded-lg w-full max-w-4xl items-start">
@@ -136,7 +147,7 @@ const BillDataTable: React.FC = () => {
                   )}
                 </td>
                 <td className="py-2 px-4 text-right">
-                  <button className="p-2 bg-gray-700 rounded-lg">{'>'}</button>
+                  <button onClick={() => handleRowClick(bill)} className="p-2 bg-gray-700 rounded-lg">{'>'}</button>
                 </td>
               </tr>
             ))}
@@ -146,6 +157,7 @@ const BillDataTable: React.FC = () => {
       <div className="fixed right-4 top-1/2 transform -translate-y-1/2 bg-gray-800 p-6 rounded-lg">
         <ToDoList />
       </div>
+      {selectedBill && <Modal show={showModal} billDetail={selectedBill} onClose={closeModal} />}
     </div>
   );
 };
