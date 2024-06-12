@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import Modal from '../forms/memberFeeTrackingForm';
 import Image from 'next/image';
 import ToDoList from '../toDoList';
+import SearchBar from '../searchBar';
+
 interface User {
   id: number;
   name: string;
@@ -97,20 +99,7 @@ const UserDataTable: React.FC = () => {
     <div className="text-white min-h-screen flex flex-col items-start">
       <div className="p-6 rounded-lg w-full max-w-4xl items-start">
         <div className="mb-4 flex justify-between items-center">
-          <div className="relative w-1/3">
-            <input
-              type="text"
-              placeholder="Search for name or sid"
-              className="p-2 pl-10 rounded-lg bg-gray-700 text-white w-full"
-            />
-            <Image
-            width={6}
-            height={6}
-              src="/search-icon.png"
-              alt="Search Icon"
-              className=" absolute top-2 left-2"
-            />
-          </div>
+          <SearchBar></SearchBar>
           <div className="flex items-center">
             <button className="p-2 bg-gray-700 rounded-lg mr-2">
               <svg
