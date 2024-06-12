@@ -61,31 +61,31 @@ const BillDataTable: React.FC = () => {
         <table className="min-w-full bg-gray-800 rounded-2xl">
           <thead>
             <tr className="border-b border-gray-700">
-              <th className="py-5 px-4">No</th>
-              <th className="py-5 px-4">Bill</th>
-              <th className="py-5 px-4">Event</th>
-              <th className="py-5 px-4">Date</th>
-              <th className="py-5 px-4">Red bill</th>
-              <th className="py-5 px-4">White bill</th>
+              <th className="border border-r py-5 px-4">No</th>
+              <th className="border border-r py-5 px-4">Bill</th>
+              <th className="border border-r py-5 px-4">Event</th>
+              <th className="border border-r py-5 px-4">Date</th>
+              <th className="border border-r py-5 px-4">Red bill</th>
+              <th className="border border-r py-5 px-4">White bill</th>
               <th className="py-5 px-4">View detail</th>
             </tr>
           </thead>
           <tbody>
             {bills.map((bill, index) => (
               <tr key={bill.no} 
-              className={`border-b border-gray-700 ${index === bills.length - 1 ? '' : 'border-b border-gray-700'}`}>
-                <td className="py-2 px-4">{bill.no}</td>
-                <td className="py-2 px-4">{bill.bill}</td>
-                <td className="py-2 px-4">{bill.event}</td>
-                <td className="py-2 px-4">{bill.date}</td>
-                <td className="py-2 px-4 text-center">
+              className={` ${index === bills.length - 1 ? '' : 'border-b border-gray-700'}`}>
+                <td className="border border-r py-2 px-4">{bill.no}</td>
+                <td className="border border-r py-2 px-4">{bill.bill}</td>
+                <td className="border border-r py-2 px-4">{bill.event}</td>
+                <td className="border border-r py-2 px-4">{bill.date}</td>
+                <td className="border border-r py-2 px-4 text-center">
                   {bill.redBill ? (
                     <span className="text-green-500">✅</span>
                   ) : (
                     <span className="text-red-500">❌</span>
                   )}
                 </td>
-                <td className="py-2 px-4 text-center">
+                <td className="border border-r py-2 px-4 text-center">
                   {bill.whiteBill ? (
                     <span className="text-green-500">✅</span>
                   ) : (
