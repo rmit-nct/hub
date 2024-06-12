@@ -1,7 +1,6 @@
 "use client"
 import React, { useState } from 'react';
 import Modal from '../forms/memberFeeTrackingForm';
-import Image from 'next/image';
 import ToDoList from '../toDoList';
 import SearchBar from '../searchBar';
 
