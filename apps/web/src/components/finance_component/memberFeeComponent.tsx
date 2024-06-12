@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import Modal from '../forms/memberFeeTrackingForm';
 import Image from 'next/image';
+import ToDoList from '../toDoList';
 interface User {
   id: number;
   name: string;
@@ -171,18 +172,7 @@ const UserDataTable: React.FC = () => {
         </table>
       </div>
       <div className="fixed right-4 top-1/2 transform -translate-y-1/2 bg-gray-800 p-6 rounded-lg">
-        <h3 className="text-xl font-bold mb-4">Tasks</h3>
-        <ul className="text-left">
-          <li className="mb-2">
-            <a href="#" className="text-white font-bold w-full text-left block">Member fee tracking</a>
-          </li>
-          <li className="mb-2">
-            <a href="#" className="text-white font-bold w-full text-left block">Bill tracking</a>
-          </li>
-          <li>
-            <a href="#" className="text-white font-bold w-full text-left block">Budget planning</a>
-          </li>
-        </ul>
+            <ToDoList></ToDoList>
       </div>
       {selectedUser && <Modal show={showModal} user={selectedUser} onClose={closeModal} />}
     </div>

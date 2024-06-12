@@ -49,7 +49,7 @@ import React from "react";
 
       return (
         <div>
-            {/* <a onClick={() => handleClick(billDetails)}>Hello click me</a> */}
+            <a>Hello click me</a>
             
         </div>
       );

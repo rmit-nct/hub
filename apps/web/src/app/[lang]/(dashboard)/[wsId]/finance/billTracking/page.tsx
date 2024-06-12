@@ -1,11 +1,12 @@
 import React from 'react';
-
+import BillDataTable from '@/components/finance_component/billTrackingComponent';
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>bill tracking!</h1>
-      </header>
+      
+        <h1 className='text-3xl font-bold mb-8'>bill tracking!</h1>
+        <BillDataTable></BillDataTable>
+      
     </div>
   );
 }
