@@ -11,9 +11,9 @@ const SearchBar= () =>{
               className="p-2 pl-10 rounded-lg bg-gray-700 text-white w-full"
             />
             <Image
-            width={6}
-            height={6}
-              src="/search-icon.png"
+            width={25}
+            height={25}
+              src="/media/finance/searchImage.png"
               alt="Search Icon"
               className=" absolute top-2 left-2"
             />

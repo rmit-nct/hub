@@ -1,11 +1,11 @@
 import React from 'react';
-
+import BudgetPlanning from '@/components/finance_component/budgetPlanning';
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>budget planning!</h1>
-      </header>
+
+        <h1 className='text-3xl font-bold mb-8'>Budget Planning</h1>
+        <BudgetPlanning></BudgetPlanning>
     </div>
   );
 }

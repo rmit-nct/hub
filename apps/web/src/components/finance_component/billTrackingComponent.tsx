@@ -3,6 +3,7 @@ import React,{useState} from "react";
 import ToDoList from "../toDoList";
 import SearchBar from "../searchBar";
 import Modal from "../forms/billTrackingForm";
+import Image from "next/image";
 interface BillDetails {
   id: string;
   item_list: string[];
@@ -28,7 +29,7 @@ const bills: BillDetails[] = [
       event_id: "event1",
       bill_name: "Lotte Mart",
       member_in_charge: "Marcus Martin",
-      image_link_red: "",
+      image_link_red: "/haha.png",
       image_link_white: "",
       total_price: 1000,
       paid_amount: 800,
@@ -132,18 +133,18 @@ const BillDataTable: React.FC = () => {
                 <td className="border border-r py-2 px-4">{bill.bill_name}</td>
                 <td className="border border-r py-2 px-4">{bill.event_id}</td>
                 <td className="border border-r py-2 px-4">{new Date(bill.completed_at).toLocaleDateString()}</td>
-                <td className="border border-r py-2 px-4 text-center">
+                <td className="border border-r py-2 px-4">
                   {bill.image_link_red ? (
-                    <span className="text-green-500">✅</span>
+                    <Image className="ml-[20px]" alt="Check image" width={30} height={30} src={'/media/finance/checkImage.png'}/>
                   ) : (
-                    <span className="text-red-500">❌</span>
+                    <Image className="ml-[20px]" alt="Check image" width={30} height={30} src={'/media/finance/alertImage.png'}/>
                   )}
                 </td>
                 <td className="border border-r py-2 px-4 text-center">
                   {bill.image_link_white ? (
-                    <span className="text-green-500">✅</span>
+                     <Image className="ml-[20px]" alt="Check image" width={30} height={30} src={'/media/finance/checkImage.png'}/>
                   ) : (
-                    <span className="text-red-500">❌</span>
+                    <Image className="ml-[20px]" alt="Check image" width={30} height={30} src={'/media/finance/alertImage.png'}/>
                   )}
                 </td>
                 <td className="py-2 px-4 text-right">
