@@ -22,17 +22,17 @@ export default async function Layout({
       matchExact: true,
     },
     {
-      name: t('wallets'),
-      href: `/${wsId}/finance/wallets`,
+      name: t('Member fee tracking'),
+      href: `/${wsId}/finance/memberFeeTracking`,
     },
     {
-      name: t('transactions'),
-      href: `/${wsId}/finance/transactions`,
+      name: t('Bill Tracking'),
+      href: `/${wsId}/finance/billTracking`,
       matchExact: true,
     },
     {
-      name: t('categories'),
-      href: `/${wsId}/finance/transactions/categories`,
+      name: t('Budget Planning'),
+      href: `/${wsId}/finance/budgetPlanning`,
     },
     {
       name: t('invoices'),
