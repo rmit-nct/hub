@@ -14,7 +14,7 @@ const budgetPlanning =()=>{
         { name: "Internal bonding", week: "Week4", amount: "1.000.000 vnd" },
       ];
 
-
+console.log(events);
 
     return(
         <div className="text-white min-h-screen flex flex-col items-start p-6">
