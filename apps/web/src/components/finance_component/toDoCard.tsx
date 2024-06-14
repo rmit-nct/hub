@@ -1,6 +1,7 @@
 import React from 'react';
 
 const ToDoTasks = () => {
+
   return (
     <div className="relative inline-block w-[800px] rounded-3xl bg-gray-800 p-6 text-center">
       <h2 className="justify-left mb-4 flex items-center text-3xl font-bold">
@@ -8,20 +9,20 @@ const ToDoTasks = () => {
       </h2>
       <ul className="ml-[50px] text-left">
         <li className="mb-2 mt-[70px]">
-          <a href={'/finance/memberFeeTracking'} className="w-full text-left text-2xl font-bold text-white line-through">
+          <a  className="w-full text-left text-2xl font-bold text-white line-through">
             Member fee tracking.
           </a>
         </li>
         <li className="mb-2 mt-[70px]">
           <a
-            href={'/finance/billTracking'}
+            
             className="w-full text-left text-2xl font-bold text-white"
           >
             Bill tracking.
           </a>
         </li>
         <li className="mt-[70px]">
-          <a href={'/finance/budgetPlanning'} className="w-full text-left text-2xl font-bold text-white">
+          <a  className="w-full text-left text-2xl font-bold text-white">
             Budget planning.
           </a>
         </li>
