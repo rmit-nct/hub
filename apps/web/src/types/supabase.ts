@@ -33,6 +33,47 @@ export type Database = {
         };
         Relationships: [];
       };
+      member_fee_tracking:{
+        Row:{
+          id:Number;
+          created_at:string;
+          name:string;
+          type:string;
+          date_of_birth:string;
+          major:string;
+          num_of_sem:string;
+          year_of_enrol:string;
+          payment_method:string;
+          image:string;
+          status:string;
+        }
+        Insert:{
+          id?:Number;
+          created_at ?:string;
+          name ?: string;
+          type ?: string;
+          date_of_birth?: string;
+          major?: string;
+          num_of_sem ?: string;
+          year_of_enrol ?: string;
+          payment_method ?: string;
+          image ?: string;
+          status ?: string;
+        }
+        Update: {
+          id?:Number;
+          created_at ?:string;
+          name ?: string;
+          type ?: string;
+          date_of_birth?: string;
+          major?: string;
+          num_of_sem ?: string;
+          year_of_enrol ?: string;
+          payment_method ?: string;
+          image ?: string;
+          status ?: string; 
+        }
+      };
       ai_chat_messages: {
         Row: {
           chat_id: string;
