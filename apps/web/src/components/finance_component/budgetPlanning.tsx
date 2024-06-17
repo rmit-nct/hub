@@ -6,15 +6,27 @@ interface Event{
     week: string;
     amount: string;
 }
-const BudgetPlanning = () => {
+
+interface Task {
+  id: number;
+  created_at: string;
+  member_fee_column: boolean;
+  bill_tracking_column: boolean;
+  budget_planning_column: boolean;
+}
+interface Props {
+  tasks: Task[];
+  wsId :string;
+}
+const BudgetPlanning: React.FC<Props> = ({tasks,wsId}) => {
   const events: Event[] = [
     { name: "Induction day", week: "Week2", amount: "1.000.000 vnd" },
     { name: "Internal bonding", week: "Week3", amount: "1.000.000 vnd" },
     { name: "Internal bonding", week: "Week4", amount: "1.000.000 vnd" },
   ];
-
+  
   const estimatedAmount = "3.000.000 vnd";
-
+  console.log(wsId);
   return (
     <div className="text-white min-h-screen flex flex-col items-start p-6">
       <div className="bg-gray-800 p-6 rounded-3xl w-full max-w-4xl">
@@ -45,7 +57,7 @@ const BudgetPlanning = () => {
         
       </div>
       <div className="fixed right-4 top-1/2 transform -translate-y-1/2 bg-gray-800 p-6 rounded-lg">
-        <ToDoList />
+        <ToDoList tasks={tasks} />
       </div>
     </div>
   );

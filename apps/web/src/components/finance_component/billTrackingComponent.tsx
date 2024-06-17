@@ -58,8 +58,19 @@ const bills: BillDetails[] = [
       updated_at: new Date().toISOString(),
     },
   ];
-  
-const BillDataTable: React.FC = () => {
+  interface Task {
+    id: number;
+    created_at: string;
+    member_fee_column: boolean;
+    bill_tracking_column: boolean;
+    budget_planning_column: boolean;
+  }
+
+  interface Props {
+    tasks: Task[];
+    wsId: string; 
+  }
+const BillDataTable: React.FC<Props> = ({tasks, wsId}) => {
     const[showModal, setShowModal]= useState(false);
     const [selectedBill, setSelectedBill] = useState<BillDetails | null>(null);
 
@@ -67,7 +78,7 @@ const BillDataTable: React.FC = () => {
         setSelectedBill(bill);
         setShowModal(true);
     }
-
+    console.log(wsId);
     const closeModal= ()=>{
         setShowModal(false);
     }
@@ -156,7 +167,7 @@ const BillDataTable: React.FC = () => {
         </table>
       </div>
       <div className="fixed right-4 top-1/2 transform -translate-y-1/2 bg-gray-800 p-6 rounded-lg">
-        <ToDoList />
+        <ToDoList tasks={tasks}/>
       </div>
       {selectedBill && <Modal show={showModal} billDetail={selectedBill} onClose={closeModal} />}
     </div>

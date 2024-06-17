@@ -17,7 +17,20 @@ interface User {
   status: string;
 }
 
-const UserDataTable: React.FC = () => {
+interface Task {
+  id: number;
+  created_at: string;
+  member_fee_column: boolean;
+  bill_tracking_column: boolean;
+  budget_planning_column: boolean;
+}
+
+interface Props {
+  tasks: Task[];
+  wsId: string; 
+}
+const UserDataTable: React.FC<Props> = ({tasks,wsId}) => {
+  console.log(wsId);
     const users: User[] = [
         {
           id: 1,
@@ -160,7 +173,7 @@ const UserDataTable: React.FC = () => {
         </table>
       </div>
       <div className="fixed right-4 top-1/2 transform -translate-y-1/2 bg-gray-800 p-6 rounded-lg">
-            <ToDoList></ToDoList>
+            <ToDoList tasks={tasks}></ToDoList>
       </div>
       {selectedUser && <Modal show={showModal} user={selectedUser} onClose={closeModal} />}
     </div>
