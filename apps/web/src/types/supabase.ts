@@ -33,6 +33,48 @@ export type Database = {
         };
         Relationships: [];
       };
+      budget_planning:{
+        id: Number;
+        created_at:string;
+        name:string;
+        week:string;
+        amount: Number;
+        assigned_to: string;
+        Row:{
+          id ?: Number;
+          created_at ?: string;
+          name ?: string;
+          week ?: string;
+          amount ?: string;
+          assigned_to ?: string;
+        }
+        Insert: {
+          id ?: Number;
+          created_at ?: string;
+          name ?: string;
+          week ?: string;
+          amount ?: string;
+          assigned_to ?: string;
+        }
+        Update: {
+          id ?: Number;
+          created_at ?: string;
+          name ?: string;
+          week ?: string;
+          amount ?: string;
+          assigned_to ?: string;
+        }
+
+        Relationship:[
+          {
+            foreignKeyName: 'public_budget_planning_assigned_to_fkey';
+            columns: ['assigned_to'];
+            isOneToOne: false;
+            referencedRelation: 'workspace_users';
+            referencedColumns: ['id'];
+          }
+        ];
+      }
       member_fee_tracking:{
         Row:{
           id:Number;
