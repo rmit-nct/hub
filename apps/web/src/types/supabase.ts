@@ -9,6 +9,30 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      To_do_tasks_finanace:{
+        Row:{
+          id: Number;
+          created_at: string;
+          member_fee_column?: boolean | null;
+          bill_tracking_column ?: boolean |null;
+          budget_planning_column? : boolean| null;
+        }
+        Insert:{
+          id?: number;
+          created_at?: string;
+          member_fee_column?: boolean;
+          bill_tracking_column?: boolean;
+          budget_planning_column?: boolean;
+        };
+        Update: {
+          id?: number;
+          created_at?: string;
+          member_fee_column?: boolean;
+          bill_tracking_column?: boolean;
+          budget_planning_column?: boolean;
+        };
+        Relationships: [];
+      };
       ai_chat_messages: {
         Row: {
           chat_id: string;

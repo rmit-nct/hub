@@ -31,7 +31,7 @@ const BudgetPlanning = () => {
               <div className="flex items-center">
                 <span className="mr-4">{event.amount}</span>
                 <button className="px-4 py-2 bg-purple-200 rounded-2xl">
-                    <Image width={10} height={10} alt="eye_icon" src={"/media/finance/eye.png"}/>
+                    <Image width={20} height={20} alt="eye_icon" src={"/media/finance/eye.png"}/>
                 </button>
               </div>
             </div>
