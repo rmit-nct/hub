@@ -5,14 +5,15 @@ import ToDoList from '../toDoList';
 import SearchBar from '../searchBar';
 
 interface User {
-  id: number;
+  id: string;
   name: string;
-  dob: Date;
+  created_at: string;
+  date_of_birth: string; 
   major: string;
-  numOfSem:Number;
-  year: string;
+  numOfSem: number;
+  yearOfEnrol: string;
   paymentMethod: string;
-  imageURL: string;
+  image: string;
   type: string;
   status: string;
 }
@@ -27,72 +28,12 @@ interface Task {
 
 interface Props {
   tasks: Task[];
+  memberFee: User[];
   wsId: string; 
 }
-const UserDataTable: React.FC<Props> = ({tasks,wsId}) => {
+const UserDataTable: React.FC<Props> = ({tasks, memberFee,wsId}) => {
   console.log(wsId);
-    const users: User[] = [
-        {
-          id: 1,
-          name: 'Huynh Tan Phat',
-          dob: new Date('1998-05-20'),
-          major: 'Computer Science',
-          numOfSem: 6,
-          year: 'Junior',
-          paymentMethod: 'Credit Card',
-          imageURL: '/favicon-32x32.png',
-          type: 'Newbie',
-          status: 'Not approved'
-        },
-        {
-          id: 2,
-          name: 'Phat Huynh',
-          dob: new Date('1997-04-15'),
-          major: 'Mechanical Engineering',
-          numOfSem: 8,
-          year: 'Senior',
-          paymentMethod: 'PayPal',
-          imageURL: '/favicon-32x32.png',
-          type: 'Oldbie',
-          status: 'Not approved'
-        },
-        {
-          id: 3,
-          name: 'Nguyen Van A',
-          dob: new Date('1999-01-10'),
-          major: 'Electrical Engineering',
-          numOfSem: 4,
-          year: 'Sophomore',
-          paymentMethod: 'Bank Transfer',
-          imageURL: '/favicon-32x32.png',
-          type: 'Oldbie',
-          status: 'Not approved'
-        },
-        {
-          id: 4,
-          name: 'Tran Thi B',
-          dob: new Date('2000-12-30'),
-          major: 'Business Administration',
-          numOfSem: 5,
-          year: 'Junior',
-          paymentMethod: 'Credit Card',
-          imageURL: '/favicon-32x32.png',
-          type: 'Newbie',
-          status: 'Approved'
-        },
-        {
-          id: 5,
-          name: 'Le Thi C',
-          dob: new Date('1996-11-25'),
-          major: 'Information Technology',
-          numOfSem: 7,
-          year: 'Senior',
-          paymentMethod: 'PayPal',
-          imageURL: '/favicon-32x32.png',
-          type: 'Oldbie',
-          status: 'Approved'
-        }
-      ];
+    
       
 
   const [showModal, setShowModal] = useState(false);
@@ -154,11 +95,11 @@ const UserDataTable: React.FC<Props> = ({tasks,wsId}) => {
             </tr>
           </thead>
           <tbody>
-            {users.map((user, index) => (
+            {memberFee.map((user, index) => (
               <tr
                 key={user.id}
                 onClick={() => handleRowClick(user)}
-                className={`h-[60px] cursor-pointer hover:bg-gray-700 ${index === users.length - 1 ? '' : 'border-b border-gray-700'}`}
+                className={`h-[60px] cursor-pointer hover:bg-gray-700 ${index === memberFee.length - 1 ? '' : 'border-b border-gray-700'}`}
               >
                 <td className="py-2 px-4">{user.id}</td>
                 <td className="py-2 px-4">{user.name}</td>

@@ -32,20 +32,30 @@ export default async function App({
       return null;
     }
 
-    const {data,error} = await supabase
+    const {data: tasksData,error:taskError} = await supabase
       .from('to_do_tasks_finance')
       .select('*');
 
 
-      if(error){
+      const {data: memberFeeData, error: memberFeeError}= await supabase
+        .from('member_fee_tracking')
+        .select('*');
+
+      if(taskError){
         console.log("Error fetching data");
       }
 
-      console.log('Fetched tasks', data);
+      console.log('Fetched tasks', tasksData);
+
+      if(memberFeeError){
+        console.log('Member fee fetched error');
+      }
+
+      console.log('Fetched member fee: ' + JSON.stringify(memberFeeData));
   return (
     <div className="App">
        <h1 className="text-3xl font-bold mb-8">Member fee tracking</h1>
-      <MemberFeeTracking tasks={data || []} wsId={wsId}></MemberFeeTracking>
+      <MemberFeeTracking memberFee={memberFeeData || []} tasks={tasksData || []} wsId={wsId}></MemberFeeTracking>
       </div>
   );
 }

@@ -1,17 +1,19 @@
-import React,{useState} from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import ImageModal from '../picture_zoom';
+
 interface User {
-    id: number;
-    name: string;
-    dob: Date;
-    major: string;
-    numOfSem:Number;
-    year: string;
-    paymentMethod: string;
-    imageURL: string;
-    type: string;
-    status: string;
+  id: string;
+  name: string;
+  created_at: string;
+  date_of_birth: string; // Changed from Date to string
+  major: string;
+  numOfSem: number;
+  yearOfEnrol: string;
+  paymentMethod: string;
+  image: string;
+  type: string;
+  status: string;
 }
 
 interface ModalProps {
@@ -21,20 +23,25 @@ interface ModalProps {
 }
 
 const Modal: React.FC<ModalProps> = ({ show, user, onClose }) => {
-    const [showModal, setShowModal]= useState(false);
-    const [selected, setSelected] = useState(false);
-    const [imageURl, setImageURL]= useState('');
-    const handleClick =(imageURL: string)=>{
-        setShowModal(true);
-        setSelected(true);
-        setImageURL(imageURL);
-    }
+  const [showModal, setShowModal] = useState(false);
+  const [selected, setSelected] = useState(false);
+  const [imageURL, setImageURL] = useState('');
 
-    const closeModel =() =>{
-        setShowModal(false);
-        setSelected(false);
-    }
+  const handleClick = (imageURL: string) => {
+    setShowModal(true);
+    setSelected(true);
+    setImageURL(imageURL);
+  }
+
+  const closeModal = () => {
+    setShowModal(false);
+    setSelected(false);
+  }
+
   if (!show) return null;
+
+  // Convert date_of_birth from string to Date object
+  const dob = new Date(user.date_of_birth);
 
   return (
     <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex justify-center items-center">
@@ -76,74 +83,73 @@ const Modal: React.FC<ModalProps> = ({ show, user, onClose }) => {
               />
             </div>
             <div className="mb-4">
-              <label className="block text-white text-sm font-bold mb-2" htmlFor="type">
-                Date of birth
+              <label className="block text-white text-sm font-bold mb-2" htmlFor="dob">
+                Date of Birth
               </label>
               <input
                 type="text"
-                id="type"
-                defaultValue={user.dob.toISOString().substring(0, 10)}
+                id="dob"
+                defaultValue={dob.toISOString().substring(0, 10)} // Format date correctly
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline"
                 disabled
               />
             </div>
             <div className="mb-4">
-              <label className="block text-white text-sm font-bold mb-2" htmlFor="type">
+              <label className="block text-white text-sm font-bold mb-2" htmlFor="major">
                 Major
               </label>
               <input
                 type="text"
-                id="type"
+                id="major"
                 defaultValue={user.major}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline"
                 disabled
               />
             </div>
             <div className="mb-4">
-              <label className="block text-white text-sm font-bold mb-2" htmlFor="type">
-                Number of Semester
+              <label className="block text-white text-sm font-bold mb-2" htmlFor="numOfSem">
+                Number of Semesters
               </label>
               <input
                 type="text"
-                id="type"
+                id="numOfSem"
                 defaultValue={user.numOfSem.toString()}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline"
                 disabled
               />
             </div>
             <div className="mb-4">
-              <label className="block text-white text-sm font-bold mb-2" htmlFor="type">
+              <label className="block text-white text-sm font-bold mb-2" htmlFor="yearOfEnrol">
                 Year of Enrollment
               </label>
               <input
                 type="text"
-                id="type"
-                defaultValue={user.year}
+                id="yearOfEnrol"
+                defaultValue={user.yearOfEnrol}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline"
                 disabled
               />
             </div>
             <div className="mb-4">
-              <label className="block text-white text-sm font-bold mb-2" htmlFor="type">
+              <label className="block text-white text-sm font-bold mb-2" htmlFor="paymentMethod">
                 Payment Method
               </label>
               <input
                 type="text"
-                id="type"
+                id="paymentMethod"
                 defaultValue={user.paymentMethod}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline"
                 disabled
               />
               <div className="mb-4">
-              <label className="block text-white text-sm font-bold mb-2" htmlFor="type">
+              <label className="block text-white text-sm font-bold mb-2" htmlFor="image">
                 Image (Optional)
               </label>
               <button onClick={(e) => {
                 e.preventDefault();
-                handleClick(user.imageURL)}}>
-                <Image width={200} height={200} src={user.imageURL} alt='payment image' className='hover:w-[250px] hover:h-[250px]'/>
+                handleClick(user.image)}}>
+                <Image width={200} height={200} src={user.image} alt='payment image' className='hover:w-[250px] hover:h-[250px]'/>
               </button>
-              
             </div>
             </div>
             <div className="mb-4">
@@ -161,7 +167,7 @@ const Modal: React.FC<ModalProps> = ({ show, user, onClose }) => {
           </form>
         </div>
       </div>
-      {selected && <ImageModal show={showModal} imageURL={imageURl} onClose={closeModel} />}
+      {selected && <ImageModal show={showModal} imageURL={imageURL} onClose={closeModal} />}
     </div>
   );
 };
