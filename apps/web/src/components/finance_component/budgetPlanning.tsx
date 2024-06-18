@@ -12,7 +12,7 @@ interface Event {
   created_at: string;
   name: string;
   week: string;
-  amount: string;
+  amount: number;
   assigned_to: User;
 }
 
@@ -42,14 +42,21 @@ const BudgetPlanning: React.FC<Props> = ({ tasks, events, wsId }) => {
   const closeModal = () => {
     setShowModal(false);
     setSelectedEvent(null);
+    setIsCreate(false);
   };
 
-  const changeState= ()=>{
+  const changeState = () => {
     setSelectedEvent(null);
-    setShowModal(true); 
+    setShowModal(true);
     setIsCreate(true);
+  };
+  let estimatedAmount=0;
+  if (events && Array.isArray(events)) {
+    events.forEach(item => {
+      estimatedAmount += item.amount;
+    });
   }
-  const estimatedAmount = "3.000.000 vnd";
+  
   console.log(wsId);
 
   return (
@@ -78,14 +85,14 @@ const BudgetPlanning: React.FC<Props> = ({ tasks, events, wsId }) => {
           ))}
         </div>
 
-        <button onClick={changeState} className="ml-[650px] mt-4 px-4 py-2 bg-blue-900 hover:bg-blue-600 text-white rounded-2xl">
+        <button onClick={() => changeState()} className="ml-[650px] mt-4 px-4 py-2 bg-blue-900 hover:bg-blue-600 text-white rounded-2xl">
           Add more event
         </button>
       </div>
       <div className="fixed right-4 top-1/2 transform -translate-y-1/2 bg-gray-800 p-6 rounded-lg">
         <ToDoList tasks={tasks} />
       </div>
-      {selectedEvent && (
+      {  (
         <Event_Modal isCreate={isCreate} show={showModal} event={selectedEvent} onClose={closeModal} />
       )}
     </div>
