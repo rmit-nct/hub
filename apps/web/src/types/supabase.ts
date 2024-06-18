@@ -9,6 +9,131 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      finance_bill_items:{
+        Row:{
+          id:Number,
+          created_at:string;
+          bill_id: Number;
+          item_id: Number;
+          quantity:Number;
+        }
+        Insert:{
+          id?: Number;
+          created_at ?: string;
+          bill_id ?: Number;
+          item_id:Number;
+          quantity ?: Number;
+        }
+        Update:{
+          id?: Number;
+          created_at ?: string;
+          bill_id ?: Number;
+          item_id:Number;
+          quantity ?: Number;
+        }
+
+        Relationship: [
+          {
+            foreignKeyName: 'public_finance_bill_items_bill_id_fkey';
+            columns: ['bill_id'];
+            isOneToOne: false;
+            referencedRelation: 'bill_tracking';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'public_finance_bill_items_item_id_fkey';
+            columns: ['item_id'];
+            isOneToOne: false;
+            referencedRelation: 'finance_items';
+            referencedColumns: ['id'];
+          }
+        ]
+      }
+      finance_items:{
+        Row: {
+          id: Number;
+          created_at: string;
+          item_name: string;
+          item_price: Number;
+          item_description: string;
+        }
+        Insert:{
+          id?: Number;
+          created_at?: string;
+          item_name?: string;
+          item_price?: Number;
+          item_description?: string;
+        }
+        Update: {
+          id?: Number;
+          created_at?: string;
+          item_name?: string;
+          item_price?: Number;
+          item_description?: string;
+        }
+        Relationship: [
+          {
+            
+          }
+        ]
+      }
+      
+      bill_tracking:{
+        Row: {
+          id: Number;
+          created_at: string;
+          bill_name: string;
+          event_id: string;
+          member_in_charge: string;
+          image_red_bill: string;
+          image_white_bill: string;
+          total_price: Number;
+          paid_amount: Number;
+          total_diff:Number;
+          tnote: string;
+          completed_at: string;
+          updated_at: string;
+        }
+        Insert:{
+          id ?: Number;
+          created_at?: string;
+          bill_name?: string;
+          event_id?: string;
+          member_in_charge?: string;
+          image_red_bill ?: string;
+          image_white_bill ?: string;
+          total_price ?: Number;
+          paid_amount ?: Number;
+          total_diff ?: Number;
+          tnote ?: string;
+          completed_at?: string;
+          updated_at?: string;
+        }
+        Update:{
+          id ?: Number;
+          created_at?: string;
+          bill_name?: string;
+          event_id?: string;
+          member_in_charge?: string;
+          image_red_bill ?: string;
+          image_white_bill ?: string;
+          total_price ?: Number;
+          paid_amount ?: Number;
+          total_diff ?: Number;
+          tnote ?: string;
+          completed_at?: string;
+          updated_at?: string;
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'public_bill_tracking_member_in_charge_fkey';
+            columns: ['member_in_charge'];
+            isOneToOne: false;
+            referencedRelation: 'workspace_users';
+            referencedColumns: ['id'];
+          }
+        ];
+      }
       To_do_tasks_finanace:{
         Row:{
           id: Number;
@@ -18,20 +143,20 @@ export type Database = {
           budget_planning_column? : boolean| null;
         }
         Insert:{
-          id?: number;
+          id?: Number;
           created_at?: string;
           member_fee_column?: boolean;
           bill_tracking_column?: boolean;
           budget_planning_column?: boolean;
         };
         Update: {
-          id?: number;
+          id?: Number;
           created_at?: string;
           member_fee_column?: boolean;
           bill_tracking_column?: boolean;
           budget_planning_column?: boolean;
         };
-        Relationships: [];
+        
       };
       budget_planning:{
         id: Number;
