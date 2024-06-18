@@ -2,9 +2,12 @@ import React from "react";
 import ToDoList from "../toDoList";
 import Image from "next/image";
 interface Event{
+    id: Number;
+    created_at: string;
     name: string;
     week: string;
     amount: string;
+    assigned_to ?: string;
 }
 
 interface Task {
@@ -16,14 +19,11 @@ interface Task {
 }
 interface Props {
   tasks: Task[];
+  events: Event[];
   wsId :string;
 }
-const BudgetPlanning: React.FC<Props> = ({tasks,wsId}) => {
-  const events: Event[] = [
-    { name: "Induction day", week: "Week2", amount: "1.000.000 vnd" },
-    { name: "Internal bonding", week: "Week3", amount: "1.000.000 vnd" },
-    { name: "Internal bonding", week: "Week4", amount: "1.000.000 vnd" },
-  ];
+const BudgetPlanning: React.FC<Props> = ({tasks, events,wsId}) => {
+  
   
   const estimatedAmount = "3.000.000 vnd";
   console.log(wsId);

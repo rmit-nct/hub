@@ -31,22 +31,31 @@ export default async function App({
       return null;
     }
 
-    const {data,error} = await supabase
+    const {data: tasksData,error: errorData} = await supabase
       .from('to_do_tasks_finance')
       .select('*');
 
 
-      if(error){
+      if(errorData){
         console.log("Error fetching data");
       }
 
-      console.log('Fetched tasks', data);
+      console.log('Fetched tasks', tasksData);
 
+      const {data: event, error :eventError}= await supabase
+        .from('budget_planning')
+        .select('*');
+
+        if(eventError){
+          console.log("Error fetching event data");
+        }else{
+          console.log('Data fetched: ' + event);
+        }
   return (
     <div className="App">
 
         <h1 className='text-3xl font-bold mb-8'>Budget Planning</h1>
-        <BudgetPlanning tasks={data || []} wsId={wsId}></BudgetPlanning>
+        <BudgetPlanning events={event || []} tasks={tasksData || []} wsId={wsId}></BudgetPlanning>
     </div>
   );
 }
