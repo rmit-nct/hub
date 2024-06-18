@@ -4,60 +4,32 @@ import ToDoList from "../toDoList";
 import SearchBar from "../searchBar";
 import Modal from "../forms/billTrackingForm";
 import Image from "next/image";
+interface BillItem{
+  id:number;
+  created_at: string;
+  item_name: string;
+  item_price: number;
+  item_description: string;
+}
 interface BillDetails {
-  id: string;
-  item_list: string[];
+  id: number;
+  bill_name: string;
   event_id: string;
-  bill_name:string;
   member_in_charge: string;
-  image_link_red: string;
-  image_link_white: string;
+  image_red_bill: string;
+  image_white_bill: string;
   total_price: number;
   paid_amount: number;
   total_diff: number;
   tnote: string;
-  noticre: string;
   completed_at: string;
   created_at: string;
   updated_at: string;
+  user_name: string | undefined;
+  items: BillItem[];
 }
 
-const bills: BillDetails[] = [
-    {
-      id: "1",
-      item_list: ["Item 1", "Item 2", "Item 3"],
-      event_id: "event1",
-      bill_name: "Lotte Mart",
-      member_in_charge: "Marcus Martin",
-      image_link_red: "/haha.png",
-      image_link_white: "",
-      total_price: 1000,
-      paid_amount: 800,
-      total_diff: 200,
-      tnote: "Some note",
-      noticre: "Some notice",
-      completed_at: new Date().toISOString(),
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-    {
-      id: "2",
-      item_list: ["Item A", "Item B", "Item C"],
-      event_id: "event2",
-      bill_name: "Super store",
-      member_in_charge: "John Doe",
-      image_link_red: "",
-      image_link_white: "",
-      total_price: 1500,
-      paid_amount: 1500,
-      total_diff: 0,
-      tnote: "Another note",
-      noticre: "Another notice",
-      completed_at: new Date().toISOString(),
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-  ];
+
   interface Task {
     id: number;
     created_at: string;
@@ -68,9 +40,10 @@ const bills: BillDetails[] = [
 
   interface Props {
     tasks: Task[];
+    bills: BillDetails[];
     wsId: string; 
   }
-const BillDataTable: React.FC<Props> = ({tasks, wsId}) => {
+const BillDataTable: React.FC<Props> = ({tasks,bills ,wsId}) => {
     const[showModal, setShowModal]= useState(false);
     const [selectedBill, setSelectedBill] = useState<BillDetails | null>(null);
 
@@ -145,14 +118,14 @@ const BillDataTable: React.FC<Props> = ({tasks, wsId}) => {
                 <td className="border border-r py-2 px-4">{bill.event_id}</td>
                 <td className="border border-r py-2 px-4">{new Date(bill.completed_at).toLocaleDateString()}</td>
                 <td className="border border-r py-2 px-4">
-                  {bill.image_link_red ? (
+                  {bill.image_red_bill ? (
                     <Image className="ml-[20px]" alt="Check image" width={30} height={30} src={'/media/finance/checkImage.png'}/>
                   ) : (
                     <Image className="ml-[20px]" alt="Check image" width={30} height={30} src={'/media/finance/alertImage.png'}/>
                   )}
                 </td>
                 <td className="border border-r py-2 px-4 text-center">
-                  {bill.image_link_white ? (
+                  {bill.image_white_bill ? (
                      <Image className="ml-[20px]" alt="Check image" width={30} height={30} src={'/media/finance/checkImage.png'}/>
                   ) : (
                     <Image className="ml-[20px]" alt="Check image" width={30} height={30} src={'/media/finance/alertImage.png'}/>

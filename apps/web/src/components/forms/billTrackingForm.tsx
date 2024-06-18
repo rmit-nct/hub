@@ -3,21 +3,29 @@ import Image from "next/image";
 import ImageModal from "../picture_zoom";
 
 interface BillDetails {
-  id: string;
-  item_list: string[];
-  event_id: string;
+  id: number;
   bill_name: string;
+  event_id: string;
   member_in_charge: string;
-  image_link_red: string;
-  image_link_white: string;
+  image_red_bill: string;
+  image_white_bill: string;
   total_price: number;
   paid_amount: number;
   total_diff: number;
   tnote: string;
-  noticre: string;
   completed_at: string;
   created_at: string;
   updated_at: string;
+  user_name: string | undefined;
+  items: BillItem[];
+}
+
+interface BillItem {
+  id: number;
+  created_at: string;
+  item_name: string;
+  item_price: number;
+  item_description: string;
 }
 
 interface ModalProps {
@@ -34,6 +42,8 @@ const Bill_Modal: React.FC<ModalProps> = ({ show, billDetail, onClose }) => {
     setShowModal(true);
     setSelected(true);
   };
+
+  console.log(JSON.stringify(billDetail.items) + " Hello items");
 
   const closeModal = () => {
     setShowModal(false);
@@ -61,19 +71,19 @@ const Bill_Modal: React.FC<ModalProps> = ({ show, billDetail, onClose }) => {
               <p className="font-bold">Bill name:</p>
               <p>{billDetail.bill_name}</p>
               <p className="font-bold mt-4">Item list:</p>
-              {billDetail.item_list.map((item, index) => (
-                <p key={index}>- {item}</p>
+              {billDetail.items.map((item, index) => (
+                <p key={index}>- {item.item_name}</p>
               ))}
               <p className="font-bold mt-4">Member in charge:</p>
-              <p>{billDetail.member_in_charge}</p>
+              <p>{billDetail.user_name}</p>
               <p className="font-bold mt-4">Red bill:</p>
-              <p>{billDetail.image_link_red ? (
+              {billDetail.image_red_bill ? (
                 <button onClick={handleClick}>
-                  <Image width={100} height={100} src={billDetail.image_link_red} alt="Red bill image" />
+                  <Image width={100} height={100} src={billDetail.image_red_bill} alt="Red bill image" />
                 </button>
               ) : (
-                "Red bill has not been provided. Click here to send email to member in charge."
-              )}</p>
+                <p>Red bill has not been provided. Click here to send email to member in charge.</p>
+              )}
             </div>
             <div>
               <p className="font-bold">Buying date:</p>
@@ -81,12 +91,12 @@ const Bill_Modal: React.FC<ModalProps> = ({ show, billDetail, onClose }) => {
               <p className="font-bold mt-4">Bill created date:</p>
               <p>{new Date(billDetail.created_at).toLocaleDateString()}</p>
               <p className="font-bold mt-[80px]">White bill:</p>
-              {billDetail.image_link_white ? (
+              {billDetail.image_white_bill ? (
                 <button onClick={handleClick}>
-                  <Image width={100} height={100} src={billDetail.image_link_white} alt="White bill image" />
+                  <Image width={100} height={100} src={billDetail.image_white_bill} alt="White bill image" />
                 </button>
               ) : (
-                "White bill has not been provided. Click here to send email to member in charge"
+                <p>White bill has not been provided. Click here to send email to member in charge.</p>
               )}
             </div>
           </div>
@@ -106,7 +116,7 @@ const Bill_Modal: React.FC<ModalProps> = ({ show, billDetail, onClose }) => {
           </div>
         </div>
       </div>
-      {selected && <ImageModal show={showModal} imageURL={billDetail.image_link_red || billDetail.image_link_white} onClose={closeModal} />}
+      {selected && <ImageModal show={showModal} imageURL={billDetail.image_red_bill || billDetail.image_white_bill} onClose={closeModal} />}
     </div>
   );
 };

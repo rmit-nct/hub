@@ -76,7 +76,7 @@ export type Database = {
             
           }
         ]
-      }
+      };
       
       bill_tracking:{
         Row: {
