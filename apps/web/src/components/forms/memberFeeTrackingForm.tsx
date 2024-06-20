@@ -6,7 +6,7 @@ interface User {
   id: string;
   name: string;
   created_at: string;
-  date_of_birth: string; // Changed from Date to string
+  date_of_birth: string; 
   major: string;
   numOfSem: number;
   yearOfEnrol: string;
@@ -40,7 +40,6 @@ const Modal: React.FC<ModalProps> = ({ show, user, onClose }) => {
 
   if (!show) return null;
 
-  // Convert date_of_birth from string to Date object
   const dob = new Date(user.date_of_birth);
 
   return (

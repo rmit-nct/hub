@@ -35,7 +35,7 @@ const ToDoTasks: React.FC<Props> = ({ tasks, wsId }) => {
     }));
   };
 
-  // Handler to update the main task state and send data to the server
+  
   const updateTask = async () => {
     const updatedTask = {
       ...task,

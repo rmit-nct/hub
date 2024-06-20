@@ -5,6 +5,7 @@ import Image from "next/image";
 import Event_Modal from "../forms/budegetPlanningform";
 
 interface User{
+  id: string;
   full_name:string;
 }
 interface Event {
@@ -93,7 +94,7 @@ const BudgetPlanning: React.FC<Props> = ({ tasks, events, wsId }) => {
         <ToDoList tasks={tasks} />
       </div>
       {  (
-        <Event_Modal isCreate={isCreate} show={showModal} event={selectedEvent} onClose={closeModal} />
+        <Event_Modal wsId={wsId} isCreate={isCreate} show={showModal} event={selectedEvent} onClose={closeModal} />
       )}
     </div>
   );

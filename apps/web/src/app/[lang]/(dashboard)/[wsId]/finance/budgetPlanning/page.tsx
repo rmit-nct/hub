@@ -44,7 +44,7 @@ export default async function App({
 
       const {data: event, error :eventError}= await supabase
         .from('budget_planning')
-        .select('*, assigned_to(full_name)');
+        .select('*, assigned_to(id,full_name)');
 
         if(eventError){
           console.log("Error fetching event data");
