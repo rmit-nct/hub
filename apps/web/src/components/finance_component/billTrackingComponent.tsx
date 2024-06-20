@@ -1,16 +1,18 @@
-"use client"
-import React,{useState} from "react";
+"use client";
+import React, { useState } from "react";
 import ToDoList from "../toDoList";
 import SearchBar from "../searchBar";
 import Modal from "../forms/billTrackingForm";
 import Image from "next/image";
-interface BillItem{
-  id:number;
+
+interface BillItem {
+  id: number;
   created_at: string;
   item_name: string;
   item_price: number;
   item_description: string;
 }
+
 interface BillDetails {
   id: number;
   bill_name: string;
@@ -29,37 +31,50 @@ interface BillDetails {
   items: BillItem[];
 }
 
+interface Task {
+  id: number;
+  created_at: string;
+  member_fee_column: boolean;
+  bill_tracking_column: boolean;
+  budget_planning_column: boolean;
+}
 
-  interface Task {
-    id: number;
-    created_at: string;
-    member_fee_column: boolean;
-    bill_tracking_column: boolean;
-    budget_planning_column: boolean;
-  }
+interface Props {
+  tasks: Task[];
+  bills: BillDetails[];
+  wsId: string;
+}
 
-  interface Props {
-    tasks: Task[];
-    bills: BillDetails[];
-    wsId: string; 
-  }
-const BillDataTable: React.FC<Props> = ({tasks,bills ,wsId}) => {
-    const[showModal, setShowModal]= useState(false);
-    const [selectedBill, setSelectedBill] = useState<BillDetails | null>(null);
+const BillDataTable: React.FC<Props> = ({ tasks, bills, wsId }) => {
+  const [showModal, setShowModal] = useState(false);
+  const [selectedBill, setSelectedBill] = useState<BillDetails | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
-    const handleRowClick= (bill: BillDetails)=>{
-        setSelectedBill(bill);
-        setShowModal(true);
-    }
-    console.log(wsId);
-    const closeModal= ()=>{
-        setShowModal(false);
-    }
+  console.log(wsId);
+  const handleRowClick = (bill: BillDetails) => {
+    setSelectedBill(bill);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  const filteredBills = bills.filter(
+    bill =>
+      bill.bill_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      bill.event_id.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="text-white min-h-screen flex flex-col items-start">
       <div className="p-6 rounded-lg w-full max-w-4xl items-start">
         <div className="mb-4 flex justify-between items-center">
-          <SearchBar />
+          <SearchBar onSearchChange={handleSearchChange} />
           <div className="flex items-center">
             <button className="p-2 bg-gray-700 rounded-lg mr-2">
               <svg
@@ -108,7 +123,7 @@ const BillDataTable: React.FC<Props> = ({tasks,bills ,wsId}) => {
             </tr>
           </thead>
           <tbody>
-            {bills.map((bill, index) => (
+            {filteredBills.map((bill, index) => (
               <tr
                 key={bill.id}
                 className={`${index === bills.length - 1 ? '' : 'border-b border-gray-700'}`}

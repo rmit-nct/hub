@@ -1,4 +1,4 @@
-"use client"
+'use client'
 import React, { useState } from 'react';
 import Modal from '../forms/memberFeeTrackingForm';
 import ToDoList from '../toDoList';
@@ -31,11 +31,11 @@ interface Props {
   memberFee: User[];
   wsId: string; 
 }
-const UserDataTable: React.FC<Props> = ({tasks, memberFee,wsId}) => {
-  console.log(wsId);
-    
-      
 
+const UserDataTable: React.FC<Props> = ({tasks, memberFee, wsId}) => {
+  console.log(wsId);
+
+  const [searchQuery, setSearchQuery] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
@@ -48,11 +48,21 @@ const UserDataTable: React.FC<Props> = ({tasks, memberFee,wsId}) => {
     setShowModal(false);
   };
 
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  const filteredUsers = memberFee.filter(
+    user =>
+      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.id.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="text-white min-h-screen flex flex-col items-start">
       <div className="p-6 rounded-lg w-full max-w-4xl items-start">
         <div className="mb-4 flex justify-between items-center">
-          <SearchBar></SearchBar>
+          <SearchBar onSearchChange={handleSearchChange} />
           <div className="flex items-center">
             <button className="p-2 bg-gray-700 rounded-lg mr-2">
               <svg
@@ -95,13 +105,13 @@ const UserDataTable: React.FC<Props> = ({tasks, memberFee,wsId}) => {
             </tr>
           </thead>
           <tbody>
-            {memberFee.map((user, index) => (
+            {filteredUsers.map((user, index) => (
               <tr
                 key={user.id}
                 onClick={() => handleRowClick(user)}
                 className={`h-[60px] cursor-pointer hover:bg-gray-700 ${index === memberFee.length - 1 ? '' : 'border-b border-gray-700'}`}
               >
-                <td className="py-2 px-4">{user.id}</td>
+                <td className="py-2 px-4">{user.major}</td>
                 <td className="py-2 px-4">{user.name}</td>
                 <td className="py-2 px-4">{user.type}</td>
                 <td className="py-2 px-4">{user.status}</td>
