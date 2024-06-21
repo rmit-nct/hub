@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import Image from 'next/image';
 import ImageModal from '../picture_zoom';
 
@@ -6,7 +6,7 @@ interface User {
   id: string;
   name: string;
   created_at: string;
-  date_of_birth: string; 
+  date_of_birth: string;
   major: string;
   numOfSem: number;
   yearOfEnrol: string;
@@ -19,24 +19,66 @@ interface User {
 interface ModalProps {
   show: boolean;
   user: User;
+  wsId: string;
   onClose: () => void;
 }
 
-const Modal: React.FC<ModalProps> = ({ show, user, onClose }) => {
+const Modal: React.FC<ModalProps> = ({ show, wsId, user, onClose }) => {
   const [showModal, setShowModal] = useState(false);
   const [selected, setSelected] = useState(false);
   const [imageURL, setImageURL] = useState('');
+  const [formData, setFormData] = useState<User>(user);
 
   const handleClick = (imageURL: string) => {
     setShowModal(true);
     setSelected(true);
     setImageURL(imageURL);
-  }
+  };
 
   const closeModal = () => {
     setShowModal(false);
     setSelected(false);
-  }
+  };
+
+  const handleApprove = () => {
+    setFormData((prevData) => ({
+      ...prevData,
+      status: "Approved",
+    }));
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    handleApprove();
+
+    try {
+      const updatedFormData = {
+        ...formData,
+        status: "Approved",
+      };
+
+      const response = await fetch(`/api/workspaces/${wsId}/memberFeeTracking`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ memberFee: updatedFormData }),
+      });
+
+      if (!response.ok) {
+        const result = await response.json();
+        throw new Error(result.error);
+      }
+
+      window.location.reload();
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      } else {
+        console.error('An unknown error occurred');
+      }
+    }
+  };
 
   if (!show) return null;
 
@@ -56,7 +98,7 @@ const Modal: React.FC<ModalProps> = ({ show, user, onClose }) => {
           </button>
         </div>
         <div className="overflow-y-auto max-h-[70vh]">
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label className="block text-white text-sm font-bold mb-2" htmlFor="name">
                 Name
@@ -88,7 +130,7 @@ const Modal: React.FC<ModalProps> = ({ show, user, onClose }) => {
               <input
                 type="text"
                 id="dob"
-                defaultValue={dob.toISOString().substring(0, 10)} // Format date correctly
+                defaultValue={dob.toISOString().substring(0, 10)}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline"
                 disabled
               />
@@ -163,6 +205,8 @@ const Modal: React.FC<ModalProps> = ({ show, user, onClose }) => {
                 disabled
               />
             </div>
+            <button type='submit'
+            className='mt-4 px-4 py-2 bg-blue-900 hover:bg-blue-600 text-white rounded-2xl'>Approve</button>
           </form>
         </div>
       </div>

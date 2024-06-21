@@ -126,7 +126,7 @@ const UserDataTable: React.FC<Props> = ({tasks, memberFee, wsId}) => {
       <div className="fixed right-4 top-1/2 transform -translate-y-1/2 bg-gray-800 p-6 rounded-lg">
             <ToDoList tasks={tasks}></ToDoList>
       </div>
-      {selectedUser && <Modal show={showModal} user={selectedUser} onClose={closeModal} />}
+      {selectedUser && <Modal wsId={wsId} show={showModal} user={selectedUser} onClose={closeModal} />}
     </div>
   );
 };
