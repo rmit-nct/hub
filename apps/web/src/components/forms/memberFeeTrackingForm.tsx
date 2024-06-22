@@ -40,23 +40,12 @@ const Modal: React.FC<ModalProps> = ({ show, wsId, user, onClose }) => {
     setSelected(false);
   };
 
-  const handleApprove = () => {
-    setFormData((prevData) => ({
-      ...prevData,
-      status: "Approved",
-    }));
-  };
-
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    handleApprove();
+    const updatedStatus = formData.status === "Approved" ? "Not Approved" : "Approved";
+    const updatedFormData = { ...formData, status: updatedStatus };
 
     try {
-      const updatedFormData = {
-        ...formData,
-        status: "Approved",
-      };
-
       const response = await fetch(`/api/workspaces/${wsId}/memberFeeTracking`, {
         method: "POST",
         headers: {
@@ -200,13 +189,14 @@ const Modal: React.FC<ModalProps> = ({ show, wsId, user, onClose }) => {
               <input
                 type="text"
                 id="status"
-                defaultValue={user.status}
+                defaultValue={formData.status}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline"
                 disabled
               />
             </div>
-            <button type='submit'
-            className='mt-4 px-4 py-2 bg-blue-900 hover:bg-blue-600 text-white rounded-2xl'>Approve</button>
+            <button type='submit' className='mt-4 px-4 py-2 bg-blue-900 hover:bg-blue-600 text-white rounded-2xl'>
+              {formData.status === "Approved" ? "Set to Not Approved" : "Approve"}
+            </button>
           </form>
         </div>
       </div>
