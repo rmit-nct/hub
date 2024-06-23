@@ -1,17 +1,8 @@
-import { createAdminClient } from '@/utils/supabase/client';
+import { createAdminClient } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server';
-
-export const dynamic = 'force-dynamic';
 
 export async function GET(_: Request) {
   const sbAdmin = createAdminClient();
-
-  if (!sbAdmin) {
-    return NextResponse.json(
-      { message: 'Error fetching prompts' },
-      { status: 500 }
-    );
-  }
 
   const { data, error } = await sbAdmin
     .from('ai_models')

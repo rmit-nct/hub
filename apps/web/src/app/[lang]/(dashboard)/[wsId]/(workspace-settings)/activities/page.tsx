@@ -1,10 +1,7 @@
 import LogList from './log-list';
 import { AuditLog } from '@/types/primitives/audit-log';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createClient } from '@/utils/supabase/server';
 import { notFound } from 'next/navigation';
-
-export const dynamic = 'force-dynamic';
 
 interface Props {
   params: {
@@ -39,7 +36,7 @@ async function getLogs(
   userIds: string[],
   itemsPerPage: string
 ) {
-  const supabase = createServerComponentClient({ cookies });
+  const supabase = createClient();
 
   const queryBuilder = supabase
     .from('audit_logs')

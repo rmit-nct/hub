@@ -12,29 +12,38 @@ export type Database = {
       ai_chat_messages: {
         Row: {
           chat_id: string;
+          completion_tokens: number;
           content: string | null;
           created_at: string;
           creator_id: string | null;
+          finish_reason: string | null;
           id: string;
           model: string | null;
+          prompt_tokens: number;
           role: Database['public']['Enums']['chat_role'];
         };
         Insert: {
           chat_id: string;
+          completion_tokens?: number;
           content?: string | null;
           created_at?: string;
           creator_id?: string | null;
+          finish_reason?: string | null;
           id?: string;
           model?: string | null;
+          prompt_tokens?: number;
           role: Database['public']['Enums']['chat_role'];
         };
         Update: {
           chat_id?: string;
+          completion_tokens?: number;
           content?: string | null;
           created_at?: string;
           creator_id?: string | null;
+          finish_reason?: string | null;
           id?: string;
           model?: string | null;
+          prompt_tokens?: number;
           role?: Database['public']['Enums']['chat_role'];
         };
         Relationships: [
@@ -53,7 +62,7 @@ export type Database = {
             referencedColumns: ['id'];
           },
           {
-            foreignKeyName: 'ai_chat_messages_model_fkey';
+            foreignKeyName: 'public_ai_chat_messages_model_fkey';
             columns: ['model'];
             isOneToOne: false;
             referencedRelation: 'ai_models';
@@ -66,21 +75,30 @@ export type Database = {
           created_at: string;
           creator_id: string | null;
           id: string;
+          is_public: boolean;
+          latest_summarized_message_id: string | null;
           model: string | null;
+          summary: string | null;
           title: string | null;
         };
         Insert: {
           created_at?: string;
           creator_id?: string | null;
           id?: string;
+          is_public?: boolean;
+          latest_summarized_message_id?: string | null;
           model?: string | null;
+          summary?: string | null;
           title?: string | null;
         };
         Update: {
           created_at?: string;
           creator_id?: string | null;
           id?: string;
+          is_public?: boolean;
+          latest_summarized_message_id?: string | null;
           model?: string | null;
+          summary?: string | null;
           title?: string | null;
         };
         Relationships: [
@@ -92,7 +110,14 @@ export type Database = {
             referencedColumns: ['id'];
           },
           {
-            foreignKeyName: 'ai_chats_model_fkey';
+            foreignKeyName: 'public_ai_chats_latest_summarized_message_id_fkey';
+            columns: ['latest_summarized_message_id'];
+            isOneToOne: false;
+            referencedRelation: 'ai_chat_messages';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'public_ai_chats_model_fkey';
             columns: ['model'];
             isOneToOne: false;
             referencedRelation: 'ai_models';
@@ -124,7 +149,7 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: 'ai_models_provider_fkey';
+            foreignKeyName: 'public_ai_models_provider_fkey';
             columns: ['provider'];
             isOneToOne: false;
             referencedRelation: 'ai_providers';
@@ -3849,9 +3874,14 @@ export type Database = {
       workspace_user_groups_with_amount: {
         Row: {
           amount: number | null;
+          archived: boolean | null;
           created_at: string | null;
+          ending_date: string | null;
           id: string | null;
           name: string | null;
+          notes: string | null;
+          sessions: string[] | null;
+          starting_date: string | null;
           ws_id: string | null;
         };
         Relationships: [

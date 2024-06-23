@@ -1,15 +1,14 @@
 import i18n from '../i18n.json';
 import { LOCALE_COOKIE_NAME } from './constants/common';
-import type { Database } from '@/types/supabase';
+import { updateSession } from './utils/supabase/middleware';
 import { match } from '@formatjs/intl-localematcher';
-import type { User } from '@supabase/auth-helpers-nextjs';
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
+import { User } from '@supabase/supabase-js';
 import Negotiator from 'negotiator';
-import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
 export async function middleware(req: NextRequest): Promise<NextResponse> {
-  const { res, user } = await handleSupabaseAuth({ req });
+  const { res, user } = await updateSession(req);
   const { res: nextRes, redirect } = handleRedirect({ req, res, user });
 
   if (redirect) return nextRes;
@@ -20,47 +19,24 @@ export const config = {
   matcher: [
     /*
      * Match all request paths except for the ones starting with:
-     * - api (API routes)
      * - _next/static (static files)
      * - _next/image (image optimization files)
-     * - media (media files)
      * - favicon.ico (favicon file)
-     * - favicon-16x16.png (favicon file)
-     * - favicon-32x32.png (favicon file)
-     * - apple-touch-icon.png (favicon file)
-     * - android-chrome-192x192.png (favicon file)
-     * - android-chrome-512x512.png (favicon file)
      * - robots.txt (SEO)
      * - sitemap.xml (SEO)
      * - site.webmanifest (SEO)
      * - monitoring (analytics)
+     * Excludes files with the following extensions for static assets:
+     * - svg
+     * - png
+     * - jpg
+     * - jpeg
+     * - gif
+     * - webp
      */
 
-    '/((?!api|_next/static|_next/image|media|favicon.ico|favicon-16x16.png|favicon-32x32.png|apple-touch-icon.png|android-chrome-192x192.png|android-chrome-512x512.png|robots.txt|sitemap.xml|site.webmanifest|monitoring).*)',
+    '/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|site.webmanifest|monitoring|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
-};
-
-const handleSupabaseAuth = async ({
-  req,
-}: {
-  req: NextRequest;
-}): Promise<{
-  res: NextResponse;
-  user: User | null;
-}> => {
-  // Create a NextResponse object to handle the response
-  const res = NextResponse.next();
-
-  // Create a Supabase client configured to use cookies
-  const supabase = createMiddlewareClient<Database>({ req, res });
-
-  // Refresh session if expired - required for Server Components
-  // https://supabase.com/docs/guides/auth/server-side/nextjs
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  return { res, user };
 };
 
 const handleRedirect = ({
@@ -75,6 +51,11 @@ const handleRedirect = ({
   res: NextResponse;
   redirect: boolean;
 } => {
+  // If current path starts with /api, return without redirecting
+  if (req.nextUrl.pathname.startsWith('/api')) {
+    return { res, redirect: false };
+  }
+
   // If current path ends with /login and user is logged in, redirect to onboarding page
   if (req.nextUrl.pathname.endsWith('/login') && user) {
     const nextRes = NextResponse.redirect(
@@ -85,18 +66,15 @@ const handleRedirect = ({
   }
 
   // If current path ends with /onboarding and user is not logged in, redirect to login page
-  if (req.nextUrl.pathname.endsWith('/onboarding') && !user) {
+  if (
+    req.nextUrl.pathname !== '/' &&
+    !req.nextUrl.pathname.endsWith('/login') &&
+    !PUBLIC_PATHS.some((path) => req.nextUrl.pathname.startsWith(path)) &&
+    !user
+  ) {
     const nextRes = NextResponse.redirect(
-      req.nextUrl.href.replace('/onboarding', '/login')
-    );
-
-    return { res: nextRes, redirect: true };
-  }
-
-  // If current path ends with /realtime and user is not logged in, redirect to login page
-  if (req.nextUrl.pathname.endsWith('/realtime') && !user) {
-    const nextRes = NextResponse.redirect(
-      req.nextUrl.href.replace('/realtime', '/login')
+      req.nextUrl.href.replace(req.nextUrl.pathname, '/login') +
+        `?nextUrl=${req.nextUrl.pathname}`
     );
 
     return { res: nextRes, redirect: true };
@@ -193,6 +171,11 @@ const handleLocale = ({
   req: NextRequest;
   res: NextResponse;
 }): NextResponse => {
+  // If current path starts with /api, return without redirecting
+  if (req.nextUrl.pathname.startsWith('/api')) {
+    return res;
+  }
+
   // Get locale from cookie or browser languages
   const { locale, pathname } = getLocale(req);
 
@@ -206,3 +189,11 @@ const handleLocale = ({
 
   return NextResponse.rewrite(req.nextUrl, res);
 };
+
+const PUBLIC_PATHS = [
+  '/terms',
+  '/privacy',
+  '/branding',
+  '/ai/chats',
+  '/calendar/meet-together',
+];

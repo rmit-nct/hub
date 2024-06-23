@@ -1,8 +1,9 @@
 import LoginForm from './form';
-import { Separator } from '@/components/ui/separator';
+import { Separator } from '@repo/ui/components/ui/separator';
 import useTranslation from 'next-translate/useTranslation';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Suspense } from 'react';
 
 export default async function Login() {
   const { t } = useTranslation('auth');
@@ -42,7 +43,9 @@ export default async function Login() {
           </h1>
         </div>
 
-        <LoginForm />
+        <Suspense fallback={<div>{t('common:loading')}...</div>}>
+          <LoginForm />
+        </Suspense>
 
         <Separator className="mt-2" />
         <div className="text-foreground/50 text-center text-sm font-semibold">

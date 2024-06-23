@@ -1,8 +1,18 @@
 'use client';
 
 import LoadingIndicator from '@/components/common/LoadingIndicator';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
+import { User } from '@/types/primitives/User';
+import { Workspace } from '@/types/primitives/Workspace';
+import { getInitials } from '@/utils/name-helper';
+import { createClient } from '@/utils/supabase/client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { CaretSortIcon, PlusCircledIcon } from '@radix-ui/react-icons';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@repo/ui/components/ui/avatar';
+import { Button } from '@repo/ui/components/ui/button';
 import {
   Command,
   CommandEmpty,
@@ -11,7 +21,7 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from '@/components/ui/command';
+} from '@repo/ui/components/ui/command';
 import {
   Dialog,
   DialogContent,
@@ -20,7 +30,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
+} from '@repo/ui/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -28,29 +38,23 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+} from '@repo/ui/components/ui/form';
+import { Input } from '@repo/ui/components/ui/input';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
+} from '@repo/ui/components/ui/popover';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
-import { toast } from '@/components/ui/use-toast';
-import { cn } from '@/lib/utils';
-import { User } from '@/types/primitives/User';
-import { Workspace } from '@/types/primitives/Workspace';
-import { getInitials } from '@/utils/name-helper';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { CaretSortIcon, PlusCircledIcon } from '@radix-ui/react-icons';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+} from '@repo/ui/components/ui/select';
+import { Separator } from '@repo/ui/components/ui/separator';
+import { toast } from '@repo/ui/hooks/use-toast';
+import { cn } from '@repo/ui/lib/utils';
 import { RealtimeChannel } from '@supabase/supabase-js';
 import { CheckIcon } from 'lucide-react';
 import { useTheme } from 'next-themes';
@@ -60,18 +64,18 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-interface Props {
-  user: User | null;
-  workspaces: Workspace[] | null;
-}
-
 const FormSchema = z.object({
   name: z.string().min(1).max(100),
   plan: z.enum(['FREE', 'PRO', 'ENTERPRISE']),
 });
 
-export default function WorkspaceSelect({ user, workspaces }: Props) {
+export default function WorkspaceSelect() {
   const { t } = useTranslation();
+
+  const [user, setUser] = useState<User | undefined>();
+  const [workspaces, setWorkspaces] = useState<Workspace[] | undefined>();
+
+  
 
   const router = useRouter();
   const params = useParams();
@@ -149,8 +153,54 @@ export default function WorkspaceSelect({ user, workspaces }: Props) {
     if (newPathname) router.push(newPathname);
   };
 
-  const wsId = params.wsId as string;
+  const wsId = params.wsId as string | undefined;
   const workspace = workspaces?.find((ws) => ws.id === wsId);
+
+  useEffect(() => {
+    const supabase = createClient();
+
+    async function fetchData() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) return;
+
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select(
+          'id, display_name, avatar_url, handle, created_at, user_private_details(email, new_email, birthday)'
+        )
+        .eq('id', user.id)
+        .single();
+
+      if (userError) return;
+
+      const { user_private_details, ...userRest } = userData;
+      setUser({ ...userRest, ...user_private_details } as User);
+
+      const { data: wsData, error: wsError } = await supabase
+        .from('workspaces')
+        .select(
+          'id, name, avatar_url, logo_url, created_at, workspace_members!inner(role)'
+        )
+        .eq('workspace_members.user_id', user.id);
+
+      if (wsError) return;
+
+      setWorkspaces(wsData as Workspace[]);
+    }
+
+    supabase.auth.onAuthStateChange((event) => {
+      if (
+        event === 'INITIAL_SESSION' ||
+        event === 'TOKEN_REFRESHED' ||
+        event === 'SIGNED_IN' ||
+        event === 'SIGNED_OUT'
+      )
+        fetchData();
+    });
+  }, [wsId]);
 
   // Toggle the menu when ⌘K is pressed
   useEffect(() => {
@@ -216,21 +266,16 @@ export default function WorkspaceSelect({ user, workspaces }: Props) {
         });
     }
 
-    const supabase = createClientComponentClient();
-    const channel = wsId
-      ? supabase.channel(
-          `workspace:${wsId}`,
-          user?.id
-            ? {
-                config: {
-                  presence: {
-                    key: user.id,
-                  },
-                },
-              }
-            : undefined
-        )
-      : null;
+    if (!wsId || !user?.id) return;
+    const supabase = createClient();
+
+    const channel = supabase.channel(`workspace:${wsId}`, {
+      config: {
+        presence: {
+          key: user.id,
+        },
+      },
+    });
 
     trackPresence(channel);
     return () => {
@@ -241,7 +286,7 @@ export default function WorkspaceSelect({ user, workspaces }: Props) {
   const { resolvedTheme } = useTheme();
   const isDefault = !resolvedTheme?.includes('-');
 
-  if (!workspace || !workspaces?.length) return null;
+  if (!wsId) return null;
 
   return (
     <>
@@ -254,23 +299,33 @@ export default function WorkspaceSelect({ user, workspaces }: Props) {
         }}
       >
         <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger asChild>
+          <PopoverTrigger
+            asChild
+            disabled={!workspaces || workspaces.length === 0}
+          >
             <Button
               variant="outline"
               role="combobox"
               aria-expanded={open}
               aria-label="Select a workspace"
               className={cn('w-full justify-between md:max-w-[16rem]')}
+              disabled={!workspaces || workspaces.length === 0}
             >
               <Avatar className="mr-2 h-5 w-5">
                 <AvatarImage
-                  src={`https://avatar.vercel.sh/${workspace.name}.png`}
-                  alt={workspace.name}
+                  src={
+                    workspace?.name
+                      ? `https://avatar.vercel.sh/${workspace.name}.png`
+                      : undefined
+                  }
+                  alt={workspace?.name || 'Workspace'}
                 />
-                <AvatarFallback>{getInitials(workspace.name)}</AvatarFallback>
+                <AvatarFallback>
+                  {workspace?.name ? getInitials(workspace.name) : '?'}
+                </AvatarFallback>
               </Avatar>
               <span className="line-clamp-1 hidden md:block">
-                {workspace.name}
+                {workspace?.name || t('common:loading') + '...'}
               </span>
               <CaretSortIcon className="ml-1 h-4 w-4 shrink-0 opacity-50" />
             </Button>

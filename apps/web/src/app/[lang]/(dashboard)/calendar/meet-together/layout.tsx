@@ -8,9 +8,7 @@ interface Props {
   };
 }
 
-export async function generateMetadata({
-  params: { lang },
-}: Props): Promise<Metadata> {
+export const generateMetadata = ({ params: { lang } }: Props): Metadata => {
   const viTitle = 'Họp cùng nhau | Giải pháp thay thế When2Meet, mã nguồn mở';
   const enTitle = 'Meet together | The Open Source When2Meet Alternative';
 
@@ -43,7 +41,7 @@ export async function generateMetadata({
     creator: 'vohoangphuc',
     openGraph: {
       type: 'website',
-      locale: 'en_US',
+      locale: lang,
       url: siteConfig.url,
       title,
       description,
@@ -65,7 +63,7 @@ export async function generateMetadata({
       creator: '@tutur3u',
     },
   };
-}
+};
 
 export default async function MeetTogetherLayout({
   children,

@@ -1,11 +1,9 @@
 import FleetingNavigator from './fleeting-navigator';
 import { NavLink, Navigation } from '@/components/navigation';
-import { Separator } from '@/components/ui/separator';
 import { getSecrets, verifySecret } from '@/lib/workspace-helper';
+import { Separator } from '@repo/ui/components/ui/separator';
 import useTranslation from 'next-translate/useTranslation';
 import { ReactNode } from 'react';
-
-export const dynamic = 'force-dynamic';
 
 interface LayoutProps {
   params: {
@@ -23,6 +21,7 @@ export default async function Layout({
   const secrets = await getSecrets({
     wsId,
     requiredSecrets: [
+      'ENABLE_X',
       'ENABLE_AI',
       'ENABLE_CHAT',
       'ENABLE_CALENDAR',
@@ -38,8 +37,16 @@ export default async function Layout({
 
   const navLinks: NavLink[] = [
     {
+      name: t('X'),
+      href: `/${wsId}/x`,
+      disabled: !verifySecret('ENABLE_X', 'true', secrets),
+      requireRootMember: true,
+      requireRootWorkspace: true,
+    },
+    {
       name: t('chat'),
       href: `/${wsId}/chat`,
+      forceRefresh: true,
       disabled: !verifySecret('ENABLE_CHAT', 'true', secrets),
     },
     {

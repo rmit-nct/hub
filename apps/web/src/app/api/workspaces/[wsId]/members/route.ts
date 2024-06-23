@@ -1,8 +1,5 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createClient } from '@/utils/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
-
-export const dynamic = 'force-dynamic';
 
 interface Params {
   params: {
@@ -16,7 +13,7 @@ export async function PUT(req: NextRequest, { params: { wsId } }: Params) {
   const userId = searchParams.get('id');
   const userEmail = searchParams.get('email');
 
-  const supabase = createRouteHandlerClient({ cookies });
+  const supabase = createClient();
   const { pending, role, role_title } = await req.json();
 
   const query = supabase
@@ -52,25 +49,31 @@ export async function DELETE(req: NextRequest, { params: { wsId } }: Params) {
   const userId = searchParams.get('id');
   const userEmail = searchParams.get('email');
 
-  const supabase = createRouteHandlerClient({ cookies });
+  const supabase = createClient();
 
-  const inviteQuery = supabase
-    .from('workspace_invites')
-    .delete()
-    .eq('ws_id', wsId)
-    .eq('user_id', userId);
+  const inviteQuery = userId
+    ? supabase
+        .from('workspace_invites')
+        .delete()
+        .eq('ws_id', wsId)
+        .eq('user_id', userId)
+    : { error: undefined };
 
-  const emailInviteQuery = supabase
-    .from('workspace_email_invites')
-    .delete()
-    .eq('ws_id', wsId)
-    .eq('email', userEmail);
+  const emailInviteQuery = userEmail
+    ? supabase
+        .from('workspace_email_invites')
+        .delete()
+        .eq('ws_id', wsId)
+        .eq('email', userEmail)
+    : { error: undefined };
 
-  const memberQuery = supabase
-    .from('workspace_members')
-    .delete()
-    .eq('ws_id', wsId)
-    .eq('user_id', userId);
+  const memberQuery = userId
+    ? supabase
+        .from('workspace_members')
+        .delete()
+        .eq('ws_id', wsId)
+        .eq('user_id', userId)
+    : { error: undefined };
 
   // use Promise.all to run all queries in parallel
   const [inviteData, emailInviteData, memberData] = await Promise.all([

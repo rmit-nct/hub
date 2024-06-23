@@ -2,10 +2,14 @@
 // @see https://github.com/mckaywrigley/chatbot-ui/blob/main/components/Chat/ChatMessage.tsx
 import { ChatMessageActions } from '@/components/chat-message-actions';
 import { MemoizedReactMarkdown } from '@/components/markdown';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { CodeBlock } from '@/components/ui/codeblock';
-import { IconUser } from '@/components/ui/icons';
-import { cn } from '@/lib/utils';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@repo/ui/components/ui/avatar';
+import { CodeBlock } from '@repo/ui/components/ui/codeblock';
+import { IconUser } from '@repo/ui/components/ui/icons';
+import { cn } from '@repo/ui/lib/utils';
 import { Message } from 'ai';
 import dayjs from 'dayjs';
 import 'dayjs/locale/vi';
@@ -20,12 +24,14 @@ import remarkMath from 'remark-math';
 
 export interface ChatMessageProps {
   message: Message & { chat_id?: string; created_at?: string };
-  model?: string;
+  model?: string | null;
+  setInput?: (input: string) => void;
 }
 
 export function FleetingAssistantMessage({
   message,
   model,
+  setInput,
   ...props
 }: ChatMessageProps) {
   dayjs.extend(relativeTime);
@@ -34,7 +40,8 @@ export function FleetingAssistantMessage({
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme?.includes('dark');
 
-  const formattedModel = model?.replace(/_/g, ' ').replace(/-/g, ' ');
+  // const formattedModel = model?.replace(/_/g, ' ').replace(/-/g, ' ');
+  const formattedModel = model;
 
   return (
     <div
@@ -143,6 +150,18 @@ export function FleetingAssistantMessage({
                   ?.join('')
                   ?.trim();
 
+                if (setInput)
+                  return (
+                    <button
+                      className="font-semibold text-foreground bg-foreground/5 hover:bg-foreground/10 mb-2 rounded-full border text-left transition last:mb-0"
+                      onClick={() => setInput(content || '')}
+                    >
+                      <span className="line-clamp-1 px-3 py-1">
+                        {content || '...'}
+                      </span>
+                    </button>
+                  );
+
                 return (
                   <span className="text-foreground bg-foreground/5 mb-2 inline-block rounded-full border text-left transition last:mb-0">
                     <span className="line-clamp-1 px-3 py-1">
@@ -208,6 +227,9 @@ export function FleetingAssistantMessage({
                   {children}
                 </pre>
               );
+            },
+            hr() {
+              return <hr className="border-border" />;
             },
           }}
         >

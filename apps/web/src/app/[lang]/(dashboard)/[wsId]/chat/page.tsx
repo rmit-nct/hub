@@ -1,12 +1,9 @@
 import Chat from './chat';
 import { getChats } from './helper';
 import { getWorkspace, verifyHasSecrets } from '@/lib/workspace-helper';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/utils/supabase/server';
 import { Message } from 'ai';
-import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
-
-export const dynamic = 'force-dynamic';
 
 interface Props {
   params: {
@@ -55,11 +52,11 @@ const hasKey = (key: string) => {
 };
 
 const getMessages = async () => {
-  const supabase = createServerComponentClient({ cookies });
+  const supabase = createClient();
 
   const { data, error } = await supabase
     .from('ai_chat_messages')
-    .select('*, ai_chats(*)')
+    .select('*, ai_chats!chat_id(*)')
     .order('created_at', { ascending: false })
     .limit(2);
 

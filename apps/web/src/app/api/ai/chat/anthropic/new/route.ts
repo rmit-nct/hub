@@ -1,13 +1,11 @@
+import { createClient } from '@/utils/supabase/server';
 import Anthropic, { AI_PROMPT, HUMAN_PROMPT } from '@anthropic-ai/sdk';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Message } from 'ai';
-import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 export const runtime = 'edge';
 export const maxDuration = 60;
 export const preferredRegion = 'sin1';
-export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
   try {
@@ -16,10 +14,7 @@ export async function POST(req: Request) {
     if (!message)
       return NextResponse.json('No message provided', { status: 400 });
 
-    const cookieStore = cookies();
-    const supabase = createServerComponentClient({
-      cookies: () => cookieStore,
-    });
+    const supabase = createClient();
 
     const {
       data: { user },

@@ -5,7 +5,14 @@ import { ThemeDropdownItems } from './(dashboard)/_components/theme-dropdown-ite
 import DashboardMenuItem from './dashboard-menu-item';
 import InviteMembersMenuItem from './invite-members-menu-item';
 import MeetTogetherMenuItem from './meet-together-menu-item';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { getCurrentUser } from '@/lib/user-helper';
+import { getWorkspaces } from '@/lib/workspace-helper';
+import { getInitials } from '@/utils/name-helper';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@repo/ui/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,14 +25,10 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { getCurrentUser } from '@/lib/user-helper';
-import { getWorkspaces } from '@/lib/workspace-helper';
-import { getInitials } from '@/utils/name-helper';
+} from '@repo/ui/components/ui/dropdown-menu';
 import { Globe, Palette, Settings, User } from 'lucide-react';
 import useTranslation from 'next-translate/useTranslation';
 import Link from 'next/link';
-import { Suspense } from 'react';
 
 export async function UserNav() {
   const { t } = useTranslation('common');
@@ -37,20 +40,18 @@ export async function UserNav() {
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Avatar className="relative cursor-pointer overflow-visible font-semibold">
-          <Suspense fallback={<AvatarFallback>?</AvatarFallback>}>
-            <AvatarImage
-              src={user?.avatar_url ?? undefined}
-              className="overflow-clip rounded-full"
-            />
-            <AvatarFallback className="font-semibold">
-              {user?.display_name ? (
-                getInitials(user.display_name)
-              ) : (
-                <User className="h-5 w-5" />
-              )}
-            </AvatarFallback>
-            <div className="border-background absolute bottom-0 right-0 z-20 h-3 w-3 rounded-full border-2 bg-green-500 dark:bg-green-400" />
-          </Suspense>
+          <AvatarImage
+            src={user?.avatar_url ?? undefined}
+            className="overflow-clip rounded-full"
+          />
+          <AvatarFallback className="font-semibold">
+            {user?.display_name ? (
+              getInitials(user.display_name)
+            ) : (
+              <User className="h-5 w-5" />
+            )}
+          </AvatarFallback>
+          <div className="border-background absolute bottom-0 right-0 z-20 h-3 w-3 rounded-full border-2 bg-green-500 dark:bg-green-400" />
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
