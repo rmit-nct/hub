@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import ImageModal from "../picture_zoom";
-
+import Email_Modal from "../customSendingEmail";
 interface BillDetails {
   id: number;
   bill_name: string;
@@ -10,6 +10,7 @@ interface BillDetails {
   image_red_bill: string;
   image_white_bill: string;
   total_price: number;
+  workspace_users:User;
   paid_amount: number;
   total_diff: number;
   tnote: string;
@@ -18,6 +19,12 @@ interface BillDetails {
   updated_at: string;
   user_name: string | undefined;
   items: BillItem[];
+}
+
+interface User{
+  id:string;
+  full_name: string;
+  email:string;
 }
 
 interface BillItem {
@@ -31,25 +38,40 @@ interface BillItem {
 interface ModalProps {
   show: boolean;
   billDetail: BillDetails;
+  wsId: string;
   onClose: () => void;
 }
 
-const Bill_Modal: React.FC<ModalProps> = ({ show, billDetail, onClose }) => {
+const Bill_Modal: React.FC<ModalProps> = ({ show, wsId,billDetail, onClose }) => {
   const [showModal, setShowModal] = useState(false);
   const [selected, setSelected] = useState(false);
-
+  const [sendEmailClicked, setSendEmailClicked] = useState(false);
+  const [showEmailModal, setShowEmailModal]= useState(false);
   const handleClick = () => {
     setShowModal(true);
     setSelected(true);
   };
 
+  const handleSendEmailClick= () =>{
+    setSendEmailClicked(true);
+    setShowEmailModal(true);
+  }
   console.log(JSON.stringify(billDetail.items) + " Hello items");
-
+  
+  const closeEmailModal= ()=>{
+    setShowEmailModal(false);
+    setSendEmailClicked(false);
+  }
   const closeModal = () => {
     setShowModal(false);
     setSelected(false);
   };
 
+  const newUser: User = {
+    id: billDetail.workspace_users.id,
+    full_name: billDetail.workspace_users.full_name,
+    email: billDetail.workspace_users.email,
+  };
   if (!show) return null;
 
   return (
@@ -100,6 +122,9 @@ const Bill_Modal: React.FC<ModalProps> = ({ show, billDetail, onClose }) => {
               )}
             </div>
           </div>
+          <div>
+            <button onClick={handleSendEmailClick} className="font-bold bg-blue-800">Send email</button>
+          </div>
           <div className="mt-4">
             <p className="font-bold">Total price:</p>
             <p>{billDetail.total_price}</p>
@@ -117,6 +142,7 @@ const Bill_Modal: React.FC<ModalProps> = ({ show, billDetail, onClose }) => {
         </div>
       </div>
       {selected && <ImageModal show={showModal} imageURL={billDetail.image_red_bill || billDetail.image_white_bill} onClose={closeModal} />}
+      {sendEmailClicked && <Email_Modal wsId={wsId} department="finance" user={newUser} show={showEmailModal}  onClose={(closeEmailModal)} />}
     </div>
   );
 };

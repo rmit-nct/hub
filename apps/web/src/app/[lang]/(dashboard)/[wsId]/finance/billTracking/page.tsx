@@ -42,7 +42,9 @@ export default async function App({
     .select(`
       *,
       workspace_users:member_in_charge (
-        full_name
+        full_name,
+        email,
+        id
       ),
       finance_bill_items (
         *,

@@ -13,6 +13,11 @@ interface BillItem {
   item_description: string;
 }
 
+interface User{
+  id:string;
+  full_name: string;
+  email:string;
+}
 interface BillDetails {
   id: number;
   bill_name: string;
@@ -20,6 +25,7 @@ interface BillDetails {
   member_in_charge: string;
   image_red_bill: string;
   image_white_bill: string;
+  workspace_users:User;
   total_price: number;
   paid_amount: number;
   total_diff: number;
@@ -157,7 +163,7 @@ const BillDataTable: React.FC<Props> = ({ tasks, bills, wsId }) => {
       <div className="fixed right-4 top-1/2 transform -translate-y-1/2 bg-gray-800 p-6 rounded-lg">
         <ToDoList tasks={tasks}/>
       </div>
-      {selectedBill && <Modal show={showModal} billDetail={selectedBill} onClose={closeModal} />}
+      {selectedBill && <Modal wsId={wsId} show={showModal} billDetail={selectedBill} onClose={closeModal} />}
     </div>
   );
 };
