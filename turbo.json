@@ -17,7 +17,11 @@
     "BASE_URL",
     "API_URL",
     "ANALYZE",
-    "NODE_ENV"
+    "NODE_ENV",
+    "AWS_REGION",
+    "AWS_ACCESS_KEY_ID",
+    "AWS_SECRET_ACCESS_KEY",
+    "SOURCE_EMAIL"
   ],
   "pipeline": {
     "build": {

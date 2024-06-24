@@ -43,7 +43,10 @@ const Modal: React.FC<ModalProps> = ({ show, wsId, user, onClose }) => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const updatedStatus = formData.status === "Approved" ? "Not Approved" : "Approved";
-    const updatedFormData = { ...formData, status: updatedStatus };
+    setFormData((prevData) => ({
+      ...prevData,
+      status: updatedStatus,
+    }));
 
     try {
       const response = await fetch(`/api/workspaces/${wsId}/memberFeeTracking`, {
@@ -51,7 +54,7 @@ const Modal: React.FC<ModalProps> = ({ show, wsId, user, onClose }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ memberFee: updatedFormData }),
+        body: JSON.stringify({ memberFee: { ...formData, status: updatedStatus } }),
       });
 
       if (!response.ok) {

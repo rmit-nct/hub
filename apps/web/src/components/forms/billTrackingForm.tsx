@@ -142,7 +142,7 @@ const Bill_Modal: React.FC<ModalProps> = ({ show, wsId,billDetail, onClose }) =>
         </div>
       </div>
       {selected && <ImageModal show={showModal} imageURL={billDetail.image_red_bill || billDetail.image_white_bill} onClose={closeModal} />}
-      {sendEmailClicked && <Email_Modal wsId={wsId} department="finance" user={newUser} show={showEmailModal}  onClose={(closeEmailModal)} />}
+      {sendEmailClicked && <Email_Modal wsId={wsId}  user={newUser} show={showEmailModal}  onClose={(closeEmailModal)} />}
     </div>
   );
 };
