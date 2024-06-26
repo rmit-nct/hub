@@ -6,6 +6,7 @@ import Modal from "../forms/billTrackingForm";
 import Image from "next/image";
 import FilterButton from "../filter";
 import RefreshButton from "../refresh";
+import usePagination from "@/hooks/usePagination";
 interface BillItem {
   id: number;
   created_at: string;
@@ -46,6 +47,7 @@ interface Task {
   budget_planning_column: boolean;
 }
 
+
 interface Props {
   tasks: Task[];
   bills: BillDetails[];
@@ -69,13 +71,29 @@ const BillDataTable: React.FC<Props> = ({ tasks, bills, wsId }) => {
 
   const handleSearchChange = (query: string) => {
     setSearchQuery(query);
+    resetPage();
   };
-
   const filteredBills = bills.filter(
     bill =>
       bill.bill_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       bill.event_id.toLowerCase().includes(searchQuery.toLowerCase())
   );
+  const itemsPerPage = 5;
+  
+
+  const {
+    currentPage,
+    totalPages,
+    startIndex,
+    endIndex,
+    handlePreviousPage,
+    handleNextPage,
+    resetPage
+  } = usePagination(filteredBills.length, itemsPerPage);
+
+  const paginatedUsers = filteredBills.slice(startIndex, endIndex);
+
+  
 
   return (
     <div className="text-white min-h-screen flex flex-col items-start">
@@ -100,7 +118,7 @@ const BillDataTable: React.FC<Props> = ({ tasks, bills, wsId }) => {
             </tr>
           </thead>
           <tbody>
-            {filteredBills.map((bill, index) => (
+            {paginatedUsers.map((bill, index) => (
               <tr
                 key={bill.id}
                 className={`${index === bills.length - 1 ? '' : 'border-b border-gray-700'}`}
@@ -130,6 +148,25 @@ const BillDataTable: React.FC<Props> = ({ tasks, bills, wsId }) => {
             ))}
           </tbody>
         </table>
+        <div className="flex justify-between mt-4">
+          <button
+            onClick={handlePreviousPage}
+            disabled={currentPage === 1}
+            className="px-4 py-2 bg-gray-700 rounded disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <span className="px-4 py-2">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 bg-gray-700 rounded disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
       </div>
       <div className="fixed right-4 top-1/2 transform -translate-y-1/2 bg-gray-800 p-6 rounded-lg">
         <ToDoList tasks={tasks}/>
