@@ -70,7 +70,7 @@ const UserDataTable: React.FC<Props> = ({ tasks, memberFee, wsId }) => {
 
   const handleSearchChange = (query: string) => {
     setSearchQuery(query);
-    resetPage(); // Reset to first page on search
+    resetPage(); 
   };
 
   return (
@@ -80,7 +80,7 @@ const UserDataTable: React.FC<Props> = ({ tasks, memberFee, wsId }) => {
           <SearchBar onSearchChange={handleSearchChange} />
           <div className="flex items-center">
             <FilterButton />
-            <RefreshButton />
+            <RefreshButton onReset={resetPage} />
           </div>
         </div>
         <table className="min-w-full bg-gray-800 rounded-2xl">

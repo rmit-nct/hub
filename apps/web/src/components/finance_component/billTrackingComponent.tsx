@@ -102,7 +102,7 @@ const BillDataTable: React.FC<Props> = ({ tasks, bills, wsId }) => {
           <SearchBar onSearchChange={handleSearchChange} />
           <div className="flex items-center">
             <FilterButton/>
-            <RefreshButton/>
+            <RefreshButton onReset={resetPage}/>
           </div>
         </div>
         <table className="min-w-full bg-gray-800 rounded-2xl">
