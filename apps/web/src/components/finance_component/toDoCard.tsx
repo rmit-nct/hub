@@ -1,6 +1,6 @@
 "use client"
 import React, { useState } from 'react';
-
+import { useTheme } from 'next-themes';
 interface Task {
   id: number;
   created_at: string;
@@ -15,6 +15,8 @@ interface Props {
 }
 
 const ToDoTasks: React.FC<Props> = ({ tasks, wsId }) => {
+  const {resolvedTheme} =useTheme();
+  const isDark= resolvedTheme === 'dark';
   const [task, setTask] = useState<Task>(tasks[0]);
   const [selections, setSelections] = useState({
     member_fee_column: task.member_fee_column,
@@ -70,23 +72,23 @@ const ToDoTasks: React.FC<Props> = ({ tasks, wsId }) => {
   };
 
   return (
-    <div className="relative inline-block w-[800px] rounded-3xl bg-gray-800 p-6 text-center">
+    <div className={`relative inline-block w-[800px] rounded-3xl p-6 text-center ${isDark ? 'bg-gray-800' : 'bg-blue-100'}`}>
       <h2 className="justify-left mb-4 flex items-center text-3xl font-bold">
         To-do tasks: <span className="ml-2 ">🎯</span>
       </h2>
-      <ul className="ml-[50px] text-left">
+      <ul className={`ml-[50px] text-left ${isDark ? 'text-white' : 'text-black'}`} >
         <li className="mb-2 mt-[70px] flex items-center cursor-pointer" onClick={() => toggleSelection('member_fee_column')}>
-          <a className={`w-full text-left text-2xl font-bold text-white ${selections.member_fee_column ? 'line-through bg-gray-600' : ''}`}>
+          <a className={`w-full text-left text-2xl font-bold  ${selections.member_fee_column ? 'line-through ' : ''}`}>
             Member fee tracking.
           </a>
         </li>
         <li className="mb-2 mt-[70px] flex items-center cursor-pointer" onClick={() => toggleSelection('bill_tracking_column')}>
-          <a className={`w-full text-left text-2xl font-bold text-white ${selections.bill_tracking_column ? 'line-through bg-gray-600' : ''}`}>
+          <a className={`w-full text-left text-2xl font-bold  ${selections.bill_tracking_column ? 'line-through ' : ''}`}>
             Bill tracking.
           </a>
         </li>
         <li className="mt-[70px] flex items-center cursor-pointer" onClick={() => toggleSelection('budget_planning_column')}>
-          <a className={`w-full text-left text-2xl font-bold text-white ${selections.budget_planning_column ? 'line-through bg-gray-600' : ''}`}>
+          <a className={`w-full text-left text-2xl font-bold  ${selections.budget_planning_column ? 'line-through ' : ''}`}>
             Budget planning.
           </a>
         </li>
