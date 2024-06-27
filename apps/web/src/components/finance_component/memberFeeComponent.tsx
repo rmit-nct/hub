@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import React, { useState } from 'react';
 import Modal from '../forms/memberFeeTrackingForm';
 import ToDoList from '../toDoList';
@@ -6,6 +6,7 @@ import SearchBar from '../searchBar';
 import RefreshButton from '../refresh';
 import FilterButton from '../filter';
 import usePagination from '@/hooks/usePagination';
+import { useTheme } from 'next-themes';
 
 interface User {
   id: string;
@@ -40,6 +41,8 @@ const UserDataTable: React.FC<Props> = ({ tasks, memberFee, wsId }) => {
   const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
   const itemsPerPage = 5;
   const filteredUsers = memberFee.filter(
     user =>
@@ -77,15 +80,15 @@ const UserDataTable: React.FC<Props> = ({ tasks, memberFee, wsId }) => {
     <div className="text-white min-h-screen flex flex-col items-start">
       <div className="p-6 rounded-lg w-full max-w-4xl items-start">
         <div className="mb-4 flex justify-between items-center">
-          <SearchBar onSearchChange={handleSearchChange} />
+          <SearchBar isDark={isDark} onSearchChange={handleSearchChange} />
           <div className="flex items-center">
             <FilterButton />
             <RefreshButton onReset={resetPage} />
           </div>
         </div>
-        <table className="min-w-full bg-gray-800 rounded-2xl">
+        <table className={`min-w-full rounded-2xl font-bold ${isDark ? 'bg-gray-800' : 'text-black bg-blue-100'}`}>
           <thead>
-            <tr className='border-b border-gray-700'>
+            <tr className={`border-b ${isDark ? 'border-gray-700' : 'border-black'}`}>
               <th className='h-[70px] py-2 px-4 text-center' colSpan={5}>Member fee list</th>
             </tr>
           </thead>
@@ -94,7 +97,7 @@ const UserDataTable: React.FC<Props> = ({ tasks, memberFee, wsId }) => {
               <tr
                 key={user.id}
                 onClick={() => handleRowClick(user)}
-                className={`h-[60px] cursor-pointer hover:bg-gray-700 ${index === paginatedUsers.length - 1 ? '' : 'border-b border-gray-700'}`}
+                className={`h-[60px] cursor-pointer hover:${isDark ? 'bg-gray-700' : 'bg-black'} ${index === paginatedUsers.length - 1 ? '' : `border-b ${isDark ? 'border-gray-700' : 'border-black'}`}`}
               >
                 <td className="py-2 px-4">{user.major}</td>
                 <td className="py-2 px-4">{user.name}</td>
@@ -115,7 +118,7 @@ const UserDataTable: React.FC<Props> = ({ tasks, memberFee, wsId }) => {
           >
             Previous
           </button>
-          <span className="px-4 py-2">
+          <span className={`px-4 py-2 font-bold ${isDark ? 'text-white' : 'text-black'}`}  >
             Page {currentPage} of {totalPages}
           </span>
           <button
