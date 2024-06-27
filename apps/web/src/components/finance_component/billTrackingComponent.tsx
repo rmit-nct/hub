@@ -7,6 +7,7 @@ import Image from "next/image";
 import FilterButton from "../filter";
 import RefreshButton from "../refresh";
 import usePagination from "@/hooks/usePagination";
+import { useTheme } from "next-themes";
 interface BillItem {
   id: number;
   created_at: string;
@@ -58,7 +59,8 @@ const BillDataTable: React.FC<Props> = ({ tasks, bills, wsId }) => {
   const [showModal, setShowModal] = useState(false);
   const [selectedBill, setSelectedBill] = useState<BillDetails | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-
+  const {resolvedTheme} = useTheme();
+  const isDark = resolvedTheme=== 'dark';
   console.log(wsId);
   const handleRowClick = (bill: BillDetails) => {
     setSelectedBill(bill);
@@ -99,7 +101,7 @@ const BillDataTable: React.FC<Props> = ({ tasks, bills, wsId }) => {
     <div className="text-white min-h-screen flex flex-col items-start">
       <div className="p-6 rounded-lg w-full max-w-4xl items-start">
         <div className="mb-4 flex justify-between items-center">
-          <SearchBar onSearchChange={handleSearchChange} />
+          <SearchBar isDark={isDark} onSearchChange={handleSearchChange} />
           <div className="flex items-center">
             <FilterButton/>
             <RefreshButton onReset={resetPage}/>
@@ -168,9 +170,9 @@ const BillDataTable: React.FC<Props> = ({ tasks, bills, wsId }) => {
           </button>
         </div>
       </div>
-      <div className="fixed right-4 top-1/2 transform -translate-y-1/2 bg-gray-800 p-6 rounded-lg">
+      
         <ToDoList tasks={tasks}/>
-      </div>
+
       {selectedBill && <Modal wsId={wsId} show={showModal} billDetail={selectedBill} onClose={closeModal} />}
     </div>
   );
