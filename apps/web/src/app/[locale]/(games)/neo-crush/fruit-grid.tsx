@@ -9,7 +9,7 @@ import {
   ChevronUp,
   Sparkles,
 } from 'lucide-react';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface FruitGridProps {
   fruits: Fruit[];
@@ -30,9 +30,19 @@ export const FruitGrid: React.FC<FruitGridProps> = ({
     useState<HTMLDivElement | null>(null);
   const [squareBeingReplaced, setSquareBeingReplaced] =
     useState<HTMLDivElement | null>(null);
-  const touchStartPosition = useRef<{ x: number; y: number } | null>(null);
 
-  const { dragStart, dragOver, dragLeave, dragDrop, dragEnd } = useDragAndDrop(
+  const {
+    dragStart,
+    dragOver,
+    dragLeave,
+    dragDrop,
+    dragEnd,
+    touchStart,
+    touchMove,
+    touchEnd,
+    handleClick,
+    isSwiping,
+  } = useDragAndDrop(
     fruits,
     setFruits,
     squareBeingDragged,
@@ -42,57 +52,15 @@ export const FruitGrid: React.FC<FruitGridProps> = ({
     handleSpecialFruits
   );
 
-  const touchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    const touch = e.touches[0];
-    if (!touch) return;
-    touchStartPosition.current = { x: touch.clientX, y: touch.clientY };
-    dragStart(e);
-  };
-
-  const touchMove = (e: React.TouchEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    if (!touchStartPosition.current) return;
-
-    const touch = e.touches[0];
-    if (!touch) return;
-
-    const diffX = touch.clientX - touchStartPosition.current.x;
-    const diffY = touch.clientY - touchStartPosition.current.y;
-
-    // Only process as a swipe if the movement is significant
-    if (Math.abs(diffX) > 20 || Math.abs(diffY) > 20) {
-      const target = e.target as HTMLDivElement;
-      const currentId = parseInt(target.getAttribute('data-id') || '0');
-
-      let newId;
-      if (Math.abs(diffX) > Math.abs(diffY)) {
-        // Horizontal swipe
-        newId = currentId + (diffX > 0 ? 1 : -1);
-      } else {
-        // Vertical swipe
-        newId = currentId + (diffY > 0 ? 8 : -8); // Assuming 8 columns
-      }
-
-      const newTarget = document.querySelector(
-        `[data-id="${newId}"]`
-      ) as HTMLDivElement;
-      if (newTarget) {
-        setSquareBeingReplaced(newTarget);
-        dragDrop({
-          target: newTarget,
-        } as unknown as React.DragEvent<HTMLDivElement>);
-      }
+  useEffect(() => {
+    if (squareBeingDragged && squareBeingReplaced) {
+      dragEnd(null, squareBeingReplaced);
     }
-  };
-
-  const touchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
-    dragDrop(e);
-    dragEnd(e);
-  };
+  }, [squareBeingDragged, squareBeingReplaced]);
 
   return (
     <>
+      {/* @ts-ignore */}
       <style jsx>{`
         @keyframes pulse {
           0% {
@@ -136,13 +104,21 @@ export const FruitGrid: React.FC<FruitGridProps> = ({
                 : ''
             }`}
             style={{
-              borderColor: fruit
-                ? fruit?.type === 'rainbow'
+              borderColor:
+                (squareBeingDragged &&
+                  squareBeingDragged.getAttribute('data-id') ===
+                    index.toString()) ||
+                (squareBeingReplaced &&
+                  squareBeingReplaced.getAttribute('data-id') ===
+                    index.toString())
                   ? 'var(--foreground)'
-                  : fruit?.type !== 'normal'
-                    ? colorMap[fruit.color]
-                    : 'transparent'
-                : 'var(--foreground)',
+                  : fruit
+                    ? fruit?.type === 'rainbow'
+                      ? 'var(--foreground)'
+                      : fruit?.type !== 'normal'
+                        ? colorMap[fruit.color]
+                        : 'transparent'
+                    : 'var(--foreground)',
               opacity: fruit ? 1 : 0.3,
               backgroundColor:
                 fruit?.type === 'rainbow'
@@ -177,6 +153,11 @@ export const FruitGrid: React.FC<FruitGridProps> = ({
             onTouchStart={touchStart}
             onTouchMove={touchMove}
             onTouchEnd={touchEnd}
+            onClick={(e) => {
+              if (!isSwiping.current) {
+                handleClick(e);
+              }
+            }}
           >
             {fruit?.type === 'horizontal' && (
               <>
