@@ -1,7 +1,6 @@
 'use client';
 
-import { Project, projects } from './data';
-import ProjectDetail from './project-detail';
+import { projects } from './data';
 import { Separator } from '@repo/ui/components/ui/separator';
 import { useState } from 'react';
 
@@ -15,11 +14,6 @@ export default function Projects() {
 
   const [pinnedType, setPinnedType] = useState<boolean>(false);
   const [pinnedStatus, setPinnedStatus] = useState<boolean>(false);
-
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [projectDetail, setProjectDetail] = useState<Project | undefined>(
-    undefined
-  );
 
   return (
     <>
@@ -180,10 +174,6 @@ export default function Projects() {
                 ? 'opacity-30'
                 : ''
             } transition duration-300 hover:-translate-y-2`}
-            onClick={() => {
-              setProjectDetail(member);
-              setIsModalOpen(true);
-            }}
           >
             <div className="flex h-full w-full flex-col items-center justify-center">
               <div className="text-foreground text-center font-bold">
@@ -282,15 +272,6 @@ export default function Projects() {
             </div>
           </button>
         ))}
-
-        {isModalOpen && (
-          <ProjectDetail
-            data={projectDetail}
-            onClose={() => {
-              setIsModalOpen(false);
-            }}
-          />
-        )}
       </div>
     </>
   );
