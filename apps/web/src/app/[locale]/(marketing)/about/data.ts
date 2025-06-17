@@ -24,12 +24,6 @@ export const members: {
     image: '/members/quang.jpg',
   },
   {
-    name: 'Vo Hoang Phuc',
-    role: 'Technical Vice President',
-    departments: ['Executive Board', 'Technology', 'External Relations'],
-    image: '/members/phuc.jpg',
-  },
-  {
     name: 'Huynh Tan Phat',
     role: 'Chief of Finance',
     departments: ['Executive Board', 'Finance'],

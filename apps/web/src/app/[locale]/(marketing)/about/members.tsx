@@ -3,6 +3,7 @@
 import { members } from './data';
 import MemberCard from './member-card';
 import { useState } from 'react';
+import MemberCarousel from './member-carousel';
 
 type DepartmentName =
   | 'Finance'
@@ -88,21 +89,9 @@ export default function Members() {
           to oversee the operations of the club.
         </div>
       </div>
-      <div className="mt-4 grid grid-cols-1 gap-0 px-16 sm:grid-cols-2 md:gap-4 lg:grid-cols-3">
-        {members.map((p, index) => (
-          <div
-            key={index}
-            className={`flex justify-center p-4 transition duration-300 ${
-              highlightedDepartment &&
-              !p.departments.includes(highlightedDepartment)
-                ? 'opacity-30'
-                : 'opacity-100'
-            }`}
-          >
-            <MemberCard name={p.name} role={p.role} image={p.image} />
-          </div>
-        ))}
-      </div>
+
+        <MemberCarousel/>
+
     </div>
   );
 }
