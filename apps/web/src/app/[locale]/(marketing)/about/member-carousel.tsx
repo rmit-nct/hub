@@ -5,7 +5,6 @@ import MemberCard from './member-card';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 
-
 export default function MemberCarousel() {
   const [positionIndexes, setPositionIndexes] = useState([0, 1, 2, 3, 4]);
 
@@ -34,7 +33,7 @@ export default function MemberCarousel() {
       x: '0%',
       scale: 1,
       zIndex: 5,
-      filter: 'grayscale(0%) blur(0px)'
+      filter: 'grayscale(0%) blur(0px)',
     },
     left1: {
       x: '-50%',
@@ -62,7 +61,7 @@ export default function MemberCarousel() {
     },
   };
   return (
-    <div className="relative bg-transparent flex h-screen w-full flex-col items-center justify-center">
+    <div className="relative flex h-screen w-full flex-col items-center justify-center bg-transparent">
       {members.map((mem, index) => (
         <motion.div
           key={index}
@@ -73,28 +72,44 @@ export default function MemberCarousel() {
           transition={{ duration: 0.5 }}
           style={{ width: '40%', position: 'absolute' }}
         >
-          <MemberCard name={mem.name} role={mem.role} image={mem.image} center={positions[positionIndexes[index] as number] === 'center'} />
+          <MemberCard
+            name={mem.name}
+            role={mem.role}
+            image={mem.image}
+            center={positions[positionIndexes[index] as number] === 'center'}
+          />
         </motion.div>
       ))}
-      <div className="z-50 flex w-full flex-row justify-center items-center gap-[400px]">
-
-
+      <div className="z-50 flex w-full flex-row items-center justify-center gap-[400px]">
         <div
-          className="h-fit py-5 rounded-lg shadow-lg backdrop-blur-md bg-white/40 border border-white/30"
+          className="h-fit rounded-lg border border-white/30 bg-white/40 py-5 shadow-lg backdrop-blur-md"
           onClick={handleBack}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="full" fill="currentColor"><path d="M8.3685 12L13.1162 3.03212L14.8838 3.9679L10.6315 12L14.8838 20.0321L13.1162 20.9679L8.3685 12Z"></path></svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            width="30"
+            height="full"
+            fill="currentColor"
+          >
+            <path d="M8.3685 12L13.1162 3.03212L14.8838 3.9679L10.6315 12L14.8838 20.0321L13.1162 20.9679L8.3685 12Z"></path>
+          </svg>
         </div>
-
 
         <div
-          className="h-fit py-5 rounded-lg shadow-lg backdrop-blur-md bg-white/40 border border-white/30"
+          className="h-fit rounded-lg border border-white/30 bg-white/40 py-5 shadow-lg backdrop-blur-md"
           onClick={handleNext}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="full" fill="currentColor"><path d="M15.6315 12L10.8838 3.03212L9.11622 3.9679L13.3685 12L9.11622 20.0321L10.8838 20.9679L15.6315 12Z"></path></svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            width="30"
+            height="full"
+            fill="currentColor"
+          >
+            <path d="M15.6315 12L10.8838 3.03212L9.11622 3.9679L13.3685 12L9.11622 20.0321L10.8838 20.9679L15.6315 12Z"></path>
+          </svg>
         </div>
-
-
       </div>
     </div>
   );

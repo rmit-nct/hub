@@ -8,16 +8,12 @@ interface MemberCardProps {
   center: boolean;
 }
 
-
-
 export default function MemberCard({
   name,
   role,
   image,
   center,
 }: MemberCardProps) {
-
-  
   return (
     <div className="flex flex-col items-center">
       <div className="flex h-full w-full justify-center">

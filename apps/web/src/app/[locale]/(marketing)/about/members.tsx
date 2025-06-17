@@ -2,8 +2,8 @@
 
 import { members } from './data';
 import MemberCard from './member-card';
-import { useState } from 'react';
 import MemberCarousel from './member-carousel';
+import { useState } from 'react';
 
 type DepartmentName =
   | 'Finance'
@@ -90,8 +90,7 @@ export default function Members() {
         </div>
       </div>
 
-        <MemberCarousel/>
-
+      <MemberCarousel />
     </div>
   );
 }
