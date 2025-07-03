@@ -48,7 +48,6 @@
         "@formatjs/intl-localematcher": "^0.6.1",
         "@mantine/hooks": "^8.0.2",
         "@ncthub/ai": "workspace:*",
-        "@ncthub/auth": "workspace:*",
         "@ncthub/supabase": "workspace:*",
         "@ncthub/transactional": "workspace:*",
         "@ncthub/types": "workspace:*",
@@ -188,25 +187,6 @@
         "@typescript-eslint/parser": "^8.33.1",
         "typescript": "^5.8.3",
         "vitest": "^3.2.2",
-      },
-    },
-    "packages/auth": {
-      "name": "@ncthub/auth",
-      "version": "0.1.0",
-      "dependencies": {
-        "@ncthub/supabase": "workspace:*",
-        "@ncthub/types": "workspace:*",
-        "@ncthub/ui": "workspace:*",
-        "@ncthub/utils": "workspace:*",
-        "next": "15.3.3",
-        "react": "^19.1.0",
-      },
-      "devDependencies": {
-        "@types/node": "^22.15.29",
-        "@types/react": "^19.1.6",
-        "@types/react-dom": "^19.1.6",
-        "eslint": "^9.28.0",
-        "typescript": "^5.8.3",
       },
     },
     "packages/eslint-config": {
@@ -825,8 +805,6 @@
     "@mermaid-js/parser": ["@mermaid-js/parser@0.4.0", "", { "dependencies": { "langium": "3.3.1" } }, "sha512-wla8XOWvQAwuqy+gxiZqY+c7FokraOTHRWMsbB4AgRx9Sy7zKslNyejy7E+a77qHfey5GXw/ik3IXv/NHMJgaA=="],
 
     "@ncthub/ai": ["@ncthub/ai@workspace:packages/ai"],
-
-    "@ncthub/auth": ["@ncthub/auth@workspace:packages/auth"],
 
     "@ncthub/db": ["@ncthub/db@workspace:apps/db"],
 

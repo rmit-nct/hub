@@ -45,7 +45,6 @@
     "@tanstack/react-table": "^8.21.3",
     "@tldraw/sync": "^3.13.1",
     "@ncthub/ai": "workspace:*",
-    "@ncthub/auth": "workspace:*",
     "@ncthub/supabase": "workspace:*",
     "@ncthub/transactional": "workspace:*",
     "@ncthub/types": "workspace:*",
