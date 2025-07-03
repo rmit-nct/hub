@@ -11,10 +11,10 @@
     "@react-email/components": "^0.0.41",
     "@react-email/tailwind": "^1.0.5",
     "react": "^19.1.0",
-    "react-email": "^4.0.16"
+    "react-email": "^4.0.17"
   },
   "devDependencies": {
-    "@types/node": "^22.15.29",
-    "@types/react": "^19.1.6"
+    "@types/node": "^22.16.0",
+    "@types/react": "^19.1.8"
   }
 }
