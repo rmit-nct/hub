@@ -1,7 +1,5 @@
 'use client';
 
-import { members } from './data';
-import MemberCard from './member-card';
 import MemberCarousel from './member-carousel';
 import { useState } from 'react';
 

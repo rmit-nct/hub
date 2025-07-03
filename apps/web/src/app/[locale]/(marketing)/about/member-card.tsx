@@ -32,7 +32,7 @@ export default function MemberCard({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
-            className="absolute bottom-[10px] mt-4 w-3/4 rounded-lg border border-white/30 bg-black/15 p-4 text-center shadow-lg shadow-md backdrop-blur-sm md:w-1/2"
+            className="absolute bottom-[10px] mt-4 w-3/4 rounded-lg border border-white/30 bg-black/15 p-4 text-center shadow-lg backdrop-blur-sm md:w-1/2"
             style={{ WebkitBackdropFilter: 'blur(10.7px)' }}
           >
             <h3 className="text-xl font-semibold text-white">{name}</h3>
