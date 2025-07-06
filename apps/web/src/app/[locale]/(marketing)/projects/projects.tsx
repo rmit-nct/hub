@@ -392,11 +392,8 @@ export default function Projects() {
             {viewMode === 'carousel' ? (
               /* Carousel Layout */
               <div className="relative mx-auto max-w-screen-2xl">
-              
-                <div className=" text-center">
-                  <div className="mt-2 flex flex-col items-center justify-center gap-2">
-              
-                  </div>
+                <div className="text-center">
+                  <div className="mt-2 flex flex-col items-center justify-center gap-2"></div>
                   {!isDragging && (
                     <motion.div
                       className="mt-3 flex items-center justify-center gap-2"
