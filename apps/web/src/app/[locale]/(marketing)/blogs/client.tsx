@@ -52,7 +52,7 @@ export default function BlogsPageClient() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="text-4xl leading-tight font-extrabold md:text-5xl lg:text-6xl"
+          className="text-4xl font-extrabold leading-tight md:text-5xl lg:text-6xl"
         >
           <span>NEO Culture Tech</span>{' '}
           <span className="relative">
@@ -60,7 +60,7 @@ export default function BlogsPageClient() {
               Blog
             </span>
             <motion.div
-              className="absolute -top-2 -right-2"
+              className="absolute -right-2 -top-2"
               animate={{
                 rotate: [0, 10, -10, 0],
                 scale: [1, 1.1, 1],
@@ -81,7 +81,7 @@ export default function BlogsPageClient() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.5 }}
-          className="mx-auto max-w-3xl text-lg font-medium text-muted-foreground md:text-xl"
+          className="text-muted-foreground mx-auto max-w-3xl text-lg font-medium md:text-xl"
         >
           Stay updated with the latest tech insights, tutorials, and stories
           from our community. Explore our articles and join the conversation.
@@ -117,7 +117,7 @@ export default function BlogsPageClient() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                     <Badge
                       variant="secondary"
-                      className={`absolute top-4 left-4 ${getCategoryColor(blog.category)}`}
+                      className={`absolute left-4 top-4 ${getCategoryColor(blog.category)}`}
                     >
                       {blog.category}
                     </Badge>
@@ -131,12 +131,12 @@ export default function BlogsPageClient() {
                 </CardHeader>
 
                 <CardContent className="space-y-4">
-                  <p className="line-clamp-3 text-sm text-muted-foreground">
+                  <p className="text-muted-foreground line-clamp-3 text-sm">
                     {blog.excerpt}
                   </p>
 
                   {/* Meta Information */}
-                  <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+                  <div className="text-muted-foreground flex flex-wrap items-center gap-4 text-xs">
                     <div className="flex items-center gap-1">
                       <User className="h-3 w-3" />
                       <span>{blog.author}</span>
