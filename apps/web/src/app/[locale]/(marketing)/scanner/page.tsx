@@ -275,10 +275,10 @@ export default function Page() {
       {/* Hero Section */}
       <div className="px-4 py-16">
         <div className="space-y-4 text-center">
-          <h1 className="bg-gradient-to-r from-dynamic-light-blue to-dynamic-blue bg-clip-text text-4xl font-bold text-transparent md:text-6xl">
+          <h1 className="from-dynamic-light-blue to-dynamic-blue bg-gradient-to-r bg-clip-text text-4xl font-bold text-transparent md:text-6xl">
             NEO Scanner
           </h1>
-          <p className="mx-auto max-w-2xl text-xl text-dynamic-light-sky">
+          <p className="text-dynamic-light-sky mx-auto max-w-2xl text-xl">
             Effortlessly capture and manage student information with our
             AI-powered scanning technology
           </p>
@@ -469,7 +469,7 @@ export default function Page() {
               <Button
                 variant="outline"
                 size="lg"
-                className="h-14 w-full bg-primary/10 text-base font-medium hover:bg-primary/20"
+                className="bg-primary/10 hover:bg-primary/20 h-14 w-full text-base font-medium"
                 disabled={!whitelisted}
               >
                 <Scan className="mr-2 h-5 w-5" />

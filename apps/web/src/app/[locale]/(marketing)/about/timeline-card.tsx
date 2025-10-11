@@ -23,7 +23,7 @@ export function TimelineCard({
   return (
     <Card
       className={cn(
-        'relative h-full overflow-hidden border-2 border-border/50 bg-card/80 shadow-lg',
+        'border-border/50 bg-card/80 relative h-full overflow-hidden border-2 shadow-lg',
         'transition-all duration-500 ease-in-out hover:shadow-xl',
         isSelected ? 'scale-100 opacity-100' : 'scale-75 opacity-60',
         'mx-auto w-full max-w-md py-4 md:py-8 lg:max-w-lg'
@@ -36,19 +36,19 @@ export function TimelineCard({
         )}
       />
       <CardHeader className="items-center gap-4">
-        <div className="flex size-20 items-center justify-center rounded-full bg-gradient-to-br from-brand-light-blue to-brand-light-yellow p-1 shadow-md md:size-24 lg:size-28">
-          <div className="flex size-full items-center justify-center rounded-full border-2 border-brand-light-blue/20 bg-card">
-            <p className="text-lg font-bold text-brand-dark-blue md:text-xl">
+        <div className="from-brand-light-blue to-brand-light-yellow flex size-20 items-center justify-center rounded-full bg-gradient-to-br p-1 shadow-md md:size-24 lg:size-28">
+          <div className="border-brand-light-blue/20 bg-card flex size-full items-center justify-center rounded-full border-2">
+            <p className="text-brand-dark-blue text-lg font-bold md:text-xl">
               {year}
             </p>
           </div>
         </div>
-        <CardTitle className="text-center text-lg font-bold text-card-foreground md:text-xl">
+        <CardTitle className="text-card-foreground text-center text-lg font-bold md:text-xl">
           {title}
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <CardDescription className="text-center text-sm text-muted-foreground">
+        <CardDescription className="text-muted-foreground text-center text-sm">
           {description}
         </CardDescription>
       </CardContent>

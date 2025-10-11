@@ -17,7 +17,7 @@ const FormRequiredIndicator = React.forwardRef<
   return (
     <span
       ref={ref}
-      className={cn('ml-1 text-destructive', className)}
+      className={cn('text-destructive ml-1', className)}
       aria-hidden="true"
       {...props}
     >

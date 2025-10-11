@@ -14,12 +14,12 @@ export default function FooterCTA() {
       viewport={{ once: true }}
       className="mt-16 text-center"
     >
-      <Card className="mx-auto max-w-2xl border-primary/20 bg-gradient-to-r from-primary/10 to-secondary/10">
+      <Card className="border-primary/20 from-primary/10 to-secondary/10 mx-auto max-w-2xl bg-gradient-to-r">
         <CardContent className="p-8">
           <h3 className="mb-4 text-2xl font-bold">
             Ready to Join Our Community?
           </h3>
-          <p className="mb-6 text-muted-foreground">
+          <p className="text-muted-foreground mb-6">
             Experience the difference that makes NEO Culture Tech the premier
             choice for technology enthusiasts
           </p>

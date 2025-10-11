@@ -284,10 +284,10 @@ export default function VideoCapture({ onNewStudent }: VideoCaptureProps) {
 
         {/* Camera Off Placeholder */}
         {!cameraOn && (
-          <div className="absolute inset-0 flex items-center justify-center bg-background/75">
+          <div className="bg-background/75 absolute inset-0 flex items-center justify-center">
             <div className="space-y-4 text-center">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-dynamic-light-gray">
-                <CameraOff className="h-8 w-8 text-dynamic-gray" />
+              <div className="bg-dynamic-light-gray mx-auto flex h-16 w-16 items-center justify-center rounded-full">
+                <CameraOff className="text-dynamic-gray h-8 w-8" />
               </div>
               <div className="space-y-2">
                 <p className="text-lg font-medium text-gray-700">
@@ -306,23 +306,23 @@ export default function VideoCapture({ onNewStudent }: VideoCaptureProps) {
           <>
             {/* Scanning Grid */}
             <div className="pointer-events-none absolute inset-0">
-              <div className="absolute top-1/2 left-1/2 h-48 w-80 -translate-x-1/2 -translate-y-1/2">
+              <div className="absolute left-1/2 top-1/2 h-48 w-80 -translate-x-1/2 -translate-y-1/2">
                 {/* Corner Brackets */}
-                <div className="absolute top-0 left-0 h-8 w-8 rounded-tl-lg border-t-4 border-l-4 border-white shadow-lg"></div>
-                <div className="absolute top-0 right-0 h-8 w-8 rounded-tr-lg border-t-4 border-r-4 border-white shadow-lg"></div>
+                <div className="absolute left-0 top-0 h-8 w-8 rounded-tl-lg border-l-4 border-t-4 border-white shadow-lg"></div>
+                <div className="absolute right-0 top-0 h-8 w-8 rounded-tr-lg border-r-4 border-t-4 border-white shadow-lg"></div>
                 <div className="absolute bottom-0 left-0 h-8 w-8 rounded-bl-lg border-b-4 border-l-4 border-white shadow-lg"></div>
-                <div className="absolute right-0 bottom-0 h-8 w-8 rounded-br-lg border-r-4 border-b-4 border-white shadow-lg"></div>
+                <div className="absolute bottom-0 right-0 h-8 w-8 rounded-br-lg border-b-4 border-r-4 border-white shadow-lg"></div>
 
                 {/* Center Crosshair */}
-                <div className="absolute top-1/2 left-1/2 h-6 w-6 -translate-x-1/2 -translate-y-1/2">
+                <div className="absolute left-1/2 top-1/2 h-6 w-6 -translate-x-1/2 -translate-y-1/2">
                   <div className="h-0.5 w-full bg-white shadow-lg"></div>
-                  <div className="absolute top-0 left-1/2 h-full w-0.5 -translate-x-1/2 bg-white shadow-lg"></div>
+                  <div className="absolute left-1/2 top-0 h-full w-0.5 -translate-x-1/2 bg-white shadow-lg"></div>
                 </div>
               </div>
             </div>
 
             {/* Instructions */}
-            <div className="absolute top-4 right-4 left-4">
+            <div className="absolute left-4 right-4 top-4">
               <div className="rounded-lg bg-black/60 px-4 py-2 text-center text-sm text-white backdrop-blur-sm">
                 <Scan className="mr-2 inline h-4 w-4" />
                 Position student ID card within the frame

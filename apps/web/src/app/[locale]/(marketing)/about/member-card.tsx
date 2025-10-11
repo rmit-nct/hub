@@ -24,7 +24,7 @@ export default function MemberCard({
   socials,
 }: MemberCardProps) {
   return (
-    <Card className="group relative flex w-full max-w-sm flex-col overflow-hidden rounded-lg border-1 border-transparent bg-calendar-bg-blue transition-all duration-300 ease-in-out hover:border-foreground/20 hover:shadow-lg hover:shadow-primary/20">
+    <Card className="border-1 bg-calendar-bg-blue hover:border-foreground/20 hover:shadow-primary/20 group relative flex w-full max-w-sm flex-col overflow-hidden rounded-lg border-transparent transition-all duration-300 ease-in-out hover:shadow-lg">
       <CardHeader className="p-0">
         <div className="relative h-64 w-full overflow-hidden transition-transform duration-300 ease-in-out group-hover:scale-105">
           <Image
@@ -36,13 +36,13 @@ export default function MemberCard({
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/5 to-transparent" />
           <div className="absolute bottom-0 w-full p-4">
             <h3 className="text-xl font-bold text-white">{name}</h3>
-            <p className="text-md font-medium text-muted-foreground">{role}</p>
+            <p className="text-md text-muted-foreground font-medium">{role}</p>
           </div>
         </div>
       </CardHeader>
       <CardContent className="flex-1 p-4">
         <p className="text-muted-foreground italic">"{quote}"</p>
-        <p className="mt-2 text-sm text-foreground/80">{bio}</p>
+        <p className="text-foreground/80 mt-2 text-sm">{bio}</p>
       </CardContent>
       <CardFooter className="flex justify-center gap-4 p-4 pt-0">
         {socials.facebook ? (
@@ -51,10 +51,10 @@ export default function MemberCard({
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Facebook className="h-6 w-6 text-muted-foreground transition-colors hover:text-primary" />
+            <Facebook className="text-muted-foreground hover:text-primary h-6 w-6 transition-colors" />
           </Link>
         ) : (
-          <Facebook className="h-6 w-6 text-muted-foreground" />
+          <Facebook className="text-muted-foreground h-6 w-6" />
         )}
 
         {socials.linkedin ? (
@@ -63,10 +63,10 @@ export default function MemberCard({
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Linkedin className="h-6 w-6 text-muted-foreground transition-colors hover:text-primary" />
+            <Linkedin className="text-muted-foreground hover:text-primary h-6 w-6 transition-colors" />
           </Link>
         ) : (
-          <Linkedin className="h-6 w-6 text-muted-foreground" />
+          <Linkedin className="text-muted-foreground h-6 w-6" />
         )}
       </CardFooter>
     </Card>
