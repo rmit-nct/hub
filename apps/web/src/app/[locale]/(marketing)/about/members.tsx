@@ -47,7 +47,7 @@ export default function Members() {
       <p className="mt-8 w-full bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 bg-clip-text p-3 text-center text-4xl font-black tracking-tight text-transparent md:text-5xl lg:text-6xl dark:from-yellow-300 dark:via-red-400 dark:to-pink-400">
         Meet Our Team
       </p>
-      <div className="relative mx-auto mt-4 mb-8 max-w-4xl rounded-lg border border-border bg-card p-4 text-center text-base tracking-wide text-foreground/80 md:p-6 md:text-lg">
+      <div className="border-border bg-card text-foreground/80 relative mx-auto mb-8 mt-4 max-w-4xl rounded-lg border p-4 text-center text-base tracking-wide md:p-6 md:text-lg">
         RMIT Neo Culture Tech Club mostly operates technical events, workshops,
         trainings, etc… related to technology. Our target students are from the
         house of{' '}
@@ -55,7 +55,7 @@ export default function Members() {
       </div>
 
       <div className="my-4">
-        <div className="w-full px-2 text-center text-base font-medium text-muted-foreground md:px-40 md:text-lg">
+        <div className="text-muted-foreground w-full px-2 text-center text-base font-medium md:px-40 md:text-lg">
           Our club has 4 core teams:{' '}
           {departments.map((department, index) => (
             <span key={department.name}>
@@ -76,7 +76,7 @@ export default function Members() {
           ))}
           , with a dedicated{' '}
           <span
-            className={`cursor-pointer font-semibold text-dynamic-pink transition-all duration-200 hover:underline ${
+            className={`text-dynamic-pink cursor-pointer font-semibold transition-all duration-200 hover:underline ${
               lockedDepartment === 'Executive Board'
                 ? 'rounded px-1 underline ring-2 ring-current'
                 : ''
