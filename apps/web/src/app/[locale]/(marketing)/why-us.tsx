@@ -108,7 +108,7 @@ export default function WhyUs() {
           Why us?
         </h2>
 
-        <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+        <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
           Discover what makes NEO Culture Tech the perfect choice for your
           technology journey
         </p>
@@ -126,14 +126,14 @@ export default function WhyUs() {
             whileHover={{ scale: 1.02 }}
             className="group"
           >
-            <Card className="h-full border-2 bg-gradient-to-br from-background/50 to-background shadow-lg backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-xl">
+            <Card className="from-background/50 to-background hover:border-primary/50 h-full border-2 bg-gradient-to-br shadow-lg backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
               <CardHeader className="pb-4 text-center">
                 {/* Icon with gradient background */}
                 <div
                   className={`mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-r ${reason.gradient} p-0.5 transition-transform duration-300 group-hover:scale-105`}
                 >
-                  <div className="flex h-full w-full items-center justify-center rounded-full bg-background">
-                    <reason.icon className="h-8 w-8 text-foreground transition-transform duration-300 group-hover:scale-110" />
+                  <div className="bg-background flex h-full w-full items-center justify-center rounded-full">
+                    <reason.icon className="text-foreground h-8 w-8 transition-transform duration-300 group-hover:scale-110" />
                   </div>
                 </div>
 
@@ -159,7 +159,7 @@ export default function WhyUs() {
                   {reason.features.map((feature, featureIndex) => (
                     <div key={featureIndex} className="flex items-center gap-2">
                       <Star className="h-4 w-4 fill-current text-yellow-400" />
-                      <span className="text-sm text-muted-foreground">
+                      <span className="text-muted-foreground text-sm">
                         {feature}
                       </span>
                     </div>
@@ -176,7 +176,7 @@ export default function WhyUs() {
                   >
                     <Button
                       variant="outline"
-                      className="w-full transition-all duration-300 group-hover:bg-primary group-hover:text-primary-foreground group-hover:shadow-lg"
+                      className="group-hover:bg-primary group-hover:text-primary-foreground w-full transition-all duration-300 group-hover:shadow-lg"
                     >
                       {reason.buttonText}
                       <ExternalLink className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
@@ -186,7 +186,7 @@ export default function WhyUs() {
                   <Link href={reason.link} aria-label={reason.buttonText}>
                     <Button
                       variant="outline"
-                      className="w-full transition-all duration-300 group-hover:bg-primary group-hover:text-primary-foreground group-hover:shadow-lg"
+                      className="group-hover:bg-primary group-hover:text-primary-foreground w-full transition-all duration-300 group-hover:shadow-lg"
                     >
                       {reason.buttonText}
                       <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />

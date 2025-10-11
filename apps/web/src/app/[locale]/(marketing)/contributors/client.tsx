@@ -163,9 +163,9 @@ export default function ContributorsClient({
   if (githubData.error) {
     return (
       <div className="flex min-h-[40vh] flex-col items-center justify-center">
-        <GithubIcon className="mb-4 h-16 w-16 text-muted-foreground" />
+        <GithubIcon className="text-muted-foreground mb-4 h-16 w-16" />
         <h2 className="mb-2 text-2xl font-bold">Data Fetch Error</h2>
-        <p className="mb-4 text-muted-foreground">{githubData.error}</p>
+        <p className="text-muted-foreground mb-4">{githubData.error}</p>
         <Button asChild>
           <a
             href={`https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}`}
@@ -212,15 +212,15 @@ export default function ContributorsClient({
           </Badge>
         </motion.div>
 
-        <h1 className="mb-6 text-4xl font-bold text-balance text-foreground md:text-5xl lg:text-6xl">
+        <h1 className="text-foreground mb-6 text-balance text-4xl font-bold md:text-5xl lg:text-6xl">
           <span>Our Amazing</span>{' '}
-          <span className="border-b-4 border-[#FBC721] whitespace-nowrap text-[#5FC6E5]">
+          <span className="whitespace-nowrap border-b-4 border-[#FBC721] text-[#5FC6E5]">
             Contributors
           </span>
         </h1>
 
         <motion.p
-          className="mx-auto max-w-2xl text-lg text-balance text-foreground/80 md:text-xl"
+          className="text-foreground/80 mx-auto max-w-2xl text-balance text-lg md:text-xl"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.8 }}
@@ -231,7 +231,7 @@ export default function ContributorsClient({
             href={`https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="font-medium text-primary underline underline-offset-4 hover:text-primary/80"
+            className="text-primary hover:text-primary/80 font-medium underline underline-offset-4"
           >
             GitHub
           </a>
@@ -249,7 +249,7 @@ export default function ContributorsClient({
               href={githubData.repo.html_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 rounded-full bg-foreground/10 px-4 py-2 text-sm hover:bg-foreground/20"
+              className="bg-foreground/10 hover:bg-foreground/20 flex items-center gap-2 rounded-full px-4 py-2 text-sm"
             >
               <Star className="h-4 w-4 text-amber-500" />
               {githubData.stats.stars.toLocaleString()} Stars
@@ -258,7 +258,7 @@ export default function ContributorsClient({
               href={`${githubData.repo.html_url}/fork`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 rounded-full bg-foreground/10 px-4 py-2 text-sm hover:bg-foreground/20"
+              className="bg-foreground/10 hover:bg-foreground/20 flex items-center gap-2 rounded-full px-4 py-2 text-sm"
             >
               <GitFork className="h-4 w-4 text-blue-500" />
               {githubData.stats.forks.toLocaleString()} Forks
@@ -267,7 +267,7 @@ export default function ContributorsClient({
               href={`${githubData.repo.html_url}/issues`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 rounded-full bg-foreground/10 px-4 py-2 text-sm hover:bg-foreground/20"
+              className="bg-foreground/10 hover:bg-foreground/20 flex items-center gap-2 rounded-full px-4 py-2 text-sm"
             >
               <MessageSquare className="h-4 w-4 text-red-500" />
               {githubData.stats.issues.toLocaleString()} Issues
@@ -284,14 +284,14 @@ export default function ContributorsClient({
           viewport={{ once: true }}
           className="relative"
         >
-          <Card className="group overflow-hidden border-primary/10">
-            <div className="absolute inset-0 bg-linear-to-br from-primary/10 via-primary/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+          <Card className="border-primary/10 group overflow-hidden">
+            <div className="bg-linear-to-br from-primary/10 via-primary/5 absolute inset-0 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
             <div className="relative p-6 sm:p-8">
               <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
                 <div className="space-y-2">
                   <div className="mb-3 flex items-center gap-3">
-                    <div className="rounded-lg bg-foreground/10 p-2.5">
+                    <div className="bg-foreground/10 rounded-lg p-2.5">
                       <GithubIcon className="h-6 w-6" />
                     </div>
                     <h3 className="text-2xl font-bold">
@@ -299,12 +299,12 @@ export default function ContributorsClient({
                     </h3>
                   </div>
 
-                  <p className="text-balance text-muted-foreground">
+                  <p className="text-muted-foreground text-balance">
                     {githubData.repo.description}
                   </p>
 
                   <div className="flex flex-wrap gap-4 pt-2">
-                    <div className="flex items-center text-sm text-foreground/80">
+                    <div className="text-foreground/80 flex items-center text-sm">
                       <Star className="mr-1.5 h-4 w-4 text-amber-500" />
                       <span>
                         {githubData.repo.stargazers_count.toLocaleString()}{' '}
@@ -312,14 +312,14 @@ export default function ContributorsClient({
                       </span>
                     </div>
 
-                    <div className="flex items-center text-sm text-foreground/80">
+                    <div className="text-foreground/80 flex items-center text-sm">
                       <GitFork className="mr-1.5 h-4 w-4 text-blue-500" />
                       <span>
                         {githubData.repo.forks_count.toLocaleString()} Forks
                       </span>
                     </div>
 
-                    <div className="flex items-center text-sm text-foreground/80">
+                    <div className="text-foreground/80 flex items-center text-sm">
                       <MessageSquare className="mr-1.5 h-4 w-4 text-red-500" />
                       <span>
                         {githubData.repo.open_issues_count.toLocaleString()}{' '}
@@ -327,7 +327,7 @@ export default function ContributorsClient({
                       </span>
                     </div>
 
-                    <div className="flex items-center text-sm text-foreground/80">
+                    <div className="text-foreground/80 flex items-center text-sm">
                       <GitCommit className="mr-1.5 h-4 w-4 text-orange-500" />
                       <span>
                         {githubData.contributors
@@ -337,7 +337,7 @@ export default function ContributorsClient({
                       </span>
                     </div>
 
-                    <div className="flex items-center text-sm text-foreground/80">
+                    <div className="text-foreground/80 flex items-center text-sm">
                       <GitPullRequest className="mr-1.5 h-4 w-4 text-green-500" />
                       <span>
                         {githubData.stats?.pullRequests.toLocaleString() || 0}{' '}
@@ -345,7 +345,7 @@ export default function ContributorsClient({
                       </span>
                     </div>
 
-                    <div className="flex items-center text-sm text-foreground/80">
+                    <div className="text-foreground/80 flex items-center text-sm">
                       <Users className="mr-1.5 h-4 w-4 text-purple-500" />
                       <span>
                         {githubData.stats?.contributors.toLocaleString() || 0}{' '}
@@ -410,7 +410,7 @@ export default function ContributorsClient({
               Top Contributors
             </Badge>
             <h2 className="mb-4 text-3xl font-bold">Community Heroes</h2>
-            <p className="mx-auto max-w-2xl text-muted-foreground">
+            <p className="text-muted-foreground mx-auto max-w-2xl">
               Meet the amazing developers who have contributed the most to
               making NCT Hub better. These are the top{' '}
               {githubData.contributors.length} contributors by commit count.
@@ -427,7 +427,7 @@ export default function ContributorsClient({
                 transition={{ delay: index * 0.05 }}
                 whileHover={{ y: -5, transition: { duration: 0.2 } }}
               >
-                <Card className="group h-full overflow-hidden border-primary/10 transition-all duration-300 hover:border-primary/30 hover:shadow-md">
+                <Card className="border-primary/10 hover:border-primary/30 group h-full overflow-hidden transition-all duration-300 hover:shadow-md">
                   <a
                     href={contributor.html_url}
                     target="_blank"
@@ -436,41 +436,41 @@ export default function ContributorsClient({
                   >
                     <div className="mb-4 flex items-center justify-between">
                       <div className="relative">
-                        <div className="absolute -inset-0.5 rounded-full bg-linear-to-r from-primary to-purple-600 opacity-75 blur-sm group-hover:opacity-100" />
+                        <div className="bg-linear-to-r from-primary absolute -inset-0.5 rounded-full to-purple-600 opacity-75 blur-sm group-hover:opacity-100" />
                         <Image
                           src={contributor.avatar_url}
                           alt={contributor.login}
-                          className="relative h-16 w-16 rounded-full border-2 border-background object-cover"
+                          className="border-background relative h-16 w-16 rounded-full border-2 object-cover"
                           width={64}
                           height={64}
                         />
                         {index < 3 && (
-                          <div className="absolute -top-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold text-white">
+                          <div className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold text-white">
                             #{index + 1}
                           </div>
                         )}
                       </div>
-                      <div className="flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-medium">
+                      <div className="bg-primary/10 flex items-center rounded-full px-3 py-1 text-xs font-medium">
                         <GitCommit className="mr-1 h-3 w-3" />
                         {contributor.contributions}
                       </div>
                     </div>
 
                     <div className="flex-1">
-                      <h3 className="mb-1 line-clamp-1 font-semibold group-hover:text-primary">
+                      <h3 className="group-hover:text-primary mb-1 line-clamp-1 font-semibold">
                         {contributor.userDetails?.name || contributor.login}
                       </h3>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-muted-foreground text-xs">
                         @{contributor.login}
                       </p>
                       {contributor.userDetails?.bio && (
-                        <p className="mt-2 line-clamp-3 text-xs text-foreground/70">
+                        <p className="text-foreground/70 mt-2 line-clamp-3 text-xs">
                           {contributor.userDetails.bio}
                         </p>
                       )}
                     </div>
 
-                    <div className="mt-4 flex items-center text-xs text-muted-foreground">
+                    <div className="text-muted-foreground mt-4 flex items-center text-xs">
                       <Calendar className="mr-1 h-3.5 w-3.5" />
                       {contributor.userDetails?.created_at
                         ? `Joined ${new Date(contributor.userDetails.created_at).toLocaleDateString()}`
@@ -498,7 +498,7 @@ export default function ContributorsClient({
               Contribution Activity
             </Badge>
             <h2 className="mb-4 text-3xl font-bold">Repository Activity</h2>
-            <p className="mx-auto max-w-2xl text-muted-foreground">
+            <p className="text-muted-foreground mx-auto max-w-2xl">
               Visualizing the contribution patterns and activity in the NCT Hub
               platform.
             </p>
@@ -515,11 +515,11 @@ export default function ContributorsClient({
               whileHover={{ y: -4 }}
               transition={{ type: 'spring', stiffness: 300 }}
             >
-              <Card className="h-full overflow-hidden border-primary/10 transition-all duration-300 hover:border-primary/30 hover:shadow-md">
+              <Card className="border-primary/10 hover:border-primary/30 h-full overflow-hidden transition-all duration-300 hover:shadow-md">
                 <div className="bg-primary/5 p-6">
                   <div className="mb-4">
                     <h3 className="text-xl font-bold">Top Contributors</h3>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-muted-foreground text-sm">
                       Distribution of commits among top contributors
                     </p>
                   </div>
@@ -603,11 +603,11 @@ export default function ContributorsClient({
               whileHover={{ y: -4 }}
               transition={{ type: 'spring', stiffness: 300 }}
             >
-              <Card className="h-full overflow-hidden border-primary/10 transition-all duration-300 hover:border-primary/30 hover:shadow-md">
+              <Card className="border-primary/10 hover:border-primary/30 h-full overflow-hidden transition-all duration-300 hover:shadow-md">
                 <div className="bg-primary/5 p-6">
                   <div className="mb-4">
                     <h3 className="text-xl font-bold">Contribution Timeline</h3>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-muted-foreground text-sm">
                       Activity patterns based on contribution counts
                     </p>
                   </div>
@@ -688,11 +688,11 @@ export default function ContributorsClient({
             className="mt-8"
             whileHover={{ y: -4 }}
           >
-            <Card className="overflow-hidden border-primary/10 transition-all duration-300 hover:border-primary/30 hover:shadow-md">
+            <Card className="border-primary/10 hover:border-primary/30 overflow-hidden transition-all duration-300 hover:shadow-md">
               <div className="bg-primary/5 p-6">
                 <div className="mb-4">
                   <h3 className="text-xl font-bold">Contribution Activity</h3>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     Activity trends over time
                   </p>
                 </div>
@@ -766,11 +766,11 @@ export default function ContributorsClient({
         viewport={{ once: true }}
         className="relative"
       >
-        <Card className="group relative overflow-hidden border-primary/10 bg-linear-to-br from-background via-background to-primary/5">
+        <Card className="border-primary/10 bg-linear-to-br from-background via-background to-primary/5 group relative overflow-hidden">
           <div className="absolute inset-0">
-            <div className="absolute inset-0 bg-primary/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+            <div className="bg-primary/5 absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
             <motion.div
-              className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(var(--primary),0.05)_1px,transparent_1px)] bg-size-[20px_20px]"
+              className="bg-size-[20px_20px] absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(var(--primary),0.05)_1px,transparent_1px)]"
               animate={{
                 backgroundPosition: ['0% 0%', '100% 100%'],
               }}
@@ -790,7 +790,7 @@ export default function ContributorsClient({
                 Join Our Community
               </Badge>
               <h2 className="mb-4 text-3xl font-bold">Become a Contributor</h2>
-              <p className="mb-8 text-muted-foreground">
+              <p className="text-muted-foreground mb-8">
                 Help us build the future of NCT Hub. Whether you're a developer,
                 designer, or documentation expert, there's a place for you in
                 our community.
@@ -802,7 +802,7 @@ export default function ContributorsClient({
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="inline-flex items-center gap-2 rounded-lg bg-foreground px-8 py-3 font-medium text-background hover:bg-foreground/90"
+                  className="bg-foreground text-background hover:bg-foreground/90 inline-flex items-center gap-2 rounded-lg px-8 py-3 font-medium"
                 >
                   <GithubIcon className="h-4 w-4" />
                   <span className="relative">View on GitHub</span>
@@ -811,54 +811,54 @@ export default function ContributorsClient({
                   href="mailto:neoculturetechclub.sgs@rmit.edu.vn"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="inline-flex items-center gap-2 rounded-lg border border-foreground/10 px-8 py-3 font-medium hover:bg-foreground/5"
+                  className="border-foreground/10 hover:bg-foreground/5 inline-flex items-center gap-2 rounded-lg border px-8 py-3 font-medium"
                 >
                   <Mail className="h-4 w-4" />
                   <span className="relative">Contact Us</span>
                 </motion.a>
               </div>
 
-              <Separator className="my-8 bg-foreground/10" />
+              <Separator className="bg-foreground/10 my-8" />
 
               <div className="grid gap-8 pt-2 sm:grid-cols-3">
-                <div className="group/item space-y-2 rounded-xl p-4 text-left transition-colors hover:bg-foreground/5">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-foreground/10 group-hover/item:bg-foreground/20">
-                    <Code className="h-5 w-5 text-primary" />
+                <div className="group/item hover:bg-foreground/5 space-y-2 rounded-xl p-4 text-left transition-colors">
+                  <div className="bg-foreground/10 group-hover/item:bg-foreground/20 flex h-10 w-10 items-center justify-center rounded-full">
+                    <Code className="text-primary h-5 w-5" />
                   </div>
                   <h3 className="font-semibold">Submit Code</h3>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     Contribute new features or fix bugs through pull requests.
                   </p>
                 </div>
 
-                <div className="group/item space-y-2 rounded-xl p-4 text-left transition-colors hover:bg-foreground/5">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-foreground/10 group-hover/item:bg-foreground/20">
-                    <MessageSquare className="h-5 w-5 text-primary" />
+                <div className="group/item hover:bg-foreground/5 space-y-2 rounded-xl p-4 text-left transition-colors">
+                  <div className="bg-foreground/10 group-hover/item:bg-foreground/20 flex h-10 w-10 items-center justify-center rounded-full">
+                    <MessageSquare className="text-primary h-5 w-5" />
                   </div>
                   <h3 className="font-semibold">Report Issues</h3>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     Help us by reporting bugs or suggesting improvements.
                   </p>
                 </div>
 
-                <div className="group/item space-y-2 rounded-xl p-4 text-left transition-colors hover:bg-foreground/5">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-foreground/10 group-hover/item:bg-foreground/20">
-                    <FileText className="h-5 w-5 text-primary" />
+                <div className="group/item hover:bg-foreground/5 space-y-2 rounded-xl p-4 text-left transition-colors">
+                  <div className="bg-foreground/10 group-hover/item:bg-foreground/20 flex h-10 w-10 items-center justify-center rounded-full">
+                    <FileText className="text-primary h-5 w-5" />
                   </div>
                   <h3 className="font-semibold">Improve Docs</h3>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     Enhance our documentation to help other users.
                   </p>
                 </div>
               </div>
 
-              <p className="mt-8 text-sm text-muted-foreground">
+              <p className="text-muted-foreground mt-8 text-sm">
                 By contributing to NCT Hub, you agree to our{' '}
                 <a
                   href={`https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/blob/main/CODE_OF_CONDUCT.md`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-primary underline underline-offset-4 hover:text-primary/80"
+                  className="text-primary hover:text-primary/80 underline underline-offset-4"
                 >
                   Code of Conduct
                 </a>{' '}
@@ -867,7 +867,7 @@ export default function ContributorsClient({
                   href={`https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/blob/main/CONTRIBUTING.md`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-primary underline underline-offset-4 hover:text-primary/80"
+                  className="text-primary hover:text-primary/80 underline underline-offset-4"
                 >
                   Contributing Guidelines
                 </a>

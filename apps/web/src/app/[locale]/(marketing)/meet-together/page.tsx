@@ -21,9 +21,9 @@ export default async function MeetTogetherPage() {
         <NeoMeetHeader />
       </div>
       <Form />
-      <Separator className="mt-8 mb-4 md:mt-16" />
+      <Separator className="mb-4 mt-8 md:mt-16" />
 
-      <div className="flex w-full flex-col items-center justify-center p-4 pb-8 text-foreground">
+      <div className="text-foreground flex w-full flex-col items-center justify-center p-4 pb-8">
         <h2 className="text-center text-2xl font-bold">{t('your_plans')}</h2>
 
         {plans?.length > 0 ? (
@@ -32,14 +32,14 @@ export default async function MeetTogetherPage() {
               <Link
                 href={`/meet-together/plans/${plan.id?.replace(/-/g, '')}`}
                 key={plan.id}
-                className="group grid w-full rounded-lg border border-foreground/20 p-4 hover:border-foreground"
+                className="border-foreground/20 hover:border-foreground group grid w-full rounded-lg border p-4"
               >
                 <div className="flex w-full items-center justify-between gap-2">
                   <h3 className="line-clamp-1 w-full flex-1 font-bold">
                     {plan.name}
                   </h3>
                   {plan.start_time && (
-                    <div className="rounded bg-foreground px-2 py-0.5 text-sm font-semibold text-background">
+                    <div className="bg-foreground text-background rounded px-2 py-0.5 text-sm font-semibold">
                       GMT
                       {Intl.NumberFormat('en-US', {
                         signDisplay: 'always',
@@ -74,7 +74,7 @@ export default async function MeetTogetherPage() {
                       {plan.dates?.slice(0, 5).map((date) => (
                         <div
                           key={date}
-                          className={`flex items-center justify-center rounded bg-foreground/20 px-2 py-0.5 text-sm ${(plan.dates?.length || 0) <= 2 && 'w-full'}`}
+                          className={`bg-foreground/20 flex items-center justify-center rounded px-2 py-0.5 text-sm ${(plan.dates?.length || 0) <= 2 && 'w-full'}`}
                         >
                           {dayjs(date)
                             .locale(locale)
@@ -84,7 +84,7 @@ export default async function MeetTogetherPage() {
                         </div>
                       ))}
                       {plan.dates.length > 5 && (
-                        <div className="rounded bg-foreground/20 px-2 py-0.5 text-sm">
+                        <div className="bg-foreground/20 rounded px-2 py-0.5 text-sm">
                           +{plan.dates.length - 5}
                         </div>
                       )}

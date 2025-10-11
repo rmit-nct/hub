@@ -46,12 +46,12 @@ export default function BlogDetailPage({ params }: { params: { id: string } }) {
           <Badge className="bg-[#5FC6E5] text-white">{blog.category}</Badge>
 
           {/* Title */}
-          <h1 className="text-4xl leading-tight font-extrabold text-foreground md:text-5xl lg:text-6xl">
+          <h1 className="text-foreground text-4xl font-extrabold leading-tight md:text-5xl lg:text-6xl">
             {blog.title}
           </h1>
 
           {/* Meta Information */}
-          <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
+          <div className="text-muted-foreground flex flex-wrap items-center gap-6 text-sm">
             <div className="flex items-center gap-2">
               <User className="h-4 w-4" />
               <span className="font-medium">{blog.author}</span>
@@ -95,21 +95,21 @@ export default function BlogDetailPage({ params }: { params: { id: string } }) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
-          className="prose prose-lg max-w-none prose-slate dark:prose-invert"
+          className="prose prose-lg prose-slate dark:prose-invert max-w-none"
         >
           <ReactMarkdown
             components={{
               h1: ({ ...props }) => (
-                <h1 className="mt-8 mb-6 text-3xl font-bold" {...props} />
+                <h1 className="mb-6 mt-8 text-3xl font-bold" {...props} />
               ),
               h2: ({ ...props }) => (
                 <h2
-                  className="mt-8 mb-4 border-b-1 border-muted pb-1 text-2xl font-bold text-[#5FC6E5]"
+                  className="border-b-1 border-muted mb-4 mt-8 pb-1 text-2xl font-bold text-[#5FC6E5]"
                   {...props}
                 />
               ),
               h3: ({ ...props }) => (
-                <h3 className="mt-6 mb-3 text-xl font-semibold" {...props} />
+                <h3 className="mb-3 mt-6 text-xl font-semibold" {...props} />
               ),
               p: ({ ...props }) => (
                 <p className="mb-4 leading-relaxed" {...props} />
@@ -123,18 +123,18 @@ export default function BlogDetailPage({ params }: { params: { id: string } }) {
               code: ({ inline, ...props }: any) =>
                 inline ? (
                   <code
-                    className="rounded bg-muted px-1.5 py-0.5 font-mono text-sm"
+                    className="bg-muted rounded px-1.5 py-0.5 font-mono text-sm"
                     {...props}
                   />
                 ) : (
                   <code
-                    className="block rounded-lg bg-muted p-4 font-mono text-sm"
+                    className="bg-muted block rounded-lg p-4 font-mono text-sm"
                     {...props}
                   />
                 ),
               blockquote: ({ ...props }) => (
                 <blockquote
-                  className="border-l-4 border-[#5FC6E5] pl-4 text-muted-foreground italic"
+                  className="text-muted-foreground border-l-4 border-[#5FC6E5] pl-4 italic"
                   {...props}
                 />
               ),

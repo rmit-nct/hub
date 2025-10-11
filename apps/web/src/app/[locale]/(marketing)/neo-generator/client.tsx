@@ -104,7 +104,7 @@ export function TextGeneratorClient() {
               readOnly={isDemo}
             />
             <div className="mt-2 flex items-center justify-between">
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 Enter text to see it transformed into various Unicode styles
               </p>
               <Badge variant="secondary" className="text-xs">
@@ -150,14 +150,14 @@ export function TextGeneratorClient() {
                         )}
                       </Button>
                     </CardTitle>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-muted-foreground text-xs">
                       {style.description}
                     </p>
                   </CardHeader>
                   <CardContent className="pt-0">
-                    <div className="flex min-h-[60px] items-center rounded-lg border bg-muted/50 p-3">
+                    <div className="bg-muted/50 flex min-h-[60px] items-center rounded-lg border p-3">
                       <p
-                        className="w-full text-base break-words"
+                        className="w-full break-words text-base"
                         style={{ wordBreak: 'break-word' }}
                       >
                         {generatedText || 'Generated text will appear here...'}
@@ -181,11 +181,11 @@ export function TextGeneratorClient() {
           <Card className="border-dashed">
             <CardContent className="pt-6">
               <div className="py-12 text-center">
-                <WandIcon className="mx-auto mb-4 h-16 w-16 text-muted-foreground/50" />
+                <WandIcon className="text-muted-foreground/50 mx-auto mb-4 h-16 w-16" />
                 <h3 className="mb-2 text-lg font-semibold">
                   Start Generating Text
                 </h3>
-                <p className="mx-auto max-w-md text-muted-foreground">
+                <p className="text-muted-foreground mx-auto max-w-md">
                   Enter some text above to see it transformed into various
                   Unicode styles. Perfect for creating eye-catching social media
                   posts and messages!

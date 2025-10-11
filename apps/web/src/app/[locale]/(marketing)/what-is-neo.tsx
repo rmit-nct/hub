@@ -70,14 +70,14 @@ export default function WhatIsNeo() {
         transition={{ duration: 0.8, delay: 0.4 }}
         viewport={{ once: true }}
       >
-        <h1 className="mb-2 text-4xl leading-normal font-extrabold md:text-5xl lg:text-6xl">
+        <h1 className="mb-2 text-4xl font-extrabold leading-normal md:text-5xl lg:text-6xl">
           What is{' '}
           <span className="relative">
-            <span className="border-b-4 border-[#FBC721] whitespace-nowrap text-[#5FC6E5]">
+            <span className="whitespace-nowrap border-b-4 border-[#FBC721] text-[#5FC6E5]">
               NEO Culture
             </span>
             <motion.div
-              className="absolute -top-2 -right-2"
+              className="absolute -right-2 -top-2"
               animate={{
                 rotate: [0, 10, -10, 0],
                 scale: [1, 1.1, 1],
@@ -109,7 +109,7 @@ export default function WhatIsNeo() {
             {' '}
             SSET students{' '}
             <motion.span
-              className="absolute right-0 -bottom-0.5 left-0 block h-0.5 bg-gradient-to-r from-[#5FC6E5] to-[#FBC721]"
+              className="absolute -bottom-0.5 left-0 right-0 block h-0.5 bg-gradient-to-r from-[#5FC6E5] to-[#FBC721]"
               initial={{ scaleX: 0 }}
               whileInView={{ scaleX: 1 }}
               transition={{ duration: 1, delay: 1 }}
@@ -139,7 +139,7 @@ export default function WhatIsNeo() {
               whileHover={{ scale: 1.05 }}
               className="group"
             >
-              <Card className="relative overflow-hidden border-2 bg-gradient-to-br from-background/50 to-background backdrop-blur-sm transition-all duration-300 hover:border-primary/50">
+              <Card className="from-background/50 to-background hover:border-primary/50 relative overflow-hidden border-2 bg-gradient-to-br backdrop-blur-sm transition-all duration-300">
                 {/* Background gradient effect */}
                 <div
                   className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-0 transition-opacity duration-300 group-hover:opacity-10`}
@@ -150,8 +150,8 @@ export default function WhatIsNeo() {
                   <div
                     className={`mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-r ${item.gradient} p-0.5`}
                   >
-                    <div className="flex h-full w-full items-center justify-center rounded-full bg-background">
-                      <item.icon className="h-8 w-8 text-foreground transition-transform duration-300 group-hover:scale-110" />
+                    <div className="bg-background flex h-full w-full items-center justify-center rounded-full">
+                      <item.icon className="text-foreground h-8 w-8 transition-transform duration-300 group-hover:scale-110" />
                     </div>
                   </div>
 
@@ -183,7 +183,7 @@ export default function WhatIsNeo() {
                   </h3>
 
                   {/* Description */}
-                  <p className="mb-4 text-sm text-muted-foreground">
+                  <p className="text-muted-foreground mb-4 text-sm">
                     {item.description}
                   </p>
 

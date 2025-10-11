@@ -14,7 +14,7 @@ export default async function AccountSettingsPage() {
   const user = await getCurrentUser();
 
   return (
-    <div className="grid gap-1 md:max-w-lg md:min-w-max">
+    <div className="grid gap-1 md:min-w-max md:max-w-lg">
       <SettingItemTab
         title={t('settings-account.avatar')}
         description={t('settings-account.avatar-description')}
@@ -86,7 +86,7 @@ export default async function AccountSettingsPage() {
       >
         <Suspense
           fallback={
-            <div className="h-10 w-full animate-pulse rounded bg-muted" />
+            <div className="bg-muted h-10 w-full animate-pulse rounded" />
           }
         >
           <DefaultWorkspaceSetting

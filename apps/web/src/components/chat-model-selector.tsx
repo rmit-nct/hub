@@ -56,11 +56,11 @@ export function ChatModelSelector({
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className="flex w-[calc(100vw-2rem)] flex-col-reverse rounded-b-none p-0 md:grid md:w-3xl md:grid-cols-2 xl:w-5xl"
+        className="md:w-3xl xl:w-5xl flex w-[calc(100vw-2rem)] flex-col-reverse rounded-b-none p-0 md:grid md:grid-cols-2"
         sideOffset={8}
         onInteractOutside={() => setOpen(false)}
       >
-        <Command className="rounded-b-none border-b md:rounded-r-none md:border-r md:border-b-0">
+        <Command className="rounded-b-none border-b md:rounded-r-none md:border-b-0 md:border-r">
           <CommandInput placeholder="Search model..." />
           <CommandEmpty>No model found.</CommandEmpty>
           <CommandList>
@@ -90,7 +90,7 @@ export function ChatModelSelector({
                           model?.value === m.value ? 'opacity-100' : 'opacity-0'
                         )}
                       />
-                      <div className="rounded-full bg-foreground px-2 py-0.5 text-background">
+                      <div className="bg-foreground text-background rounded-full px-2 py-0.5">
                         {m.label}
                       </div>
                     </CommandItem>
@@ -101,11 +101,11 @@ export function ChatModelSelector({
         </Command>
 
         <div>
-          <div className="flex items-center px-2 pt-3 pb-1">
+          <div className="flex items-center px-2 pb-1 pt-3">
             <div className="text-sm font-semibold opacity-80">
               {previewModel?.provider}{' '}
             </div>
-            <div className="mx-2 h-4 w-px rotate-30 bg-foreground/20" />
+            <div className="rotate-30 bg-foreground/20 mx-2 h-4 w-px" />
             <div className="line-clamp-1 font-mono text-xs">
               {previewModel?.label}
             </div>
@@ -116,7 +116,7 @@ export function ChatModelSelector({
             {previewModel?.context != undefined && (
               <>
                 <Separator className="my-2" />
-                <div className="rounded bg-foreground px-2 py-0.5 text-center text-sm font-semibold text-background">
+                <div className="bg-foreground text-background rounded px-2 py-0.5 text-center text-sm font-semibold">
                   {Intl.NumberFormat('en-US', {
                     style: 'decimal',
                   }).format(previewModel.context)}{' '}
