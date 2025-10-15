@@ -11,9 +11,10 @@ export async function generateStaticParams() {
 export default async function BlogDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const { id } = params;
+  const { id } = await params;
+
   const blog = blogsData.find((b) => b.id === id);
 
   if (!blog) {
