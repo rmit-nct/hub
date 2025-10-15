@@ -2361,6 +2361,63 @@ export type Database = {
           },
         ];
       };
+      neo_blogs: {
+        Row: {
+          author: string | null;
+          category: string | null;
+          content: string | null;
+          created_at: string;
+          date_published: string;
+          excerpt: string | null;
+          id: string;
+          image_url: string | null;
+          is_published: boolean;
+          likes_count: number;
+          read_time: string | null;
+          slug: string;
+          tags: string[] | null;
+          title: string;
+          updated_at: string;
+          views_count: number;
+        };
+        Insert: {
+          author?: string | null;
+          category?: string | null;
+          content?: string | null;
+          created_at?: string;
+          date_published?: string;
+          excerpt?: string | null;
+          id?: string;
+          image_url?: string | null;
+          is_published?: boolean;
+          likes_count?: number;
+          read_time?: string | null;
+          slug: string;
+          tags?: string[] | null;
+          title: string;
+          updated_at?: string;
+          views_count?: number;
+        };
+        Update: {
+          author?: string | null;
+          category?: string | null;
+          content?: string | null;
+          created_at?: string;
+          date_published?: string;
+          excerpt?: string | null;
+          id?: string;
+          image_url?: string | null;
+          is_published?: boolean;
+          likes_count?: number;
+          read_time?: string | null;
+          slug?: string;
+          tags?: string[] | null;
+          title?: string;
+          updated_at?: string;
+          views_count?: number;
+        };
+        Relationships: [];
+      };
       nova_challenge_criteria: {
         Row: {
           challenge_id: string;
