@@ -33,21 +33,21 @@ export default function NeoMeetingAgentLanding() {
           minSize={1024}
           src={files}
           onDrop={handleDrop}
-          className="h-64 border-2 border-dashed transition-colors duration-300 hover:bg-muted/25"
+          className="hover:bg-muted/25 h-64 border-2 border-dashed transition-colors duration-300"
         >
           <DropzoneContent />
           <DropzoneEmptyState>
             <div className="flex flex-col items-center justify-center text-center">
               <div className="rounded-full border border-dashed p-3">
                 <UploadIcon
-                  className="size-7 text-muted-foreground"
+                  className="text-muted-foreground size-7"
                   aria-hidden="true"
                 />
               </div>
-              <p className="mt-4 font-medium text-muted-foreground">
+              <p className="text-muted-foreground mt-4 font-medium">
                 {t('dropzone.title')}
               </p>
-              <p className="mt-2 text-sm text-muted-foreground/70">
+              <p className="text-muted-foreground/70 mt-2 text-sm">
                 {t('dropzone.caption', { size: 50 })}
               </p>
             </div>
