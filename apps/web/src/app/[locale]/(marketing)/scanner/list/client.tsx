@@ -193,7 +193,7 @@ export default function StudentListClient() {
           <Button
             variant="outline"
             size="lg"
-            className="h-12 bg-primary/10 text-base font-medium hover:bg-primary/20"
+            className="bg-primary/10 hover:bg-primary/20 h-12 text-base font-medium"
           >
             <ArrowLeft className="mr-2 h-5 w-5" />
             Back to Capture Page
@@ -203,10 +203,10 @@ export default function StudentListClient() {
 
       <div className="px-4 py-16">
         <div className="space-y-4 text-center">
-          <h1 className="bg-gradient-to-r from-dynamic-light-blue to-dynamic-blue bg-clip-text text-4xl font-bold text-transparent md:text-6xl">
+          <h1 className="from-dynamic-light-blue to-dynamic-blue bg-gradient-to-r bg-clip-text text-4xl font-bold text-transparent md:text-6xl">
             Student Records
           </h1>
-          <p className="mx-auto max-w-2xl text-xl text-dynamic-light-sky">
+          <p className="text-dynamic-light-sky mx-auto max-w-2xl text-xl">
             Manage and track student information
           </p>
         </div>
