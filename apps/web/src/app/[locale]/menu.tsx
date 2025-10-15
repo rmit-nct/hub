@@ -43,9 +43,10 @@ const navItems = (t: any, user: WorkspaceUser | null) => {
     { href: '/neo-generator', label: 'Neo Generator' },
   ] as NavItem[];
 
-  // Only add Scanner for logged-in users
+  // Only add item for logged-in users
   if (user) {
     baseItems.push({ href: '/scanner', label: 'Scanner' });
+    baseItems.push({ href: '/neo-meeting-agent', label: 'Neo Meeting Agent' });
   }
 
   return baseItems;
