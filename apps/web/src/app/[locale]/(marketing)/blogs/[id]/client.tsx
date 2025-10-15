@@ -1,13 +1,27 @@
+'use client';
+
 import { Blog } from '../data';
 import { Badge } from '@ncthub/ui/badge';
 import { Button } from '@ncthub/ui/button';
 import { ArrowLeft, Calendar, Clock, User } from '@ncthub/ui/icons';
+import { EditorContent, useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import ReactMarkdown from 'react-markdown';
 
-export default async function BlogDetailClient({ blog }: { blog: Blog }) {
+export default function BlogDetailClient({ blog }: { blog: Blog }) {
+  const editor = useEditor({
+    editable: false,
+    content: blog.content,
+    extensions: [StarterKit],
+    editorProps: {
+      attributes: {
+        class: 'prose prose-lg max-w-none prose-slate dark:prose-invert',
+      },
+    },
+  });
+
   return (
     <div className="container mx-auto px-4 py-16">
       {/* Back Button */}
@@ -86,53 +100,8 @@ export default async function BlogDetailClient({ blog }: { blog: Blog }) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
-          className="prose prose-lg max-w-none prose-slate dark:prose-invert"
         >
-          <ReactMarkdown
-            components={{
-              h1: ({ ...props }) => (
-                <h1 className="mt-8 mb-6 text-3xl font-bold" {...props} />
-              ),
-              h2: ({ ...props }) => (
-                <h2
-                  className="mt-8 mb-4 border-b-1 border-muted pb-1 text-2xl font-bold text-[#5FC6E5]"
-                  {...props}
-                />
-              ),
-              h3: ({ ...props }) => (
-                <h3 className="mt-6 mb-3 text-xl font-semibold" {...props} />
-              ),
-              p: ({ ...props }) => (
-                <p className="mb-4 leading-relaxed" {...props} />
-              ),
-              ul: ({ ...props }) => (
-                <ul className="mb-4 ml-6 list-disc space-y-2" {...props} />
-              ),
-              ol: ({ ...props }) => (
-                <ol className="mb-4 ml-6 list-decimal space-y-2" {...props} />
-              ),
-              code: ({ inline, ...props }: any) =>
-                inline ? (
-                  <code
-                    className="rounded bg-muted px-1.5 py-0.5 font-mono text-sm"
-                    {...props}
-                  />
-                ) : (
-                  <code
-                    className="block rounded-lg bg-muted p-4 font-mono text-sm"
-                    {...props}
-                  />
-                ),
-              blockquote: ({ ...props }) => (
-                <blockquote
-                  className="border-l-4 border-[#5FC6E5] pl-4 text-muted-foreground italic"
-                  {...props}
-                />
-              ),
-            }}
-          >
-            {blog.content}
-          </ReactMarkdown>
+          <EditorContent editor={editor} />
         </motion.article>
 
         {/* Back to Blogs Button */}

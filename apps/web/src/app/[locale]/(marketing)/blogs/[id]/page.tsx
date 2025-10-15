@@ -2,14 +2,19 @@ import { blogsData } from '../data';
 import BlogDetailClient from './client';
 import { notFound } from 'next/navigation';
 
+export async function generateStaticParams() {
+  return blogsData.map((blog) => ({
+    id: blog.id,
+  }));
+}
+
 export default async function BlogDetailPage({
   params,
 }: {
-  params: Promise<{ blogId: string }>;
+  params: { id: string };
 }) {
-  const { blogId } = await params;
-
-  const blog = blogsData.find((b) => b.id === blogId);
+  const { id } = params;
+  const blog = blogsData.find((b) => b.id === id);
 
   if (!blog) {
     notFound();
