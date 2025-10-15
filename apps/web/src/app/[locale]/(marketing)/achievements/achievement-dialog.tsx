@@ -40,7 +40,7 @@ export default function AchievementDialog({
   return (
     <Dialog key={achievement.id}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto md:min-w-2xl">
+      <DialogContent className="md:min-w-2xl max-h-[90vh] max-w-3xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <TrophyIcon className="h-5 w-5 text-yellow-500" />
@@ -55,11 +55,11 @@ export default function AchievementDialog({
                 >
                   {achievement.category} • {achievement.year}
                 </Badge>
-                <span className="text-lg font-semibold text-foreground">
+                <span className="text-foreground text-lg font-semibold">
                   {achievement.achievement}
                 </span>
               </div>
-              <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-muted">
+              <div className="bg-muted relative aspect-video w-full overflow-hidden rounded-lg">
                 {!imageError ? (
                   <Image
                     src={achievement.image}
@@ -69,8 +69,8 @@ export default function AchievementDialog({
                     onError={() => setImageError(true)}
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-muted">
-                    <TrophyIcon className="h-16 w-16 text-muted-foreground" />
+                  <div className="bg-muted flex h-full w-full items-center justify-center">
+                    <TrophyIcon className="text-muted-foreground h-16 w-16" />
                   </div>
                 )}
               </div>
@@ -80,7 +80,7 @@ export default function AchievementDialog({
 
         <div className="space-y-6">
           <div>
-            <h4 className="mb-3 flex items-center gap-2 font-semibold text-foreground">
+            <h4 className="text-foreground mb-3 flex items-center gap-2 font-semibold">
               <UsersIcon className="h-4 w-4" />
               Team: {achievement.teamName}
             </h4>
@@ -88,7 +88,7 @@ export default function AchievementDialog({
               {achievement.teamMembers.map((member) => (
                 <div
                   key={member.id}
-                  className="flex items-center gap-3 rounded-lg bg-muted/50 p-3"
+                  className="bg-muted/50 flex items-center gap-3 rounded-lg p-3"
                 >
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={member.avatar} alt={member.name} />
@@ -100,10 +100,10 @@ export default function AchievementDialog({
                     </AvatarFallback>
                   </Avatar>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-foreground">
+                    <p className="text-foreground truncate text-sm font-medium">
                       {member.name}
                     </p>
-                    <p className="truncate text-xs text-muted-foreground">
+                    <p className="text-muted-foreground truncate text-xs">
                       {member.role}
                     </p>
                   </div>
@@ -113,10 +113,10 @@ export default function AchievementDialog({
           </div>
 
           <div>
-            <h4 className="mb-3 font-semibold text-foreground">
+            <h4 className="text-foreground mb-3 font-semibold">
               Achievement Description
             </h4>
-            <p className="leading-relaxed text-muted-foreground">
+            <p className="text-muted-foreground leading-relaxed">
               {achievement.achievementDescription}
             </p>
           </div>

@@ -33,7 +33,7 @@ export default function AchievementsPage() {
               Fame
             </span>
           </h1>
-          <p className="mx-auto max-w-5xl text-lg text-foreground/80 md:text-xl">
+          <p className="text-foreground/80 mx-auto max-w-5xl text-lg md:text-xl">
             Celebrating our teams&apos; outstanding achievements in
             competitions, hackathons, and innovation challenges. Discover the
             brilliant minds behind groundbreaking solutions and innovative
@@ -47,7 +47,7 @@ export default function AchievementsPage() {
 
       <section className="px-4 py-12 sm:px-6 lg:px-8">
         <div className="my-12 text-center">
-          <h1 className="text-4xl font-bold tracking-tight text-foreground md:text-5xl">
+          <h1 className="text-foreground text-4xl font-bold tracking-tight md:text-5xl">
             Other Achievements
           </h1>
         </div>

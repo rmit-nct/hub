@@ -154,8 +154,8 @@ function SpecialAchievementCard({ achievement }: { achievement: Achievement }) {
             onError={() => setImageError(true)}
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-muted">
-            <TrophyIcon className="h-24 w-24 text-muted-foreground" />
+          <div className="bg-muted flex h-full w-full items-center justify-center">
+            <TrophyIcon className="text-muted-foreground h-24 w-24" />
           </div>
         )}
         {/* Dark overlay for better text readability - reduces opacity on hover */}
@@ -175,7 +175,7 @@ function SpecialAchievementCard({ achievement }: { achievement: Achievement }) {
         {/* Center section with main headers */}
         <div className="flex flex-1 items-center justify-center">
           <div className="space-y-2 text-center sm:space-y-4">
-            <h2 className="text-2xl leading-tight font-extrabold text-white sm:text-3xl md:text-4xl lg:text-5xl">
+            <h2 className="text-2xl font-extrabold leading-tight text-white sm:text-3xl md:text-4xl lg:text-5xl">
               {achievement.competitionName}
             </h2>
             <h3 className="text-xl font-semibold text-white/95 sm:text-2xl md:text-3xl lg:text-4xl">
@@ -202,7 +202,7 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
   return (
     <Card className="group flex h-full cursor-pointer flex-col justify-between transition-all duration-200 hover:scale-[1.02] hover:shadow-lg">
       <CardHeader>
-        <div className="relative mb-4 aspect-video w-full overflow-hidden rounded-lg bg-muted">
+        <div className="bg-muted relative mb-4 aspect-video w-full overflow-hidden rounded-lg">
           {!imageError ? (
             <Image
               src={achievement.image}
@@ -212,8 +212,8 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
               onError={() => setImageError(true)}
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-muted">
-              <TrophyIcon className="h-12 w-12 text-muted-foreground" />
+            <div className="bg-muted flex h-full w-full items-center justify-center">
+              <TrophyIcon className="text-muted-foreground h-12 w-12" />
             </div>
           )}
         </div>
@@ -224,7 +224,7 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
           >
             {achievement.category}
           </Badge>
-          <span className="flex items-center gap-1 text-sm text-muted-foreground">
+          <span className="text-muted-foreground flex items-center gap-1 text-sm">
             <CalendarIcon className="h-3 w-3" />
             {achievement.year}
           </span>
@@ -232,12 +232,12 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
         <CardTitle className="line-clamp-2 text-lg leading-tight">
           {achievement.competitionName}
         </CardTitle>
-        <CardDescription className="text-base font-medium text-foreground">
+        <CardDescription className="text-foreground text-base font-medium">
           {achievement.achievement}
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <div className="text-muted-foreground flex items-center gap-2 text-sm">
           <UsersIcon className="h-4 w-4" />
           <span className="font-medium">{achievement.teamName}</span>
           <span>•</span>
