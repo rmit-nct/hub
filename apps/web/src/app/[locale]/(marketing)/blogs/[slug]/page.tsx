@@ -1,6 +1,6 @@
 'use client';
 
-import { blogsData } from '../data';
+import { createClient } from '@ncthub/supabase/next/client';
 import { Badge } from '@ncthub/ui/badge';
 import { Button } from '@ncthub/ui/button';
 import { ArrowLeft, Calendar, Clock, User } from '@ncthub/ui/icons';
@@ -8,15 +8,67 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 
-export default function BlogDetailPage({ params }: { params: { id: string } }) {
-  const blog = blogsData.find((b) => b.id === params.id);
+interface BlogDetail {
+  id: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  author: string;
+  date_published: string;
+  category: string;
+  image_url?: string;
+  read_time: string;
+  views_count?: number;
+  likes_count?: number;
+  tags?: string[];
+  is_published?: boolean;
+  slug?: string;
+}
 
-  if (!blog) {
-    notFound();
-  }
+export default function BlogDetailPage() {
+  const supabase = createClient();
+  const params = useParams();
 
+  const [blogDetail, setBlogDetail] = useState<BlogDetail[]>([]);
+
+  const fetchBlogDetail = async () => {
+    const { data, error } = await supabase
+      .from('neo_blogs')
+      .select('*')
+      .eq('slug', params.slug)
+      .eq('is_published', true)
+      .single();
+
+    if (error) {
+      console.error('Error fetching blog:', error.message);
+      return;
+    }
+
+    if (!data) {
+      setBlogDetail(null);
+      return;
+    }
+
+    // update views count
+    await supabase
+      .from('neo_blogs')
+      .update({ views_count: (data.views_count || 0) + 1 })
+      .eq('id', data.id);
+
+    setBlogDetail(data as BlogDetail);
+  };
+
+  useEffect(() => {
+    if (params.slug) fetchBlogDetail();
+  }, [params.slug]);
+
+  if (!blogDetail) return null;
+
+  console.log('blogDetail', blogDetail);
   return (
     <div className="container mx-auto px-4 py-16">
       {/* Back Button */}
@@ -43,23 +95,23 @@ export default function BlogDetailPage({ params }: { params: { id: string } }) {
           className="mb-8 space-y-6"
         >
           {/* Category Badge */}
-          <Badge className="bg-[#5FC6E5] text-white">{blog.category}</Badge>
+          <Badge className="bg-[#5FC6E5] text-white">{blogDetail.category}</Badge>
 
           {/* Title */}
           <h1 className="text-4xl leading-tight font-extrabold text-foreground md:text-5xl lg:text-6xl">
-            {blog.title}
+            {blogDetail.title}
           </h1>
 
           {/* Meta Information */}
           <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <User className="h-4 w-4" />
-              <span className="font-medium">{blog.author}</span>
+              <span className="font-medium">{blogDetail.author}</span>
             </div>
             <div className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
               <span>
-                {new Date(blog.date).toLocaleDateString('en-US', {
+                {new Date(blogDetail.date_published).toLocaleDateString('en-US', {
                   month: 'long',
                   day: 'numeric',
                   year: 'numeric',
@@ -68,13 +120,13 @@ export default function BlogDetailPage({ params }: { params: { id: string } }) {
             </div>
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4" />
-              <span>{blog.readTime} read</span>
+              <span>{blogDetail.read_time} read</span>
             </div>
           </div>
         </motion.div>
 
         {/* Featured Image */}
-        {blog.imageUrl && (
+        {blogDetail.image_url && (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -82,8 +134,8 @@ export default function BlogDetailPage({ params }: { params: { id: string } }) {
             className="relative mb-12 h-96 w-full overflow-hidden rounded-2xl"
           >
             <Image
-              src={blog.imageUrl}
-              alt={blog.title}
+              src={blogDetail.image_url}
+              alt={blogDetail.title}
               fill
               className="object-cover"
             />
@@ -140,7 +192,7 @@ export default function BlogDetailPage({ params }: { params: { id: string } }) {
               ),
             }}
           >
-            {blog.content}
+            {blogDetail.content}
           </ReactMarkdown>
         </motion.article>
 
