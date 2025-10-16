@@ -1,10 +1,10 @@
 'use client';
 
+import BlogDetailClient from './client';
 import { createClient } from '@ncthub/supabase/next/client';
 import { notFound } from 'next/navigation';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import BlogDetailClient from './client';
 
 export interface BlogDetail {
   id: string;
@@ -68,7 +68,6 @@ export default function BlogDetailPage() {
   if (!blogDetail) return null;
 
   console.log('blogDetail', blogDetail);
-  
-  return <BlogDetailClient blog={blogDetail} />;
 
+  return <BlogDetailClient blog={blogDetail} />;
 }
