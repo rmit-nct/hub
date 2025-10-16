@@ -34,7 +34,7 @@ interface Blog {
   date_published: string;
   category: string;
   image_url?: string;
-  readTime: string;
+  read_time: string;
   views_count?: number;
   likes_count?: number;
   tags?: string[];
@@ -61,7 +61,7 @@ export default function BlogsPageClient() {
       return [];
     }
 
-    setBlogs(data);
+    setBlogs(data as Blog[]);
   };
 
   useEffect(() => {
@@ -147,7 +147,7 @@ export default function BlogsPageClient() {
             transition={{ duration: 0.4, delay: 0.8 + index * 0.1 }}
             whileHover={{ y: -8 }}
           >
-            <Link href={`/blogs/${blog.slug}`}>
+            <Link href={`/blogs/${blog.id}`}>
               <Card className="group h-full overflow-hidden transition-all duration-300 hover:border-[#5FC6E5]/50 hover:shadow-lg">
                 {/* Blog Image */}
                 {blog.image_url && (

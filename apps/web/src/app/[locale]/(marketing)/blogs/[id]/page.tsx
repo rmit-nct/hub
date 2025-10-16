@@ -1,18 +1,12 @@
 'use client';
 
 import { createClient } from '@ncthub/supabase/next/client';
-import { Badge } from '@ncthub/ui/badge';
-import { Button } from '@ncthub/ui/button';
-import { ArrowLeft, Calendar, Clock, User } from '@ncthub/ui/icons';
-import { motion } from 'framer-motion';
-import Image from 'next/image';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import ReactMarkdown from 'react-markdown';
+import BlogDetailClient from './client';
 
-interface BlogDetail {
+export interface BlogDetail {
   id: string;
   title: string;
   excerpt: string;
@@ -33,13 +27,18 @@ export default function BlogDetailPage() {
   const supabase = createClient();
   const params = useParams();
 
-  const [blogDetail, setBlogDetail] = useState<BlogDetail[]>([]);
+  const [blogDetail, setBlogDetail] = useState<BlogDetail | null>(null);
 
   const fetchBlogDetail = async () => {
+    if (!params.id || typeof params.id !== 'string') {
+      notFound();
+      return;
+    }
+
     const { data, error } = await supabase
       .from('neo_blogs')
       .select('*')
-      .eq('slug', params.slug)
+      .eq('id', params.id)
       .eq('is_published', true)
       .single();
 
@@ -63,13 +62,13 @@ export default function BlogDetailPage() {
   };
 
   useEffect(() => {
-    if (params.slug) fetchBlogDetail();
-  }, [params.slug]);
+    if (params.id) fetchBlogDetail();
+  }, [params.id]);
 
   if (!blogDetail) return null;
 
   console.log('blogDetail', blogDetail);
   
-  return <BlogDetailClient blog={blog} />;
+  return <BlogDetailClient blog={blogDetail} />;
 
 }
