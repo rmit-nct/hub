@@ -1,6 +1,6 @@
 'use client';
 
-
+import { BlogDetail } from './page';
 import { Badge } from '@ncthub/ui/badge';
 import { Button } from '@ncthub/ui/button';
 import { ArrowLeft, Calendar, Clock, User } from '@ncthub/ui/icons';
@@ -9,20 +9,28 @@ import StarterKit from '@tiptap/starter-kit';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { BlogDetail } from './page';
 
 export default function BlogDetailClient({ blog }: { blog: BlogDetail }) {
   // Parse content if it's a string
-  const parsedContent = typeof blog.content === 'string' 
-    ? (() => {
-        try {
-          return JSON.parse(blog.content);
-        } catch (error) {
-          console.error('Failed to parse blog content:', error);
-          return { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: blog.content }] }] };
-        }
-      })()
-    : blog.content;
+  const parsedContent =
+    typeof blog.content === 'string'
+      ? (() => {
+          try {
+            return JSON.parse(blog.content);
+          } catch (error) {
+            console.error('Failed to parse blog content:', error);
+            return {
+              type: 'doc',
+              content: [
+                {
+                  type: 'paragraph',
+                  content: [{ type: 'text', text: blog.content }],
+                },
+              ],
+            };
+          }
+        })()
+      : blog.content;
 
   const editor = useEditor({
     editable: false,
