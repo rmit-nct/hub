@@ -2848,6 +2848,55 @@ export type Database = {
           ws_id?: string;
         };
       };
+      media_uploads: {
+        Insert: {
+          created_at?: string;
+          duration_seconds?: null | number;
+          id?: string;
+          status?: string;
+          storage_path: string;
+          user_id: string;
+        };
+        Relationships: [
+          {
+            columns: ['user_id'];
+            foreignKeyName: 'media_uploads_user_id_fkey';
+            isOneToOne: false;
+            referencedColumns: ['user_id'];
+            referencedRelation: 'nova_user_challenge_leaderboard';
+          },
+          {
+            columns: ['user_id'];
+            foreignKeyName: 'media_uploads_user_id_fkey';
+            isOneToOne: false;
+            referencedColumns: ['user_id'];
+            referencedRelation: 'nova_user_leaderboard';
+          },
+          {
+            columns: ['user_id'];
+            foreignKeyName: 'media_uploads_user_id_fkey';
+            isOneToOne: false;
+            referencedColumns: ['id'];
+            referencedRelation: 'users';
+          },
+        ];
+        Row: {
+          created_at: string;
+          duration_seconds: null | number;
+          id: string;
+          status: string;
+          storage_path: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          duration_seconds?: null | number;
+          id?: string;
+          status?: string;
+          storage_path?: string;
+          user_id?: string;
+        };
+      };
       meet_together_guest_timeblocks: {
         Insert: {
           created_at?: string;
@@ -3043,6 +3092,102 @@ export type Database = {
           plan_id?: string;
           start_time?: string;
           user_id?: string;
+        };
+      };
+      meeting_notes: {
+        Insert: {
+          created_at?: string;
+          id?: string;
+          media_upload_id: string;
+          notes_markdown: string;
+          transcript_id?: null | string;
+        };
+        Relationships: [
+          {
+            columns: ['media_upload_id'];
+            foreignKeyName: 'meeting_notes_media_upload_id_fkey';
+            isOneToOne: false;
+            referencedColumns: ['id'];
+            referencedRelation: 'media_uploads';
+          },
+          {
+            columns: ['transcript_id'];
+            foreignKeyName: 'meeting_notes_transcript_id_fkey';
+            isOneToOne: false;
+            referencedColumns: ['id'];
+            referencedRelation: 'recording_transcripts';
+          },
+        ];
+        Row: {
+          created_at: string;
+          id: string;
+          media_upload_id: string;
+          notes_markdown: string;
+          transcript_id: null | string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          media_upload_id?: string;
+          notes_markdown?: string;
+          transcript_id?: null | string;
+        };
+      };
+      neo_blogs: {
+        Insert: {
+          author?: null | string;
+          category?: null | string;
+          content?: null | string;
+          created_at?: string;
+          date_published?: string;
+          excerpt?: null | string;
+          id?: string;
+          image_url?: null | string;
+          is_published?: boolean;
+          likes_count?: number;
+          read_time?: null | string;
+          slug: string;
+          tags?: null | string[];
+          title: string;
+          updated_at?: string;
+          views_count?: number;
+        };
+        Relationships: [];
+        Row: {
+          author: null | string;
+          category: null | string;
+          content: null | string;
+          created_at: string;
+          date_published: string;
+          excerpt: null | string;
+          id: string;
+          image_url: null | string;
+          is_published: boolean;
+          likes_count: number;
+          read_time: null | string;
+          slug: string;
+          tags: null | string[];
+          title: string;
+          updated_at: string;
+          views_count: number;
+        };
+        Update: {
+          author?: null | string;
+          category?: null | string;
+          content?: null | string;
+          created_at?: string;
+          date_published?: string;
+          excerpt?: null | string;
+          id?: string;
+          image_url?: null | string;
+          is_published?: boolean;
+          likes_count?: number;
+          read_time?: null | string;
+          slug?: string;
+          tags?: null | string[];
+          title?: string;
+          updated_at?: string;
+          views_count?: number;
         };
       };
       nova_challenge_criteria: {
@@ -3980,6 +4125,44 @@ export type Database = {
           created_at?: string;
           quiz_id?: string;
           set_id?: string;
+        };
+      };
+      recording_transcripts: {
+        Insert: {
+          created_at?: string;
+          duration_in_seconds?: number;
+          id?: string;
+          language?: string;
+          media_upload_id: string;
+          segments?: Json | null;
+          text: string;
+        };
+        Relationships: [
+          {
+            columns: ['media_upload_id'];
+            foreignKeyName: 'recording_transcripts_media_upload_id_fkey';
+            isOneToOne: false;
+            referencedColumns: ['id'];
+            referencedRelation: 'media_uploads';
+          },
+        ];
+        Row: {
+          created_at: string;
+          duration_in_seconds: number;
+          id: string;
+          language: string;
+          media_upload_id: string;
+          segments: Json | null;
+          text: string;
+        };
+        Update: {
+          created_at?: string;
+          duration_in_seconds?: number;
+          id?: string;
+          language?: string;
+          media_upload_id?: string;
+          segments?: Json | null;
+          text?: string;
         };
       };
       sent_emails: {
