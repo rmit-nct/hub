@@ -58,25 +58,28 @@ export type Database = {
         Returns: number;
       };
       cleanup_expired_cross_app_tokens: {
-        Args: Record<PropertyKey, never>;
+        Args: never;
         Returns: undefined;
       };
       cleanup_role_inconsistencies: {
-        Args: Record<PropertyKey, never>;
+        Args: never;
         Returns: undefined;
       };
-      count_search_users: {
-        Args:
-          | {
+      count_search_users:
+        | {
+            Args: {
               enabled_filter?: boolean;
               role_filter?: string;
               search_query: string;
-            }
-          | {
+            };
+            Returns: number;
+          }
+        | {
+            Args: {
               search_query: string;
             };
-        Returns: number;
-      };
+            Returns: number;
+          };
       create_ai_chat: {
         Args: {
           message: string;
@@ -85,23 +88,26 @@ export type Database = {
         };
         Returns: string;
       };
-      generate_cross_app_token: {
-        Args:
-          | {
+      generate_cross_app_token:
+        | {
+            Args: {
               p_expiry_seconds?: number;
               p_origin_app: string;
               p_session_data?: Json;
               p_target_app: string;
               p_user_id: string;
-            }
-          | {
+            };
+            Returns: string;
+          }
+        | {
+            Args: {
               p_expiry_seconds?: number;
               p_origin_app: string;
               p_target_app: string;
               p_user_id: string;
             };
-        Returns: string;
-      };
+            Returns: string;
+          };
       get_challenge_stats: {
         Args: {
           challenge_id_param: string;
@@ -281,7 +287,7 @@ export type Database = {
         }[];
       };
       get_session_statistics: {
-        Args: Record<PropertyKey, never>;
+        Args: never;
         Returns: {
           active_count: number;
           completed_count: number;
@@ -311,7 +317,7 @@ export type Database = {
         }[];
       };
       get_submission_statistics: {
-        Args: Record<PropertyKey, never>;
+        Args: never;
         Returns: {
           latest_submission_date: string;
           total_count: number;
@@ -319,7 +325,7 @@ export type Database = {
         }[];
       };
       get_transaction_categories_with_amount: {
-        Args: Record<PropertyKey, never>;
+        Args: never;
         Returns: {
           amount: number;
           created_at: string;
@@ -488,11 +494,11 @@ export type Database = {
         Returns: boolean;
       };
       is_nova_challenge_manager: {
-        Args: Record<PropertyKey, never>;
+        Args: never;
         Returns: boolean;
       };
       is_nova_role_manager: {
-        Args: Record<PropertyKey, never>;
+        Args: never;
         Returns: boolean;
       };
       is_nova_user_email_in_team: {
@@ -575,39 +581,60 @@ export type Database = {
         };
         Returns: undefined;
       };
-      search_users: {
-        Args:
-          | {
+      search_users:
+        | {
+            Args: {
               enabled_filter?: boolean;
               page_number: number;
               page_size: number;
               role_filter?: string;
               search_query: string;
-            }
-          | {
+            };
+            Returns: {
+              allow_challenge_management: boolean;
+              allow_manage_all_challenges: boolean;
+              allow_role_management: boolean;
+              avatar_url: string;
+              bio: string;
+              birthday: string;
+              created_at: string;
+              deleted: boolean;
+              display_name: string;
+              email: string;
+              enabled: boolean;
+              full_name: string;
+              handle: string;
+              id: string;
+              new_email: string;
+              team_name: string[];
+              user_id: string;
+            }[];
+          }
+        | {
+            Args: {
               page_number: number;
               page_size: number;
               search_query: string;
             };
-        Returns: {
-          allow_challenge_management: boolean;
-          allow_manage_all_challenges: boolean;
-          allow_role_management: boolean;
-          avatar_url: string;
-          bio: string;
-          birthday: string;
-          created_at: string;
-          deleted: boolean;
-          display_name: string;
-          email: string;
-          enabled: boolean;
-          handle: string;
-          id: string;
-          new_email: string;
-          team_name: string[];
-          user_id: string;
-        }[];
-      };
+            Returns: {
+              allow_challenge_management: boolean;
+              allow_manage_all_challenges: boolean;
+              allow_role_management: boolean;
+              avatar_url: string;
+              bio: string;
+              birthday: string;
+              created_at: string;
+              deleted: boolean;
+              display_name: string;
+              email: string;
+              enabled: boolean;
+              handle: string;
+              id: string;
+              new_email: string;
+              team_name: string[];
+              user_id: string;
+            }[];
+          };
       search_users_by_name: {
         Args: {
           min_similarity?: number;
@@ -637,7 +664,7 @@ export type Database = {
         Returns: boolean;
       };
       update_expired_sessions: {
-        Args: Record<PropertyKey, never>;
+        Args: never;
         Returns: undefined;
       };
       update_session_total_score: {
@@ -3016,63 +3043,6 @@ export type Database = {
           plan_id?: string;
           start_time?: string;
           user_id?: string;
-        };
-      };
-      neo_blogs: {
-        Insert: {
-          author?: null | string;
-          category?: null | string;
-          content?: null | string;
-          created_at?: string;
-          date_published?: string;
-          excerpt?: null | string;
-          id?: string;
-          image_url?: null | string;
-          is_published?: boolean;
-          likes_count?: number;
-          read_time?: null | string;
-          slug: string;
-          tags?: null | string[];
-          title: string;
-          updated_at?: string;
-          views_count?: number;
-        };
-        Relationships: [];
-        Row: {
-          author: null | string;
-          category: null | string;
-          content: null | string;
-          created_at: string;
-          date_published: string;
-          excerpt: null | string;
-          id: string;
-          image_url: null | string;
-          is_published: boolean;
-          likes_count: number;
-          read_time: null | string;
-          slug: string;
-          tags: null | string[];
-          title: string;
-          updated_at: string;
-          views_count: number;
-        };
-        Update: {
-          author?: null | string;
-          category?: null | string;
-          content?: null | string;
-          created_at?: string;
-          date_published?: string;
-          excerpt?: null | string;
-          id?: string;
-          image_url?: null | string;
-          is_published?: boolean;
-          likes_count?: number;
-          read_time?: null | string;
-          slug?: string;
-          tags?: null | string[];
-          title?: string;
-          updated_at?: string;
-          views_count?: number;
         };
       };
       nova_challenge_criteria: {
@@ -7391,7 +7361,7 @@ export type Database = {
           op?: 'DELETE' | 'INSERT' | 'TRUNCATE' | 'UPDATE' | null;
           record?: Json | null;
           record_id?: null | string;
-          table_name?: null | unknown;
+          table_name?: unknown;
           ts?: null | string;
           ws_id?: never;
         };
@@ -7427,7 +7397,7 @@ export type Database = {
           op: 'DELETE' | 'INSERT' | 'TRUNCATE' | 'UPDATE' | null;
           record: Json | null;
           record_id: null | string;
-          table_name: null | unknown;
+          table_name: unknown;
           ts: null | string;
           ws_id: null | string;
         };
@@ -7440,7 +7410,7 @@ export type Database = {
           op?: 'DELETE' | 'INSERT' | 'TRUNCATE' | 'UPDATE' | null;
           record?: Json | null;
           record_id?: null | string;
-          table_name?: null | unknown;
+          table_name?: unknown;
           ts?: null | string;
           ws_id?: never;
         };
@@ -7880,24 +7850,28 @@ export type Database = {
     };
   };
 };
-type DefaultSchema = Database[Extract<keyof Database, 'public'>];
+type DatabaseWithoutInternals = Omit<Database, '__InternalSupabase'>;
+type DefaultSchema = DatabaseWithoutInternals[Extract<
+  keyof Database,
+  'public'
+>];
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | {
-        schema: keyof Database;
+        schema: keyof DatabaseWithoutInternals;
       }
     | keyof (DefaultSchema['Tables'] & DefaultSchema['Views']),
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database;
+    schema: keyof DatabaseWithoutInternals;
   }
-    ? keyof (Database[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
-        Database[DefaultSchemaTableNameOrOptions['schema']]['Views'])
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof Database;
+  schema: keyof DatabaseWithoutInternals;
 }
-  ? (Database[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
-      Database[DefaultSchemaTableNameOrOptions['schema']]['Views'])[TableName] extends {
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])[TableName] extends {
       Row: infer R;
     }
     ? R
@@ -7914,18 +7888,18 @@ export type Tables<
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | {
-        schema: keyof Database;
+        schema: keyof DatabaseWithoutInternals;
       }
     | keyof DefaultSchema['Tables'],
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database;
+    schema: keyof DatabaseWithoutInternals;
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof Database;
+  schema: keyof DatabaseWithoutInternals;
 }
-  ? Database[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
       Insert: infer I;
     }
     ? I
@@ -7940,18 +7914,18 @@ export type TablesInsert<
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | {
-        schema: keyof Database;
+        schema: keyof DatabaseWithoutInternals;
       }
     | keyof DefaultSchema['Tables'],
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database;
+    schema: keyof DatabaseWithoutInternals;
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof Database;
+  schema: keyof DatabaseWithoutInternals;
 }
-  ? Database[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
       Update: infer U;
     }
     ? U
@@ -7966,36 +7940,36 @@ export type TablesUpdate<
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | {
-        schema: keyof Database;
+        schema: keyof DatabaseWithoutInternals;
       }
     | keyof DefaultSchema['Enums'],
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
-    schema: keyof Database;
+    schema: keyof DatabaseWithoutInternals;
   }
-    ? keyof Database[DefaultSchemaEnumNameOrOptions['schema']]['Enums']
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums']
     : never = never,
 > = DefaultSchemaEnumNameOrOptions extends {
-  schema: keyof Database;
+  schema: keyof DatabaseWithoutInternals;
 }
-  ? Database[DefaultSchemaEnumNameOrOptions['schema']]['Enums'][EnumName]
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums'][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema['Enums']
     ? DefaultSchema['Enums'][DefaultSchemaEnumNameOrOptions]
     : never;
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | {
-        schema: keyof Database;
+        schema: keyof DatabaseWithoutInternals;
       }
     | keyof DefaultSchema['CompositeTypes'],
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
-    schema: keyof Database;
+    schema: keyof DatabaseWithoutInternals;
   }
-    ? keyof Database[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
     : never = never,
 > = PublicCompositeTypeNameOrOptions extends {
-  schema: keyof Database;
+  schema: keyof DatabaseWithoutInternals;
 }
-  ? Database[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes'][CompositeTypeName]
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes'][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema['CompositeTypes']
     ? DefaultSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
     : never;
