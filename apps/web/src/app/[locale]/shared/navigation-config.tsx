@@ -6,6 +6,7 @@ import {
   Gamepad2,
   GitBranch,
   Newspaper,
+  NotebookPen,
   Puzzle,
   ScanLine,
   Sparkles,
@@ -61,6 +62,12 @@ export const useNavigation = (t: any): { categories: NavCategory[] } => {
       label: t('common.blogs'),
       description: 'Read our latest blog posts.',
       icon: <Newspaper />,
+    },
+    {
+      href: '/neo-meeting-agent',
+      label: 'Neo Meeting Agent',
+      description: 'Automate minutes of meetings and summaries.',
+      icon: <NotebookPen />,
     },
     {
       href: '/neo-generator',
