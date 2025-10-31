@@ -43,14 +43,14 @@ export function GLBViewerCanvas({
   const controlsRef = useRef<OrbitControlsImpl>(null);
 
   return (
-    <div className="relative h-[45vh] max-h-[80vh] min-h-[300px] w-full rounded-2xl border border-border bg-gradient-to-br from-background/95 to-primary/5 shadow-lg sm:h-[55vh] md:h-[65vh] xl:h-[70vh]">
+    <div className="border-border from-background/95 to-primary/5 relative h-[45vh] max-h-[80vh] min-h-[300px] w-full rounded-2xl border bg-gradient-to-br shadow-lg sm:h-[55vh] md:h-[65vh] xl:h-[70vh]">
       {/* Background image layer */}
       <Image
         src="/media/logos/nct-logo-dark-nbg.png" // <-- change to your image
         alt=""
         fill
         priority
-        className="pointer-events-none z-0 object-contain object-center opacity-40 select-none"
+        className="pointer-events-none z-0 select-none object-contain object-center opacity-40"
       />
 
       <Canvas
