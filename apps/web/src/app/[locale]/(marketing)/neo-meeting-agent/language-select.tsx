@@ -20,7 +20,7 @@ export function LanguageSelect({
 
   return (
     <Select onValueChange={onValueChange} defaultValue={defaultValue}>
-      <SelectTrigger className="w-full border bg-card text-foreground transition-colors duration-300 hover:bg-muted/40">
+      <SelectTrigger className="bg-card text-foreground hover:bg-muted/40 w-full border transition-colors duration-300">
         <SelectValue placeholder="Language" />
       </SelectTrigger>
       <SelectContent className="border-color bg-card text-foreground">
