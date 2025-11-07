@@ -91,28 +91,28 @@ export default function Events() {
         className="mb-12 text-center"
       >
         <div className="mb-4 inline-flex items-center gap-2">
-          <Camera className="h-6 w-6 text-primary" />
+          <Camera className="text-primary h-6 w-6" />
           <Badge variant="outline" className="px-3 py-1 text-sm">
             Our Events
           </Badge>
-          <Camera className="h-6 w-6 text-primary" />
+          <Camera className="text-primary h-6 w-6" />
         </div>
 
         <h2 className="mb-4 text-3xl font-bold md:text-4xl lg:text-5xl">
           Memorable{' '}
-          <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          <span className="from-primary to-secondary bg-gradient-to-r bg-clip-text text-transparent">
             Moments
           </span>
         </h2>
 
-        <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+        <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
           Experience the highlights of our vibrant community through these
           unforgettable events
         </p>
       </motion.div>
 
       {/* Events Grid */}
-      <div className="rounded-3xl border border-border/50 bg-background/60 p-6 shadow-2xl backdrop-blur-xl md:p-8">
+      <div className="border-border/50 bg-background/60 rounded-3xl border p-6 shadow-2xl backdrop-blur-xl md:p-8">
         <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           {/* Primary Event Card */}
           <motion.div
@@ -147,13 +147,13 @@ export default function Events() {
           viewport={{ once: true }}
           className="text-center"
         >
-          <Card className="mx-auto max-w-md border-primary/20 bg-gradient-to-r from-primary/5 to-secondary/5">
+          <Card className="border-primary/20 from-primary/5 to-secondary/5 mx-auto max-w-md bg-gradient-to-r">
             <CardContent className="p-6">
-              <Sparkles className="mx-auto mb-3 h-8 w-8 text-primary" />
+              <Sparkles className="text-primary mx-auto mb-3 h-8 w-8" />
               <h3 className="mb-2 text-xl font-semibold">
                 Join Our Next Event
               </h3>
-              <p className="mb-4 text-sm text-muted-foreground">
+              <p className="text-muted-foreground mb-4 text-sm">
                 Don't miss out on our upcoming activities and networking
                 opportunities
               </p>
@@ -174,8 +174,8 @@ export default function Events() {
 
       {/* Background Elements */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
-        <div className="absolute right-1/4 bottom-1/4 h-64 w-64 rounded-full bg-secondary/10 blur-3xl" />
+        <div className="bg-primary/10 absolute left-1/4 top-1/4 h-64 w-64 rounded-full blur-3xl" />
+        <div className="bg-secondary/10 absolute bottom-1/4 right-1/4 h-64 w-64 rounded-full blur-3xl" />
       </div>
     </motion.div>
   );
@@ -188,7 +188,7 @@ const PrimaryEventCard = ({ event }: { event: EventType }) => {
       target="_blank"
       rel="noopener noreferrer"
     >
-      <Card className="group relative h-full min-h-[400px] overflow-hidden border-2 transition-all duration-500 hover:border-primary/50 hover:shadow-2xl">
+      <Card className="hover:border-primary/50 group relative h-full min-h-[400px] overflow-hidden border-2 transition-all duration-500 hover:shadow-2xl">
         <div className="relative h-full">
           <Image
             src={event.src}
@@ -201,8 +201,8 @@ const PrimaryEventCard = ({ event }: { event: EventType }) => {
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
           {/* Content */}
-          <div className="absolute right-0 bottom-0 left-0 p-6 text-white">
-            <Badge className="mb-3 bg-primary/90 hover:bg-primary">
+          <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+            <Badge className="bg-primary/90 hover:bg-primary mb-3">
               Featured Event
             </Badge>
 
@@ -250,7 +250,7 @@ const SecondaryEventCard = ({ event }: { event: EventType }) => {
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
           {/* Content */}
-          <div className="absolute right-0 bottom-0 left-0 p-4 text-white">
+          <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
             <h4 className="mb-1 text-sm font-semibold">{event.title}</h4>
             <p className="mb-2 text-xs text-white/70">{event.description}</p>
 

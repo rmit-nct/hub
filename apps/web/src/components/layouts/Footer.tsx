@@ -9,7 +9,7 @@ export default async function Footer() {
 
   return (
     <div className="w-full px-0 text-center md:px-4 lg:px-10">
-      <Separator className="mt-8 mb-5 bg-foreground/5" />
+      <Separator className="bg-foreground/5 mb-5 mt-8" />
       {/* Client component with motion */}
       <FooterCTA />
 
@@ -60,7 +60,7 @@ export default async function Footer() {
               href="https://www.facebook.com/rmit.nct"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-foreground/50 transition-colors hover:text-foreground"
+              className="text-foreground/50 hover:text-foreground transition-colors"
               aria-label="Facebook"
             >
               <Facebook className="h-6 w-6" />
@@ -69,7 +69,7 @@ export default async function Footer() {
               href="https://instagram.com/rmitnct"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-foreground/50 transition-colors hover:text-foreground"
+              className="text-foreground/50 hover:text-foreground transition-colors"
               aria-label="Instagram"
             >
               <Instagram className="h-6 w-6" />
@@ -78,7 +78,7 @@ export default async function Footer() {
               href="https://linkedin.com/company/rmit-nct"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-foreground/50 transition-colors hover:text-foreground"
+              className="text-foreground/50 hover:text-foreground transition-colors"
               aria-label="LinkedIn"
             >
               <Linkedin className="h-6 w-6" />
@@ -87,7 +87,7 @@ export default async function Footer() {
               href="https://github.com/rmit-nct/hub"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-foreground/50 transition-colors hover:text-foreground"
+              className="text-foreground/50 hover:text-foreground transition-colors"
               aria-label="GitHub"
             >
               <IconGitHub className="h-6 w-6" />
@@ -161,7 +161,7 @@ export default async function Footer() {
               Our Address:
             </div>
 
-            <div className="text-left text-foreground/50 hover:text-foreground/80">
+            <div className="text-foreground/50 hover:text-foreground/80 text-left">
               702 Nguyen Van Linh, Tan Hung Ward, <br /> Ho Chi Minh City,
               Vietnam
             </div>
@@ -169,7 +169,7 @@ export default async function Footer() {
         </div>
       </div>
 
-      <div className="p-4 text-center text-sm text-balance opacity-80 md:px-32 xl:px-64">
+      <div className="text-balance p-4 text-center text-sm opacity-80 md:px-32 xl:px-64">
         {t('common.copyright')}
       </div>
     </div>
