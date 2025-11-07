@@ -220,12 +220,12 @@ export default function StudentList({
       </div>
 
       {/* Search and Filters */}
-      <Card className="border-0 bg-background/80 shadow-lg">
+      <Card className="bg-background/80 border-0 shadow-lg">
         <CardContent className="p-6">
           <div className="space-y-4">
             {/* Search Bar */}
             <div className="relative">
-              <Search className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 transform text-gray-400" />
+              <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 transform text-gray-400" />
               <Input
                 placeholder="Search by name, student number, or program..."
                 value={searchTerm}
@@ -237,7 +237,7 @@ export default function StudentList({
                   variant="ghost"
                   size="sm"
                   onClick={() => setSearchTerm('')}
-                  className="absolute top-1/2 right-2 h-8 w-8 -translate-y-1/2 transform p-0"
+                  className="absolute right-2 top-1/2 h-8 w-8 -translate-y-1/2 transform p-0"
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -329,7 +329,7 @@ export default function StudentList({
       </div>
 
       <div className="overflow-x-auto">
-        <Table className="min-w-full overflow-hidden rounded-lg bg-primary-foreground">
+        <Table className="bg-primary-foreground min-w-full overflow-hidden rounded-lg">
           <TableHeader className="bg-secondary">
             <TableRow>
               <TableHead className="px-4 py-2 text-center">Name</TableHead>
