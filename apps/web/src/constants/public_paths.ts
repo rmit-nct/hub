@@ -8,6 +8,7 @@ export const APP_PUBLIC_PATHS = [
   '/meet-together',
   '/neo-crush',
   '/neo-chess',
+  '/blogs',
   '/neo-pacman',
   '/neo-generator',
 ].reduce((acc: string[], path) => {
