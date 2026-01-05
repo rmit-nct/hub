@@ -5,6 +5,7 @@ import {
   Calendar,
   Gamepad2,
   GitBranch,
+  Newspaper,
   NotebookPen,
   Puzzle,
   ScanLine,
@@ -55,6 +56,12 @@ export const useNavigation = (t: any): { categories: NavCategory[] } => {
       label: t('common.meet-together'),
       description: 'Find the best time slot for everyone, hassle-free.',
       icon: <Calendar />,
+    },
+    {
+      href: '/blogs',
+      label: t('common.blogs'),
+      description: 'Read our latest blog posts.',
+      icon: <Newspaper />,
     },
     {
       href: '/neo-meeting-agent',
