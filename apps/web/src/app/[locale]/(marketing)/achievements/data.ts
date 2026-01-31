@@ -275,7 +275,7 @@ export const achievements: Achievement[] = [
       },
     ],
     achievementDescription:
-      "In 2025, my team, 0XEPLOIT, achieved a notable result at the Cybersecurity Student Contest Vietnam (CSCV), ranking 11th out of more than 300 teams from 317 institutions nationwide and internationally. Competing in the finals at the Ministry of Public Security’s A05 Cyber Arena in Hanoi, we faced intense Attack–Defense and Jeopardy-style CTF challenges across web exploitation, cryptography, binary exploitation, and digital forensics. Despite the high-pressure environment and experienced opponents, our team relied on strong collaboration, clear communication, and rapid problem-solving to perform effectively and secure a Top 20 national finish",
+      'In 2025, my team, 0XEPLOIT, achieved a notable result at the Cybersecurity Student Contest Vietnam (CSCV), ranking 11th out of more than 300 teams from 317 institutions nationwide and internationally. Competing in the finals at the Ministry of Public Security’s A05 Cyber Arena in Hanoi, we faced intense Attack–Defense and Jeopardy-style CTF challenges across web exploitation, cryptography, binary exploitation, and digital forensics. Despite the high-pressure environment and experienced opponents, our team relied on strong collaboration, clear communication, and rapid problem-solving to perform effectively and secure a Top 20 national finish',
     eventLink: 'https://www.facebook.com/cscv.vn',
     year: 2025,
     category: 'Contest',
