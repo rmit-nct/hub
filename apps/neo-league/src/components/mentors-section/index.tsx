@@ -1,4 +1,4 @@
-import { mentors } from "./data";
+import { mentors } from './data';
 
 export default function MentorsSection() {
   return (
