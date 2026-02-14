@@ -81,10 +81,10 @@ export default function AboutNeoLeagueSection() {
               </div>
 
               <h2 className="mb-8 text-center text-4xl md:text-5xl lg:text-6xl font-montserrat ">
-                <span className="font-medium text-[#134e4a] italic">ABOUT </span>
-                <span className="relative inline-block font-black text-[#134e4a]">
+                <span className="font-medium text-brand-teal italic">ABOUT </span>
+                <span className="relative inline-block font-black text-brand-teal">
                   NEO LEAGUE
-                  <span className="absolute left-0 -bottom-2 h-[4px] w-full bg-yellow-400"></span>
+                  <span className="absolute left-0 -bottom-2 h-1 w-full bg-yellow-400"></span>
                 </span>
               </h2>
 
@@ -124,10 +124,10 @@ export default function AboutNeoLeagueSection() {
                 className="absolute top-0 right-0 hidden w-auto -translate-y-3/4 md:block md:h-64"
               />
               <h3 className="mb-8 text-center text-3xl md:text-4xl lg:text-5xl tracking-wide">
-                <span className="font-medium text-[#134e4a] italic">OUR </span>
-                <span className="relative inline-block font-black text-[#134e4a]">
+                <span className="font-medium text-brand-teal italic">OUR </span>
+                <span className="relative inline-block font-black text-brand-teal">
                   VISION
-                  <span className="absolute left-0 -bottom-1 h-[4px] w-full bg-yellow-400"></span>
+                  <span className="absolute left-0 -bottom-1 h-1 w-full bg-yellow-400"></span>
                 </span>
               </h3>
 

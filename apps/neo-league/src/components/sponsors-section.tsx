@@ -18,10 +18,10 @@ export default function SponsorsSection() {
         {/* Section Header */}
         <div className="mb-16 text-center">
           <h2 className="mb-4 text-3xl md:text-4xl tracking-wide">
-            <span className="font-medium text-[#134e4a] italic ">OUR </span>
-            <span className="relative inline-block font-black text-[#134e4a]">
+            <span className="font-medium text-brand-teal italic ">OUR </span>
+            <span className="relative inline-block font-black text-brand-teal">
               SPONSORS
-              <span className="absolute left-0 -bottom-1 h-[4px] w-full bg-yellow-400"></span>
+              <span className="absolute left-0 -bottom-1 h-1 w-full bg-yellow-400"></span>
             </span>
           </h2>
           <p className="mx-auto max-w-2xl font-bold text-foreground text-lg">
