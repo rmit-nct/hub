@@ -2,6 +2,7 @@
 
 import {
   Award,
+  BookOpen,
   Bot,
   Calendar,
   Gamepad2,
@@ -62,6 +63,13 @@ export const useNavigation = (t: any): { categories: NavCategory[] } => {
       description:
         'Explore our flagship NCT Hub Platform and student projects.',
       icon: <Bot />,
+    },
+    {
+      href: 'https://docs.rmitnct.club',
+      label: t('common.documentation'),
+      description: 'Find detailed documentation and guides for developers.',
+      icon: <BookOpen />,
+      external: true,
     },
   ] as NavItem[];
 
