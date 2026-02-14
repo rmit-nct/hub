@@ -20,7 +20,7 @@ export default async function Footer() {
           <Link href="/" aria-label="Neo Culture Tech">
             <div className="aspect-square w-20 items-start md:w-24 lg:w-28">
               <Image
-                src="/media/logos/nct-logo-only-light-new.png"
+                src="/media/logos/transparent.png"
                 alt="NCT logo"
                 width={112}
                 height={112}
