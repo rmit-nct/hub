@@ -1,4 +1,4 @@
-import { JSONContent } from '@tiptap/react';
+import type { JSONContent } from '@ncthub/ui/tiptap';
 
 export interface Blog {
   id: string;
