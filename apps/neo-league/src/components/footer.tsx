@@ -1,0 +1,184 @@
+import {
+  ArrowUpRight,
+  Facebook,
+  Globe,
+  Instagram,
+  Linkedin,
+  Mail,
+  Phone,
+} from '@ncthub/ui/icons';
+import Image from 'next/image';
+import Link from 'next/link';
+
+export default function Footer() {
+  return (
+    <footer className="gradient-background border-primary/10 border-t py-10 md:py-12">
+      <div className="mx-auto max-w-7xl space-y-8 px-4 sm:px-6">
+        {/* Top Section - Logos */}
+        <div className="flex flex-col items-center justify-between gap-8 md:flex-row">
+          {/* Neo League Logo */}
+          <div className="w-80">
+            <Image
+              src="/logo.png"
+              alt="Neo League Logo"
+              width={350}
+              height={100}
+              className="w-full"
+            />
+          </div>
+
+          {/* Partner Logos */}
+          <div className="flex items-center gap-6">
+            <Image
+              src="/rmit-sset.png"
+              alt="RMIT SSET"
+              width={200}
+              height={100}
+              className="h-10 w-auto object-contain"
+            />
+            <Image
+              src="/rmit-nct-logo.png"
+              alt="RMIT NCT"
+              width={200}
+              height={100}
+              className="h-10 w-auto object-contain"
+            />
+            <Image
+              src="/rmit-student-club-program.png"
+              alt="RMIT Student Club Program"
+              width={200}
+              height={100}
+              className="h-10 w-auto object-contain"
+            />
+          </div>
+        </div>
+
+        {/* Main Footer Content */}
+        <div className="grid gap-6 md:grid-cols-3 lg:gap-8">
+          {/*    Socials */}
+          <div className="space-y-4 text-center md:text-left">
+            <h3 className="font-black text-brand-dark-blue text-lg">
+              Our Socials
+            </h3>
+            <div className="flex justify-center gap-4 md:justify-start">
+              <div className="rounded-lg bg-white/50 p-3 transition-colors duration-200 hover:bg-blue-50">
+                <Link
+                  href="https://www.facebook.com/rmit.nct"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary transition-colors hover:text-primary/70"
+                  aria-label="Facebook"
+                >
+                  <Facebook className="h-8 w-8" />
+                </Link>
+              </div>
+              <div className="rounded-lg bg-white/50 p-3 transition-colors duration-200 hover:bg-blue-50">
+                <Link
+                  href="https://instagram.com/rmitnct"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary transition-colors hover:text-primary/70"
+                  aria-label="Instagram"
+                >
+                  <Instagram className="h-8 w-8" />
+                </Link>
+              </div>
+              <div className="rounded-lg bg-white/50 p-3 transition-colors duration-200 hover:bg-blue-50">
+                <Link
+                  href="https://linkedin.com/company/rmit-nct"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary transition-colors hover:text-primary/70"
+                  aria-label="LinkedIn"
+                >
+                  <Linkedin className="h-8 w-8" />
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* Contact Us */}
+          <div className="space-y-4 text-center md:text-left">
+            <h3 className="font-black text-brand-dark-blue text-lg">
+              Contact Us
+            </h3>
+            <div className="space-y-2 text-primary text-sm">
+              <p>
+                <span className="font-bold">Ngo Van Tai</span>
+                <span> - Co-Project Leader</span>
+              </p>
+              <div className="flex items-center justify-center gap-2 md:justify-start">
+                <Phone className="h-4 w-4 shrink-0" />
+                <div>
+                  <span className="font-bold">0918498056</span>
+                </div>
+              </div>
+
+              <p>
+                <span className="font-bold">Nguyen Ha Gia Tam</span>
+                <span> - Co-Project Leader</span>
+              </p>
+              <div className="flex items-center justify-center gap-2 md:justify-start">
+                <Phone className="h-4 w-4 shrink-0" />
+                <div>
+                  <span className="font-bold">0765386296</span>
+                </div>
+              </div>
+              <div className="flex items-center justify-center gap-2 md:justify-start">
+                <Mail className="h-4 w-4 shrink-0" />
+                <a
+                  href="mailto:neoculturetechclub.sgs@rmit.edu.vn"
+                  className="font-bold hover:underline"
+                >
+                  neoculturetechclub.sgs@rmit.edu.vn
+                </a>
+              </div>
+              <div className="flex items-center justify-center gap-2 md:justify-start">
+                <Globe className="h-4 w-4 shrink-0" />
+                <a
+                  href="https://rmitnct.club"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-bold hover:underline"
+                >
+                  rmitnct.club
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Core Values */}
+          <div className="space-y-4 text-center md:text-left">
+            <h3 className="font-black text-brand-dark-blue text-dark text-lg">
+              Core Values
+            </h3>
+            <ul className="space-y-2.5 font-bold text-sm tracking-wide">
+              {[
+                'CULTURE',
+                'REVOLUTIONARY',
+                'COMPANIONSHIP',
+                'DIVERSITY',
+                'INCLUSION',
+              ].map((value) => (
+                <li
+                  key={value}
+                  className="flex items-center justify-center gap-2 md:justify-start"
+                >
+                  <ArrowUpRight className="h-4 w-4" strokeWidth={3} />
+                  {value}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Bottom Section */}
+        <div className="border-primary/10 border-t pt-8 text-center">
+          <p className="text-primary text-sm">
+            © 2026 RMIT NEO Culture Technology Club. All rights reserved.
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+}
