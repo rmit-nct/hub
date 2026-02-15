@@ -1,0 +1,293 @@
+import Image from 'next/image';
+import AnimationSection from './animated-section';
+
+export default function AboutClubSection() {
+  return (
+    <section className="relative px-6 py-20 md:px-8 md:py-28">
+      <div className="relative mx-auto max-w-7xl">
+        <div className="mb-28 grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+          {/* Left Column */}
+          <AnimationSection>
+            <div className="mb-6 flex items-center gap-3">
+              <div className="relative h-14 w-14 overflow-hidden rounded-xl border-2 border-white/50 bg-white/30 p-2 shadow-lg backdrop-blur-sm">
+                <Image
+                  src="/rmit-nct.png"
+                  alt="NCT Logo"
+                  fill
+                  className="object-contain p-1"
+                />
+              </div>
+              <div className="h-px flex-1 bg-linear-to-r from-primary/30 to-transparent" />
+            </div>
+
+            {/* Header */}
+            <div>
+              <p className="font-semibold text-primary-foreground text-sm uppercase tracking-[0.25em]">
+                Who We Are
+              </p>
+              <h2 className="font-black text-4xl leading-17 tracking-normal md:text-5xl">
+                <span className="text-primary underline decoration-6 decoration-brand-light-yellow underline-offset-8">
+                  NEO CULTURE
+                </span>
+                <br />
+                <span className="text-secondary">TECH</span>
+              </h2>
+            </div>
+
+            {/* Accent Line */}
+            <div className="mb-6 flex items-center gap-7">
+              <div className="h-1 w-16 rounded-full bg-linear-to-r from-brand-light-yellow to-brand-light-red" />
+              <div className="h-1 w-8 rounded-full bg-brand-light-blue" />
+            </div>
+
+            <p className="mb-6 w-full font-bold text-foreground text-lg leading-relaxed md:max-w-lg">
+              RMIT Neo Culture Technology Club is a vibrant and dynamic
+              student-led organization dedicated to fostering a passion for
+              technology and innovation within the university community.
+            </p>
+            <p className="w-full text-foreground/70 leading-relaxed md:max-w-lg">
+              We believe in the power of technology to shape the future and
+              empower individuals to make a positive impact on the world. Our
+              mission is to create a welcoming and inclusive environment where
+              everyone feels empowered to learn, grow, and contribute their
+              unique talents.
+            </p>
+          </AnimationSection>
+
+          {/* Right Column */}
+          <AnimationSection delay={0.2}>
+            <div className="relative">
+              <div className="group relative aspect-4/3 overflow-hidden rounded-2xl shadow-2xl transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
+                <Image
+                  src="/about-us/club-day.jpeg"
+                  alt="NCT Club Activities"
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-linear-to-t from-primary/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                <div className="absolute right-0 bottom-0 left-0 translate-y-full p-4 transition-transform duration-300 group-hover:translate-y-0">
+                  <span className="font-bold text-sm text-white">Club Day</span>
+                </div>
+              </div>
+
+              {/* Overlapping Sub-Images */}
+              <div className="mt-4 grid grid-cols-2 gap-4 pt-10">
+                <div className="group relative aspect-3/2 -translate-y-8 overflow-hidden rounded-xl shadow-xl transition-all duration-500 hover:-translate-y-10 hover:shadow-2xl">
+                  <Image
+                    src="/about-us/netcompany-tour.jpg"
+                    alt="Company Tour"
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-linear-to-t from-primary/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                  <div className="absolute right-0 bottom-0 left-0 translate-y-full p-3 transition-transform duration-300 group-hover:translate-y-0">
+                    <span className="font-bold text-sm text-white">
+                      Company Tour
+                    </span>
+                  </div>
+                </div>
+                <div className="group relative aspect-3/2 translate-y-2 overflow-hidden rounded-xl shadow-xl transition-all duration-500 hover:translate-y-0 hover:shadow-2xl">
+                  <Image
+                    src="/about-us/sport-day.jpg"
+                    alt="Neo Sport"
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-linear-to-t from-primary/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                  <div className="absolute right-0 bottom-0 left-0 translate-y-full p-3 transition-transform duration-300 group-hover:translate-y-0">
+                    <span className="font-bold text-sm text-white">
+                      RMIT Sport Day
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </AnimationSection>
+        </div>
+
+        {/* WHAT WE DO SECTION */}
+        <div className="mb-28">
+          <div className="mb-12 grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+            {/* Left Column */}
+            <AnimationSection
+              className="order-2 grid grid-cols-2 gap-10 md:order-1"
+              delay={0.1}
+            >
+              <div className="group relative aspect-3/4 overflow-hidden rounded-2xl shadow-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
+                <Image
+                  src="/about-us/workshop2.jpg"
+                  alt="Workshop session"
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-linear-to-t from-primary/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                <div className="absolute right-0 bottom-0 left-0 translate-y-full p-4 transition-transform duration-300 group-hover:translate-y-0">
+                  <span className="font-bold text-sm text-white">
+                    Workshops
+                  </span>
+                </div>
+              </div>
+              <div className="group relative mt-8 aspect-3/4 overflow-hidden rounded-2xl shadow-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
+                <Image
+                  src="/about-us/netcompany-talkshow.jpg"
+                  alt="Talk show event"
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-linear-to-t from-primary/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                <div className="absolute right-0 bottom-0 left-0 translate-y-full p-4 transition-transform duration-300 group-hover:translate-y-0">
+                  <span className="font-bold text-sm text-white">
+                    Talk Shows
+                  </span>
+                </div>
+              </div>
+            </AnimationSection>
+
+            {/* Right Column - Content */}
+            <AnimationSection className="order-1 md:order-2" delay={0.2}>
+              <div className="mb-6">
+                <p className="mb-2 font-semibold text-primary-foreground text-sm uppercase tracking-[0.25em]">
+                  What We Do
+                </p>
+                <h3 className="font-black text-3xl text-foreground leading-tight tracking-tight md:text-4xl">
+                  Empowering the
+                  <br />
+                  <span className="gradient-text">Tech Community</span>
+                </h3>
+              </div>
+
+              {/* Description */}
+              <p className="mb-6 text-foreground/80 text-lg leading-relaxed">
+                We are a dynamic platform dedicated to empowering the tech
+                community through engaging workshops, thought-provoking talk
+                shows, and strategic collaborations.
+              </p>
+
+              {/* Core Values */}
+              <div className="flex flex-wrap gap-3">
+                <span className="rounded-full bg-primary px-4 py-2 font-semibold text-brand-light-yellow transition-all hover:scale-105">
+                  CULTURE
+                </span>
+                <span className="rounded-full bg-primary px-4 py-2 font-semibold text-brand-light-yellow transition-all hover:scale-105">
+                  REVOLUTIONARY
+                </span>
+                <span className="rounded-full bg-primary px-4 py-2 font-semibold text-brand-light-yellow transition-all hover:scale-105">
+                  COMPANIONSHIP
+                </span>
+                <span className="rounded-full bg-primary px-4 py-2 font-semibold text-brand-light-yellow transition-all hover:scale-105">
+                  DIVERSITY
+                </span>
+                <span className="rounded-full bg-primary px-4 py-2 font-semibold text-brand-light-yellow transition-all hover:scale-105">
+                  INCLUSION
+                </span>
+              </div>
+            </AnimationSection>
+          </div>
+        </div>
+
+        {/* OUR PREVIOUS ACTIVITIES SECTION */}
+        <div className="space-y-10">
+          {/* Header */}
+          <div className="text-center">
+            <h3
+              className="gradient-text mb-4 animate-slide-up font-black text-3xl md:text-4xl"
+              style={{ animationDelay: '0.15s' }}
+            >
+              Our Previous Activities
+            </h3>
+            <p
+              className="mx-auto max-w-2xl animate-slide-up text-foreground/70 leading-relaxed"
+              style={{ animationDelay: '0.2s' }}
+            >
+              Beyond technology, we believe in building lasting relationships.
+              From hands-on workshops and inspiring events to our Neo Connect
+              series, team bonding activities, Neo Sport competitions, and
+              heartwarming Secret Santa celebrations — our community is more
+              than just learning.
+            </p>
+          </div>
+
+          {/* Accent Line Center */}
+          <div
+            className="mx-auto flex w-fit animate-slide-up items-center gap-2"
+            style={{ animationDelay: '0.25s' }}
+          >
+            <div className="h-1 w-8 rounded-full bg-brand-light-yellow" />
+            <div className="h-1 w-16 rounded-full bg-linear-to-r from-brand-light-red to-brand-light-blue" />
+            <div className="h-1 w-8 rounded-full bg-primary" />
+          </div>
+
+          {/* 4-Image Masonry Grid */}
+          <div
+            className="grid animate-slide-up grid-cols-2 gap-4 md:grid-cols-4 md:gap-6"
+            style={{ animationDelay: '0.3s' }}
+          >
+            {/* Image 1 */}
+            <div className="group relative aspect-3/4 overflow-hidden rounded-2xl shadow-lg transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
+              <Image
+                src="/about-us/workshop3.jpg"
+                alt="Workshop event"
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-linear-to-t from-primary/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              <div className="absolute right-0 bottom-0 left-0 translate-y-full p-4 transition-transform duration-300 group-hover:translate-y-0">
+                <span className="font-bold text-sm text-white">
+                  Soft Skill Workshops
+                </span>
+              </div>
+            </div>
+
+            {/* Image 2 - Offset */}
+            <div className="group relative mt-8 aspect-3/4 overflow-hidden rounded-2xl shadow-lg transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl md:mt-12">
+              <Image
+                src="/about-us/bonding2.png"
+                alt="Team bonding"
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-linear-to-t from-primary/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              <div className="absolute right-0 bottom-0 left-0 translate-y-full p-4 transition-transform duration-300 group-hover:translate-y-0">
+                <span className="font-bold text-sm text-white">
+                  Team Bonding
+                </span>
+              </div>
+            </div>
+
+            {/* Image 3 */}
+            <div className="group relative aspect-3/4 overflow-hidden rounded-2xl shadow-lg transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
+              <Image
+                src="/about-us/bonding3.jpeg"
+                alt="Sports activities"
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-linear-to-t from-primary/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              <div className="absolute right-0 bottom-0 left-0 translate-y-full p-4 transition-transform duration-300 group-hover:translate-y-0">
+                <span className="font-bold text-sm text-white">
+                  Sports & Fun
+                </span>
+              </div>
+            </div>
+
+            {/* Image 4 - Offset */}
+            <div className="group relative mt-8 aspect-3/4 overflow-hidden rounded-2xl shadow-lg transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl md:mt-12">
+              <Image
+                src="/about-us/secret-santa.jpg"
+                alt="Secrete Santa event"
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-linear-to-t from-primary/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              <div className="absolute right-0 bottom-0 left-0 translate-y-full p-4 transition-transform duration-300 group-hover:translate-y-0">
+                <span className="font-bold text-sm text-white">
+                  Connect Event
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
