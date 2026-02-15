@@ -10,6 +10,6 @@
     { "path": "./packages/transactional" },
     { "path": "./packages/types" },
     { "path": "./packages/ui" },
-    { "path": "./packages/utils" },
+    { "path": "./packages/utils" }
   ]
 }
