@@ -20,6 +20,7 @@
     "devrs:ocr": "bun sb:stop && bun sb:start && bun sb:reset && bun dev:ocr",
     "test": "turbo run test",
     "test:watch": "turbo run test:watch",
+    "type-check": "turbo run type-check",
     "format": "biome format",
     "format:fix": "biome format --write",
     "lint": "biome lint",

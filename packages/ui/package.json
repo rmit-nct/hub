@@ -6,6 +6,7 @@
     "access": "public"
   },
   "scripts": {
+    "type-check": "tsc --build",
     "ui": "bunx shadcn-ui@latest"
   },
   "packageManager": "bun@1.3.9",
