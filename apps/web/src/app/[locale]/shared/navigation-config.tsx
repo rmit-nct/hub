@@ -8,6 +8,7 @@ import {
   Gamepad2,
   GitBranch,
   NotebookPen,
+  Paintbrush,
   Puzzle,
   ScanLine,
   Sparkles,
@@ -41,6 +42,13 @@ export const useNavigation = (t: any): { categories: NavCategory[] } => {
       description:
         "Celebrating our teams' outstanding achievements in competitions, hackathons, and innovation challenges.",
       icon: <Award />,
+    },
+    {
+      href: '/branding',
+      label: t('common.branding'),
+      description:
+        'Access our official logos, color palettes, and brand guidelines.',
+      icon: <Paintbrush />,
     },
     {
       href: '/contributors',

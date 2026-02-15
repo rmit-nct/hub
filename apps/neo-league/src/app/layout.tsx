@@ -6,7 +6,6 @@ import { BASE_URL } from '@/constants/configs';
 
 const poppins = Poppins({
   subsets: ['latin'],
-  variable: '--font-poppins',
   weight: ['400', '700', '800', '900'],
 });
 
