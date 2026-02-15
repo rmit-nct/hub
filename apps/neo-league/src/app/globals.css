@@ -9,6 +9,7 @@
   --background: #c4ecff;
   --foreground: #022539;
 
+  --brand-teal: #034a5b;
   --brand-light-yellow: #ffd65a;
   --brand-light-red: #ff8a89;
   --brand-light-blue: #356df9;
@@ -30,6 +31,7 @@
   --brand-light-red: #ff8a89;
   --brand-light-blue: #356df9;
   --brand-dark-blue: #345ad1;
+  --brand-teal: #034a5b;
 }
 
 @theme inline {
@@ -46,6 +48,7 @@
   --color-brand-light-red: var(--brand-light-red);
   --color-brand-light-blue: var(--brand-light-blue);
   --color-brand-dark-blue: var(--brand-dark-blue);
+  --color-brand-teal: var(--brand-teal);
 }
 
 /* Gradient Background */
