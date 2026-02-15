@@ -5,6 +5,7 @@ import { Sparkles } from '@ncthub/ui/icons';
 import { motion } from 'framer-motion';
 import ColorPaletteSection from './color-palette-section';
 import LogoSection from './logo-section';
+import TypographySection from './typography-section';
 
 export default function BrandingContent() {
   return (
@@ -67,6 +68,8 @@ export default function BrandingContent() {
       <LogoSection />
 
       <ColorPaletteSection />
+
+      <TypographySection />
     </div>
   );
 }
