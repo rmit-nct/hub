@@ -80,10 +80,13 @@ export default function AboutNeoLeagueSection() {
                 <div className="h-px w-12 bg-linear-to-l from-transparent to-brand-dark-blue" />
               </div>
 
-              <h2 className="mb-8 text-center font-normal text-4xl leading-tight shadow-text md:text-5xl lg:text-6xl">
-                ABOUT{' '}
-                <span className="relative inline-block font-black text-primary">
+              <h2 className="mb-8 text-center text-4xl md:text-5xl lg:text-6xl">
+                <span className="font-medium text-brand-teal italic">
+                  ABOUT{' '}
+                </span>
+                <span className="relative inline-block font-black text-brand-teal">
                   NEO LEAGUE
+                  <span className="absolute -bottom-2 left-0 h-1 w-full bg-yellow-400"></span>
                 </span>
               </h2>
 
@@ -122,8 +125,12 @@ export default function AboutNeoLeagueSection() {
                 height={150}
                 className="absolute top-0 right-0 hidden w-auto -translate-y-3/4 md:block md:h-64"
               />
-              <h3 className="mb-8 text-center font-black text-3xl text-primary shadow-text md:text-4xl lg:text-5xl">
-                OUR VISION
+              <h3 className="mb-8 text-center text-3xl tracking-wide md:text-4xl lg:text-5xl">
+                <span className="font-medium text-brand-teal italic">OUR </span>
+                <span className="relative inline-block font-black text-brand-teal">
+                  VISION
+                  <span className="absolute -bottom-1 left-0 h-1 w-full bg-yellow-400"></span>
+                </span>
               </h3>
 
               <div className="mx-auto max-w-6xl">
