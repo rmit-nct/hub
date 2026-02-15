@@ -1,14 +1,13 @@
 'use client';
 
-import { Blog } from '../data';
 import { Badge } from '@ncthub/ui/badge';
 import { Button } from '@ncthub/ui/button';
 import { ArrowLeft, Calendar, Clock, User } from '@ncthub/ui/icons';
-import { EditorContent, useEditor } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
+import { EditorContent, StarterKit, useEditor } from '@ncthub/ui/tiptap';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
+import type { Blog } from '../data';
 
 export default function BlogDetailClient({ blog }: { blog: Blog }) {
   const editor = useEditor({
@@ -51,12 +50,12 @@ export default function BlogDetailClient({ blog }: { blog: Blog }) {
           <Badge className="bg-[#5FC6E5] text-white">{blog.category}</Badge>
 
           {/* Title */}
-          <h1 className="text-4xl leading-tight font-extrabold text-foreground md:text-5xl lg:text-6xl">
+          <h1 className="font-extrabold text-4xl text-foreground leading-tight md:text-5xl lg:text-6xl">
             {blog.title}
           </h1>
 
           {/* Meta Information */}
-          <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-6 text-muted-foreground text-sm">
             <div className="flex items-center gap-2">
               <User className="h-4 w-4" />
               <span className="font-medium">{blog.author}</span>
