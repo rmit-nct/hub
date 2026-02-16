@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 /* Color Theme */
 :root {
   --primary: #202945;
