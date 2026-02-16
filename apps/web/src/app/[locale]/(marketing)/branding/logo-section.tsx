@@ -167,7 +167,7 @@ export default function LogoSection() {
       >
         <h2 className="text-center font-bold text-4xl tracking-tight md:text-5xl">
           <span className="inline-block border-b-4 border-[#5FC6E5] pb-2 text-white">
-            Logo <span>Design</span>
+            Logo Design
           </span>
         </h2>
 
