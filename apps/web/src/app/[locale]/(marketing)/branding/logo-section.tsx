@@ -92,12 +92,30 @@ function LogoCard({
         </span>
       </div>
 
-      {/* Logo display area */}
+      {/* Logo display area with checkerboard transparency */}
       <motion.div
         className={cn(
           'relative flex aspect-4/3 items-center justify-center overflow-hidden rounded-2xl border transition-colors duration-500',
-          isDark ? 'border-white/6 bg-[#171624]' : 'border-black/6 bg-[#E3EDF9]'
+          isDark ? 'border-white/6' : 'border-black/6'
         )}
+        style={{
+          backgroundColor: isDark ? '#171624' : '#E3EDF9',
+          backgroundImage: isDark
+            ? `
+              linear-gradient(45deg, rgba(255,255,255,0.08) 25%, transparent 25%),
+              linear-gradient(-45deg, rgba(255,255,255,0.08) 25%, transparent 25%),
+              linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.08) 75%),
+              linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.08) 75%)
+            `
+            : `
+              linear-gradient(45deg, rgba(0,0,0,0.06) 25%, transparent 25%),
+              linear-gradient(-45deg, rgba(0,0,0,0.06) 25%, transparent 25%),
+              linear-gradient(45deg, transparent 75%, rgba(0,0,0,0.06) 75%),
+              linear-gradient(-45deg, transparent 75%, rgba(0,0,0,0.06) 75%)
+            `,
+          backgroundSize: '20px 20px',
+          backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
+        }}
         animate={{
           borderColor: isHovered
             ? isDark
@@ -126,7 +144,7 @@ function LogoCard({
           />
         </motion.div>
 
-        {/* Download button on hover */}
+        {/* Download button */}
         <motion.div
           className="absolute right-3 bottom-3"
           initial={false}
@@ -157,7 +175,6 @@ function LogoCard({
 export default function LogoSection() {
   return (
     <section className="mx-auto max-w-6xl">
-      {/* Section header */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -173,15 +190,11 @@ export default function LogoSection() {
         </h2>
 
         <p className="mx-auto max-w-2xl text-center text-muted-foreground leading-relaxed">
-          The logo features a tilted 45&deg; letter &ldquo;N&rdquo;,
-          representing Neo Culture Tech. The emblem uses dark blue, light blue,
-          and mustard yellow&mdash;the signature colours of the club. The dark
-          variant features a neon treatment with glowing blue and yellow
-          outlines. Set in Gotham, a geometric sans-serif.
+          The logo features a tilted 45&deg; letter “N”, representing Neo Culture Tech.
+          The emblem uses dark blue, light blue, and mustard yellow.
         </p>
       </motion.div>
 
-      {/* Logo groups */}
       <div className="space-y-24">
         {logoVariants.map((variant, variantIndex) => (
           <motion.div
@@ -191,11 +204,7 @@ export default function LogoSection() {
             whileInView="visible"
             viewport={{ once: true, margin: '-80px' }}
           >
-            {/* Group header */}
-            <motion.div
-              variants={stagger.item}
-              className="mb-8 flex items-end justify-between border-border/50 border-b pb-4"
-            >
+            <div className="mb-8 flex items-end justify-between border-border/50 border-b pb-4">
               <div>
                 <p className="mb-1 font-mono text-brand-light-yellow text-xs uppercase tracking-[0.2em]">
                   Variant {String(variantIndex + 1).padStart(2, '0')}
@@ -204,20 +213,8 @@ export default function LogoSection() {
                   {variant.title}
                 </h3>
               </div>
-              <p className="hidden max-w-xs text-right text-muted-foreground text-sm leading-relaxed md:block">
-                {variant.description}
-              </p>
-            </motion.div>
+            </div>
 
-            {/* Subtitle on mobile */}
-            <motion.p
-              variants={stagger.item}
-              className="mb-6 text-muted-foreground text-sm leading-relaxed md:hidden"
-            >
-              {variant.description}
-            </motion.p>
-
-            {/* Logo grid */}
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               {variant.images.map((image, imgIndex) => (
                 <LogoCard
@@ -233,3 +230,4 @@ export default function LogoSection() {
     </section>
   );
 }
+
