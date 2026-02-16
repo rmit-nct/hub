@@ -190,8 +190,9 @@ export default function LogoSection() {
         </h2>
 
         <p className="mx-auto max-w-2xl text-center text-muted-foreground leading-relaxed">
-          The logo features a tilted 45&deg; letter “N”, representing Neo Culture Tech.
-          The emblem uses dark blue, light blue, and mustard yellow.
+          The logo features a tilted 45&deg; letter “N”, representing Neo
+          Culture Tech. The emblem uses dark blue, light blue, and mustard
+          yellow.
         </p>
       </motion.div>
 
@@ -230,4 +231,3 @@ export default function LogoSection() {
     </section>
   );
 }
-
