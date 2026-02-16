@@ -174,6 +174,10 @@ export default function Footer() {
 
         {/* Bottom Section */}
         <div className="border-primary/10 border-t pt-8 text-center">
+          <p className="mb-2 text-primary/60 text-xs">
+            RMIT NEO League — Vietnam&apos;s premier student IoT competition &
+            innovation challenge
+          </p>
           <p className="text-primary text-sm">
             © 2026 RMIT NEO Culture Technology Club. All rights reserved.
           </p>
