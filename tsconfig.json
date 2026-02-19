@@ -1,6 +1,15 @@
 {
-  "compilerOptions": {
-    "jsx": "react"
-  },
-  "extends": "@ncthub/typescript-config/base.json"
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "files": [],
+  "references": [
+    { "path": "./apps/neo-league" },
+    { "path": "./apps/web" },
+    { "path": "./packages/ai" },
+    { "path": "./packages/auth" },
+    { "path": "./packages/supabase" },
+    { "path": "./packages/transactional" },
+    { "path": "./packages/types" },
+    { "path": "./packages/ui" },
+    { "path": "./packages/utils" }
+  ]
 }

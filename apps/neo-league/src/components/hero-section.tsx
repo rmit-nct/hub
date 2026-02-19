@@ -29,23 +29,30 @@ export default function HeroSection() {
           <div className="w-full max-w-lg">
             <Image
               src="/logo.png"
-              alt="NEO League Logo"
+              alt="RMIT NEO League 2026 — Innovation Humanity Challenge"
               width={350}
               height={100}
               className="w-full"
             />
           </div>
 
+          {/* SEO: Visually hidden h1 for search engines */}
+          <h1 className="sr-only">
+            RMIT NEO League 2026 — IoT Competition & Innovation Humanity
+            Challenge | Student IoT Hackathon Vietnam
+          </h1>
+
           <p
             className="mx-auto max-w-4xl animate-slide-up text-foreground/70 text-xl"
             style={{ animationDelay: '0.3s' }}
           >
-            Engineer integrated IoT solutions addressing{' '}
+            A premier IoT competition where university students engineer
+            integrated hardware and IoT solutions addressing{' '}
             <span className="font-bold text-primary">
               UN Sustainable Development Goals.
             </span>{' '}
             Combine physical prototyping with software, data connectivity, and
-            smart technologies.
+            smart technologies in this RMIT student innovation challenge.
           </p>
 
           <div

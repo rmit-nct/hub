@@ -20,6 +20,7 @@
     "devrs:ocr": "bun sb:stop && bun sb:start && bun sb:reset && bun dev:ocr",
     "test": "turbo run test",
     "test:watch": "turbo run test:watch",
+    "type-check": "turbo run type-check",
     "format": "biome format",
     "format:fix": "biome format --write",
     "lint": "biome lint",
@@ -45,7 +46,7 @@
     "update-all": "bun ./scripts/package-update.js"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.3.15",
+    "@biomejs/biome": "^2.4.0",
     "@ncthub/typescript-config": "workspace:*",
     "@vitest/coverage-v8": "^4.0.18",
     "turbo": "^2.8.9",
