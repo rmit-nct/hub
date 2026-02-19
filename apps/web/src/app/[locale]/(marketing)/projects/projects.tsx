@@ -9,7 +9,7 @@ import {
 import { Layers, LayoutGrid, Search, Smile } from '@ncthub/ui/icons';
 import { cn } from '@ncthub/utils/format';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type Project, projects } from './data';
 import ProjectCard from './project-card';
 import ProjectDetail from './project-detail';
@@ -32,18 +32,22 @@ export default function Projects() {
     undefined
   );
 
-  const filteredProjects = projects.filter((project) => {
-    const matchesType = !type || project.type === type;
-    const matchesStatus = !status || project.status === status;
-    return matchesType && matchesStatus;
-  });
+  const filteredProjects = useMemo(
+    () =>
+      projects.filter((project) => {
+        const matchesType = !type || project.type === type;
+        const matchesStatus = !status || project.status === status;
+        return matchesType && matchesStatus;
+      }),
+    [type, status]
+  );
 
   const projectsWithNull = useMemo(
     () => [null, ...filteredProjects, null],
     [filteredProjects]
   );
 
-  const onScroll = () => {
+  const onScroll = useCallback(() => {
     if (!emblaApi) return;
 
     const root = emblaApi.rootNode();
@@ -84,14 +88,14 @@ export default function Projects() {
 
       return selectedIndex;
     });
-  };
+  }, [emblaApi]);
 
-  const onReInit = () => {
+  const onReInit = useCallback(() => {
     if (!emblaApi) return;
 
     emblaApi.scrollTo(0);
     setSelectedIndex(1);
-  };
+  }, [emblaApi]);
 
   const handleTypeFilter = (newType: ProjectType) => {
     setType(newType === type ? undefined : newType);
@@ -131,7 +135,7 @@ export default function Projects() {
       emblaApi.off('scroll', onScroll);
       emblaApi.off('reInit', onReInit);
     };
-  }, [emblaApi]);
+  }, [emblaApi, onScroll, onReInit]);
 
   useEffect(() => {
     if (!isAutoScrolling || !emblaApi || filteredProjects.length <= 1) return;
@@ -174,7 +178,7 @@ export default function Projects() {
           <div className="flex justify-center">
             <div className="relative flex rounded-2xl border-2 border-border/50 bg-card/80 p-1.5 shadow-lg backdrop-blur-md">
               <motion.div
-                className="absolute inset-y-1.5 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 shadow-md"
+                className="absolute inset-y-1.5 rounded-xl bg-linear-to-r from-blue-500 to-purple-600 shadow-md"
                 animate={{
                   x: viewMode === 'carousel' ? '3px' : 'calc(100% + 3px)',
                 }}
@@ -182,6 +186,7 @@ export default function Projects() {
                 transition={{ type: 'spring', stiffness: 300, damping: 30 }}
               />
               <button
+                type="button"
                 onClick={() => handleViewModeChange('carousel')}
                 className={`relative z-10 flex w-1/2 items-center justify-center gap-2.5 rounded-xl px-6 py-3 font-bold text-base transition-all duration-200 ${
                   viewMode === 'carousel'
@@ -193,6 +198,7 @@ export default function Projects() {
                 Swipe
               </button>
               <button
+                type="button"
                 onClick={() => handleViewModeChange('grid')}
                 className={`relative z-10 flex w-1/2 items-center justify-center gap-2.5 rounded-xl px-6 py-3 font-bold text-base transition-all duration-200 ${
                   viewMode === 'grid'
@@ -209,7 +215,7 @@ export default function Projects() {
           <div className="flex justify-center">
             <div className="relative flex rounded-2xl border border-border/30 bg-card/60 p-1 shadow-md backdrop-blur-sm">
               <motion.div
-                className="absolute inset-y-1 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 shadow-sm"
+                className="absolute inset-y-1 rounded-xl bg-linear-to-r from-blue-500 to-purple-600 shadow-sm"
                 animate={{
                   x:
                     type === 'web'
@@ -230,6 +236,7 @@ export default function Projects() {
                 { key: 'hardware', label: 'Hardware' },
               ].map((p) => (
                 <button
+                  type="button"
                   key={p.key}
                   onClick={() => handleTypeFilter(p.key as ProjectType)}
                   className={`relative z-10 w-28 px-5 py-3 font-bold text-base transition-all duration-200 ${
@@ -247,7 +254,7 @@ export default function Projects() {
           <div className="flex justify-center">
             <div className="relative flex rounded-2xl border border-border/30 bg-card/60 p-1 shadow-md backdrop-blur-sm">
               <motion.div
-                className="absolute inset-y-1 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 shadow-sm"
+                className="absolute inset-y-1 rounded-xl bg-linear-to-r from-blue-500 to-purple-600 shadow-sm"
                 animate={{
                   x:
                     status === 'planning'
@@ -268,6 +275,7 @@ export default function Projects() {
                 { key: 'completed', label: 'Completed' },
               ].map((p) => (
                 <button
+                  type="button"
                   key={p.key}
                   onClick={() => handleStatusFilter(p.key as ProjectStatus)}
                   className={`relative z-10 w-28 py-3 font-bold text-base transition-all duration-200 ${
@@ -288,124 +296,120 @@ export default function Projects() {
 
       <div className="mt-8 px-4 md:px-6 lg:px-8">
         {filteredProjects.length > 0 ? (
-          <>
-            {viewMode === 'carousel' ? (
-              <motion.div
-                className="max-w-5xl"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, ease: 'easeOut' }}
-              >
-                <Carousel setApi={setEmblaApi}>
-                  <CarouselContent>
-                    {projectsWithNull.map((project, index) => (
-                      <CarouselItem key={index} className="basis-1/3">
-                        {project && (
-                          <div
-                            key={index}
-                            className={cn(
-                              'h-full transition-all duration-500 ease-in-out',
-                              index === selectedIndex
-                                ? 'scale-100 opacity-100'
-                                : 'scale-75 opacity-60'
-                            )}
-                          >
-                            <ProjectCard
-                              project={project}
-                              type={type}
-                              status={status}
-                              isSelected={index === selectedIndex}
-                              onClick={() => {
-                                if (index === selectedIndex) {
-                                  openProjectModal(project);
-                                } else {
-                                  emblaApi?.scrollTo(index - 1);
-                                }
-                              }}
-                            />
-                          </div>
-                        )}
-                      </CarouselItem>
-                    ))}
-                  </CarouselContent>
-                </Carousel>
-
-                <div className="mt-8 flex justify-center space-x-3">
-                  {projectsWithNull.map(
-                    (project, index) =>
-                      project && (
-                        <motion.button
+          viewMode === 'carousel' ? (
+            <motion.div
+              className="max-w-5xl"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, ease: 'easeOut' }}
+            >
+              <Carousel setApi={setEmblaApi}>
+                <CarouselContent>
+                  {projectsWithNull.map((project, index) => (
+                    <CarouselItem key={index} className="basis-1/3">
+                      {project && (
+                        <div
                           key={index}
-                          whileHover={{ scale: 1.05 }}
-                          onClick={() => {
-                            emblaApi?.scrollTo(index - 1);
-                          }}
+                          className={cn(
+                            'h-full transition-all duration-500 ease-in-out',
+                            index === selectedIndex
+                              ? 'scale-100 opacity-100'
+                              : 'scale-75 opacity-60'
+                          )}
                         >
-                          <div
-                            className={`h-3 w-3 rounded-full transition-all duration-300 ${
-                              index === selectedIndex
-                                ? 'scale-125 bg-gradient-to-r from-blue-500 to-purple-600'
-                                : 'bg-muted-foreground/30 hover:bg-muted-foreground/50'
-                            }`}
+                          <ProjectCard
+                            project={project}
+                            type={type}
+                            status={status}
+                            isSelected={index === selectedIndex}
+                            onClick={() => {
+                              if (index === selectedIndex) {
+                                openProjectModal(project);
+                              } else {
+                                emblaApi?.scrollTo(index - 1);
+                              }
+                            }}
                           />
-                        </motion.button>
-                      )
-                  )}
-                </div>
+                        </div>
+                      )}
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
 
-                <div className="mt-6 flex justify-center">
-                  <motion.button
-                    onClick={() => setIsAutoScrolling(!isAutoScrolling)}
-                    whileHover={{ scale: 1.05 }}
-                    className={`rounded-xl px-4 py-2 font-medium text-sm transition-all duration-200 ${
-                      isAutoScrolling
-                        ? 'border border-white/20 bg-gradient-to-r from-blue-500/20 to-purple-600/20 text-foreground'
-                        : 'border border-white/10 bg-white/10 text-muted-foreground'
-                    }`}
-                  >
-                    {isAutoScrolling
-                      ? 'Pause Auto-scroll'
-                      : 'Resume Auto-scroll'}
-                  </motion.button>
-                </div>
-              </motion.div>
-            ) : (
-              <div className="mx-auto grid max-w-7xl gap-6 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
-                {filteredProjects.map((project, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 40, scale: 0.9 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{
-                      duration: 0.5,
-                      delay: index * 0.1,
-                      ease: 'easeOut',
-                      type: 'spring',
-                      stiffness: 100,
-                    }}
-                    whileHover={{
-                      scale: 1.05,
-                      y: -5,
-                      transition: { duration: 0.2 },
-                    }}
-                    whileTap={{ scale: 0.95 }}
-                    className={cn(
-                      'group relative h-full w-full cursor-pointer'
-                    )}
-                  >
-                    <ProjectCard
-                      project={project}
-                      type={type}
-                      status={status}
-                      isSelected={true}
-                      onClick={() => openProjectModal(project)}
-                    />
-                  </motion.div>
-                ))}
+              <div className="mt-8 flex justify-center space-x-3">
+                {projectsWithNull.map(
+                  (project, index) =>
+                    project && (
+                      <motion.button
+                        type="button"
+                        key={index}
+                        whileHover={{ scale: 1.05 }}
+                        onClick={() => {
+                          emblaApi?.scrollTo(index - 1);
+                        }}
+                      >
+                        <div
+                          className={`h-3 w-3 rounded-full transition-all duration-300 ${
+                            index === selectedIndex
+                              ? 'scale-125 bg-linear-to-r from-blue-500 to-purple-600'
+                              : 'bg-muted-foreground/30 hover:bg-muted-foreground/50'
+                          }`}
+                        />
+                      </motion.button>
+                    )
+                )}
               </div>
-            )}
-          </>
+
+              <div className="mt-6 flex justify-center">
+                <motion.button
+                  type="button"
+                  onClick={() => setIsAutoScrolling(!isAutoScrolling)}
+                  whileHover={{ scale: 1.05 }}
+                  className={`rounded-xl px-4 py-2 font-medium text-sm transition-all duration-200 ${
+                    isAutoScrolling
+                      ? 'border border-white/20 bg-linear-to-r from-blue-500/20 to-purple-600/20 text-foreground'
+                      : 'border border-white/10 bg-white/10 text-muted-foreground'
+                  }`}
+                >
+                  {isAutoScrolling ? 'Pause Auto-scroll' : 'Resume Auto-scroll'}
+                </motion.button>
+              </div>
+            </motion.div>
+          ) : (
+            <div className="mx-auto grid max-w-7xl gap-6 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+              {filteredProjects.map((project, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 40, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{
+                    duration: 0.5,
+                    delay: index * 0.1,
+                    ease: 'easeOut',
+                    type: 'spring',
+                    stiffness: 100,
+                  }}
+                  whileHover={{
+                    scale: 1.05,
+                    y: -5,
+                    transition: { duration: 0.2 },
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                  className={cn('group relative h-full w-full cursor-pointer')}
+                >
+                  <ProjectCard
+                    project={project}
+                    type={type}
+                    status={status}
+                    isSelected={true}
+                    onClick={() => openProjectModal(project)}
+                  />
+                </motion.div>
+              ))}
+            </div>
+          )
         ) : (
           <div className="py-12 text-center">
             <div className="mb-6">
@@ -422,8 +426,9 @@ export default function Projects() {
               <Smile className="h-6 w-6 text-yellow-400 md:h-8 md:w-8" />
             </p>
             <button
+              type="button"
               onClick={clearAllFilters}
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-3 font-bold text-lg text-primary-foreground transition-all duration-300 hover:scale-105 hover:shadow-lg"
+              className="inline-flex items-center gap-2 rounded-xl bg-linear-to-r from-blue-500 to-purple-600 px-6 py-3 font-bold text-lg text-primary-foreground transition-all duration-300 hover:scale-105 hover:shadow-lg"
             >
               Clear Filters
             </button>
