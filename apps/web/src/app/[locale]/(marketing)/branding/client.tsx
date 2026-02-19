@@ -53,12 +53,10 @@ export default function BrandingContent() {
           className="mx-auto max-w-3xl text-lg text-muted-foreground md:text-xl"
         >
           The guidelines demonstrate the{' '}
-          <span className="font-bold text-brand-light-yellow">
-            key elements
-          </span>{' '}
+          <span className="font-bold text-brand-light-blue">key elements</span>{' '}
           of the brand along with simple instructions for how to use them.
           Adherence to these guidelines is important to{' '}
-          <span className="font-bold text-brand-light-yellow">
+          <span className="font-bold text-brand-light-blue">
             ensure consistency
           </span>{' '}
           and recognition of the brand.​
