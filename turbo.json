@@ -59,6 +59,17 @@
     "test": {},
     "test:watch": {
       "cache": false
+    },
+    "type-check": {
+      "dependsOn": ["^build", "^type-check"],
+      "inputs": ["$TURBO_DEFAULT$", "**/messages/*.json"],
+      "outputs": [
+        "tsconfig.tsbuildinfo",
+        "tsconfig.build.tsbuildinfo",
+        "dist/tsconfig.tsbuildinfo",
+        ".turbo/tsconfig.tsbuildinfo",
+        ".next/cache/.tsbuildinfo"
+      ]
     }
   }
 }

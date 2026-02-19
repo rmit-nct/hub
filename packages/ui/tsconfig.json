@@ -2,10 +2,9 @@
   "extends": "@ncthub/typescript-config/react-library.json",
   "compilerOptions": {
     "baseUrl": ".",
-    "paths": {
-      "@ncthub/ui/*": ["./src/*"]
-    }
+    "outDir": "dist",
+    "rootDir": "src"
   },
   "include": ["src"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "dist", ".turbo"]
 }

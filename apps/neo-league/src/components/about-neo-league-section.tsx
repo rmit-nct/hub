@@ -136,15 +136,20 @@ export default function AboutNeoLeagueSection() {
               <div className="mx-auto max-w-6xl">
                 <p className="text-center text-foreground/90 text-xl leading-relaxed">
                   NEO League Season 2 empowers STEM students to become
-                  innovators. We foster a hands-on community using IoT solutions
-                  to build sustainable solutions for{' '}
+                  innovators in the IoT and hardware development space. This IoT
+                  competition fosters a hands-on community building sustainable
+                  solutions for{' '}
                   <strong className="text-brand-dark-blue">UN SDGs</strong> and
                   real-world societal impact. By connecting students with
                   industry professionals, we create a notable playground for{' '}
                   <strong className="text-brand-dark-blue">
                     Hardware Development
                   </strong>{' '}
-                  and <strong className="text-brand-dark-blue">IoT</strong>.
+                  and{' '}
+                  <strong className="text-brand-dark-blue">
+                    IoT Solutions
+                  </strong>
+                  .
                 </p>
               </div>
             </div>
