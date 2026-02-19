@@ -38,7 +38,7 @@ export function TimelineCard({
       <CardHeader className="items-center gap-4">
         <div className="flex size-20 items-center justify-center rounded-full bg-gradient-to-br from-brand-light-blue to-brand-light-yellow p-1 shadow-md md:size-24 lg:size-28">
           <div className="flex size-full items-center justify-center rounded-full border-2 border-brand-light-blue/20 bg-card">
-            <p className="text-lg font-bold text-brand-dark-blue md:text-xl">
+            <p className="text-lg font-bold text-brand-white md:text-xl">
               {year}
             </p>
           </div>
