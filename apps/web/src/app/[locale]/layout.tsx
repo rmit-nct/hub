@@ -81,11 +81,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       images: [siteConfig.ogImage],
       creator: '@tuturuuu',
     },
-    icons: {
-      icon: '/favicon.ico',
-      shortcut: '/favicon-16x16.png',
-      apple: '/apple-touch-icon.png',
-    },
     manifest: `/site.webmanifest`,
   };
 }
