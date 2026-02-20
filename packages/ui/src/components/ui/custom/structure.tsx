@@ -72,7 +72,10 @@ export function Structure({
       <TooltipProvider delayDuration={0}>
         <ResizablePanelGroup
           orientation="horizontal"
-          defaultLayout={{ sidebar: defaultLayout[0] ?? 20, main: defaultLayout[1] ?? 80 }}
+          defaultLayout={{
+            sidebar: defaultLayout[0] ?? 20,
+            main: defaultLayout[1] ?? 80,
+          }}
           onLayoutChange={(sizes) => {
             const sidebar = sizes['sidebar'];
             const main = sizes['main'];
