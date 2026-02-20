@@ -15,10 +15,6 @@ export default function RulesSection() {
       id="rules"
       className="relative overflow-hidden px-6 py-20 md:px-8 md:py-32"
     >
-      {/* Background decoration */}
-      <div className="absolute top-0 right-0 -mt-20 -mr-20 h-96 w-96 rounded-full bg-brand-teal/5 blur-3xl"></div>
-      <div className="absolute bottom-0 left-0 -mb-20 -ml-20 h-96 w-96 rounded-full bg-brand-light-blue/5 blur-3xl"></div>
-
       <div className="relative z-10 mx-auto max-w-7xl">
         <div className="mb-16 text-center">
           <h2 className="mb-4 text-3xl tracking-wide md:text-4xl">
