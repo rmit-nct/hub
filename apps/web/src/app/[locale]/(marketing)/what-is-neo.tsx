@@ -109,7 +109,9 @@ export default function WhatIsNeo() {
             {' '}
             SSET students
           </span>{' '}
-          <span className='mt-1'>to explore the world of technology at RMIT University.</span>
+          <span className="mt-1">
+            to explore the world of technology at RMIT University.
+          </span>
         </p>
       </motion.div>
 
