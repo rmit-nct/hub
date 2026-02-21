@@ -96,26 +96,10 @@ function LogoCard({
       <motion.div
         className={cn(
           'relative flex aspect-4/3 items-center justify-center overflow-hidden rounded-2xl border transition-colors duration-500',
-          isDark ? 'border-white/6' : 'border-black/6'
+          isDark
+            ? 'border-white/6 checkerboard-dark'
+            : 'border-black/6 checkerboard-light'
         )}
-        style={{
-          backgroundColor: isDark ? '#171624' : '#E3EDF9',
-          backgroundImage: isDark
-            ? `
-              linear-gradient(45deg, rgba(255,255,255,0.08) 25%, transparent 25%),
-              linear-gradient(-45deg, rgba(255,255,255,0.08) 25%, transparent 25%),
-              linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.08) 75%),
-              linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.08) 75%)
-            `
-            : `
-              linear-gradient(45deg, rgba(0,0,0,0.06) 25%, transparent 25%),
-              linear-gradient(-45deg, rgba(0,0,0,0.06) 25%, transparent 25%),
-              linear-gradient(45deg, transparent 75%, rgba(0,0,0,0.06) 75%),
-              linear-gradient(-45deg, transparent 75%, rgba(0,0,0,0.06) 75%)
-            `,
-          backgroundSize: '20px 20px',
-          backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
-        }}
         animate={{
           borderColor: isHovered
             ? isDark
