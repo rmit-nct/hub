@@ -29,27 +29,23 @@ export default function RulesSection() {
           <p className="mx-auto mt-4 max-w-2xl font-bold text-lg text-primary">
             The foundation for equity, inclusivity, and mutual respect
             throughout the competition. Please review these requirements
-            carefully before regsitering.
+            carefully before registering.
           </p>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:gap-12">
           {/* Eligibility Card */}
-          <div className="group relative overflow-hidden rounded-3xl border border-border bg-card/50 p-8 transition-colors duration-300 hover:border-brand-teal/50 md:p-10">
-            <div className="absolute top-0 right-0 p-8 opacity-10 transition-opacity group-hover:opacity-20">
-              <CheckCircle2 className="h-32 w-32 text-brand-teal" />
-            </div>
-
+          <div className="group glass-card card-hover relative overflow-hidden rounded-3xl p-8 md:p-10">
             <div className="relative">
               <h3 className="mb-8 flex items-center gap-3 font-black text-2xl text-brand-teal uppercase tracking-wide">
-                <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-teal text-white shadow-brand-teal/20 shadow-lg">
-                  <span className="text-xl">✓</span>
-                </span>
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-teal shadow-brand-teal/20 shadow-lg">
+                  <CheckCircle2 className="text-white text-xl" />
+                </div>
                 Eligibility
               </h3>
 
               <ul className="grid gap-4">
-                <li className="flex gap-4 rounded-xl border border-transparent bg-background/50 p-4 transition-all hover:border-brand-teal/20 hover:shadow-sm">
+                <li className="flex gap-4 rounded-xl border border-transparent bg-background/70 p-4 transition-all hover:border-brand-teal/20 hover:shadow-sm">
                   <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-teal/10 text-brand-teal">
                     <UserCheck className="h-4 w-4" />
                   </div>
@@ -92,16 +88,12 @@ export default function RulesSection() {
           </div>
 
           {/* Rules Card */}
-          <div className="group relative overflow-hidden rounded-3xl border border-border bg-card/50 p-8 transition-colors duration-300 hover:border-brand-light-blue/50 md:p-10">
-            <div className="absolute top-0 right-0 p-8 opacity-10 transition-opacity group-hover:opacity-20">
-              <AlertOctagon className="h-32 w-32 text-brand-light-blue" />
-            </div>
-
+          <div className="group glass-card card-hover relative overflow-hidden rounded-3xl p-8 md:p-10">
             <div className="relative">
               <h3 className="mb-8 flex items-center gap-3 font-black text-2xl text-brand-light-blue uppercase tracking-wide">
-                <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-light-blue text-white shadow-brand-light-blue/20 shadow-lg">
-                  <span className="text-xl">!</span>
-                </span>
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-light-blue shadow-brand-light-blue/20 shadow-lg">
+                  <AlertOctagon className="text-white text-xl" />
+                </div>
                 Rules
               </h3>
 
