@@ -97,8 +97,8 @@ function LogoCard({
         className={cn(
           'relative flex aspect-4/3 items-center justify-center overflow-hidden rounded-2xl border transition-colors duration-500',
           isDark
-            ? 'border-white/6 checkerboard-dark'
-            : 'border-black/6 checkerboard-light'
+            ? 'checkerboard-dark border-white/6'
+            : 'checkerboard-light border-black/6'
         )}
         animate={{
           borderColor: isHovered
@@ -168,7 +168,7 @@ export default function LogoSection() {
         className="mb-16 space-y-6"
       >
         <h2 className="text-center font-bold text-4xl tracking-tight md:text-5xl">
-          <span className="inline-block border-b-4 border-[#5FC6E5] pb-2 text-white">
+          <span className="inline-block border-[#5FC6E5] border-b-4 pb-2 text-white">
             Logo Design
           </span>
         </h2>
