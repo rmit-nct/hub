@@ -96,7 +96,9 @@ function LogoCard({
       <motion.div
         className={cn(
           'relative flex aspect-4/3 items-center justify-center overflow-hidden rounded-2xl border transition-colors duration-500',
-          isDark ? 'border-white/6 bg-[#171624]' : 'border-black/6 bg-[#E3EDF9]'
+          isDark
+            ? 'checkerboard-dark border-white/6'
+            : 'checkerboard-light border-black/6'
         )}
         animate={{
           borderColor: isHovered
