@@ -81,7 +81,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       images: [siteConfig.ogImage],
       creator: '@tuturuuu',
     },
-    manifest: `/site.webmanifest`,
   };
 }
 

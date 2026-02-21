@@ -46,7 +46,7 @@
     "update-all": "bun ./scripts/package-update.js"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.3",
+    "@biomejs/biome": "^2.4.4",
     "@ncthub/typescript-config": "workspace:*",
     "@vitest/coverage-v8": "^4.0.18",
     "turbo": "^2.8.10",
