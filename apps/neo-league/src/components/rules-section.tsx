@@ -46,7 +46,7 @@ export default function RulesSection() {
 
               <ul className="grid gap-4">
                 <li className="flex gap-4 rounded-xl border border-transparent bg-background/70 p-4 transition-all hover:border-brand-teal/20 hover:shadow-sm">
-                  <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-teal/10 text-brand-teal">
+                  <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-light-blue/10 text-brand-light-blue">
                     <UserCheck className="h-4 w-4" />
                   </div>
                   <div>
@@ -58,7 +58,7 @@ export default function RulesSection() {
                   </div>
                 </li>
                 <li className="flex gap-4 rounded-xl border border-transparent bg-background/50 p-4 transition-all hover:border-brand-teal/20 hover:shadow-sm">
-                  <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-teal/10 text-brand-teal">
+                  <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-light-blue/10 text-brand-light-blue">
                     <Users className="h-4 w-4" />
                   </div>
                   <div>
@@ -72,7 +72,7 @@ export default function RulesSection() {
                   </div>
                 </li>
                 <li className="flex gap-4 rounded-xl border border-transparent bg-background/50 p-4 transition-all hover:border-brand-teal/20 hover:shadow-sm">
-                  <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-teal/10 text-brand-teal">
+                  <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-light-blue/10 text-brand-light-blue">
                     <Component className="h-4 w-4" />
                   </div>
                   <div>
@@ -90,8 +90,8 @@ export default function RulesSection() {
           {/* Rules Card */}
           <div className="group glass-card card-hover relative overflow-hidden rounded-3xl p-8 md:p-10">
             <div className="relative">
-              <h3 className="mb-8 flex items-center gap-3 font-black text-2xl text-brand-light-blue uppercase tracking-wide">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-light-blue shadow-brand-light-blue/20 shadow-lg">
+              <h3 className="mb-8 flex items-center gap-3 font-black text-2xl text-brand-teal uppercase tracking-wide">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-teal shadow-brand-light-blue/20 shadow-lg">
                   <AlertOctagon className="text-white text-xl" />
                 </div>
                 Rules
