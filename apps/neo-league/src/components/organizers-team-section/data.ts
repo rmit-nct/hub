@@ -72,7 +72,16 @@ export const teams: Team[] = [
     description: 'Coordinating team operations and internal communications.',
     members: [
       { name: 'Kelvin Lam', role: 'Team Leader' },
-      { name: 'Member 2', role: 'Member' },
+      {
+        name: 'Minh Nhat',
+        role: 'Member',
+        avatar: '/organizer-team/internal-affairs/minh-nhat.png',
+      },
+      {
+        name: 'Duy Khanh',
+        role: 'Member',
+        avatar: '/organizer-team/internal-affairs/duy-khanh.png',
+      },
       // Add more members
     ],
   },
