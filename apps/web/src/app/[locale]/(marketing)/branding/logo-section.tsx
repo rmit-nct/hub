@@ -166,12 +166,10 @@ export default function LogoSection() {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] as const }}
         viewport={{ once: true }}
-        className="mb-16 space-y-6"
+        className="mb-16 space-y-6 text-center"
       >
-        <h2 className="text-center font-bold text-4xl tracking-tight md:text-5xl">
-          <span className="inline-block border-[#5FC6E5] border-b-4 pb-2 text-white">
-            Logo Design
-          </span>
+        <h2 className="font-bold text-4xl tracking-tight md:text-5xl">
+          Logo Design
         </h2>
 
         <p className="mx-auto max-w-2xl text-center text-muted-foreground leading-relaxed">
