@@ -13,13 +13,13 @@ export default function OrganizersTeamSection() {
       <div className="mx-auto max-w-6xl">
         {/* Section Header */}
         <div className="mb-16 text-center">
-          <h2 className="mb-4 text-3xl md:text-4xl tracking-wide">
+          <h2 className="mb-4 text-3xl tracking-wide md:text-4xl">
             <span className="font-medium text-brand-teal italic">
               ORGANIZING{' '}
             </span>
             <span className="relative inline-block font-black text-brand-teal">
               TEAM
-              <span className="absolute left-0 -bottom-1 h-1 w-full bg-yellow-400"></span>
+              <span className="absolute -bottom-1 left-0 h-1 w-full bg-yellow-400"></span>
             </span>
           </h2>
           <p className="mx-auto max-w-2xl text-foreground/70 text-lg">
@@ -65,7 +65,7 @@ export default function OrganizersTeamSection() {
                 <TabsTrigger
                   key={team.name}
                   value={team.name}
-                  className="rounded-full border border-foreground/10 bg-foreground/5 px-5 py-2.5 font-bold text-sm transition-all data-[state=active]:gradient-bg data-[state=active]:border-transparent data-[state=active]:text-black"
+                  className="data-[state=active]:gradient-bg rounded-full border border-foreground/10 bg-foreground/5 px-5 py-2.5 font-bold text-sm transition-all data-[state=active]:border-transparent data-[state=active]:text-black"
                 >
                   {team.name}
                 </TabsTrigger>
@@ -94,8 +94,12 @@ export default function OrganizersTeamSection() {
                       }
                     >
                       <div className="group flex flex-col items-center text-center">
-                        <Avatar className="mb-3 h-20 w-20 transition-transform duration-300 group-hover:scale-110 sm:h-24 sm:w-24">
-                          <AvatarImage src={member.avatar} alt={member.name} />
+                        <Avatar className="mb-3 h-20 w-20 bg-white/40 transition-transform duration-300 group-hover:scale-110 sm:h-24 sm:w-24">
+                          <AvatarImage
+                            src={member.avatar}
+                            alt={member.name}
+                            className="object-cover"
+                          />
                           <AvatarFallback className="bg-secondary/20 font-bold text-lg">
                             {getInitials(member.name)}
                           </AvatarFallback>

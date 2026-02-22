@@ -81,11 +81,20 @@ export const teams: Team[] = [
     description: 'Managing venues, equipment, and operational logistics.',
     members: [
       {
-        name: 'Kim',
+        name: 'Thien Kim',
         role: 'Team Leader',
         avatar: '/organizer-team/logistic/kim.png',
       },
-      { name: 'Member 2' },
+      {
+        name: 'Mai Kim',
+        role: 'Member',
+        avatar: '/organizer-team/logistic/mai-kim.png',
+      },
+      {
+        name: 'Bao Ngoc',
+        role: 'Member',
+        avatar: '/organizer-team/logistic/ngoc.png',
+      },
       // Add more members
     ],
   },
