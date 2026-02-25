@@ -45,11 +45,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     metadataBase: new URL(siteConfig.url),
     description,
     keywords: [
-      'Next.js',
-      'React',
-      'Tailwind CSS',
-      'Server Components',
-      'Radix UI',
+      'Neo Culture Tech',
+      'NCT',
+      'RMIT',
+      'RMIT club',
+      'RMIT tech club',
+      'RMIT University',
+      'SSET',
+      'RMIT SSET',
+      'tech club',
+      'technology club',
+      'RMIT Vietnam',
+      'student club',
+      'câu lạc bộ RMIT',
+      'câu lạc bộ công nghệ',
     ],
     authors: [
       {
@@ -81,7 +90,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       images: [siteConfig.ogImage],
       creator: '@tuturuuu',
     },
-    manifest: `/site.webmanifest`,
   };
 }
 
