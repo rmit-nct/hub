@@ -1,35 +1,44 @@
-const { execSync } = require('child_process');
-const isWin = process.platform === 'win32';
+const { execSync } = require('node:child_process');
+const path = require('node:path');
+const fs = require('node:fs');
 
 const arg = process.argv[2];
 
 if (!arg) {
   console.error(
-    'No command provided. Usage: node script.js <install|dev|start|run|serve|deploy>'
+    'No command provided. Usage: node script.js <init|install|dev|start|run|serve|deploy>'
   );
   process.exit(1);
 }
 
+const projectRoot = path.resolve(__dirname);
+process.chdir(projectRoot);
+
+const isWin = process.platform === 'win32';
+const venvPath = path.join(projectRoot, 'venv');
+const venvBin = path.join(venvPath, isWin ? 'Scripts' : 'bin');
+
 const commands = {
-  install: isWin
-    ? 'python -m venv venv && venv\\Scripts\\pip install -r requirements.txt'
-    : 'python -m venv venv && venv/bin/pip install -r requirements.txt',
-  dev: isWin
-    ? 'venv\\Scripts\\uvicorn main:app --host 127.0.0.1 --port 5500 --reload'
-    : 'venv/bin/uvicorn main:app --host 127.0.0.1 --port 5500 --reload',
-  start: isWin
-    ? 'venv\\Scripts\\uvicorn main:app --host 127.0.0.1 --port 5500'
-    : 'venv/bin/uvicorn main:app --host 127.0.0.1 --port 5500',
-  run: isWin
-    ? 'venv\\Scripts\\modal run modal_deployment.py'
-    : 'venv/bin/modal run modal_deployment.py',
-  serve: isWin
-    ? 'venv\\Scripts\\modal serve modal_deployment.py'
-    : 'venv/bin/modal serve modal_deployment.py',
-  deploy: isWin
-    ? 'venv\\Scripts\\modal deploy modal_deployment.py'
-    : 'venv/bin/modal deploy modal_deployment.py',
+  init: `python -m venv venv`,
+  install: `${path.join(venvBin, 'pip')} install -r requirements.txt`,
+  dev: `${path.join(venvBin, 'uvicorn')} main:app --host 127.0.0.1 --port 5500 --reload`,
+  start: `${path.join(venvBin, 'uvicorn')} main:app --host 127.0.0.1 --port 5500`,
+  run: `${path.join(venvBin, 'modal')} run modal_deployment.py`,
+  serve: `${path.join(venvBin, 'modal')} serve modal_deployment.py`,
+  deploy: `${path.join(venvBin, 'modal')} deploy modal_deployment.py`,
 };
+
+// Check if venv exists (except for init command)
+if (arg !== 'init' && !fs.existsSync(venvPath)) {
+  console.error('Virtual environment not found. Creating it now...');
+  try {
+    execSync(commands.init, { stdio: 'inherit' });
+    console.log('Virtual environment created successfully.');
+  } catch (e) {
+    console.error('Failed to create virtual environment:', e);
+    process.exit(1);
+  }
+}
 
 const cmd = commands[arg];
 

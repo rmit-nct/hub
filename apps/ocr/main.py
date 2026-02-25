@@ -10,7 +10,7 @@ os.environ["OMP_NUM_THREADS"] = "1"
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from paddleocr import PaddleOCR
+from paddleocr import PaddleOCRVL
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -24,14 +24,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize PaddleOCR
-ocr = PaddleOCR(
-    text_detection_model_name="PP-OCRv5_mobile_det",
-    text_recognition_model_name="PP-OCRv5_mobile_rec",
-    use_doc_orientation_classify=False,
-    use_doc_unwarping=False,
-    use_textline_orientation=False,
-)
+# Initialize PaddleOCRVL
+ocr = PaddleOCRVL(device="cpu")
 
 
 async def process_frame(frame):
