@@ -5,12 +5,15 @@ import numpy as np
 import os
 import re
 
-os.environ["OMP_NUM_THREADS"] = "1"
-
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from paddleocr import PaddleOCRVL
+
+os.environ["OMP_NUM_THREADS"] = "1"
+
+# Initialize PaddleOCRVL
+ocr = PaddleOCRVL(device="cpu")
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -23,9 +26,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Initialize PaddleOCRVL
-ocr = PaddleOCRVL(device="cpu")
 
 
 async def process_frame(frame):

@@ -15,11 +15,11 @@ const projectRoot = path.resolve(__dirname);
 process.chdir(projectRoot);
 
 const isWin = process.platform === 'win32';
-const venvPath = path.join(projectRoot, 'venv');
+const venvPath = path.join(projectRoot, '.conda');
 const venvBin = path.join(venvPath, isWin ? 'Scripts' : 'bin');
 
 const commands = {
-  init: `python -m venv venv`,
+  init: `conda create -p "${venvPath}" python=3.12.12 -y`,
   install: `${path.join(venvBin, 'pip')} install -r requirements.txt`,
   dev: `${path.join(venvBin, 'uvicorn')} main:app --host 127.0.0.1 --port 5500 --reload`,
   start: `${path.join(venvBin, 'uvicorn')} main:app --host 127.0.0.1 --port 5500`,
