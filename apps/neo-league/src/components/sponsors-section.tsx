@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-
 import AnimatedSection from './animated-section';
 
 export default function SponsorsSection() {
@@ -17,11 +16,11 @@ export default function SponsorsSection() {
       <div className="mx-auto max-w-7xl">
         {/* Section Header */}
         <div className="mb-16 text-center">
-          <h2 className="mb-4 text-3xl md:text-4xl tracking-wide">
-            <span className="font-medium text-brand-teal italic ">OUR </span>
+          <h2 className="mb-4 text-3xl tracking-wide md:text-4xl">
+            <span className="font-medium text-brand-teal italic">OUR </span>
             <span className="relative inline-block font-black text-brand-teal">
               SPONSORS
-              <span className="absolute left-0 -bottom-1 h-1 w-full bg-yellow-400"></span>
+              <span className="absolute -bottom-1 left-0 h-1 w-full bg-yellow-400"></span>
             </span>
           </h2>
           <p className="mx-auto max-w-2xl font-bold text-foreground text-lg">
@@ -35,12 +34,16 @@ export default function SponsorsSection() {
             <h3 className="text-center font-black text-2xl text-yellow-400 uppercase shadow-text md:text-3xl">
               Gold Sponsors
             </h3>
-            <div className="flex items-center justify-center gap-8">
+            <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
               {[1, 2].map((index) => (
-                <AnimatedSection key={index} delay={index * 0.1}>
-                  <div className="glass-card card-hover h-30 max-w-md flex-1 rounded-2xl p-6">
+                <AnimatedSection
+                  key={index}
+                  delay={index * 0.1}
+                  className={index === 1 ? 'md:col-start-2' : ''}
+                >
+                  <div className="glass-card card-hover h-30 flex-1 rounded-2xl p-4">
                     <Image
-                      src="/sponsor-example.png"
+                      src="/sponsors/big-o-coding.png"
                       alt={`Gold Sponsor ${index}`}
                       width={100}
                       height={100}
@@ -57,12 +60,12 @@ export default function SponsorsSection() {
             <h3 className="text-center font-black text-2xl text-gray-300 uppercase shadow-text md:text-3xl">
               Silver Sponsors
             </h3>
-            <div className="flex flex-wrap items-center justify-center gap-6">
+            <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
               {[1, 2, 3, 4].map((index) => (
                 <AnimatedSection key={index} delay={index * 0.08}>
-                  <div className="glass-card card-hover h-25 flex-1 rounded-2xl p-5">
+                  <div className="glass-card card-hover h-25 flex-1 rounded-2xl p-4">
                     <Image
-                      src="/sponsor-example.png"
+                      src="/sponsors/fpt.png"
                       alt={`Silver Sponsor ${index}`}
                       width={100}
                       height={100}
@@ -93,7 +96,7 @@ export default function SponsorsSection() {
                           className="glass-card card-hover h-25 rounded-xl p-4"
                         >
                           <Image
-                            src="/sponsor-example.png"
+                            src="/sponsors/fpt.png"
                             alt={`${category} ${index}`}
                             width={100}
                             height={100}
