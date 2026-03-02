@@ -3,6 +3,25 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
+// detect external links (same rule as Navbar)
+const isExternal = (href: string) => href.startsWith('http');
+
+// reusable link renderer for buttons
+const renderLink = (
+  href: string,
+  children: React.ReactNode,
+  className?: string
+) => (
+  <Link
+    href={href}
+    className={className}
+    target={isExternal(href) ? '_blank' : undefined}
+    rel={isExternal(href) ? 'noopener noreferrer' : undefined}
+    prefetch={isExternal(href) ? false : undefined}
+  >
+    {children}
+  </Link>
+);
 export default function HeroSection() {
   const handleScrollClick = () => {
     if (typeof window === 'undefined') {
@@ -59,22 +78,26 @@ export default function HeroSection() {
             className="flex animate-slide-up flex-col justify-center gap-4 sm:flex-row"
             style={{ animationDelay: '0.4s' }}
           >
-            <Link href="#register" className="btn-primary animate-pulse-glow">
-              Register Now
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </Link>
+            {renderLink(
+              'https://forms.office.com/r/GdkwnUbty6?origin=lprLink',
+              <>
+                Register Now
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </>,
+              'btn-primary animate-pulse-glow'
+            )}
             <Link href="#about" className="btn-secondary">
               Learn More
             </Link>
