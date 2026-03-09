@@ -71,7 +71,7 @@ export default function AboutNeoLeagueSection() {
             </div>
 
             {/* About Content */}
-            <div className="mx-auto max-w-6xl">
+            <div className="mx-auto max-w-6xl" id="about-neo-league">
               <div className="mb-8 flex items-center justify-center gap-3">
                 <div className="h-px w-12 bg-linear-to-r from-transparent to-brand-dark-blue" />
                 <span className="font-semibold text-brand-dark-blue text-sm uppercase tracking-[0.2em]">

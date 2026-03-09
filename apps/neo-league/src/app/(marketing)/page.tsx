@@ -12,7 +12,7 @@ import SponsorsSection from '@/components/sponsors-section';
 
 export default function Home() {
   return (
-    <div className="gradient-background flex flex-col overflow-hidden">
+    <div className="gradient-background flex flex-col">
       <AnimatedSection>
         <HeroSection />
       </AnimatedSection>

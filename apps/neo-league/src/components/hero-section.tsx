@@ -9,6 +9,13 @@ export default function HeroSection() {
       return;
     }
 
+    const aboutSection = document.getElementById('about-neo-league');
+
+    if (aboutSection) {
+      aboutSection.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+
     window.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
   };
 
@@ -81,7 +88,10 @@ export default function HeroSection() {
               </svg>
             </Link>
 
-            <Link href="#about" className="btn-secondary">
+            <Link
+              href="#about-neo-league"
+              className="btn-secondary"
+            >
               Learn More
             </Link>
           </div>

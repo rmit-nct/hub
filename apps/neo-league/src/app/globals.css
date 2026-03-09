@@ -52,6 +52,16 @@
   --color-brand-teal: var(--brand-teal);
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 /* Gradient Background */
 .gradient-background {
   background: linear-gradient(90deg, #5ac7df 0%, var(--background) 100%);
