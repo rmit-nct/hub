@@ -88,10 +88,7 @@ export default function HeroSection() {
               </svg>
             </Link>
 
-            <Link
-              href="#about-neo-league"
-              className="btn-secondary"
-            >
+            <Link href="#about-neo-league" className="btn-secondary">
               Learn More
             </Link>
           </div>
