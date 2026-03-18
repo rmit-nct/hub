@@ -12,7 +12,7 @@ import {
   Puzzle,
   ScanLine,
   Sparkles,
-  QrCode
+  QrCode,
 } from '@ncthub/ui/icons';
 import type { ReactNode } from 'react';
 
@@ -109,12 +109,12 @@ export const useNavigation = (t: any): { categories: NavCategory[] } => {
       icon: <ScanLine />,
     },
     {
-      href:'/neo-qr-generator',
-      label:'Neo QR Generator',
+      href: '/neo-qr-generator',
+      label: 'Neo QR Generator',
       description:
         'Generate and customize QR codes instantly for links, text, and more.',
-      icon: <QrCode />
-    }
+      icon: <QrCode />,
+    },
   ] as NavItem[];
 
   const games = [
