@@ -1,7 +1,6 @@
 // npm install qrcode.react
 'use client';
 import { Button } from '@ncthub/ui/button';
-import { igloo } from '@ncthub/ui/icons';
 import { QRCodeSVG } from 'qrcode.react';
 import { useState } from 'react';
 
