@@ -14,6 +14,7 @@ export const APP_PUBLIC_PATHS = [
   '/neo-chess',
   '/blogs',
   '/neo-pacman',
+  '/qrgenerator',
 ].reduce((acc: string[], path) => {
   // Add the original path
   acc.push(path);

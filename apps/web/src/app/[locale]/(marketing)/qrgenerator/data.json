@@ -1,0 +1,32 @@
+[
+  {
+    "id": "1",
+    "name": "John Doe",
+    "dob": "1995-05-15",
+    "major": "Computer Science"
+  },
+  {
+    "id": "2",
+    "name": "Jane Smith",
+    "dob": "1996-08-22",
+    "major": "Mathematics"
+  },
+  {
+    "id": "3",
+    "name": "Emily Johnson",
+    "dob": "1994-12-10",
+    "major": "Physics"
+  },
+  {
+    "id": "4",
+    "name": "Michael Brown",
+    "dob": "1997-03-30",
+    "major": "Chemistry"
+  },
+  {
+    "id": "5",
+    "name": "Sarah Davis",
+    "dob": "1995-11-05",
+    "major": "Biology"
+  }
+]
