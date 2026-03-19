@@ -24,7 +24,7 @@ export default function NeoGeneratorHero() {
           variant="outline"
           className="border-[#5FC6E5]/50 px-3 py-1 text-[#5FC6E5] text-sm"
         >
-          Text Style Generator
+          QR Generator
         </Badge>
         <Sparkles className="h-5 w-5 text-[#FBC721]" />
       </motion.div>
@@ -37,7 +37,7 @@ export default function NeoGeneratorHero() {
       >
         <span>Welcome to</span>{' '}
         <span className="whitespace-nowrap border-[#FBC721] border-b-4 text-[#5FC6E5]">
-          Neo Generator
+          Neo QR Generator
         </span>
       </motion.h1>
 
@@ -47,9 +47,7 @@ export default function NeoGeneratorHero() {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5, duration: 0.8 }}
       >
-        Transform your text into various Unicode styles including bold, italic,
-        script, and more. Perfect for social media posts where regular
-        formatting isn't available.
+        Transform your text into scannable QR code.
       </motion.p>
     </motion.div>
   );
