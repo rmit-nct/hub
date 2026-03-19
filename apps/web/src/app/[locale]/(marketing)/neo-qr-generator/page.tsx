@@ -3,7 +3,6 @@
 import { Button } from '@ncthub/ui/button';
 import { QRCodeSVG } from 'qrcode.react';
 import { useState } from 'react';
-import { ur } from 'zod/v4/locales';
 import NeoGeneratorHero from './hero';
 export default function ScanTicket() {
   const [qrData, setQrData] = useState('');
