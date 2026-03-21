@@ -1,7 +1,5 @@
 'use client';
 
-import { DepartmentName, members } from './data';
-import MemberCard from './member-card';
 import { Badge } from '@ncthub/ui/badge';
 import { Crown } from '@ncthub/ui/icons';
 import {
@@ -13,6 +11,8 @@ import {
 } from '@ncthub/ui/select';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
+import { type DepartmentName, members } from './data';
+import MemberCard from './member-card';
 
 const cardVariants = {
   hidden: { y: 20, opacity: 0 },
@@ -22,7 +22,7 @@ const cardVariants = {
   },
 };
 
-const departments: { name: DepartmentName; color: string }[] = [
+const memberDepartments: { name: DepartmentName; color: string }[] = [
   { name: 'FinLog', color: 'text-dynamic-green' },
   { name: 'Technology', color: 'text-dynamic-blue' },
   { name: 'Human Resources', color: 'text-dynamic-purple' },
@@ -51,7 +51,7 @@ export default function Members() {
 
   const handleDepartmentClick = (departmentName: DepartmentName) => {
     if (lockedDepartment === departmentName) {
-      setLockedDepartment(null); // Unlock if clicking the same department
+      setLockedDepartment(null);
     } else {
       setLockedDepartment(departmentName);
     }
@@ -60,12 +60,12 @@ export default function Members() {
   return (
     <div className="flex flex-col items-center px-2 py-4">
       <motion.h1
-        className="mb-8 mt-4 text-center text-6xl font-extrabold"
+        className="mt-4 mb-8 text-center font-extrabold text-6xl"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <span className="border-b-4 border-[#5FC6E5] pb-2">Meet Our Team</span>
+        <span className="border-[#5FC6E5] border-b-4 pb-2">Meet Our Team</span>
         <motion.div
           className="ml-3 inline-block"
           initial={{ rotate: 0 }}
@@ -76,7 +76,7 @@ export default function Members() {
         </motion.div>
       </motion.h1>
 
-      <div className="border-border bg-card text-foreground/80 relative mx-auto mb-8 mt-4 max-w-4xl rounded-lg border p-4 text-center text-base tracking-wide md:p-6 md:text-lg">
+      <div className="relative mx-auto mt-4 mb-8 max-w-4xl rounded-lg border border-border bg-card p-4 text-center text-base text-foreground/80 tracking-wide md:p-6 md:text-lg">
         {selectedGeneration === 7 ? (
           <>
             RMIT Neo Culture Tech Club mostly operates technical events,
@@ -96,9 +96,9 @@ export default function Members() {
       </div>
 
       <div className="my-4">
-        <div className="text-muted-foreground w-full px-2 text-center text-base font-medium md:px-40 md:text-lg">
+        <div className="w-full px-2 text-center font-medium text-base text-muted-foreground md:px-40 md:text-lg">
           Our club has 4 core teams:{' '}
-          {departments.map((department, index) => (
+          {memberDepartments.map((department, index) => (
             <span key={department.name}>
               <span
                 className={`font-semibold ${department.color} cursor-pointer transition-all duration-200 hover:underline ${
@@ -112,12 +112,12 @@ export default function Members() {
               >
                 {department.name}
               </span>
-              {index < departments.length - 1 && ', '}
+              {index < memberDepartments.length - 1 && ', '}
             </span>
           ))}
           , with a dedicated{' '}
           <span
-            className={`text-dynamic-pink cursor-pointer font-semibold transition-all duration-200 hover:underline ${
+            className={`cursor-pointer font-semibold text-dynamic-pink transition-all duration-200 hover:underline ${
               lockedDepartment === 'Executive Board'
                 ? 'rounded px-1 underline ring-2 ring-current'
                 : ''
@@ -271,10 +271,10 @@ export default function Members() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mb-4 mt-6 flex flex-col items-center gap-3"
+          className="mt-6 mb-4 flex flex-col items-center gap-3"
         >
           <div className="flex items-center gap-3">
-            <span className="text-muted-foreground text-sm font-medium">
+            <span className="font-medium text-muted-foreground text-sm">
               Generation:
             </span>
             <Select
@@ -283,7 +283,7 @@ export default function Members() {
                 setSelectedGeneration(Number(value) as 6 | 7)
               }
             >
-              <SelectTrigger className="border-border bg-card hover:bg-muted h-10 w-52 transition-colors">
+              <SelectTrigger className="h-10 w-52 border-border bg-card transition-colors hover:bg-muted">
                 <SelectValue placeholder="Select generation..." />
               </SelectTrigger>
               <SelectContent>
@@ -292,7 +292,7 @@ export default function Members() {
                     <span className="font-medium">Generation 7</span>
                     <Badge
                       variant="outline"
-                      className="ml-auto border-[#5FC6E5] text-xs text-[#5FC6E5]"
+                      className="ml-auto border-[#5FC6E5] text-[#5FC6E5] text-xs"
                     >
                       Current
                     </Badge>
@@ -303,7 +303,7 @@ export default function Members() {
                     <span className="font-medium">Generation 6</span>
                     <Badge
                       variant="outline"
-                      className="ml-auto border-[#FBC721] text-xs text-[#FBC721]"
+                      className="ml-auto border-[#FBC721] text-[#FBC721] text-xs"
                     >
                       Legacy
                     </Badge>
