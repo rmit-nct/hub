@@ -656,10 +656,11 @@ export default function NeoQrGeneratorPage() {
                 type="button"
                 key={tab.value}
                 onClick={() => handleTypeChange(tab.value)}
-                className={`relative flex items-center gap-2 overflow-hidden rounded-lg px-3 py-2 font-medium text-sm transition-all duration-200 hover:scale-105 hover:brightness-110 active:scale-95 ${isActive
-                  ? 'scale-105 text-white'
-                  : 'border border-slate-700 bg-slate-800/50 text-slate-300 hover:border-slate-600 hover:bg-slate-800'
-                  }`}
+                className={`relative flex items-center gap-2 overflow-hidden rounded-lg px-3 py-2 font-medium text-sm transition-all duration-200 hover:scale-105 hover:brightness-110 active:scale-95 ${
+                  isActive
+                    ? 'scale-105 text-white'
+                    : 'border border-slate-700 bg-slate-800/50 text-slate-300 hover:border-slate-600 hover:bg-slate-800'
+                }`}
               >
                 {isActive ? (
                   <motion.div
@@ -695,10 +696,11 @@ export default function NeoQrGeneratorPage() {
                   onChange={(e) => setUrlInput(e.target.value)}
                   onFocus={(e) => e.currentTarget.select()}
                   placeholder="Enter URL"
-                  className={`w-full rounded-lg border bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 transition-colors focus:outline-none ${urlInput.trim() && !urlInputValid
-                    ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500/20'
-                    : 'border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
-                    }`}
+                  className={`w-full rounded-lg border bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 transition-colors focus:outline-none ${
+                    urlInput.trim() && !urlInputValid
+                      ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500/20'
+                      : 'border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
+                  }`}
                 />
                 <p className="text-slate-400 text-xs">
                   Try something like https://example.com/
@@ -715,10 +717,11 @@ export default function NeoQrGeneratorPage() {
                   onChange={(e) => setFacebookUrl(e.target.value)}
                   onFocus={(e) => e.currentTarget.select()}
                   placeholder="https://facebook.com/..."
-                  className={`w-full rounded-lg border bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 transition-colors focus:outline-none ${facebookUrl.trim() && !facebookUrlValid
-                    ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500/20'
-                    : 'border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
-                    }`}
+                  className={`w-full rounded-lg border bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 transition-colors focus:outline-none ${
+                    facebookUrl.trim() && !facebookUrlValid
+                      ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500/20'
+                      : 'border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
+                  }`}
                 />
               </div>
             ) : null}
