@@ -191,7 +191,6 @@ export default function NeoQrGeneratorPage() {
   const [showCustomizeModal, setShowCustomizeModal] = useState(false);
   const [showOptionsModal, setShowOptionsModal] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [saved, setSaved] = useState(false);
   const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -516,15 +515,6 @@ export default function NeoQrGeneratorPage() {
       name: downloadName,
     });
   }, [downloadFormat, downloadName, qrCanDownload]);
-
-  const handleSave = async () => {
-    if (!qrCanDownload) return;
-    await download();
-    if (!qrRef.current) return;
-    setSaved(true);
-    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-    saveTimeoutRef.current = setTimeout(() => setSaved(false), 2000);
-  };
 
   const qrTypeTabs: QRTypeTab[] = [
     {
@@ -948,7 +938,7 @@ export default function NeoQrGeneratorPage() {
           </div>
 
           {/* Action Buttons */}
-          <div className="mt-6 grid gap-2 sm:grid-cols-5">
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             <Button
               type="button"
               onClick={download}
@@ -1024,45 +1014,7 @@ export default function NeoQrGeneratorPage() {
                 {copied ? '✅ Copied' : 'Copy'}
               </span>
             </Button>
-            <Button
-              type="button"
-              variant="outline"
-              disabled={!qrCanDownload || saved}
-              onClick={handleSave}
-              className="rounded-lg border border-slate-600 bg-slate-800/50 text-white transition-all duration-200 hover:scale-105 hover:border-slate-500 hover:bg-slate-700 hover:brightness-110 active:scale-95 disabled:opacity-50"
-            >
-              <span className="inline-flex items-center gap-2">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4"
-                >
-                  <title>Save</title>
-                  <path
-                    d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M17 21v-8H7v8"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M7 3v5h8"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                {saved ? '✅ Saved' : 'Save'}
-              </span>
-            </Button>
+
             <Button
               type="button"
               onClick={() => setShowCustomizeModal(true)}
