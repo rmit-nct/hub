@@ -6,6 +6,8 @@ import { useState } from 'react';
 import NeoGeneratorHero from './hero';
 export default function ScanTicket() {
   const [qrData, setQrData] = useState('');
+  const [bgColor, setBgColor] = useState('#ffffff');
+  const [fgColor, setFgColor] = useState('#000000');
 
   const downloadQR = (format: string) => {
     const svg = document.getElementById('qr-code-svg');
@@ -30,7 +32,7 @@ export default function ScanTicket() {
       canvas.height = img.height;
 
       if (format === 'jpg') {
-        ctx.fillStyle = '#ffffff';
+        ctx.fillStyle = bgColor;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
       }
 
@@ -57,51 +59,32 @@ export default function ScanTicket() {
     document.body.removeChild(downloadLink);
   };
   return (
-    <div className="container mx-auto px-4 py-14">
+    <div className="container mx-auto w-full px-4 py-4">
       <NeoGeneratorHero />
 
       {/* Tailwind used for the layout, background, and drop shadow */}
-      <div className="mx-auto mt-10 flex max-w-lg flex-col items-center justify-center rounded-2xl p-8 shadow-xl">
-        <h2 className="mb-6 font-bold text-2xl text-white">Neo QR Generator</h2>
-
+      <div className="mx-auto mt-10 flex w-full max-w-4xl flex-col items-center justify-center gap-8 rounded-2xl border-2 p-8 shadow-xl md:flex-row">
         {/* A white wrapper ensures the QR code is always scannable, even in dark mode */}
-        <div className="w-full rounded-xl border-2 p-6">
+        <div className="w-full rounded-xl p-2">
           {qrData ? (
-            <div className="flex w-full flex-row items-center justify-between gap-6 sm:flex-row">
+            <div className="ml-2 flex w-full flex-col items-center justify-between gap-5 sm:flex-row">
               {/* Added an ID to the QRCode so our download function can find it */}
-              <div className="rounded-2xl bg-[#ffffff] bg-white p-6 shadow-sm">
+              <div
+                className="rounded-2xl p-8 shadow-sm"
+                style={{ backgroundColor: bgColor }}
+              >
                 <QRCodeSVG
                   id="qr-code-svg"
                   value={qrData}
                   size={160}
                   level="H"
+                  bgColor={bgColor}
+                  fgColor={fgColor}
                   className="shrink-0"
                 />
               </div>
 
               {/* Download Button */}
-              <div className="flex w-full flex-col gap-3 sm:w-auto">
-                <Button
-                  onClick={() => downloadQR('png')}
-                  className="w-full rounded-lg bg-blue-600 px-6 py-2 font-semibold text-sm text-white transition-colors hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 sm:w-auto"
-                >
-                  Download PNG
-                </Button>
-
-                <Button
-                  onClick={() => downloadQR('webp')}
-                  className="w-full rounded-lg bg-blue-600 px-6 py-2 font-semibold text-sm text-white transition-colors hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 sm:w-auto"
-                >
-                  Download Webp
-                </Button>
-
-                <Button
-                  onClick={() => downloadQR('jpg')}
-                  className="w-full rounded-lg bg-blue-600 px-6 py-2 font-semibold text-sm text-white transition-colors hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 sm:w-auto"
-                >
-                  Download JPEG
-                </Button>
-              </div>
             </div>
           ) : (
             <div className="flex min-h-[160px] w-full items-center justify-center rounded-lg p-4 text-center text-sm text-white">
@@ -110,20 +93,70 @@ export default function ScanTicket() {
           )}
         </div>
         <div className="mb-8 w-full pt-3">
-          <label
-            htmlFor="qr-input"
-            className="mb-2 block font-medium text-sm text-white"
-          >
-            Enter URL or Text
-          </label>
-          <textarea
-            id="qr-input"
-            rows={3}
-            className="w-full resize-none rounded-xl border-2 p-3 text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            placeholder="https://..."
-            value={qrData}
-            onChange={(e) => setQrData(e.target.value)}
-          />
+          <div className="pb-2">
+            <label
+              htmlFor="qr-input"
+              className="mb-2 block font-medium text-sm text-white"
+            >
+              Enter URL or Text
+            </label>
+            <textarea
+              id="qr-input"
+              rows={3}
+              className="h-1/3 w-full resize-none rounded-xl border-2 bg-slate-50 p-3 pt-1 text-black focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              placeholder="https://..."
+              value={qrData}
+              onChange={(e) => setQrData(e.target.value)}
+            />
+          </div>
+
+          <div className="mb-4 flex w-full flex-row gap-4">
+            <div className="w-1/2">
+              <label className="mb-2 block font-medium text-sm text-white">
+                Background Color
+              </label>
+              <input
+                type="color"
+                value={bgColor}
+                onChange={(e) => setBgColor(e.target.value)}
+                className="h-10 w-full cursor-pointer rounded border-0 bg-transparent p-0"
+              />
+            </div>
+            <div className="w-1/2">
+              <label className="mb-2 block font-medium text-sm text-white">
+                QR/Text Color
+              </label>
+              <input
+                type="color"
+                value={fgColor}
+                onChange={(e) => setFgColor(e.target.value)}
+                className="h-10 w-full cursor-pointer rounded border-0 bg-transparent p-0"
+              />
+            </div>
+          </div>
+
+          <div className="flex w-full flex-row gap-3 sm:w-auto">
+            <Button
+              onClick={() => downloadQR('png')}
+              className="w-full rounded-lg bg-blue-600 px-6 py-2 font-semibold text-sm text-white transition-colors hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 sm:w-auto"
+            >
+              Download PNG
+            </Button>
+
+            <Button
+              onClick={() => downloadQR('webp')}
+              className="w-full rounded-lg bg-blue-600 px-6 py-2 font-semibold text-sm text-white transition-colors hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 sm:w-auto"
+            >
+              Download Webp
+            </Button>
+
+            <Button
+              onClick={() => downloadQR('jpg')}
+              className="w-full rounded-lg bg-blue-600 px-6 py-2 font-semibold text-sm text-white transition-colors hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 sm:w-auto"
+            >
+              Download JPEG
+            </Button>
+          </div>
         </div>
       </div>
     </div>
