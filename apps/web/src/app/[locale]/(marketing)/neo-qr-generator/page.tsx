@@ -402,7 +402,7 @@ export default function NeoQrGeneratorPage() {
       prevQrTypeRef.current = qrType;
       prevQrContainerElRef.current = currentContainer;
     } else {
-      qrRef.current.update({
+      qrRef.current!.update({
         ...options,
         width: qrSize,
         height: qrSize,
