@@ -87,7 +87,7 @@ export default function ScanTicket() {
               {/* Download Button */}
             </div>
           ) : (
-            <div className="flex min-h-[160px] w-full items-center justify-center rounded-lg p-4 text-center text-sm text-white">
+            <div className="flex min-h-[160px] w-full items-center justify-center rounded-lg p-4 text-center text-foreground text-sm">
               Type something above to generate a QR code
             </div>
           )}
@@ -96,7 +96,7 @@ export default function ScanTicket() {
           <div className="pb-2">
             <label
               htmlFor="qr-input"
-              className="mb-2 block font-medium text-sm text-white"
+              className="mb-2 block font-medium text-foreground text-sm"
             >
               Enter URL or Text
             </label>
@@ -112,7 +112,7 @@ export default function ScanTicket() {
 
           <div className="mb-4 flex w-full flex-row gap-4">
             <div className="w-1/2">
-              <label className="mb-2 block font-medium text-sm text-white">
+              <label className="mb-2 block font-medium text-foreground text-sm">
                 Background Color
               </label>
               <input
@@ -123,7 +123,7 @@ export default function ScanTicket() {
               />
             </div>
             <div className="w-1/2">
-              <label className="mb-2 block font-medium text-sm text-white">
+              <label className="mb-2 block font-medium text-foreground text-sm">
                 QR/Text Color
               </label>
               <input
