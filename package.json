@@ -69,6 +69,7 @@
     "unrs-resolver"
   ],
   "dependencies": {
+    "qr-code-styling": "^1.9.2",
     "react-qr-code": "^2.0.18"
   }
 }

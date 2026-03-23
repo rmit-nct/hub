@@ -33,8 +33,6 @@ type QrType =
   | 'vcard'
   | 'facebook'
   | 'appstores'
-  | 'mp3'
-  | 'pdf'
   | 'images';
 type QrDownloadFormat = 'png' | 'jpeg' | 'svg' | 'eps';
 type QrErrorLevel = 'L' | 'M' | 'Q' | 'H';
@@ -306,12 +304,6 @@ export default function NeoQrGeneratorPage() {
           tel: vTel,
           email: vEmail,
         });
-      case 'mp3':
-      case 'pdf':
-      case 'images': {
-        const override = fileUrlOverride.trim();
-        return override || fileObjectUrl;
-      }
       default:
         return '';
     }
@@ -591,12 +583,6 @@ export default function NeoQrGeneratorPage() {
       description: 'Redirect to an existing web URL',
     },
     {
-      value: 'pdf',
-      label: 'PDF',
-      icon: '📄',
-      description: 'Link to a PDF document',
-    },
-    {
       value: 'email',
       label: 'Email',
       icon: '📧',
@@ -625,18 +611,6 @@ export default function NeoQrGeneratorPage() {
       label: 'App',
       icon: '📱',
       description: 'Link to app profile',
-    },
-    {
-      value: 'mp3',
-      label: 'Audio',
-      icon: '🎵',
-      description: 'Link to audio files',
-    },
-    {
-      value: 'images',
-      label: 'Files',
-      icon: '📁',
-      description: 'Link to image files',
     },
   ];
 
@@ -991,88 +965,11 @@ export default function NeoQrGeneratorPage() {
                 </div>
               </div>
             ) : null}
-
-            {/* File Upload Configuration */}
-            {qrType === 'mp3' || qrType === 'pdf' || qrType === 'images' ? (
-              <div className="space-y-4">
-                <div className="rounded-lg border border-slate-600 bg-slate-700/30 p-4">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                      <p className="font-medium text-sm text-white">
-                        Upload file
-                      </p>
-                      <p className="mt-1 text-slate-400 text-xs">
-                        Supports .jpg, .pdf, .mp3, .docx, .pptx
-                      </p>
-                    </div>
-                    <Button
-                      type="button"
-                      onClick={onUploadClick}
-                      className="rounded-lg bg-blue-600 px-4 py-2 font-semibold text-sm text-white transition-all duration-200 hover:scale-105 hover:bg-blue-700 hover:brightness-110 active:scale-95"
-                    >
-                      Choose file
-                    </Button>
-                  </div>
-
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept=".jpg,.jpeg,.pdf,.mp3,.docx,.pptx"
-                    onChange={onUploadFileChange}
-                    className="hidden"
-                  />
-
-                  {fileName ? (
-                    <div className="mt-3 flex flex-wrap items-center gap-2 text-slate-300 text-xs">
-                      <span className="rounded-md border border-slate-600 bg-slate-700/50 px-2 py-1">
-                        {fileName}
-                      </span>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="xs"
-                        className="border-slate-600 bg-transparent text-slate-300 transition-all duration-200 hover:scale-105 hover:bg-slate-700 hover:brightness-110 active:scale-95"
-                        onClick={() => {
-                          if (fileObjectUrl) URL.revokeObjectURL(fileObjectUrl);
-                          setFileObjectUrl('');
-                          setFileName('');
-                        }}
-                      >
-                        Remove
-                      </Button>
-                    </div>
-                  ) : null}
-
-                  {fileError ? (
-                    <p className="mt-3 font-medium text-red-400 text-xs">
-                      {fileError}
-                    </p>
-                  ) : null}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="file-url-override" className="text-slate-300">
-                    Or paste a hosted URL
-                  </Label>
-                  <input
-                    id="file-url-override"
-                    value={fileUrlOverride}
-                    onChange={(e) => setFileUrlOverride(e.target.value)}
-                    onFocus={(e) => e.currentTarget.select()}
-                    placeholder="https://..."
-                    className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
-                  />
-                  <p className="text-slate-400 text-xs">
-                    Uses permanent URL instead of temporary
-                  </p>
-                </div>
-              </div>
-            ) : null}
           </div>
 
           {/* QR Code Preview with Fade-in Animation */}
           <div className="mt-8 border-white/10 border-t pt-8">
-            <p className="mb-3 text-slate-400 text-sm">⚡ Live Preview</p>
+            <p className="mb-3 text-slate-400 text-sm">Live Preview</p>
             <div className="flex flex-col items-center justify-center">
               {qrValue.trim() ? (
                 <div
