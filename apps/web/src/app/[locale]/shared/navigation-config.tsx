@@ -110,8 +110,8 @@ export const useNavigation = (t: any): { categories: NavCategory[] } => {
     {
       href: '/neo-shortener',
       label: 'Neo Shortener',
-      description: 'fyfyfyf'
-    }
+      description: 'fyfyfyf',
+    },
   ] as NavItem[];
 
   const games = [

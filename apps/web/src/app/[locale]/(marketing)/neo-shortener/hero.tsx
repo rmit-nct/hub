@@ -47,7 +47,8 @@ export default function NeoShortenerHero() {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5, duration: 0.8 }}
       >
-        Transform your long url into a shorter version. Perfect for sharing on social media and other platforms where space is limited.
+        Transform your long url into a shorter version. Perfect for sharing on
+        social media and other platforms where space is limited.
       </motion.p>
     </motion.div>
   );
