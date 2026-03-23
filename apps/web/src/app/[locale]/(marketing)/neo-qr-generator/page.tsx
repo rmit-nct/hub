@@ -225,11 +225,7 @@ export default function NeoQrGeneratorPage() {
   const [vEmail, setVEmail] = useState('');
 
   // File-based inputs
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [fileObjectUrl, setFileObjectUrl] = useState<string>('');
-  const [fileName, setFileName] = useState<string>('');
-  const [fileUrlOverride, setFileUrlOverride] = useState<string>('');
-  const [fileError, setFileError] = useState<string>('');
 
   // Customize options
   const [bgColor, setBgColor] = useState('#ffffff');
@@ -311,9 +307,7 @@ export default function NeoQrGeneratorPage() {
     emailBody,
     emailSubject,
     emailTo,
-    fileUrlOverride,
     facebookUrl,
-    fileObjectUrl,
     appPlatform,
     androidStoreUrl,
     iosStoreUrl,
@@ -436,9 +430,6 @@ export default function NeoQrGeneratorPage() {
       if (prev) URL.revokeObjectURL(prev);
       return '';
     });
-    setFileName('');
-    setFileUrlOverride('');
-    setFileError('');
   }, []);
 
   const handleTypeChange = useCallback(
@@ -480,46 +471,6 @@ export default function NeoQrGeneratorPage() {
       if (fileObjectUrl) URL.revokeObjectURL(fileObjectUrl);
     };
   }, [fileObjectUrl]);
-
-  const onPickFile = useCallback(
-    (file: File | null) => {
-      setFileError('');
-      if (!file) return;
-
-      const ext = getExt(file.name);
-      const isImage = ['jpg', 'jpeg'].includes(ext);
-      const isPdf = ext === 'pdf';
-      const isMp3 = ext === 'mp3';
-      const isDocx = ext === 'docx';
-      const isPptx = ext === 'pptx';
-      const supported = isImage || isPdf || isMp3 || isDocx || isPptx;
-      if (!supported) {
-        setFileError(
-          'Unsupported file type. Use .jpg, .pdf, .mp3, .docx, .pptx'
-        );
-        return;
-      }
-
-      if (fileObjectUrl) URL.revokeObjectURL(fileObjectUrl);
-      const url = URL.createObjectURL(file);
-      setFileObjectUrl(url);
-      setFileName(file.name);
-      setFileUrlOverride('');
-    },
-    [fileObjectUrl]
-  );
-
-  const onUploadClick = useCallback(() => {
-    fileInputRef.current?.click();
-  }, []);
-
-  const onUploadFileChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0] ?? null;
-      onPickFile(file);
-    },
-    [onPickFile]
-  );
 
   const onLogoUploadChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
