@@ -1,12 +1,10 @@
-import React from 'react'
-import NeoShortenerHero from './hero'
-
+import React from 'react';
+import NeoShortenerHero from './hero';
 
 export default function page() {
   return (
     <div>
-        <NeoShortenerHero />
+      <NeoShortenerHero />
     </div>
-    
-  )
+  );
 }

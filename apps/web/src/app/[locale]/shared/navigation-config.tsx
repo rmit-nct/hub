@@ -110,9 +110,10 @@ export const useNavigation = (t: any): { categories: NavCategory[] } => {
     {
       href: '/neo-shortener',
       label: 'Neo Shortener',
-      description: 'Transform your long url into a shorter version. Perfect for sharing on social media and other platforms where space is limited.',
+      description:
+        'Transform your long url into a shorter version. Perfect for sharing on social media and other platforms where space is limited.',
       icon: <ScanLine />,
-    }
+    },
   ] as NavItem[];
 
   const games = [
