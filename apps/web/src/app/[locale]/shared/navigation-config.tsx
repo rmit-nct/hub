@@ -112,7 +112,7 @@ export const useNavigation = (t: any): { categories: NavCategory[] } => {
       href: '/neo-shortener',
       label: 'Neo Shortener',
       description: 'Create short, trackable links and QR codes in seconds.',
-      icon: <Link />
+      icon: <Link />,
     },
   ] as NavItem[];
 
