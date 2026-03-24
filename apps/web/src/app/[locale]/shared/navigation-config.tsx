@@ -7,6 +7,7 @@ import {
   Calendar,
   Gamepad2,
   GitBranch,
+  Link,
   NotebookPen,
   Paintbrush,
   Puzzle,
@@ -110,7 +111,8 @@ export const useNavigation = (t: any): { categories: NavCategory[] } => {
     {
       href: '/neo-shortener',
       label: 'Neo Shortener',
-      description: 'fyfyfyf',
+      description: 'Create short, trackable links and QR codes in seconds.',
+      icon: <Link />
     },
   ] as NavItem[];
 
