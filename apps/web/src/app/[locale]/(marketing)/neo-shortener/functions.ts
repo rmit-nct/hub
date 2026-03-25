@@ -1,6 +1,6 @@
 'use server';
 
-import { createAdminClient, createClient } from '@ncthub/supabase/next/server';
+import { createClient } from '@ncthub/supabase/next/server';
 import { customAlphabet } from 'nanoid';
 
 const generateSlug = customAlphabet(
@@ -31,43 +31,36 @@ export async function createShortLink(formData: FormData) {
   }
 
   const supabase = await createClient();
+
   const {
     data: { user },
     error: userError,
   } = await supabase.auth.getUser();
 
-  if (userError) {
+  if (userError || !user) {
     console.error(userError);
-    throw new Error(userError.message || 'Failed to get authenticated user');
+    throw new Error('Please sign in to create a short link');
   }
-
-  if (!user) {
-    throw new Error('User not authenticated');
-  }
-
-  const sbAdmin = await createAdminClient();
 
   for (let attempt = 0; attempt < 10; attempt++) {
     const slug = generateSlug();
 
-    const { data, error } = await sbAdmin
+    const { data, error } = await supabase
       .from('shortened_links')
       .insert([
         {
           link,
           slug,
-          domain: '',
           creator_id: user.id,
         },
       ])
-      .select('id, link, slug')
+      .select('id, link, slug, domain, creator_id, created_at')
       .single();
 
     if (!error && data) {
       return data;
     }
 
-    // PostgreSQL unique constraint violation
     if (error?.code === '23505') {
       continue;
     }

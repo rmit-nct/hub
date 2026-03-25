@@ -3906,21 +3906,6 @@ export type Database = {
           },
         ];
       };
-      test: {
-        Row: {
-          created_at: string;
-          id: number;
-        };
-        Insert: {
-          created_at?: string;
-          id?: number;
-        };
-        Update: {
-          created_at?: string;
-          id?: number;
-        };
-        Relationships: [];
-      };
       time_tracking_categories: {
         Row: {
           color: string | null;
@@ -4157,6 +4142,24 @@ export type Database = {
             referencedColumns: ['id'];
           },
         ];
+      };
+      user: {
+        Row: {
+          created_at: string;
+          id: number;
+          password: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          id?: number;
+          password?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          id?: number;
+          password?: string | null;
+        };
+        Relationships: [];
       };
       user_feedbacks: {
         Row: {
