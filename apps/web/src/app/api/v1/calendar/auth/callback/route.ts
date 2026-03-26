@@ -1,5 +1,5 @@
 import { createClient } from '@ncthub/supabase/next/server';
-import { google } from 'googleapis';
+import { OAuth2Client } from 'google-auth-library';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
@@ -15,11 +15,11 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'No code provided' }, { status: 400 });
   }
 
-  const auth = new google.auth.OAuth2(
-    process.env.GOOGLE_CLIENT_ID,
-    process.env.GOOGLE_CLIENT_SECRET,
-    process.env.GOOGLE_REDIRECT_URI
-  );
+  const auth = new OAuth2Client({
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    redirectUri: process.env.GOOGLE_REDIRECT_URI,
+  });
 
   try {
     // Exchange the authorization code for tokens
