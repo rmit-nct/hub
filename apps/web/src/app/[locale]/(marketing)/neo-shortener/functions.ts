@@ -43,23 +43,27 @@ function resolveShortenerBaseUrl() {
   );
 }
 
-function normalizeUrl(value: string) {
-  const trimmed = value.trim();
-
-  if (!trimmed.startsWith('http://') && !trimmed.startsWith('https://')) {
-    return `https://${trimmed}`;
-  }
-
-  return trimmed;
+function hasExplicitScheme(value: string) {
+  return /^[a-zA-Z][a-zA-Z\d+.-]*:/.test(value);
 }
 
-function isValidHttpUrl(value: string) {
+function parseHttpUrl(value: string) {
+  const trimmed = value.trim();
+  const candidate = hasExplicitScheme(trimmed) ? trimmed : `https://${trimmed}`;
+
+  let url: URL;
+
   try {
-    const url = new URL(value);
-    return url.protocol === 'http:' || url.protocol === 'https:';
+    url = new URL(candidate);
   } catch {
-    return false;
+    throw new Error('Please enter a valid URL');
   }
+
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+    throw new Error('Please enter a valid URL');
+  }
+
+  return url;
 }
 
 function getDomainFromShortenerBaseUrl() {
@@ -84,17 +88,13 @@ export async function createShortLink(
     );
   }
 
-  const normalizedUrl = normalizeUrl(parsedValues.data.url);
-
-  if (!isValidHttpUrl(normalizedUrl)) {
-    throw new Error('Please enter a valid URL');
-  }
-
+  const normalizedUrl = parseHttpUrl(parsedValues.data.url);
   const requestedSlug = parsedValues.data.customSlug.trim();
   const shortenerBaseUrl = resolveShortenerBaseUrl();
   const domain = getDomainFromShortenerBaseUrl();
+  const parsedShortenerBaseUrl = new URL(shortenerBaseUrl);
 
-  if (normalizedUrl.startsWith(shortenerBaseUrl)) {
+  if (normalizedUrl.origin === parsedShortenerBaseUrl.origin) {
     throw new Error(
       'Please enter a destination URL, not an existing short link'
     );
@@ -133,7 +133,7 @@ export async function createShortLink(
         {
           creator_id: user.id,
           domain,
-          link: normalizedUrl,
+          link: normalizedUrl.toString(),
           slug,
         },
       ])
