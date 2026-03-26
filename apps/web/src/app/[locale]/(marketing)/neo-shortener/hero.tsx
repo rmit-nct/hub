@@ -7,48 +7,47 @@ import { motion } from 'framer-motion';
 export default function NeoShortenerHero() {
   return (
     <motion.div
-      className="mb-8 text-center"
+      className="space-y-6 text-center"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
     >
-      {/* Hero Badge */}
       <motion.div
-        className="mb-6 inline-flex items-center gap-2"
-        initial={{ opacity: 0, scale: 0.8 }}
+        className="inline-flex items-center gap-2"
+        initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
+        transition={{ duration: 0.45, delay: 0.15 }}
       >
         <Sparkles className="h-5 w-5 text-[#FBC721]" />
         <Badge
           variant="outline"
-          className="border-[#5FC6E5]/50 px-3 py-1 text-sm text-[#5FC6E5]"
+          className="border-[#5FC6E5]/50 bg-white/60 px-3 py-1 text-[#127A9B] text-sm"
         >
-          Text Style Generator
+          Link Shortener
         </Badge>
         <Sparkles className="h-5 w-5 text-[#FBC721]" />
       </motion.div>
 
       <motion.h1
-        className="mb-6 text-4xl font-bold text-balance text-foreground md:text-5xl lg:text-6xl"
+        className="font-bold text-4xl text-foreground tracking-tight md:text-5xl lg:text-6xl"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.3 }}
+        transition={{ duration: 0.6, delay: 0.25 }}
       >
-        <span>Welcome to</span>{' '}
-        <span className="border-b-4 border-[#FBC721] whitespace-nowrap text-[#5FC6E5]">
+        Build shareable links with{' '}
+        <span className="border-[#FBC721] border-b-4 text-[#5FC6E5]">
           Neo Shortener
         </span>
       </motion.h1>
 
       <motion.p
-        className="mx-auto max-w-2xl text-lg text-muted-foreground"
+        className="mx-auto max-w-2xl text-base text-muted-foreground md:text-lg"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.5, duration: 0.8 }}
+        transition={{ duration: 0.8, delay: 0.4 }}
       >
-        Transform your long url into a shorter version. Perfect for sharing on
-        social media and other platforms where space is limited.
+        Turn long URLs into clean short links with support for custom slugs and
+        simple sharing.
       </motion.p>
     </motion.div>
   );
