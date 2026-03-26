@@ -18,12 +18,6 @@ import { useState, useTransition } from 'react';
 import { type CreatedShortLink, createShortLink } from './functions';
 import NeoShortenerHero from './hero';
 
-const shortenerBaseUrl =
-  process.env.NEXT_PUBLIC_SHORTENER_URL ||
-  (process.env.NODE_ENV === 'development'
-    ? 'http://localhost:3002'
-    : 'https://nct.gg');
-
 export default function NeoShortenerPage() {
   const [url, setUrl] = useState('');
   const [customSlug, setCustomSlug] = useState('');
@@ -72,7 +66,7 @@ export default function NeoShortenerPage() {
     <main className="px-4 py-14">
       <div className="container mx-auto">
         <div className="mx-auto max-w-5xl space-y-8">
-          <NeoShortenerHero shortenerBaseUrl={shortenerBaseUrl} />
+          <NeoShortenerHero />
 
           <div className="mx-auto max-w-3xl">
             <Card className="border-border/60 bg-slate-950 text-slate-100 shadow-2xl">
