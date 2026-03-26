@@ -237,7 +237,6 @@ export default function NeoQrGeneratorPage() {
   const [dotShape, setDotShape] = useState<QrDotShape>('rounded');
   const [logoDataUrl, setLogoDataUrl] = useState<string>('');
   const [logoSize, setLogoSize] = useState(24);
-  const [logoMargin, setLogoMargin] = useState(6);
 
   // Export options
   const [downloadFormat, setDownloadFormat] = useState<QrDownloadFormat>('png');
@@ -262,6 +261,18 @@ export default function NeoQrGeneratorPage() {
 
   const urlInputValid = isValidHttpUrl(urlInput);
   const facebookUrlValid = isValidHttpUrl(facebookUrl);
+
+  // Calculate max logo size - since it's below the QR code, it can be up to the width of the QR code
+  const maxLogoSize = useMemo(() => {
+    return qrSize;
+  }, [qrSize]);
+
+  // Enforce the max logo size if error level or qr size changes
+  useEffect(() => {
+    if (logoSize > maxLogoSize) {
+      setLogoSize(maxLogoSize);
+    }
+  }, [maxLogoSize, logoSize]);
 
   const qrPayload = useMemo(() => {
     switch (qrType) {
@@ -349,13 +360,6 @@ export default function NeoQrGeneratorPage() {
         typeNumber: 0 as unknown as TypeNumber | undefined,
         errorCorrectionLevel: errorLevel,
       },
-      imageOptions: {
-        saveAsBlob: true,
-        hideBackgroundDots: true,
-        imageSize: logoDataUrl ? logoSize : 0,
-        crossOrigin: 'anonymous',
-        margin: logoMargin,
-      },
       dotsOptions: {
         type: dot.dots,
         color: fgColor,
@@ -373,7 +377,6 @@ export default function NeoQrGeneratorPage() {
         round: 0,
         color: bgColor,
       },
-      ...(logoDataUrl ? { image: logoDataUrl } : {}),
     } as any;
 
     const shouldRecreate =
@@ -398,9 +401,6 @@ export default function NeoQrGeneratorPage() {
     dotShape,
     errorLevel,
     fgColor,
-    logoDataUrl,
-    logoMargin,
-    logoSize,
     qrType,
     quietZone,
     qrValue,
@@ -475,6 +475,12 @@ export default function NeoQrGeneratorPage() {
     const file = acceptedFiles[0];
     if (!file) return;
 
+    // 2MB file size limit for the logo
+    if (file.size > 2 * 1024 * 1024) {
+      alert('Image size exceeds 2MB limit. Please upload a smaller image.');
+      return;
+    }
+
     const ext = getExt(file.name);
     const ok = ['png', 'jpg', 'jpeg', 'webp'].includes(ext);
     if (!ok) {
@@ -485,7 +491,41 @@ export default function NeoQrGeneratorPage() {
     const reader = new FileReader();
     reader.onload = () => {
       const result = reader.result;
-      if (typeof result === 'string') setLogoDataUrl(result);
+      if (typeof result === 'string') {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            setLogoDataUrl(result);
+            return;
+          }
+
+          // Safe resolution for QR code logos to keep file sizes very small
+          const targetSize = 256;
+          canvas.width = targetSize;
+          canvas.height = targetSize;
+
+          // Center crop the original image to a perfect square
+          const size = Math.min(img.width, img.height);
+          const startX = (img.width - size) / 2;
+          const startY = (img.height - size) / 2;
+
+          ctx.drawImage(
+            img,
+            startX,
+            startY,
+            size,
+            size,
+            0,
+            0,
+            targetSize,
+            targetSize
+          );
+          setLogoDataUrl(canvas.toDataURL('image/png'));
+        };
+        img.src = result;
+      }
     };
     reader.readAsDataURL(file);
   }, []);
@@ -495,23 +535,152 @@ export default function NeoQrGeneratorPage() {
   const download = useCallback(async () => {
     if (!qrRef.current || !qrCanDownload) return;
 
-    if (downloadFormat === 'eps') {
-      const svgBlob = await qrRef.current.getRawData('svg');
-      if (!svgBlob) return;
-      triggerDownload(svgBlob as Blob, `${downloadName}.eps`);
+    if (!logoDataUrl) {
+      if (downloadFormat === 'eps') {
+        const svgBlob = await qrRef.current.getRawData('svg');
+        if (!svgBlob) return;
+        triggerDownload(svgBlob as Blob, `${downloadName}.eps`);
+        return;
+      }
+
+      await qrRef.current.download({
+        extension:
+          downloadFormat === 'jpeg'
+            ? 'jpeg'
+            : downloadFormat === 'svg'
+              ? 'svg'
+              : downloadFormat,
+        name: downloadName,
+      });
       return;
     }
 
-    await qrRef.current.download({
-      extension:
-        downloadFormat === 'jpeg'
-          ? 'jpeg'
-          : downloadFormat === 'svg'
-            ? 'svg'
-            : downloadFormat,
-      name: downloadName,
-    });
-  }, [downloadFormat, downloadName, qrCanDownload]);
+    // Merge QR code and logo for raster downloads
+    if (downloadFormat === 'png' || downloadFormat === 'jpeg') {
+      const qrBlob = await qrRef.current.getRawData('png');
+      if (!qrBlob) return;
+      const qrUrl = URL.createObjectURL(qrBlob as Blob);
+
+      const qrImg = new Image();
+      const logoImg = new Image();
+
+      await Promise.all([
+        new Promise((res) => {
+          qrImg.onload = res;
+          qrImg.src = qrUrl;
+        }),
+        new Promise((res) => {
+          logoImg.onload = res;
+          logoImg.src = logoDataUrl;
+        }),
+      ]);
+
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        URL.revokeObjectURL(qrUrl);
+        return;
+      }
+
+      const logoAspect = logoImg.width / logoImg.height;
+      const targetLogoHeight = logoSize;
+      const targetLogoWidth = targetLogoHeight * logoAspect;
+      const paddingTop = 16;
+      const paddingBottom = 16;
+      const totalHeight =
+        qrSize + paddingTop + targetLogoHeight + paddingBottom;
+
+      canvas.width = qrSize;
+      canvas.height = totalHeight;
+
+      // Fill background
+      ctx.fillStyle = bgColor;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw QR code
+      ctx.drawImage(qrImg, 0, 0, qrSize, qrSize);
+
+      // Draw Logo
+      const logoX = (qrSize - targetLogoWidth) / 2;
+      const logoY = qrSize + paddingTop;
+      ctx.drawImage(logoImg, logoX, logoY, targetLogoWidth, targetLogoHeight);
+
+      canvas.toBlob((blob) => {
+        if (blob) triggerDownload(blob, `${downloadName}.${downloadFormat}`);
+        URL.revokeObjectURL(qrUrl);
+      }, `image/${downloadFormat}`);
+      return;
+    }
+
+    // Merge QR code and logo for vector downloads
+    if (downloadFormat === 'svg' || downloadFormat === 'eps') {
+      const svgBlob = await qrRef.current.getRawData('svg');
+      if (!svgBlob) return;
+      const svgText = await (svgBlob as Blob).text();
+
+      const logoAspect = await new Promise<number>((res) => {
+        const img = new Image();
+        img.onload = () => res(img.width / img.height);
+        img.src = logoDataUrl;
+      });
+
+      const targetLogoHeight = logoSize;
+      const targetLogoWidth = targetLogoHeight * logoAspect;
+      const paddingTop = 16;
+      const paddingBottom = 16;
+      const totalHeight =
+        qrSize + paddingTop + targetLogoHeight + paddingBottom;
+
+      const parser = new DOMParser();
+      const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
+      const svgElement = svgDoc.documentElement;
+
+      svgElement.setAttribute('viewBox', `0 0 ${qrSize} ${totalHeight}`);
+      svgElement.setAttribute('height', `${totalHeight}`);
+      svgElement.setAttribute('width', `${qrSize}`);
+
+      const bgRect = svgDoc.createElementNS(
+        'http://www.w3.org/2000/svg',
+        'rect'
+      );
+      bgRect.setAttribute('x', '0');
+      bgRect.setAttribute('y', `${qrSize}`);
+      bgRect.setAttribute('width', `${qrSize}`);
+      bgRect.setAttribute('height', `${totalHeight - qrSize}`);
+      bgRect.setAttribute('fill', bgColor);
+      svgElement.appendChild(bgRect);
+
+      const imageElement = svgDoc.createElementNS(
+        'http://www.w3.org/2000/svg',
+        'image'
+      );
+      const logoX = (qrSize - targetLogoWidth) / 2;
+      const logoY = qrSize + paddingTop;
+      imageElement.setAttribute('href', logoDataUrl);
+      imageElement.setAttribute('x', `${logoX}`);
+      imageElement.setAttribute('y', `${logoY}`);
+      imageElement.setAttribute('width', `${targetLogoWidth}`);
+      imageElement.setAttribute('height', `${targetLogoHeight}`);
+      svgElement.appendChild(imageElement);
+
+      const serializer = new XMLSerializer();
+      const finalSvgText = serializer.serializeToString(svgDoc);
+      const finalBlob = new Blob([finalSvgText], { type: 'image/svg+xml' });
+
+      triggerDownload(
+        finalBlob,
+        `${downloadName}.${downloadFormat === 'eps' ? 'eps' : 'svg'}`
+      );
+    }
+  }, [
+    bgColor,
+    downloadFormat,
+    downloadName,
+    logoDataUrl,
+    logoSize,
+    qrCanDownload,
+    qrSize,
+  ]);
 
   const qrTypeTabs: QRTypeTab[] = [
     {
@@ -582,520 +751,602 @@ export default function NeoQrGeneratorPage() {
         </div>
 
         {/* Main Content Area */}
-        <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
-          {/* Left Column: Input Section */}
-          <div className="rounded-xl border border-white/10 bg-gradient-to-b from-slate-900/60 to-slate-800/30 p-4 backdrop-blur-sm">
-            {/* Section Title */}
-            <div className="mb-6">
-              <h3 className="text-center font-semibold text-lg text-white">
-                {currentTabInfo?.description ||
-                  'Redirect to an existing web URL'}
-              </h3>
-            </div>
-
-            {/* Input Section */}
-            <div className="space-y-4">
-              {/* URL Input */}
-              {qrType === 'url' ? (
-                <div className="space-y-3">
-                  <input
-                    id="url-input"
-                    value={urlInput}
-                    onChange={(e) => setUrlInput(e.target.value)}
-                    onFocus={(e) => e.currentTarget.select()}
-                    placeholder="Enter URL"
-                    className={`w-full rounded-lg border bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 transition-colors focus:outline-none ${
-                      urlInput.trim() && !urlInputValid
-                        ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500/20'
-                        : 'border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
-                    }`}
-                  />
-                  <p className="text-foreground text-xs">
-                    Try something like https://example.com/
-                  </p>
-                </div>
-              ) : null}
-
-              {/* Facebook URL Input */}
-              {qrType === 'facebook' ? (
-                <div className="space-y-3">
-                  <input
-                    id="facebook-url"
-                    value={facebookUrl}
-                    onChange={(e) => setFacebookUrl(e.target.value)}
-                    onFocus={(e) => e.currentTarget.select()}
-                    placeholder="https://facebook.com/..."
-                    className={`w-full rounded-lg border bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 transition-colors focus:outline-none ${
-                      facebookUrl.trim() && !facebookUrlValid
-                        ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500/20'
-                        : 'border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
-                    }`}
-                  />
-                </div>
-              ) : null}
-
-              {/* App Stores Selection */}
-              {qrType === 'appstores' ? (
-                <div className="space-y-4">
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label className="text-slate-300">Platform</Label>
-                      <Select
-                        value={appPlatform}
-                        onValueChange={(v) =>
-                          setAppPlatform(v as 'ios' | 'android')
-                        }
-                      >
-                        <SelectTrigger className="rounded-lg border-slate-600 bg-slate-700/50 text-white">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="border-slate-600 bg-slate-800 text-white">
-                          <SelectItem value="ios">iOS</SelectItem>
-                          <SelectItem value="android">Android</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-slate-300">Store URL</Label>
-                      <input
-                        id="store-url"
-                        value={
-                          appPlatform === 'ios' ? iosStoreUrl : androidStoreUrl
-                        }
-                        onChange={(e) => {
-                          if (appPlatform === 'ios')
-                            setIosStoreUrl(e.target.value);
-                          else setAndroidStoreUrl(e.target.value);
-                        }}
-                        onFocus={(e) => e.currentTarget.select()}
-                        placeholder="Paste URL"
-                        className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-3 py-2 text-sm text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
-                      />
-                    </div>
-                  </div>
-                </div>
-              ) : null}
-
-              {/* WiFi Configuration */}
-              {qrType === 'wifi' ? (
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label className="text-slate-300">
-                      Network name (SSID)
-                    </Label>
-                    <input
-                      id="wifi-ssid"
-                      value={wifiSsid}
-                      onChange={(e) => setWifiSsid(e.target.value)}
-                      onFocus={(e) => e.currentTarget.select()}
-                      placeholder="My_WiFi"
-                      className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label className="text-slate-300">Password</Label>
-                    <input
-                      id="wifi-password"
-                      value={wifiPassword}
-                      onChange={(e) => setWifiPassword(e.target.value)}
-                      onFocus={(e) => e.currentTarget.select()}
-                      placeholder="••••••••"
-                      disabled={
-                        wifiSecurity === 'nopass' || wifiSecurity === 'NONE'
-                      }
-                      className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none disabled:opacity-50"
-                    />
-                  </div>
-
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label className="text-slate-300">Security</Label>
-                      <Select
-                        value={wifiSecurity}
-                        onValueChange={(v) =>
-                          setWifiSecurity(
-                            v as 'WPA' | 'WEP' | 'nopass' | 'WPA2' | 'NONE'
-                          )
-                        }
-                      >
-                        <SelectTrigger className="rounded-lg border-slate-600 bg-slate-700/50 text-white">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="border-slate-600 bg-slate-800 text-white">
-                          <SelectItem value="WPA2">WPA2</SelectItem>
-                          <SelectItem value="WPA">WPA</SelectItem>
-                          <SelectItem value="WEP">WEP</SelectItem>
-                          <SelectItem value="nopass">No password</SelectItem>
-                          <SelectItem value="NONE">None</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="flex items-center gap-3 pt-6">
-                      <Checkbox
-                        id="wifi-hidden"
-                        checked={wifiHidden}
-                        onCheckedChange={(c) => setWifiHidden(c === true)}
-                      />
-                      <Label
-                        htmlFor="wifi-hidden"
-                        className="cursor-pointer text-slate-300"
-                      >
-                        Hidden
-                      </Label>
-                    </div>
-                  </div>
-                </div>
-              ) : null}
-
-              {/* Email Configuration */}
-              {qrType === 'email' ? (
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label className="text-slate-300">To</Label>
-                    <input
-                      id="email-to"
-                      value={emailTo}
-                      onChange={(e) => setEmailTo(e.target.value)}
-                      onFocus={(e) => e.currentTarget.select()}
-                      placeholder="someone@example.com"
-                      className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-slate-300">Subject</Label>
-                    <input
-                      id="email-subject"
-                      value={emailSubject}
-                      onChange={(e) => setEmailSubject(e.target.value)}
-                      onFocus={(e) => e.currentTarget.select()}
-                      placeholder="Optional"
-                      className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-slate-300">Body</Label>
-                    <textarea
-                      id="email-body"
-                      rows={3}
-                      value={emailBody}
-                      onChange={(e) => setEmailBody(e.target.value)}
-                      onFocus={(e) => e.currentTarget.select()}
-                      className="w-full resize-none rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
-                      placeholder="Write a message..."
-                    />
-                  </div>
-                </div>
-              ) : null}
-
-              {/* SMS Configuration */}
-              {qrType === 'sms' ? (
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label className="text-slate-300">Number</Label>
-                    <input
-                      id="sms-number"
-                      value={smsNumber}
-                      onChange={(e) => setSmsNumber(e.target.value)}
-                      onFocus={(e) => e.currentTarget.select()}
-                      placeholder="+1 555 123 456"
-                      className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-slate-300">Message</Label>
-                    <textarea
-                      id="sms-message"
-                      rows={3}
-                      value={smsMessage}
-                      onChange={(e) => setSmsMessage(e.target.value)}
-                      onFocus={(e) => e.currentTarget.select()}
-                      className="w-full resize-none rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
-                      placeholder="Your message..."
-                    />
-                  </div>
-                </div>
-              ) : null}
-
-              {/* vCard Configuration */}
-              {qrType === 'vcard' ? (
-                <div className="space-y-4">
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="v-first" className="text-slate-300">
-                        First name
-                      </Label>
-                      <input
-                        id="v-first"
-                        value={vFirstName}
-                        onChange={(e) => setVFirstName(e.target.value)}
-                        onFocus={(e) => e.currentTarget.select()}
-                        className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="v-last" className="text-slate-300">
-                        Last name
-                      </Label>
-                      <input
-                        id="v-last"
-                        value={vLastName}
-                        onChange={(e) => setVLastName(e.target.value)}
-                        onFocus={(e) => e.currentTarget.select()}
-                        className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="v-org" className="text-slate-300">
-                      Organization
-                    </Label>
-                    <input
-                      id="v-org"
-                      value={vOrg}
-                      onChange={(e) => setVOrg(e.target.value)}
-                      onFocus={(e) => e.currentTarget.select()}
-                      className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="v-title" className="text-slate-300">
-                      Title
-                    </Label>
-                    <input
-                      id="v-title"
-                      value={vTitle}
-                      onChange={(e) => setVTitle(e.target.value)}
-                      onFocus={(e) => e.currentTarget.select()}
-                      className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="v-tel" className="text-slate-300">
-                      Phone
-                    </Label>
-                    <input
-                      id="v-tel"
-                      value={vTel}
-                      onChange={(e) => setVTel(e.target.value)}
-                      onFocus={(e) => e.currentTarget.select()}
-                      className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="v-email" className="text-slate-300">
-                      Email
-                    </Label>
-                    <input
-                      id="v-email"
-                      value={vEmail}
-                      onChange={(e) => setVEmail(e.target.value)}
-                      onFocus={(e) => e.currentTarget.select()}
-                      className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
-                    />
-                  </div>
-                </div>
-              ) : null}
-            </div>
-
-            {/* Logo upload */}
-            <div className="mt-6 space-y-3 rounded-lg border border-slate-600 bg-slate-700/30 p-4">
-              <div>
-                <p className="font-medium text-sm text-white">Logo</p>
+        <div className="rounded-xl border border-white/10 bg-gradient-to-b from-slate-900/60 to-slate-800/30 backdrop-blur-sm">
+          <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
+            {/* Left Column: Input Section */}
+            <div className="p-4">
+              {/* Section Title */}
+              <div className="mb-6">
+                <h3 className="text-center font-semibold text-lg text-white">
+                  {currentTabInfo?.description ||
+                    'Redirect to an existing web URL'}
+                </h3>
               </div>
 
-              {!logoDataUrl ? (
-                <Dropzone
-                  onDrop={onDropLogo}
-                  accept={{
-                    'image/png': ['.png'],
-                    'image/jpeg': ['.jpg', '.jpeg'],
-                    'image/webp': ['.webp'],
-                  }}
-                  maxFiles={1}
-                  className="border-slate-600 bg-slate-800/50 text-white transition-all duration-200 hover:bg-slate-700 hover:brightness-110"
-                >
-                  <DropzoneEmptyState />
-                </Dropzone>
-              ) : null}
-
-              {logoDataUrl ? (
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-300 text-xs">Logo uploaded</span>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setLogoDataUrl('')}
-                    className="border-slate-600 bg-slate-800/50 text-white transition-all duration-200 hover:scale-105 hover:bg-slate-700 hover:brightness-110 active:scale-95"
-                  >
-                    Remove
-                  </Button>
-                </div>
-              ) : null}
-
-              {logoDataUrl && (
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label className="text-slate-300 text-xs">Size</Label>
-                    <Slider
-                      min={0}
-                      max={120}
-                      step={2}
-                      value={[logoSize]}
-                      onValueChange={(v) => setLogoSize(v[0] ?? logoSize)}
-                      className="py-1"
+              {/* Input Section */}
+              <div className="space-y-4">
+                {/* URL Input */}
+                {qrType === 'url' ? (
+                  <div className="space-y-3">
+                    <input
+                      id="url-input"
+                      value={urlInput}
+                      onChange={(e) => setUrlInput(e.target.value)}
+                      onFocus={(e) => e.currentTarget.select()}
+                      placeholder="Enter URL"
+                      className={`w-full rounded-lg border bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 transition-colors focus:outline-none ${
+                        urlInput.trim() && !urlInputValid
+                          ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500/20'
+                          : 'border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
+                      }`}
                     />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-slate-300 text-xs">Margin</Label>
-                    <Slider
-                      min={0}
-                      max={20}
-                      step={1}
-                      value={[logoMargin]}
-                      onValueChange={(v) => setLogoMargin(v[0] ?? logoMargin)}
-                      className="py-1"
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Right Column: QR Preview and Actions */}
-          <div className="rounded-xl border border-white/10 bg-gradient-to-b from-slate-900/60 to-slate-800/30 p-6 backdrop-blur-sm lg:sticky lg:top-24">
-            <div className="mb-6">
-              <h3 className="text-center font-semibold text-lg text-white">
-                Live Preview
-              </h3>
-            </div>
-
-            {/* QR Code Preview with Fade-in Animation */}
-            <div className="flex flex-col items-center justify-center">
-              {qrValue.trim() ? (
-                <div
-                  key={`qr-${qrType}-${qrValue.slice(0, 40)}`}
-                  className="flex animate-fadeIn items-center justify-center rounded-lg bg-white p-2 shadow-xl transition-all duration-300 ease-in-out hover:scale-[1.03] hover:shadow-2xl"
-                >
-                  <div
-                    className="transition-all duration-300 ease-in-out"
-                    style={{ width: qrSize, height: qrSize }}
-                  >
-                    <div ref={qrContainerRef} />
-                  </div>
-                </div>
-              ) : (
-                <div className="flex min-h-[300px] w-full items-center justify-center text-center text-slate-400 text-sm">
-                  <div>
-                    <p className="font-semibold text-lg text-slate-600">
-                      No QR Code yet
+                    <p className="text-foreground text-xs">
+                      Try something like https://example.com/
                     </p>
-                    <p className="mt-2">Enter details to generate</p>
+                  </div>
+                ) : null}
+
+                {/* Facebook URL Input */}
+                {qrType === 'facebook' ? (
+                  <div className="space-y-3">
+                    <input
+                      id="facebook-url"
+                      value={facebookUrl}
+                      onChange={(e) => setFacebookUrl(e.target.value)}
+                      onFocus={(e) => e.currentTarget.select()}
+                      placeholder="https://facebook.com/..."
+                      className={`w-full rounded-lg border bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 transition-colors focus:outline-none ${
+                        facebookUrl.trim() && !facebookUrlValid
+                          ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500/20'
+                          : 'border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
+                      }`}
+                    />
+                  </div>
+                ) : null}
+
+                {/* App Stores Selection */}
+                {qrType === 'appstores' ? (
+                  <div className="space-y-4">
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label className="text-slate-300">Platform</Label>
+                        <Select
+                          value={appPlatform}
+                          onValueChange={(v) =>
+                            setAppPlatform(v as 'ios' | 'android')
+                          }
+                        >
+                          <SelectTrigger className="rounded-lg border-slate-600 bg-slate-700/50 text-white">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="border-slate-600 bg-slate-800 text-white">
+                            <SelectItem value="ios">iOS</SelectItem>
+                            <SelectItem value="android">Android</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-slate-300">Store URL</Label>
+                        <input
+                          id="store-url"
+                          value={
+                            appPlatform === 'ios'
+                              ? iosStoreUrl
+                              : androidStoreUrl
+                          }
+                          onChange={(e) => {
+                            if (appPlatform === 'ios')
+                              setIosStoreUrl(e.target.value);
+                            else setAndroidStoreUrl(e.target.value);
+                          }}
+                          onFocus={(e) => e.currentTarget.select()}
+                          placeholder="Paste URL"
+                          className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-3 py-2 text-sm text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+
+                {/* WiFi Configuration */}
+                {qrType === 'wifi' ? (
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label className="text-slate-300">
+                        Network name (SSID)
+                      </Label>
+                      <input
+                        id="wifi-ssid"
+                        value={wifiSsid}
+                        onChange={(e) => setWifiSsid(e.target.value)}
+                        onFocus={(e) => e.currentTarget.select()}
+                        placeholder="My_WiFi"
+                        className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-slate-300">Password</Label>
+                      <input
+                        id="wifi-password"
+                        value={wifiPassword}
+                        onChange={(e) => setWifiPassword(e.target.value)}
+                        onFocus={(e) => e.currentTarget.select()}
+                        placeholder="••••••••"
+                        disabled={
+                          wifiSecurity === 'nopass' || wifiSecurity === 'NONE'
+                        }
+                        className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none disabled:opacity-50"
+                      />
+                    </div>
+
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label className="text-slate-300">Security</Label>
+                        <Select
+                          value={wifiSecurity}
+                          onValueChange={(v) =>
+                            setWifiSecurity(
+                              v as 'WPA' | 'WEP' | 'nopass' | 'WPA2' | 'NONE'
+                            )
+                          }
+                        >
+                          <SelectTrigger className="rounded-lg border-slate-600 bg-slate-700/50 text-white">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="border-slate-600 bg-slate-800 text-white">
+                            <SelectItem value="WPA2">WPA2</SelectItem>
+                            <SelectItem value="WPA">WPA</SelectItem>
+                            <SelectItem value="WEP">WEP</SelectItem>
+                            <SelectItem value="nopass">No password</SelectItem>
+                            <SelectItem value="NONE">None</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="flex items-center gap-3 pt-6">
+                        <Checkbox
+                          id="wifi-hidden"
+                          checked={wifiHidden}
+                          onCheckedChange={(c) => setWifiHidden(c === true)}
+                        />
+                        <Label
+                          htmlFor="wifi-hidden"
+                          className="cursor-pointer text-slate-300"
+                        >
+                          Hidden
+                        </Label>
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+
+                {/* Email Configuration */}
+                {qrType === 'email' ? (
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label className="text-slate-300">To</Label>
+                      <input
+                        id="email-to"
+                        value={emailTo}
+                        onChange={(e) => setEmailTo(e.target.value)}
+                        onFocus={(e) => e.currentTarget.select()}
+                        placeholder="someone@example.com"
+                        className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-slate-300">Subject</Label>
+                      <input
+                        id="email-subject"
+                        value={emailSubject}
+                        onChange={(e) => setEmailSubject(e.target.value)}
+                        onFocus={(e) => e.currentTarget.select()}
+                        placeholder="Optional"
+                        className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-slate-300">Body</Label>
+                      <textarea
+                        id="email-body"
+                        rows={3}
+                        value={emailBody}
+                        onChange={(e) => setEmailBody(e.target.value)}
+                        onFocus={(e) => e.currentTarget.select()}
+                        className="w-full resize-none rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                        placeholder="Write a message..."
+                      />
+                    </div>
+                  </div>
+                ) : null}
+
+                {/* SMS Configuration */}
+                {qrType === 'sms' ? (
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label className="text-slate-300">Number</Label>
+                      <input
+                        id="sms-number"
+                        value={smsNumber}
+                        onChange={(e) => setSmsNumber(e.target.value)}
+                        onFocus={(e) => e.currentTarget.select()}
+                        placeholder="+1 555 123 456"
+                        className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-slate-300">Message</Label>
+                      <textarea
+                        id="sms-message"
+                        rows={3}
+                        value={smsMessage}
+                        onChange={(e) => setSmsMessage(e.target.value)}
+                        onFocus={(e) => e.currentTarget.select()}
+                        className="w-full resize-none rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                        placeholder="Your message..."
+                      />
+                    </div>
+                  </div>
+                ) : null}
+
+                {/* vCard Configuration */}
+                {qrType === 'vcard' ? (
+                  <div className="space-y-4">
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label htmlFor="v-first" className="text-slate-300">
+                          First name
+                        </Label>
+                        <input
+                          id="v-first"
+                          value={vFirstName}
+                          onChange={(e) => setVFirstName(e.target.value)}
+                          onFocus={(e) => e.currentTarget.select()}
+                          className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="v-last" className="text-slate-300">
+                          Last name
+                        </Label>
+                        <input
+                          id="v-last"
+                          value={vLastName}
+                          onChange={(e) => setVLastName(e.target.value)}
+                          onFocus={(e) => e.currentTarget.select()}
+                          className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="v-org" className="text-slate-300">
+                        Organization
+                      </Label>
+                      <input
+                        id="v-org"
+                        value={vOrg}
+                        onChange={(e) => setVOrg(e.target.value)}
+                        onFocus={(e) => e.currentTarget.select()}
+                        className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="v-title" className="text-slate-300">
+                        Title
+                      </Label>
+                      <input
+                        id="v-title"
+                        value={vTitle}
+                        onChange={(e) => setVTitle(e.target.value)}
+                        onFocus={(e) => e.currentTarget.select()}
+                        className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="v-tel" className="text-slate-300">
+                        Phone
+                      </Label>
+                      <input
+                        id="v-tel"
+                        value={vTel}
+                        onChange={(e) => setVTel(e.target.value)}
+                        onFocus={(e) => e.currentTarget.select()}
+                        className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="v-email" className="text-slate-300">
+                        Email
+                      </Label>
+                      <input
+                        id="v-email"
+                        value={vEmail}
+                        onChange={(e) => setVEmail(e.target.value)}
+                        onFocus={(e) => e.currentTarget.select()}
+                        className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+
+              {/* Logo upload */}
+              <div className="mt-6 space-y-3 rounded-lg p-4">
+                <div>
+                  <p className="font-medium text-sm text-white">Logo</p>
+                </div>
+
+                {!logoDataUrl ? (
+                  <Dropzone
+                    onDrop={onDropLogo}
+                    accept={{
+                      'image/png': ['.png'],
+                      'image/jpeg': ['.jpg', '.jpeg'],
+                      'image/webp': ['.webp'],
+                    }}
+                    maxFiles={1}
+                    className="border-slate-600 bg-slate-800/50 text-white transition-all duration-200 hover:bg-slate-700 hover:brightness-110"
+                  >
+                    <DropzoneEmptyState />
+                  </Dropzone>
+                ) : null}
+
+                {logoDataUrl ? (
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-300 text-xs">
+                      Logo uploaded
+                    </span>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setLogoDataUrl('')}
+                      className="border-slate-600 bg-slate-800/50 text-white transition-all duration-200 hover:scale-105 hover:bg-slate-700 hover:brightness-110 active:scale-95"
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                ) : null}
+
+                {logoDataUrl && (
+                  <div className="space-y-3">
+                    <div className="space-y-2">
+                      <Label className="flex justify-between text-slate-300 text-xs">
+                        <span>Size</span>
+                        <span className="text-[10px] text-slate-400">
+                          Max: {maxLogoSize}px
+                        </span>
+                      </Label>
+                      <Slider
+                        min={20}
+                        max={maxLogoSize}
+                        step={2}
+                        value={[logoSize]}
+                        onValueChange={(v) => setLogoSize(v[0] ?? logoSize)}
+                        className="py-1"
+                      />
+                    </div>
+                  </div>
+                )}
+                <div className="mb-4 flex items-center justify-between">
+                  <h2 className="font-semibold text-lg text-white">
+                    Customize QR Code
+                  </h2>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex justify-center gap-6">
+                    <div className="space-y-2">
+                      <input
+                        type="color"
+                        value={fgColor}
+                        onChange={(e) => setFgColor(e.target.value)}
+                        className="h-10 w-14 cursor-pointer rounded-lg border border-slate-600"
+                      />
+                      <Label className="text-slate-300">
+                        <span className="block leading-tight">Foreground</span>
+                        <span className="block leading-tight">color</span>
+                      </Label>
+                    </div>
+
+                    <div className="space-y-2">
+                      <input
+                        type="color"
+                        value={bgColor}
+                        onChange={(e) => setBgColor(e.target.value)}
+                        className="h-10 w-14 cursor-pointer rounded-lg border border-slate-600"
+                      />
+                      <Label className="text-slate-300">
+                        <span className="block leading-tight">Background</span>
+                        <span className="block leading-tight">color</span>
+                      </Label>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-slate-300">
+                      QR size ({qrSize}px)
+                    </Label>
+                    <Slider
+                      min={180}
+                      max={420}
+                      step={10}
+                      value={[qrSize]}
+                      onValueChange={(v) => setQrSize(v[0] ?? qrSize)}
+                      className="py-1"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-slate-300">Error correction</Label>
+                    <Select
+                      value={errorLevel}
+                      onValueChange={(v) => setErrorLevel(v as QrErrorLevel)}
+                    >
+                      <SelectTrigger className="rounded-lg border-slate-600 bg-slate-700/50 text-white">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="border-slate-600 bg-slate-800 text-white">
+                        <SelectItem value="L">Low (~7%)</SelectItem>
+                        <SelectItem value="M">Medium (~15%)</SelectItem>
+                        <SelectItem value="Q">Quartile (~25%)</SelectItem>
+                        <SelectItem value="H">High (~30%)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Checkbox
+                      id="quiet-zone-modal"
+                      checked={quietZone}
+                      onCheckedChange={(c) => setQuietZone(c === true)}
+                    />
+                    <Label
+                      htmlFor="quiet-zone-modal"
+                      className="cursor-pointer text-slate-300"
+                    >
+                      Quiet zone (recommended)
+                    </Label>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
 
-            {/* Action Buttons */}
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Button
-                type="button"
-                onClick={download}
-                disabled={!qrCanDownload}
-                className="rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white transition-all duration-200 hover:scale-105 hover:bg-blue-700 hover:brightness-110 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 disabled:hover:bg-blue-600"
-              >
-                <span className="inline-flex items-center gap-2">
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4"
-                  >
-                    <title>Download</title>
-                    <path
-                      d="M12 3v10"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M8 11l4 4 4-4"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M4 20h16"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  Download
-                </span>
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                disabled={!qrCanDownload || copied}
-                className="rounded-lg border border-slate-600 bg-slate-800/50 text-white transition-all duration-200 hover:scale-105 hover:border-slate-500 hover:bg-slate-700 hover:brightness-110 active:scale-95 disabled:opacity-50"
-                onClick={handleCopy}
-              >
-                <span className="inline-flex items-center gap-2">
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4"
-                  >
-                    <title>Copy</title>
-                    <path
-                      d="M9 9h10v12H9V9Z"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  {copied ? 'Copied' : 'Copy'}
-                </span>
-              </Button>
+            {/* Right Column: QR Preview and Actions */}
+            <div className="rounded-xl bg-gradient-to-b p-6 backdrop-blur-sm lg:top-24">
+              <div className="mb-6">
+                <h3 className="text-center font-semibold text-lg text-white">
+                  Live Preview
+                </h3>
+              </div>
 
-              <Button
-                type="button"
-                onClick={() => setShowCustomizeModal(true)}
-                variant="outline"
-                className="rounded-lg border border-slate-600 bg-transparent text-white transition-all duration-200 hover:scale-105 hover:border-slate-500 hover:bg-slate-800/50 hover:brightness-110 active:scale-95"
-              >
-                Customize
-              </Button>
-              <Button
-                type="button"
-                onClick={() => setShowOptionsModal(true)}
-                variant="outline"
-                className="rounded-lg border border-slate-600 bg-transparent text-white transition-all duration-200 hover:scale-105 hover:border-slate-500 hover:bg-slate-800/50 hover:brightness-110 active:scale-95"
-              >
-                Options
-              </Button>
+              {/* QR Code Preview with Fade-in Animation */}
+              <div className="flex flex-col items-center justify-center">
+                {qrValue.trim() ? (
+                  <div
+                    key={`qr-${qrType}-${qrValue.slice(0, 40)}`}
+                    className="flex animate-fadeIn flex-col items-center justify-center gap-4 rounded-lg bg-white p-4 shadow-xl transition-all duration-300 ease-in-out hover:scale-[1.03] hover:shadow-2xl"
+                  >
+                    <div
+                      className="transition-all duration-300 ease-in-out"
+                      style={{ width: qrSize, height: qrSize }}
+                    >
+                      <div ref={qrContainerRef} />
+                    </div>
+                    {logoDataUrl && (
+                      <div className="flex w-full items-center justify-center border-slate-100 border-t pt-4 pb-2">
+                        <img
+                          src={logoDataUrl}
+                          alt="QR Logo"
+                          style={{ height: logoSize, width: 'auto' }}
+                          className="object-contain"
+                        />
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex min-h-[300px] w-full items-center justify-center text-center text-slate-400 text-sm">
+                    <div>
+                      <p className="font-semibold text-lg text-slate-600">
+                        No QR Code yet
+                      </p>
+                      <p className="mt-2">Enter details to generate</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+                <Button
+                  type="button"
+                  onClick={download}
+                  disabled={!qrCanDownload}
+                  className="rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white transition-all duration-200 hover:scale-105 hover:bg-blue-700 hover:brightness-110 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 disabled:hover:bg-blue-600"
+                >
+                  <span className="inline-flex items-center gap-2">
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                    >
+                      <title>Download</title>
+                      <path
+                        d="M12 3v10"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M8 11l4 4 4-4"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M4 20h16"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    Download
+                  </span>
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={!qrCanDownload || copied}
+                  className="rounded-lg border border-slate-600 bg-slate-800/50 text-white transition-all duration-200 hover:scale-105 hover:border-slate-500 hover:bg-slate-700 hover:brightness-110 active:scale-95 disabled:opacity-50"
+                  onClick={handleCopy}
+                >
+                  <span className="inline-flex items-center gap-2">
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                    >
+                      <title>Copy</title>
+                      <path
+                        d="M9 9h10v12H9V9Z"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    {copied ? 'Copied' : 'Copy'}
+                  </span>
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => setShowOptionsModal(true)}
+                  variant="outline"
+                  className="rounded-lg border border-slate-600 bg-transparent text-white transition-all duration-200 hover:scale-105 hover:border-slate-500 hover:bg-slate-800/50 hover:brightness-110 active:scale-95"
+                >
+                  Options
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -1217,93 +1468,6 @@ function CustomizeModal({
         className="w-full max-w-md animate-slideUp rounded-xl border border-slate-700 bg-slate-800 p-6 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="font-semibold text-lg text-white">
-            🎨 Customize QR Code
-          </h2>
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-slate-400 transition-all duration-200 hover:scale-110 hover:text-white active:scale-95"
-          >
-            ✕
-          </button>
-        </div>
-
-        <div className="space-y-4">
-          <div className="flex justify-center gap-6">
-            <div className="space-y-2">
-              <input
-                type="color"
-                value={fgColor}
-                onChange={(e) => setFgColor(e.target.value)}
-                className="h-10 w-14 cursor-pointer rounded-lg border border-slate-600"
-              />
-              <Label className="text-slate-300">
-                <span className="block leading-tight">Foreground</span>
-                <span className="block leading-tight">color</span>
-              </Label>
-            </div>
-
-            <div className="space-y-2">
-              <input
-                type="color"
-                value={bgColor}
-                onChange={(e) => setBgColor(e.target.value)}
-                className="h-10 w-14 cursor-pointer rounded-lg border border-slate-600"
-              />
-              <Label className="text-slate-300">
-                <span className="block leading-tight">Background</span>
-                <span className="block leading-tight">color</span>
-              </Label>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label className="text-slate-300">QR size ({qrSize}px)</Label>
-            <Slider
-              min={180}
-              max={420}
-              step={10}
-              value={[qrSize]}
-              onValueChange={(v) => setQrSize(v[0] ?? qrSize)}
-              className="py-1"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label className="text-slate-300">Error correction</Label>
-            <Select
-              value={errorLevel}
-              onValueChange={(v) => setErrorLevel(v as QrErrorLevel)}
-            >
-              <SelectTrigger className="rounded-lg border-slate-600 bg-slate-700/50 text-white">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="border-slate-600 bg-slate-800 text-white">
-                <SelectItem value="L">Low (~7%)</SelectItem>
-                <SelectItem value="M">Medium (~15%)</SelectItem>
-                <SelectItem value="Q">Quartile (~25%)</SelectItem>
-                <SelectItem value="H">High (~30%)</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <Checkbox
-              id="quiet-zone-modal"
-              checked={quietZone}
-              onCheckedChange={(c) => setQuietZone(c === true)}
-            />
-            <Label
-              htmlFor="quiet-zone-modal"
-              className="cursor-pointer text-slate-300"
-            >
-              Quiet zone (recommended)
-            </Label>
-          </div>
-        </div>
-
         <div className="mt-6 flex gap-3">
           <Button
             type="button"
