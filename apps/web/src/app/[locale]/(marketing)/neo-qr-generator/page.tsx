@@ -262,17 +262,17 @@ export default function NeoQrGeneratorPage() {
   const urlInputValid = isValidHttpUrl(urlInput);
   const facebookUrlValid = isValidHttpUrl(facebookUrl);
 
-  // Calculate max logo size - since it's below the QR code, it can be up to the width of the QR code
+  // UPDATED RANGE: Calculate max logo size - fixed at 96px
   const maxLogoSize = useMemo(() => {
-    return qrSize;
-  }, [qrSize]);
+    return 96;
+  }, []);
 
-  // Enforce the max logo size if error level or qr size changes
+  // UPDATED RANGE: Enforce the max logo size at 96px
   useEffect(() => {
-    if (logoSize > maxLogoSize) {
-      setLogoSize(maxLogoSize);
+    if (logoSize > 96) {
+      setLogoSize(96);
     }
-  }, [maxLogoSize, logoSize]);
+  }, [logoSize]);
 
   const qrPayload = useMemo(() => {
     switch (qrType) {
@@ -347,7 +347,8 @@ export default function NeoQrGeneratorPage() {
 
     const currentContainer = qrContainerRef.current;
     const dot = dotStyle(dotShape);
-    const margin = quietZone ? 12 : 0;
+    // FIXED SYNC: Compute padding from single source - quietZone state
+    const margin = quietZone ? 3 : 0;
 
     const options = {
       type: 'svg' as const,
@@ -390,10 +391,12 @@ export default function NeoQrGeneratorPage() {
       prevQrTypeRef.current = qrType;
       prevQrContainerElRef.current = currentContainer;
     } else {
+      // FIXED SYNC: Update QR size and padding in SAME render cycle
       qrRef.current!.update({
         ...options,
         width: qrSize,
         height: qrSize,
+        margin: margin,
       });
     }
   }, [
@@ -492,7 +495,8 @@ export default function NeoQrGeneratorPage() {
     reader.onload = () => {
       const result = reader.result;
       if (typeof result === 'string') {
-        const img = new Image();
+        // UPDATED: Explicitly typed Image creation
+        const img = document.createElement('img') as HTMLImageElement;
         img.onload = () => {
           const canvas = document.createElement('canvas');
           const ctx = canvas.getContext('2d');
@@ -561,8 +565,9 @@ export default function NeoQrGeneratorPage() {
       if (!qrBlob) return;
       const qrUrl = URL.createObjectURL(qrBlob as Blob);
 
-      const qrImg = new Image();
-      const logoImg = new Image();
+      // UPDATED: Explicitly typed Image creation
+      const qrImg = document.createElement('img') as HTMLImageElement;
+      const logoImg = document.createElement('img') as HTMLImageElement;
 
       await Promise.all([
         new Promise((res) => {
@@ -582,16 +587,15 @@ export default function NeoQrGeneratorPage() {
         return;
       }
 
-      const logoAspect = logoImg.width / logoImg.height;
-      const targetLogoHeight = logoSize;
-      const targetLogoWidth = targetLogoHeight * logoAspect;
-      const paddingTop = 16;
-      const paddingBottom = 16;
-      const totalHeight =
-        qrSize + paddingTop + targetLogoHeight + paddingBottom;
+      // UPDATED: Logo positioned at bottom-right corner (10-15% of QR size)
+      const logoWidth = Math.max(20, Math.min(60, Math.floor(qrSize * 0.15)));
+      const logoHeight = logoWidth;
+      const padding = 8;
+      const logoX = qrSize - logoWidth - padding;
+      const logoY = qrSize - logoHeight - padding;
 
       canvas.width = qrSize;
-      canvas.height = totalHeight;
+      canvas.height = qrSize;
 
       // Fill background
       ctx.fillStyle = bgColor;
@@ -600,10 +604,10 @@ export default function NeoQrGeneratorPage() {
       // Draw QR code
       ctx.drawImage(qrImg, 0, 0, qrSize, qrSize);
 
-      // Draw Logo
-      const logoX = (qrSize - targetLogoWidth) / 2;
-      const logoY = qrSize + paddingTop;
-      ctx.drawImage(logoImg, logoX, logoY, targetLogoWidth, targetLogoHeight);
+      // Draw Logo with border
+      ctx.fillStyle = 'white';
+      ctx.fillRect(logoX - 3, logoY - 3, logoWidth + 6, logoHeight + 6);
+      ctx.drawImage(logoImg, logoX, logoY, logoWidth, logoHeight);
 
       canvas.toBlob((blob) => {
         if (blob) triggerDownload(blob, `${downloadName}.${downloadFormat}`);
@@ -618,49 +622,44 @@ export default function NeoQrGeneratorPage() {
       if (!svgBlob) return;
       const svgText = await (svgBlob as Blob).text();
 
-      const logoAspect = await new Promise<number>((res) => {
-        const img = new Image();
-        img.onload = () => res(img.width / img.height);
-        img.src = logoDataUrl;
-      });
-
-      const targetLogoHeight = logoSize;
-      const targetLogoWidth = targetLogoHeight * logoAspect;
-      const paddingTop = 16;
-      const paddingBottom = 16;
-      const totalHeight =
-        qrSize + paddingTop + targetLogoHeight + paddingBottom;
+      // UPDATED: Logo positioned at bottom-right corner (10-15% of QR size)
+      const logoWidth = Math.max(20, Math.min(60, Math.floor(qrSize * 0.15)));
+      const logoHeight = logoWidth;
+      const padding = 8;
+      const logoX = qrSize - logoWidth - padding;
+      const logoY = qrSize - logoHeight - padding;
 
       const parser = new DOMParser();
       const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
       const svgElement = svgDoc.documentElement;
 
-      svgElement.setAttribute('viewBox', `0 0 ${qrSize} ${totalHeight}`);
-      svgElement.setAttribute('height', `${totalHeight}`);
+      svgElement.setAttribute('viewBox', `0 0 ${qrSize} ${qrSize}`);
+      svgElement.setAttribute('height', `${qrSize}`);
       svgElement.setAttribute('width', `${qrSize}`);
 
-      const bgRect = svgDoc.createElementNS(
+      // Add white border behind logo for visibility
+      const borderRect = svgDoc.createElementNS(
         'http://www.w3.org/2000/svg',
         'rect'
       );
-      bgRect.setAttribute('x', '0');
-      bgRect.setAttribute('y', `${qrSize}`);
-      bgRect.setAttribute('width', `${qrSize}`);
-      bgRect.setAttribute('height', `${totalHeight - qrSize}`);
-      bgRect.setAttribute('fill', bgColor);
-      svgElement.appendChild(bgRect);
+      borderRect.setAttribute('x', `${logoX - 3}`);
+      borderRect.setAttribute('y', `${logoY - 3}`);
+      borderRect.setAttribute('width', `${logoWidth + 6}`);
+      borderRect.setAttribute('height', `${logoHeight + 6}`);
+      borderRect.setAttribute('fill', 'white');
+      borderRect.setAttribute('rx', '4');
+      svgElement.appendChild(borderRect);
 
       const imageElement = svgDoc.createElementNS(
         'http://www.w3.org/2000/svg',
         'image'
       );
-      const logoX = (qrSize - targetLogoWidth) / 2;
-      const logoY = qrSize + paddingTop;
       imageElement.setAttribute('href', logoDataUrl);
       imageElement.setAttribute('x', `${logoX}`);
       imageElement.setAttribute('y', `${logoY}`);
-      imageElement.setAttribute('width', `${targetLogoWidth}`);
-      imageElement.setAttribute('height', `${targetLogoHeight}`);
+      imageElement.setAttribute('width', `${logoWidth}`);
+      imageElement.setAttribute('height', `${logoHeight}`);
+      imageElement.setAttribute('rx', '2');
       svgElement.appendChild(imageElement);
 
       const serializer = new XMLSerializer();
@@ -677,7 +676,6 @@ export default function NeoQrGeneratorPage() {
     downloadFormat,
     downloadName,
     logoDataUrl,
-    logoSize,
     qrCanDownload,
     qrSize,
   ]);
@@ -722,52 +720,61 @@ export default function NeoQrGeneratorPage() {
       <NeoGeneratorHero />
 
       <div className="mx-auto max-w-6xl px-4 py-15 pb-0 sm:px-6 lg:px-8">
-        {/* QR Type Tabs with Sliding Indicator */}
-        <div className="relative mb-8 flex flex-wrap justify-center gap-2">
-          {qrTypeTabs.map((tab) => {
-            const isActive = tab.value === qrType;
-            return (
-              <button
-                type="button"
-                key={tab.value}
-                onClick={() => handleTypeChange(tab.value)}
-                className={`relative flex items-center gap-2 overflow-hidden rounded-lg px-3 py-2 font-medium text-sm transition-all duration-200 hover:scale-105 hover:brightness-110 active:scale-95 ${
-                  isActive
-                    ? 'scale-105 text-white'
-                    : 'border border-slate-700 bg-slate-800/50 text-slate-300 hover:border-slate-600 hover:bg-slate-800'
-                }`}
-              >
-                {isActive ? (
-                  <motion.div
-                    layoutId="activeTab"
-                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                    className="absolute inset-0 -z-10 rounded-lg bg-blue-600 shadow-blue-600/30 shadow-lg"
-                  />
-                ) : null}
-                <span className="hidden sm:inline">{tab.label}</span>
-              </button>
-            );
-          })}
-        </div>
-
         {/* Main Content Area */}
         <div className="rounded-xl border border-white/10 bg-gradient-to-b from-slate-900/60 to-slate-800/30 backdrop-blur-sm">
           <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
-            {/* Left Column: Input Section */}
+            {/* Left Column: Input Section with merged tabs */}
             <div className="p-4">
-              {/* Section Title */}
-              <div className="mb-6">
-                <h3 className="text-center font-semibold text-lg text-white">
-                  {currentTabInfo?.description ||
-                    'Redirect to an existing web URL'}
-                </h3>
-              </div>
+              {/* MERGED NAVBAR: Tab selector integrated with input section */}
+              <div className="rounded-lg border border-slate-700/50 bg-slate-800/50 p-4">
+                {/* Tab Navigation Header */}
+                <div className="relative mb-4 flex flex-wrap justify-center gap-1.5 rounded-full bg-gradient-to-r from-slate-900/40 to-slate-800/40 p-1.5 backdrop-blur-sm border border-slate-700/50">
+                  {qrTypeTabs.map((tab) => {
+                    const isActive = tab.value === qrType;
+                    return (
+                      <button
+                        type="button"
+                        key={tab.value}
+                        onClick={() => handleTypeChange(tab.value)}
+                        className={`relative flex items-center gap-2 overflow-hidden rounded-full px-4 py-2.5 font-semibold text-sm transition-all duration-300 ${
+                          isActive
+                            ? 'text-white scale-105'
+                            : 'text-slate-300 hover:text-white hover:scale-102'
+                        } focus:outline-none focus:ring-2 focus:ring-blue-500/50`}
+                      >
+                        {isActive ? (
+                          <motion.div
+                            layoutId="activeTabPill"
+                            transition={{ type: 'spring', stiffness: 380, damping: 35 }}
+                            className="absolute inset-0 -z-10 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 shadow-lg shadow-blue-500/50"
+                          />
+                        ) : null}
+                        <span className="hidden sm:inline text-center">{tab.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
 
-              {/* Input Section */}
-              <div className="space-y-4">
+                {/* Section Title */}
+                <div className="mb-4 border-t border-slate-700/50 pt-4">
+                  <h3 className="text-center font-semibold text-lg text-white">
+                    {currentTabInfo?.description ||
+                      'Redirect to an existing web URL'}
+                  </h3>
+                </div>
+
+                {/* Input Section */}
+                <div className="space-y-4">
                 {/* URL Input */}
                 {qrType === 'url' ? (
-                  <div className="space-y-3">
+                  <motion.div
+                    key="url-input"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2, ease: 'easeInOut' }}
+                    className="space-y-3"
+                  >
                     <input
                       id="url-input"
                       value={urlInput}
@@ -783,12 +790,19 @@ export default function NeoQrGeneratorPage() {
                     <p className="text-foreground text-xs">
                       Try something like https://example.com/
                     </p>
-                  </div>
+                  </motion.div>
                 ) : null}
 
                 {/* Facebook URL Input */}
                 {qrType === 'facebook' ? (
-                  <div className="space-y-3">
+                  <motion.div
+                    key="facebook-input"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2, ease: 'easeInOut' }}
+                    className="space-y-3"
+                  >
                     <input
                       id="facebook-url"
                       value={facebookUrl}
@@ -801,12 +815,19 @@ export default function NeoQrGeneratorPage() {
                           : 'border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
                       }`}
                     />
-                  </div>
+                  </motion.div>
                 ) : null}
 
                 {/* App Stores Selection */}
                 {qrType === 'appstores' ? (
-                  <div className="space-y-4">
+                  <motion.div
+                    key="appstores-input"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2, ease: 'easeInOut' }}
+                    className="space-y-4"
+                  >
                     <div className="grid gap-3 sm:grid-cols-2">
                       <div className="space-y-2">
                         <Label className="text-slate-300">Platform</Label>
@@ -845,12 +866,19 @@ export default function NeoQrGeneratorPage() {
                         />
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 ) : null}
 
                 {/* WiFi Configuration */}
                 {qrType === 'wifi' ? (
-                  <div className="space-y-4">
+                  <motion.div
+                    key="wifi-input"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2, ease: 'easeInOut' }}
+                    className="space-y-4"
+                  >
                     <div className="space-y-2">
                       <Label className="text-slate-300">
                         Network name (SSID)
@@ -918,12 +946,19 @@ export default function NeoQrGeneratorPage() {
                         </Label>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 ) : null}
 
                 {/* Email Configuration */}
                 {qrType === 'email' ? (
-                  <div className="space-y-4">
+                  <motion.div
+                    key="email-input"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2, ease: 'easeInOut' }}
+                    className="space-y-4"
+                  >
                     <div className="space-y-2">
                       <Label className="text-slate-300">To</Label>
                       <input
@@ -958,12 +993,19 @@ export default function NeoQrGeneratorPage() {
                         placeholder="Write a message..."
                       />
                     </div>
-                  </div>
+                  </motion.div>
                 ) : null}
 
                 {/* SMS Configuration */}
                 {qrType === 'sms' ? (
-                  <div className="space-y-4">
+                  <motion.div
+                    key="sms-input"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2, ease: 'easeInOut' }}
+                    className="space-y-4"
+                  >
                     <div className="space-y-2">
                       <Label className="text-slate-300">Number</Label>
                       <input
@@ -987,22 +1029,31 @@ export default function NeoQrGeneratorPage() {
                         placeholder="Your message..."
                       />
                     </div>
-                  </div>
+                  </motion.div>
                 ) : null}
 
                 {/* vCard Configuration */}
                 {qrType === 'vcard' ? (
-                  <div className="space-y-4">
+                  <motion.div
+                    key="vcard-input"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2, ease: 'easeInOut' }}
+                    className="space-y-4"
+                  >
                     <div className="grid gap-3 sm:grid-cols-2">
                       <div className="space-y-2">
                         <Label htmlFor="v-first" className="text-slate-300">
                           First name
                         </Label>
+                        {/* UPDATED: Added placeholder for Contact tab */}
                         <input
                           id="v-first"
                           value={vFirstName}
                           onChange={(e) => setVFirstName(e.target.value)}
                           onFocus={(e) => e.currentTarget.select()}
+                          placeholder="Enter full name"
                           className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
                         />
                       </div>
@@ -1010,11 +1061,13 @@ export default function NeoQrGeneratorPage() {
                         <Label htmlFor="v-last" className="text-slate-300">
                           Last name
                         </Label>
+                        {/* UPDATED: Added placeholder for Contact tab */}
                         <input
                           id="v-last"
                           value={vLastName}
                           onChange={(e) => setVLastName(e.target.value)}
                           onFocus={(e) => e.currentTarget.select()}
+                          placeholder="Enter last name"
                           className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
                         />
                       </div>
@@ -1024,11 +1077,13 @@ export default function NeoQrGeneratorPage() {
                       <Label htmlFor="v-org" className="text-slate-300">
                         Organization
                       </Label>
+                      {/* UPDATED: Added placeholder for Contact tab */}
                       <input
                         id="v-org"
                         value={vOrg}
                         onChange={(e) => setVOrg(e.target.value)}
                         onFocus={(e) => e.currentTarget.select()}
+                        placeholder="Enter company name"
                         className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
                       />
                     </div>
@@ -1037,11 +1092,13 @@ export default function NeoQrGeneratorPage() {
                       <Label htmlFor="v-title" className="text-slate-300">
                         Title
                       </Label>
+                      {/* UPDATED: Added placeholder for Contact tab */}
                       <input
                         id="v-title"
                         value={vTitle}
                         onChange={(e) => setVTitle(e.target.value)}
                         onFocus={(e) => e.currentTarget.select()}
+                        placeholder="Enter job title"
                         className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
                       />
                     </div>
@@ -1050,11 +1107,13 @@ export default function NeoQrGeneratorPage() {
                       <Label htmlFor="v-tel" className="text-slate-300">
                         Phone
                       </Label>
+                      {/* UPDATED: Added placeholder for Contact tab */}
                       <input
                         id="v-tel"
                         value={vTel}
                         onChange={(e) => setVTel(e.target.value)}
                         onFocus={(e) => e.currentTarget.select()}
+                        placeholder="Enter phone number"
                         className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
                       />
                     </div>
@@ -1063,76 +1122,23 @@ export default function NeoQrGeneratorPage() {
                       <Label htmlFor="v-email" className="text-slate-300">
                         Email
                       </Label>
+                      {/* UPDATED: Added placeholder for Contact tab */}
                       <input
                         id="v-email"
                         value={vEmail}
                         onChange={(e) => setVEmail(e.target.value)}
                         onFocus={(e) => e.currentTarget.select()}
+                        placeholder="Enter email address"
                         className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
                       />
                     </div>
-                  </div>
+                  </motion.div>
                 ) : null}
+                </div>
               </div>
 
-              {/* Logo upload */}
+              {/* UPDATED: Customize options moved up, logo upload removed (moved to Options modal) */}
               <div className="mt-6 space-y-3 rounded-lg p-4">
-                <div>
-                  <p className="font-medium text-sm text-white">Logo</p>
-                </div>
-
-                {!logoDataUrl ? (
-                  <Dropzone
-                    onDrop={onDropLogo}
-                    accept={{
-                      'image/png': ['.png'],
-                      'image/jpeg': ['.jpg', '.jpeg'],
-                      'image/webp': ['.webp'],
-                    }}
-                    maxFiles={1}
-                    className="border-slate-600 bg-slate-800/50 text-white transition-all duration-200 hover:bg-slate-700 hover:brightness-110"
-                  >
-                    <DropzoneEmptyState />
-                  </Dropzone>
-                ) : null}
-
-                {logoDataUrl ? (
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-300 text-xs">
-                      Logo uploaded
-                    </span>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setLogoDataUrl('')}
-                      className="border-slate-600 bg-slate-800/50 text-white transition-all duration-200 hover:scale-105 hover:bg-slate-700 hover:brightness-110 active:scale-95"
-                    >
-                      Remove
-                    </Button>
-                  </div>
-                ) : null}
-
-                {logoDataUrl && (
-                  <div className="space-y-3">
-                    <div className="space-y-2">
-                      <Label className="flex justify-between text-slate-300 text-xs">
-                        <span>Size</span>
-                        <span className="text-[10px] text-slate-400">
-                          Max: {maxLogoSize}px
-                        </span>
-                      </Label>
-                      <Slider
-                        min={20}
-                        max={maxLogoSize}
-                        step={2}
-                        value={[logoSize]}
-                        onValueChange={(v) => setLogoSize(v[0] ?? logoSize)}
-                        className="py-1"
-                      />
-                    </div>
-                  </div>
-                )}
                 <div className="mb-4 flex items-center justify-between">
                   <h2 className="font-semibold text-lg text-white">
                     Customize QR Code
@@ -1172,6 +1178,7 @@ export default function NeoQrGeneratorPage() {
                     <Label className="text-slate-300">
                       QR size ({qrSize}px)
                     </Label>
+                    {/* UPDATED: QR size slider - updates in real-time while dragging */}
                     <Slider
                       min={180}
                       max={420}
@@ -1230,24 +1237,32 @@ export default function NeoQrGeneratorPage() {
                 {qrValue.trim() ? (
                   <div
                     key={`qr-${qrType}-${qrValue.slice(0, 40)}`}
-                    className="flex animate-fadeIn flex-col items-center justify-center gap-4 rounded-lg bg-white p-4 shadow-xl transition-all duration-300 ease-in-out hover:scale-[1.03] hover:shadow-2xl"
+                    className="flex animate-fadeIn flex-col items-center justify-center gap-4 rounded-lg bg-white p-4 shadow-xl transition-all duration-300 ease-in-out"
                   >
-                    <div
-                      className="transition-all duration-300 ease-in-out"
-                      style={{ width: qrSize, height: qrSize }}
-                    >
-                      <div ref={qrContainerRef} />
-                    </div>
-                    {logoDataUrl && (
-                      <div className="flex w-full items-center justify-center border-slate-100 border-t pt-4 pb-2">
-                        <img
-                          src={logoDataUrl}
-                          alt="QR Logo"
-                          style={{ height: logoSize, width: 'auto' }}
-                          className="object-contain"
-                        />
+                    {/* UPDATED: Logo positioned at bottom-right corner */}
+                    <div className="relative">
+                      <div
+                        className="transition-all duration-300 ease-in-out"
+                        style={{ width: qrSize, height: qrSize }}
+                      >
+                        <div ref={qrContainerRef} />
                       </div>
-                    )}
+                      {logoDataUrl && (
+                        <div className="absolute -bottom-2 -right-2">
+                          <div
+                            style={{ 
+                              height: logoSize,
+                              width: logoSize,
+                              backgroundImage: `url('${logoDataUrl}')`,
+                              backgroundSize: 'contain',
+                              backgroundRepeat: 'no-repeat',
+                              backgroundPosition: 'center',
+                            }}
+                            className="rounded-lg border-2 border-white shadow-lg"
+                          />
+                        </div>
+                      )}
+                    </div>
                   </div>
                 ) : (
                   <div className="flex min-h-[300px] w-full items-center justify-center text-center text-slate-400 text-sm">
@@ -1383,6 +1398,12 @@ export default function NeoQrGeneratorPage() {
           setDownloadName={setDownloadName}
           downloadFormat={downloadFormat}
           setDownloadFormat={setDownloadFormat}
+          logoDataUrl={logoDataUrl}
+          setLogoDataUrl={setLogoDataUrl}
+          logoSize={logoSize}
+          setLogoSize={setLogoSize}
+          maxLogoSize={maxLogoSize}
+          onDropLogo={onDropLogo}
         />
       )}
     </div>
@@ -1502,6 +1523,13 @@ interface OptionsModalProps {
   setDownloadName: (name: string) => void;
   downloadFormat: QrDownloadFormat;
   setDownloadFormat: (format: QrDownloadFormat) => void;
+  // UPDATED: Added logo upload props
+  logoDataUrl: string;
+  setLogoDataUrl: (url: string) => void;
+  logoSize: number;
+  setLogoSize: (size: number) => void;
+  maxLogoSize: number;
+  onDropLogo: (files: File[]) => void;
 }
 
 function OptionsModal({
@@ -1515,12 +1543,21 @@ function OptionsModal({
   setDownloadName,
   downloadFormat,
   setDownloadFormat,
+  // UPDATED: Added logo upload parameters
+  logoDataUrl,
+  setLogoDataUrl,
+  logoSize,
+  setLogoSize,
+  maxLogoSize,
+  onDropLogo,
 }: OptionsModalProps) {
   const initialStateRef = useRef<{
     frameStyle: QrFrameStyle;
     dotShape: QrDotShape;
     downloadName: string;
     downloadFormat: QrDownloadFormat;
+    logoDataUrl: string;
+    logoSize: number;
   } | null>(null);
 
   useEffect(() => {
@@ -1536,9 +1573,11 @@ function OptionsModal({
         dotShape,
         downloadName,
         downloadFormat,
+        logoDataUrl,
+        logoSize,
       };
     }
-  }, [dotShape, downloadFormat, downloadName, frameStyle, isOpen]);
+  }, [dotShape, downloadFormat, downloadName, frameStyle, isOpen, logoDataUrl, logoSize]);
 
   if (!isOpen) return null;
 
@@ -1549,6 +1588,8 @@ function OptionsModal({
       setDotShape(initial.dotShape);
       setDownloadName(initial.downloadName);
       setDownloadFormat(initial.downloadFormat);
+      setLogoDataUrl(initial.logoDataUrl);
+      setLogoSize(initial.logoSize);
     }
     onClose();
   };
@@ -1612,8 +1653,69 @@ function OptionsModal({
             </div>
           </div>
 
+          {/* MOVED TO OPTIONS: Logo upload section */}
+          <div className="space-y-3 border-t border-slate-700 pt-4">
+            <div>
+              <p className="font-medium text-sm text-white">Logo</p>
+            </div>
+
+            {!logoDataUrl ? (
+              <Dropzone
+                onDrop={onDropLogo}
+                accept={{
+                  'image/png': ['.png'],
+                  'image/jpeg': ['.jpg', '.jpeg'],
+                  'image/webp': ['.webp'],
+                }}
+                maxFiles={1}
+                className="border-slate-600 bg-slate-800/50 text-white transition-all duration-200 hover:bg-slate-700 hover:brightness-110"
+              >
+                <DropzoneEmptyState />
+              </Dropzone>
+            ) : null}
+
+            {logoDataUrl ? (
+              <div className="flex items-center justify-between">
+                <span className="text-slate-300 text-xs">
+                  Logo uploaded
+                </span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setLogoDataUrl('')}
+                  className="border-slate-600 bg-slate-800/50 text-white transition-all duration-200 hover:scale-105 hover:bg-slate-700 hover:brightness-110 active:scale-95"
+                >
+                  Remove
+                </Button>
+              </div>
+            ) : null}
+
+            {logoDataUrl && (
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <Label className="flex justify-between text-slate-300 text-xs">
+                    <span>Logo size</span>
+                    <span className="text-[10px] text-slate-400">
+                      {logoSize}px | Max: {maxLogoSize}px
+                    </span>
+                  </Label>
+                  {/* UPDATED RANGE: Logo size slider fixed to 20-96px range */}
+                  <Slider
+                    min={20}
+                    max={96}
+                    step={2}
+                    value={[logoSize]}
+                    onValueChange={(v) => setLogoSize(v[0] ?? logoSize)}
+                    className="py-1"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Download options */}
-          <div className="space-y-3">
+          <div className="space-y-3 border-t border-slate-700 pt-4">
             <div className="space-y-2">
               <Label className="text-slate-300">File name</Label>
               <input
