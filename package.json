@@ -67,5 +67,8 @@
     "sharp",
     "supabase",
     "unrs-resolver"
-  ]
+  ],
+  "dependencies": {
+    "lucide-react": "^1.7.0"
+  }
 }
