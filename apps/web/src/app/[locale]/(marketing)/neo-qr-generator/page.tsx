@@ -745,11 +745,17 @@ export default function NeoQrGeneratorPage() {
                         {isActive ? (
                           <motion.div
                             layoutId="activeTabPill"
-                            transition={{ type: 'spring', stiffness: 380, damping: 35 }}
+                            transition={{
+                              type: 'spring',
+                              stiffness: 380,
+                              damping: 35,
+                            }}
                             className="absolute inset-0 -z-10 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 shadow-lg shadow-blue-500/50"
                           />
                         ) : null}
-                        <span className="hidden sm:inline text-center">{tab.label}</span>
+                        <span className="hidden sm:inline text-center">
+                          {tab.label}
+                        </span>
                       </button>
                     );
                   })}
@@ -765,375 +771,377 @@ export default function NeoQrGeneratorPage() {
 
                 {/* Input Section */}
                 <div className="space-y-4">
-                {/* URL Input */}
-                {qrType === 'url' ? (
-                  <motion.div
-                    key="url-input"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.2, ease: 'easeInOut' }}
-                    className="space-y-3"
-                  >
-                    <input
-                      id="url-input"
-                      value={urlInput}
-                      onChange={(e) => setUrlInput(e.target.value)}
-                      onFocus={(e) => e.currentTarget.select()}
-                      placeholder="Enter URL"
-                      className={`w-full rounded-lg border bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 transition-colors focus:outline-none ${
-                        urlInput.trim() && !urlInputValid
-                          ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500/20'
-                          : 'border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
-                      }`}
-                    />
-                    <p className="text-foreground text-xs">
-                      Try something like https://example.com/
-                    </p>
-                  </motion.div>
-                ) : null}
+                  {/* URL Input */}
+                  {qrType === 'url' ? (
+                    <motion.div
+                      key="url-input"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2, ease: 'easeInOut' }}
+                      className="space-y-3"
+                    >
+                      <input
+                        id="url-input"
+                        value={urlInput}
+                        onChange={(e) => setUrlInput(e.target.value)}
+                        onFocus={(e) => e.currentTarget.select()}
+                        placeholder="Enter URL"
+                        className={`w-full rounded-lg border bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 transition-colors focus:outline-none ${
+                          urlInput.trim() && !urlInputValid
+                            ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500/20'
+                            : 'border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
+                        }`}
+                      />
+                      <p className="text-foreground text-xs">
+                        Try something like https://example.com/
+                      </p>
+                    </motion.div>
+                  ) : null}
 
-                {/* Facebook URL Input */}
-                {qrType === 'facebook' ? (
-                  <motion.div
-                    key="facebook-input"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.2, ease: 'easeInOut' }}
-                    className="space-y-3"
-                  >
-                    <input
-                      id="facebook-url"
-                      value={facebookUrl}
-                      onChange={(e) => setFacebookUrl(e.target.value)}
-                      onFocus={(e) => e.currentTarget.select()}
-                      placeholder="https://facebook.com/..."
-                      className={`w-full rounded-lg border bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 transition-colors focus:outline-none ${
-                        facebookUrl.trim() && !facebookUrlValid
-                          ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500/20'
-                          : 'border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
-                      }`}
-                    />
-                  </motion.div>
-                ) : null}
+                  {/* Facebook URL Input */}
+                  {qrType === 'facebook' ? (
+                    <motion.div
+                      key="facebook-input"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2, ease: 'easeInOut' }}
+                      className="space-y-3"
+                    >
+                      <input
+                        id="facebook-url"
+                        value={facebookUrl}
+                        onChange={(e) => setFacebookUrl(e.target.value)}
+                        onFocus={(e) => e.currentTarget.select()}
+                        placeholder="https://facebook.com/..."
+                        className={`w-full rounded-lg border bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 transition-colors focus:outline-none ${
+                          facebookUrl.trim() && !facebookUrlValid
+                            ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500/20'
+                            : 'border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
+                        }`}
+                      />
+                    </motion.div>
+                  ) : null}
 
-                {/* App Stores Selection */}
-                {qrType === 'appstores' ? (
-                  <motion.div
-                    key="appstores-input"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.2, ease: 'easeInOut' }}
-                    className="space-y-4"
-                  >
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      <div className="space-y-2">
-                        <Label className="text-slate-300">Platform</Label>
-                        <Select
-                          value={appPlatform}
-                          onValueChange={(v) =>
-                            setAppPlatform(v as 'ios' | 'android')
-                          }
-                        >
-                          <SelectTrigger className="rounded-lg border-slate-600 bg-slate-700/50 text-white">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="border-slate-600 bg-slate-800 text-white">
-                            <SelectItem value="ios">iOS</SelectItem>
-                            <SelectItem value="android">Android</SelectItem>
-                          </SelectContent>
-                        </Select>
+                  {/* App Stores Selection */}
+                  {qrType === 'appstores' ? (
+                    <motion.div
+                      key="appstores-input"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2, ease: 'easeInOut' }}
+                      className="space-y-4"
+                    >
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        <div className="space-y-2">
+                          <Label className="text-slate-300">Platform</Label>
+                          <Select
+                            value={appPlatform}
+                            onValueChange={(v) =>
+                              setAppPlatform(v as 'ios' | 'android')
+                            }
+                          >
+                            <SelectTrigger className="rounded-lg border-slate-600 bg-slate-700/50 text-white">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="border-slate-600 bg-slate-800 text-white">
+                              <SelectItem value="ios">iOS</SelectItem>
+                              <SelectItem value="android">Android</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-slate-300">Store URL</Label>
+                          <input
+                            id="store-url"
+                            value={
+                              appPlatform === 'ios'
+                                ? iosStoreUrl
+                                : androidStoreUrl
+                            }
+                            onChange={(e) => {
+                              if (appPlatform === 'ios')
+                                setIosStoreUrl(e.target.value);
+                              else setAndroidStoreUrl(e.target.value);
+                            }}
+                            onFocus={(e) => e.currentTarget.select()}
+                            placeholder="Paste URL"
+                            className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-3 py-2 text-sm text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                          />
+                        </div>
                       </div>
+                    </motion.div>
+                  ) : null}
+
+                  {/* WiFi Configuration */}
+                  {qrType === 'wifi' ? (
+                    <motion.div
+                      key="wifi-input"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2, ease: 'easeInOut' }}
+                      className="space-y-4"
+                    >
                       <div className="space-y-2">
-                        <Label className="text-slate-300">Store URL</Label>
+                        <Label className="text-slate-300">
+                          Network name (SSID)
+                        </Label>
                         <input
-                          id="store-url"
-                          value={
-                            appPlatform === 'ios'
-                              ? iosStoreUrl
-                              : androidStoreUrl
-                          }
-                          onChange={(e) => {
-                            if (appPlatform === 'ios')
-                              setIosStoreUrl(e.target.value);
-                            else setAndroidStoreUrl(e.target.value);
-                          }}
+                          id="wifi-ssid"
+                          value={wifiSsid}
+                          onChange={(e) => setWifiSsid(e.target.value)}
                           onFocus={(e) => e.currentTarget.select()}
-                          placeholder="Paste URL"
-                          className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-3 py-2 text-sm text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                          placeholder="My_WiFi"
+                          className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
                         />
                       </div>
-                    </div>
-                  </motion.div>
-                ) : null}
 
-                {/* WiFi Configuration */}
-                {qrType === 'wifi' ? (
-                  <motion.div
-                    key="wifi-input"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.2, ease: 'easeInOut' }}
-                    className="space-y-4"
-                  >
-                    <div className="space-y-2">
-                      <Label className="text-slate-300">
-                        Network name (SSID)
-                      </Label>
-                      <input
-                        id="wifi-ssid"
-                        value={wifiSsid}
-                        onChange={(e) => setWifiSsid(e.target.value)}
-                        onFocus={(e) => e.currentTarget.select()}
-                        placeholder="My_WiFi"
-                        className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label className="text-slate-300">Password</Label>
-                      <input
-                        id="wifi-password"
-                        value={wifiPassword}
-                        onChange={(e) => setWifiPassword(e.target.value)}
-                        onFocus={(e) => e.currentTarget.select()}
-                        placeholder="••••••••"
-                        disabled={
-                          wifiSecurity === 'nopass' || wifiSecurity === 'NONE'
-                        }
-                        className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none disabled:opacity-50"
-                      />
-                    </div>
-
-                    <div className="grid gap-3 sm:grid-cols-2">
                       <div className="space-y-2">
-                        <Label className="text-slate-300">Security</Label>
-                        <Select
-                          value={wifiSecurity}
-                          onValueChange={(v) =>
-                            setWifiSecurity(
-                              v as 'WPA' | 'WEP' | 'nopass' | 'WPA2' | 'NONE'
-                            )
-                          }
-                        >
-                          <SelectTrigger className="rounded-lg border-slate-600 bg-slate-700/50 text-white">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="border-slate-600 bg-slate-800 text-white">
-                            <SelectItem value="WPA2">WPA2</SelectItem>
-                            <SelectItem value="WPA">WPA</SelectItem>
-                            <SelectItem value="WEP">WEP</SelectItem>
-                            <SelectItem value="nopass">No password</SelectItem>
-                            <SelectItem value="NONE">None</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div className="flex items-center gap-3 pt-6">
-                        <Checkbox
-                          id="wifi-hidden"
-                          checked={wifiHidden}
-                          onCheckedChange={(c) => setWifiHidden(c === true)}
-                        />
-                        <Label
-                          htmlFor="wifi-hidden"
-                          className="cursor-pointer text-slate-300"
-                        >
-                          Hidden
-                        </Label>
-                      </div>
-                    </div>
-                  </motion.div>
-                ) : null}
-
-                {/* Email Configuration */}
-                {qrType === 'email' ? (
-                  <motion.div
-                    key="email-input"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.2, ease: 'easeInOut' }}
-                    className="space-y-4"
-                  >
-                    <div className="space-y-2">
-                      <Label className="text-slate-300">To</Label>
-                      <input
-                        id="email-to"
-                        value={emailTo}
-                        onChange={(e) => setEmailTo(e.target.value)}
-                        onFocus={(e) => e.currentTarget.select()}
-                        placeholder="someone@example.com"
-                        className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-slate-300">Subject</Label>
-                      <input
-                        id="email-subject"
-                        value={emailSubject}
-                        onChange={(e) => setEmailSubject(e.target.value)}
-                        onFocus={(e) => e.currentTarget.select()}
-                        placeholder="Optional"
-                        className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-slate-300">Body</Label>
-                      <textarea
-                        id="email-body"
-                        rows={3}
-                        value={emailBody}
-                        onChange={(e) => setEmailBody(e.target.value)}
-                        onFocus={(e) => e.currentTarget.select()}
-                        className="w-full resize-none rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
-                        placeholder="Write a message..."
-                      />
-                    </div>
-                  </motion.div>
-                ) : null}
-
-                {/* SMS Configuration */}
-                {qrType === 'sms' ? (
-                  <motion.div
-                    key="sms-input"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.2, ease: 'easeInOut' }}
-                    className="space-y-4"
-                  >
-                    <div className="space-y-2">
-                      <Label className="text-slate-300">Number</Label>
-                      <input
-                        id="sms-number"
-                        value={smsNumber}
-                        onChange={(e) => setSmsNumber(e.target.value)}
-                        onFocus={(e) => e.currentTarget.select()}
-                        placeholder="+1 555 123 456"
-                        className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-slate-300">Message</Label>
-                      <textarea
-                        id="sms-message"
-                        rows={3}
-                        value={smsMessage}
-                        onChange={(e) => setSmsMessage(e.target.value)}
-                        onFocus={(e) => e.currentTarget.select()}
-                        className="w-full resize-none rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
-                        placeholder="Your message..."
-                      />
-                    </div>
-                  </motion.div>
-                ) : null}
-
-                {/* vCard Configuration */}
-                {qrType === 'vcard' ? (
-                  <motion.div
-                    key="vcard-input"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.2, ease: 'easeInOut' }}
-                    className="space-y-4"
-                  >
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      <div className="space-y-2">
-                        <Label htmlFor="v-first" className="text-slate-300">
-                          First name
-                        </Label>
-                        {/* UPDATED: Added placeholder for Contact tab */}
+                        <Label className="text-slate-300">Password</Label>
                         <input
-                          id="v-first"
-                          value={vFirstName}
-                          onChange={(e) => setVFirstName(e.target.value)}
+                          id="wifi-password"
+                          value={wifiPassword}
+                          onChange={(e) => setWifiPassword(e.target.value)}
                           onFocus={(e) => e.currentTarget.select()}
-                          placeholder="Enter full name"
+                          placeholder="••••••••"
+                          disabled={
+                            wifiSecurity === 'nopass' || wifiSecurity === 'NONE'
+                          }
+                          className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none disabled:opacity-50"
+                        />
+                      </div>
+
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        <div className="space-y-2">
+                          <Label className="text-slate-300">Security</Label>
+                          <Select
+                            value={wifiSecurity}
+                            onValueChange={(v) =>
+                              setWifiSecurity(
+                                v as 'WPA' | 'WEP' | 'nopass' | 'WPA2' | 'NONE'
+                              )
+                            }
+                          >
+                            <SelectTrigger className="rounded-lg border-slate-600 bg-slate-700/50 text-white">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="border-slate-600 bg-slate-800 text-white">
+                              <SelectItem value="WPA2">WPA2</SelectItem>
+                              <SelectItem value="WPA">WPA</SelectItem>
+                              <SelectItem value="WEP">WEP</SelectItem>
+                              <SelectItem value="nopass">
+                                No password
+                              </SelectItem>
+                              <SelectItem value="NONE">None</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="flex items-center gap-3 pt-6">
+                          <Checkbox
+                            id="wifi-hidden"
+                            checked={wifiHidden}
+                            onCheckedChange={(c) => setWifiHidden(c === true)}
+                          />
+                          <Label
+                            htmlFor="wifi-hidden"
+                            className="cursor-pointer text-slate-300"
+                          >
+                            Hidden
+                          </Label>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ) : null}
+
+                  {/* Email Configuration */}
+                  {qrType === 'email' ? (
+                    <motion.div
+                      key="email-input"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2, ease: 'easeInOut' }}
+                      className="space-y-4"
+                    >
+                      <div className="space-y-2">
+                        <Label className="text-slate-300">To</Label>
+                        <input
+                          id="email-to"
+                          value={emailTo}
+                          onChange={(e) => setEmailTo(e.target.value)}
+                          onFocus={(e) => e.currentTarget.select()}
+                          placeholder="someone@example.com"
                           className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="v-last" className="text-slate-300">
-                          Last name
-                        </Label>
-                        {/* UPDATED: Added placeholder for Contact tab */}
+                        <Label className="text-slate-300">Subject</Label>
                         <input
-                          id="v-last"
-                          value={vLastName}
-                          onChange={(e) => setVLastName(e.target.value)}
+                          id="email-subject"
+                          value={emailSubject}
+                          onChange={(e) => setEmailSubject(e.target.value)}
                           onFocus={(e) => e.currentTarget.select()}
-                          placeholder="Enter last name"
+                          placeholder="Optional"
                           className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
                         />
                       </div>
-                    </div>
+                      <div className="space-y-2">
+                        <Label className="text-slate-300">Body</Label>
+                        <textarea
+                          id="email-body"
+                          rows={3}
+                          value={emailBody}
+                          onChange={(e) => setEmailBody(e.target.value)}
+                          onFocus={(e) => e.currentTarget.select()}
+                          className="w-full resize-none rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                          placeholder="Write a message..."
+                        />
+                      </div>
+                    </motion.div>
+                  ) : null}
 
-                    <div className="space-y-2">
-                      <Label htmlFor="v-org" className="text-slate-300">
-                        Organization
-                      </Label>
-                      {/* UPDATED: Added placeholder for Contact tab */}
-                      <input
-                        id="v-org"
-                        value={vOrg}
-                        onChange={(e) => setVOrg(e.target.value)}
-                        onFocus={(e) => e.currentTarget.select()}
-                        placeholder="Enter company name"
-                        className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
-                      />
-                    </div>
+                  {/* SMS Configuration */}
+                  {qrType === 'sms' ? (
+                    <motion.div
+                      key="sms-input"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2, ease: 'easeInOut' }}
+                      className="space-y-4"
+                    >
+                      <div className="space-y-2">
+                        <Label className="text-slate-300">Number</Label>
+                        <input
+                          id="sms-number"
+                          value={smsNumber}
+                          onChange={(e) => setSmsNumber(e.target.value)}
+                          onFocus={(e) => e.currentTarget.select()}
+                          placeholder="+1 555 123 456"
+                          className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-slate-300">Message</Label>
+                        <textarea
+                          id="sms-message"
+                          rows={3}
+                          value={smsMessage}
+                          onChange={(e) => setSmsMessage(e.target.value)}
+                          onFocus={(e) => e.currentTarget.select()}
+                          className="w-full resize-none rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                          placeholder="Your message..."
+                        />
+                      </div>
+                    </motion.div>
+                  ) : null}
 
-                    <div className="space-y-2">
-                      <Label htmlFor="v-title" className="text-slate-300">
-                        Title
-                      </Label>
-                      {/* UPDATED: Added placeholder for Contact tab */}
-                      <input
-                        id="v-title"
-                        value={vTitle}
-                        onChange={(e) => setVTitle(e.target.value)}
-                        onFocus={(e) => e.currentTarget.select()}
-                        placeholder="Enter job title"
-                        className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
-                      />
-                    </div>
+                  {/* vCard Configuration */}
+                  {qrType === 'vcard' ? (
+                    <motion.div
+                      key="vcard-input"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2, ease: 'easeInOut' }}
+                      className="space-y-4"
+                    >
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        <div className="space-y-2">
+                          <Label htmlFor="v-first" className="text-slate-300">
+                            First name
+                          </Label>
+                          {/* UPDATED: Added placeholder for Contact tab */}
+                          <input
+                            id="v-first"
+                            value={vFirstName}
+                            onChange={(e) => setVFirstName(e.target.value)}
+                            onFocus={(e) => e.currentTarget.select()}
+                            placeholder="Enter full name"
+                            className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="v-last" className="text-slate-300">
+                            Last name
+                          </Label>
+                          {/* UPDATED: Added placeholder for Contact tab */}
+                          <input
+                            id="v-last"
+                            value={vLastName}
+                            onChange={(e) => setVLastName(e.target.value)}
+                            onFocus={(e) => e.currentTarget.select()}
+                            placeholder="Enter last name"
+                            className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                          />
+                        </div>
+                      </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="v-tel" className="text-slate-300">
-                        Phone
-                      </Label>
-                      {/* UPDATED: Added placeholder for Contact tab */}
-                      <input
-                        id="v-tel"
-                        value={vTel}
-                        onChange={(e) => setVTel(e.target.value)}
-                        onFocus={(e) => e.currentTarget.select()}
-                        placeholder="Enter phone number"
-                        className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
-                      />
-                    </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="v-org" className="text-slate-300">
+                          Organization
+                        </Label>
+                        {/* UPDATED: Added placeholder for Contact tab */}
+                        <input
+                          id="v-org"
+                          value={vOrg}
+                          onChange={(e) => setVOrg(e.target.value)}
+                          onFocus={(e) => e.currentTarget.select()}
+                          placeholder="Enter company name"
+                          className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                        />
+                      </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="v-email" className="text-slate-300">
-                        Email
-                      </Label>
-                      {/* UPDATED: Added placeholder for Contact tab */}
-                      <input
-                        id="v-email"
-                        value={vEmail}
-                        onChange={(e) => setVEmail(e.target.value)}
-                        onFocus={(e) => e.currentTarget.select()}
-                        placeholder="Enter email address"
-                        className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
-                      />
-                    </div>
-                  </motion.div>
-                ) : null}
+                      <div className="space-y-2">
+                        <Label htmlFor="v-title" className="text-slate-300">
+                          Title
+                        </Label>
+                        {/* UPDATED: Added placeholder for Contact tab */}
+                        <input
+                          id="v-title"
+                          value={vTitle}
+                          onChange={(e) => setVTitle(e.target.value)}
+                          onFocus={(e) => e.currentTarget.select()}
+                          placeholder="Enter job title"
+                          className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="v-tel" className="text-slate-300">
+                          Phone
+                        </Label>
+                        {/* UPDATED: Added placeholder for Contact tab */}
+                        <input
+                          id="v-tel"
+                          value={vTel}
+                          onChange={(e) => setVTel(e.target.value)}
+                          onFocus={(e) => e.currentTarget.select()}
+                          placeholder="Enter phone number"
+                          className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="v-email" className="text-slate-300">
+                          Email
+                        </Label>
+                        {/* UPDATED: Added placeholder for Contact tab */}
+                        <input
+                          id="v-email"
+                          value={vEmail}
+                          onChange={(e) => setVEmail(e.target.value)}
+                          onFocus={(e) => e.currentTarget.select()}
+                          placeholder="Enter email address"
+                          className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                        />
+                      </div>
+                    </motion.div>
+                  ) : null}
                 </div>
               </div>
 
@@ -1250,7 +1258,7 @@ export default function NeoQrGeneratorPage() {
                       {logoDataUrl && (
                         <div className="absolute -bottom-2 -right-2">
                           <div
-                            style={{ 
+                            style={{
                               height: logoSize,
                               width: logoSize,
                               backgroundImage: `url('${logoDataUrl}')`,
@@ -1577,7 +1585,15 @@ function OptionsModal({
         logoSize,
       };
     }
-  }, [dotShape, downloadFormat, downloadName, frameStyle, isOpen, logoDataUrl, logoSize]);
+  }, [
+    dotShape,
+    downloadFormat,
+    downloadName,
+    frameStyle,
+    isOpen,
+    logoDataUrl,
+    logoSize,
+  ]);
 
   if (!isOpen) return null;
 
@@ -1676,9 +1692,7 @@ function OptionsModal({
 
             {logoDataUrl ? (
               <div className="flex items-center justify-between">
-                <span className="text-slate-300 text-xs">
-                  Logo uploaded
-                </span>
+                <span className="text-slate-300 text-xs">Logo uploaded</span>
                 <Button
                   type="button"
                   variant="outline"
