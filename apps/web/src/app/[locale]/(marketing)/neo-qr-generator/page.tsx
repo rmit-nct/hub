@@ -17,6 +17,7 @@ import QRCodeStyling, { type TypeNumber } from 'qr-code-styling';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import NeoGeneratorHero from './hero';
 import '@/style/animations.css';
+import '@/style/qr-generator.css';
 
 // Type definitions
 interface QRTypeTab {
@@ -159,6 +160,22 @@ function buildAppStorePayload({
   return platform === 'ios' ? iosUrl.trim() : androidUrl.trim();
 }
 
+// Validate and sanitize dot types to prevent qr-code-styling crashes
+function sanitizeDotType(type: unknown): string {
+  const validTypes = [
+    'square',
+    'dots',
+    'rounded',
+    'extra-rounded',
+    'classy',
+    'classy-rounded',
+  ];
+  if (typeof type === 'string' && validTypes.includes(type)) {
+    return type;
+  }
+  return 'square'; // Safe fallback
+}
+
 function dotStyle(dotShape: QrDotShape) {
   switch (dotShape) {
     case 'rounded':
@@ -166,14 +183,14 @@ function dotStyle(dotShape: QrDotShape) {
         shape: 'square' as const,
         dots: 'rounded' as const,
         cornerSquare: 'extra-rounded' as const,
-        cornerDot: 'dot' as const,
+        cornerDot: 'dots' as const,
       };
     case 'dots':
       return {
-        shape: 'circle' as const,
+        shape: 'square' as const,
         dots: 'dots' as const,
-        cornerSquare: 'dot' as const,
-        cornerDot: 'dot' as const,
+        cornerSquare: 'dots' as const,
+        cornerDot: 'dots' as const,
       };
     default:
       return {
@@ -185,6 +202,130 @@ function dotStyle(dotShape: QrDotShape) {
   }
 }
 
+// Build COMPLETE and VALID QR options object - BULLETPROOF VERSION
+// This prevents partial update crashes from undefined fields
+function buildQrOptions({
+  qrValue,
+  displaySize,
+  dotConfig,
+  fgColor,
+  bgColor,
+  margin,
+  errorLevel,
+}: {
+  qrValue: string;
+  displaySize: number;
+  dotConfig: ReturnType<typeof dotStyle>;
+  fgColor: string;
+  bgColor: string;
+  margin: number;
+  errorLevel: QrErrorLevel;
+}) {
+  // BULLETPROOF: Enforce minimum size of 190px
+  const safeSize = Math.max(190, Math.ceil(displaySize));
+
+  // BULLETPROOF: Default values for all colors
+  const safeFgColor =
+    fgColor && typeof fgColor === 'string' ? fgColor : '#000000';
+  const safeBgColor =
+    bgColor && typeof bgColor === 'string' ? bgColor : '#ffffff';
+
+  // BULLETPROOF: Sanitize all dot types - always have fallback
+  const safeDotType = sanitizeDotType(dotConfig?.dots) || 'square';
+  const safeCornerSquareType =
+    sanitizeDotType(dotConfig?.cornerSquare) || 'square';
+  const safeCornerDotType = sanitizeDotType(dotConfig?.cornerDot) || 'square';
+
+  // BULLETPROOF: Ensure shape exists
+  const safeShape = dotConfig?.shape || 'square';
+
+  // BULLETPROOF: Validate qrValue
+  const safeData =
+    qrValue && qrValue.trim().length > 0 ? qrValue : 'https://example.com';
+
+  // BULLETPROOF: Validate margin
+  const safeMargin = Number.isFinite(margin) ? Math.max(0, margin) : 0;
+
+  // Build options with ALL fields explicitly set
+  const options = {
+    type: 'svg' as const,
+    shape: safeShape,
+    width: safeSize,
+    height: safeSize,
+    margin: safeMargin,
+    data: safeData,
+    qrOptions: {
+      typeNumber: 0 as unknown as TypeNumber | undefined,
+      errorCorrectionLevel: errorLevel || 'H',
+    },
+    dotsOptions: {
+      type: safeDotType,
+      color: safeFgColor,
+      roundSize: false,
+    },
+    cornersSquareOptions: {
+      type: safeCornerSquareType,
+      color: safeFgColor,
+    },
+    cornersDotOptions: {
+      type: safeCornerDotType,
+      color: safeFgColor,
+    },
+    backgroundOptions: {
+      round: 0,
+      color: safeBgColor,
+    },
+  } as any;
+
+  // BULLETPROOF: Validate complete object before returning
+  if (
+    !options.dotsOptions ||
+    !options.dotsOptions.type ||
+    !options.cornersSquareOptions ||
+    !options.cornersSquareOptions.type ||
+    !options.cornersDotOptions ||
+    !options.cornersDotOptions.type ||
+    !options.backgroundOptions ||
+    !options.backgroundOptions.color
+  ) {
+    console.warn(
+      '[QR WARN] Options object has missing fields, using safe defaults'
+    );
+    // Return absolute fallback
+    return {
+      type: 'svg' as const,
+      shape: 'square',
+      width: 260,
+      height: 260,
+      margin: 0,
+      data: 'https://example.com',
+      qrOptions: {
+        typeNumber: 0 as unknown as TypeNumber | undefined,
+        errorCorrectionLevel: 'H',
+      },
+      dotsOptions: {
+        type: 'square',
+        color: '#000000',
+        roundSize: false,
+      },
+      cornersSquareOptions: {
+        type: 'square',
+        color: '#000000',
+      },
+      cornersDotOptions: {
+        type: 'square',
+        color: '#000000',
+      },
+      backgroundOptions: {
+        round: 0,
+        color: '#ffffff',
+      },
+    } as any;
+  }
+
+  return options;
+}
+
 export default function NeoQrGeneratorPage() {
   const [qrType, setQrType] = useState<QrType>('url');
   const [qrValue, setQrValue] = useState('');
@@ -193,6 +334,9 @@ export default function NeoQrGeneratorPage() {
   const [copied, setCopied] = useState(false);
   const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // DEBOUNCE: Prevent rapid successive updates during theme transitions
+  const qrUpdateTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // URL-like inputs
   const [urlInput, setUrlInput] = useState('');
@@ -226,10 +370,12 @@ export default function NeoQrGeneratorPage() {
   // File-based inputs
   const [fileObjectUrl, setFileObjectUrl] = useState<string>('');
 
-  // Customize options
+  // Customize options - Theme-aware defaults
   const [bgColor, setBgColor] = useState('#ffffff');
   const [fgColor, setFgColor] = useState('#000000');
   const [qrSize, setQrSize] = useState(260);
+  const [previewQrSize, setPreviewQrSize] = useState(260);
+  const [isDraggingSlider, setIsDraggingSlider] = useState(false);
   const [errorLevel, setErrorLevel] = useState<QrErrorLevel>('H');
   const [quietZone, setQuietZone] = useState(true);
 
@@ -273,6 +419,34 @@ export default function NeoQrGeneratorPage() {
       setLogoSize(96);
     }
   }, [logoSize]);
+
+  // Slider drag behavior: slider and label update in real-time, QR image/background frozen
+  const handleQrSizeSliderStart = useCallback(() => {
+    setIsDraggingSlider(true);
+    setPreviewQrSize(qrSize);
+  }, [qrSize]);
+
+  const handleQrSizeSliderChange = useCallback(
+    (v: number[]) => {
+      // Update preview slider value in real-time
+      setPreviewQrSize(v[0] ?? qrSize);
+    },
+    [qrSize]
+  );
+
+  const handleQrSizeSliderEnd = useCallback(() => {
+    // Apply final size to QR
+    setQrSize(previewQrSize);
+    setIsDraggingSlider(false);
+  }, [previewQrSize]);
+
+  const handleQrSizeSliderPointerDown = useCallback(() => {
+    handleQrSizeSliderStart();
+  }, [handleQrSizeSliderStart]);
+
+  const handleQrSizeSliderPointerUp = useCallback(() => {
+    handleQrSizeSliderEnd();
+  }, [handleQrSizeSliderEnd]);
 
   const qrPayload = useMemo(() => {
     switch (qrType) {
@@ -342,62 +516,162 @@ export default function NeoQrGeneratorPage() {
     setQrValue(qrPayload);
   }, [qrPayload]);
 
-  useEffect(() => {
+  // Extract the actual QR update logic into a separate function for clarity
+  // Declare this BEFORE the useEffect that uses it
+  const performQrUpdate = useCallback(() => {
     if (!qrContainerRef.current) return;
 
     const currentContainer = qrContainerRef.current;
+
+    // Validate required data before creating/updating QR
+    if (!qrValue.trim()) {
+      // Clear container if no value
+      if (qrRef.current) {
+        currentContainer.innerHTML = '';
+      }
+      return;
+    }
+
     const dot = dotStyle(dotShape);
-    // FIXED SYNC: Compute padding from single source - quietZone state
     const margin = quietZone ? 3 : 0;
+    // Always use qrSize for rendering - frozen during slider dragging
+    const displaySize = qrSize;
 
-    const options = {
-      type: 'svg' as const,
-      shape: dot.shape,
-      width: qrSize,
-      height: qrSize,
+    // Defensive: Ensure dot style returns expected shape
+    if (!dot || !dot.shape || !dot.dots) {
+      console.warn('Invalid dot style configuration');
+      return;
+    }
+
+    // Build COMPLETE and VALID options using helper function
+    const options = buildQrOptions({
+      qrValue,
+      displaySize,
+      dotConfig: dot,
+      fgColor,
+      bgColor,
       margin,
-      data: qrValue || '',
-      qrOptions: {
-        typeNumber: 0 as unknown as TypeNumber | undefined,
-        errorCorrectionLevel: errorLevel,
-      },
-      dotsOptions: {
-        type: dot.dots,
-        color: fgColor,
-        roundSize: false,
-      },
-      cornersSquareOptions: {
-        type: dot.cornerSquare,
-        color: fgColor,
-      },
-      cornersDotOptions: {
-        type: dot.cornerDot,
-        color: fgColor,
-      },
-      backgroundOptions: {
-        round: 0,
-        color: bgColor,
-      },
-    } as any;
+      errorLevel,
+    });
 
-    const shouldRecreate =
+    // Determine if we need to recreate (only on qrType or container change)
+    const needsRecreate =
       !qrRef.current ||
       prevQrTypeRef.current !== qrType ||
       prevQrContainerElRef.current !== currentContainer;
 
-    if (shouldRecreate) {
-      qrRef.current = new QRCodeStyling(options);
-      qrRef.current.append(currentContainer);
-      prevQrTypeRef.current = qrType;
-      prevQrContainerElRef.current = currentContainer;
-    } else {
-      // FIXED SYNC: Update QR size and padding in SAME render cycle
-      qrRef.current!.update({
-        ...options,
-        width: qrSize,
-        height: qrSize,
-        margin: margin,
+    try {
+      if (needsRecreate) {
+        // Clean up old instance
+        if (qrRef.current && currentContainer) {
+          currentContainer.innerHTML = '';
+        }
+
+        // Create new instance with validated options
+        qrRef.current = new QRCodeStyling(options);
+        qrRef.current.append(currentContainer);
+
+        prevQrTypeRef.current = qrType;
+        prevQrContainerElRef.current = currentContainer;
+      } else {
+        // BULLETPROOF: Validate all critical fields before update
+        if (!qrRef.current) {
+          console.warn('[QR WARN] qrRef.current is null, cannot update');
+          return;
+        }
+
+        if (!options) {
+          console.warn('[QR WARN] options object is null, cannot update');
+          return;
+        }
+
+        // BULLETPROOF: Validate nested options object structure with comprehensive checks
+        const hasValidDotsOptions =
+          options.dotsOptions &&
+          typeof options.dotsOptions === 'object' &&
+          'type' in options.dotsOptions &&
+          'color' in options.dotsOptions &&
+          typeof options.dotsOptions.type === 'string' &&
+          typeof options.dotsOptions.color === 'string';
+
+        const hasValidCornersSquare =
+          options.cornersSquareOptions &&
+          typeof options.cornersSquareOptions === 'object' &&
+          'type' in options.cornersSquareOptions &&
+          'color' in options.cornersSquareOptions &&
+          typeof options.cornersSquareOptions.type === 'string' &&
+          typeof options.cornersSquareOptions.color === 'string';
+
+        const hasValidCornersDot =
+          options.cornersDotOptions &&
+          typeof options.cornersDotOptions === 'object' &&
+          'type' in options.cornersDotOptions &&
+          'color' in options.cornersDotOptions &&
+          typeof options.cornersDotOptions.type === 'string' &&
+          typeof options.cornersDotOptions.color === 'string';
+
+        const hasValidBackground =
+          options.backgroundOptions &&
+          typeof options.backgroundOptions === 'object' &&
+          'color' in options.backgroundOptions &&
+          typeof options.backgroundOptions.color === 'string';
+
+        const hasValidQrOptions =
+          options.qrOptions &&
+          typeof options.qrOptions === 'object' &&
+          'errorCorrectionLevel' in options.qrOptions;
+
+        if (
+          !hasValidDotsOptions ||
+          !hasValidCornersSquare ||
+          !hasValidCornersDot ||
+          !hasValidBackground ||
+          !hasValidQrOptions
+        ) {
+          console.warn(
+            '[QR WARN] Options structure validation failed, recreating instead:',
+            {
+              hasValidDotsOptions,
+              hasValidCornersSquare,
+              hasValidCornersDot,
+              hasValidBackground,
+              hasValidQrOptions,
+            }
+          );
+          // Fallback: Recreate the QR code instead of updating
+          if (currentContainer) {
+            currentContainer.innerHTML = '';
+          }
+          qrRef.current = new QRCodeStyling(options);
+          qrRef.current.append(currentContainer);
+          return;
+        }
+
+        // BULLETPROOF: All guards passed, safe to update
+        // Wrap update in defensive try-catch to handle any library edge cases
+        try {
+          qrRef.current.update(options);
+        } catch (updateError) {
+          console.warn(
+            '[QR WARN] Update failed, attempting recreation:',
+            updateError
+          );
+          // If update fails, recreate the QR code
+          if (currentContainer) {
+            currentContainer.innerHTML = '';
+          }
+          qrRef.current = new QRCodeStyling(options);
+          qrRef.current.append(currentContainer);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to create/update QR code:', error, {
+        options,
+        hasQrRef: !!qrRef.current,
       });
+      if (currentContainer) {
+        currentContainer.innerHTML = '';
+      }
     }
   }, [
     bgColor,
@@ -409,6 +683,26 @@ export default function NeoQrGeneratorPage() {
     qrValue,
     qrSize,
   ]);
+
+  // DEBOUNCED: Main QR update effect with protection against rapid theme transitions
+  useEffect(() => {
+    // Clear any pending update from previous render
+    if (qrUpdateTimeoutRef.current) {
+      clearTimeout(qrUpdateTimeoutRef.current);
+    }
+
+    // DEBOUNCE: Delay update to prevent crashes during theme transitions
+    // This allows multiple rapid state changes to batch together
+    qrUpdateTimeoutRef.current = setTimeout(() => {
+      performQrUpdate();
+    }, 50); // 50ms debounce - short enough for responsiveness, long enough to batch updates
+
+    return () => {
+      if (qrUpdateTimeoutRef.current) {
+        clearTimeout(qrUpdateTimeoutRef.current);
+      }
+    };
+  }, [performQrUpdate]);
 
   const resetFormForType = useCallback(() => {
     setUrlInput('');
@@ -465,6 +759,12 @@ export default function NeoQrGeneratorPage() {
   useEffect(() => {
     return () => {
       if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (qrUpdateTimeoutRef.current) clearTimeout(qrUpdateTimeoutRef.current);
     };
   }, []);
 
@@ -719,27 +1019,32 @@ export default function NeoQrGeneratorPage() {
     <div className="min-h-screen">
       <NeoGeneratorHero />
 
-      <div className="mx-auto max-w-6xl px-4 py-15 pb-0 sm:px-6 lg:px-8">
-        {/* Main Content Area */}
-        <div className="rounded-xl border border-white/10 bg-gradient-to-b from-slate-900/60 to-slate-800/30 backdrop-blur-sm">
-          <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
-            {/* Left Column: Input Section with merged tabs */}
-            <div className="p-4">
-              {/* MERGED NAVBAR: Tab selector integrated with input section */}
-              <div className="rounded-lg border border-slate-700/50 bg-slate-800/50 p-4">
-                {/* Tab Navigation Header */}
-                <div className="relative mb-4 flex flex-wrap justify-center gap-1.5 rounded-full bg-gradient-to-r from-slate-900/40 to-slate-800/40 p-1.5 backdrop-blur-sm border border-slate-700/50">
+      <div className="mx-auto max-w-6xl px-4 py-16 pb-0 sm:px-6 lg:px-8">
+        {/* Unified Main Container - All sections merged */}
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-lg transition-all duration-300 dark:border-slate-700 dark:bg-slate-900">
+          <div className="flex flex-col lg:flex-row lg:gap-0">
+            {/* Left Column: Input Section */}
+            <div className='flex-1 border-slate-200 border-b p-6 sm:p-8 lg:border-r lg:border-b-0 lg:pr-8 dark:border-slate-700'>
+              {/* Navbar - Type Switcher */}
+              <div className="mb-8">
+                <div className="relative flex flex-wrap justify-center gap-1.5 overflow-x-auto rounded-full border border-slate-200 bg-slate-100 p-2 transition-colors duration-300 dark:border-slate-700 dark:bg-slate-800">
                   {qrTypeTabs.map((tab) => {
                     const isActive = tab.value === qrType;
                     return (
-                      <button
+                      <motion.button
                         type="button"
                         key={tab.value}
                         onClick={() => handleTypeChange(tab.value)}
-                        className={`relative flex items-center gap-2 overflow-hidden rounded-full px-4 py-2.5 font-semibold text-sm transition-all duration-300 ${
+                        whileHover={
+                          !isActive
+                            ? { backgroundColor: 'rgba(255, 255, 255, 0.3)' }
+                            : {}
+                        }
+                        whileTap={{ scale: 0.95 }}
+                        className={`relative shrink-0 overflow-hidden whitespace-nowrap rounded-full px-4 py-2.5 font-medium text-sm transition-all duration-300 ${
                           isActive
-                            ? 'text-white scale-105'
-                            : 'text-slate-300 hover:text-white hover:scale-102'
+                            ? 'scale-100 text-white'
+                            : 'text-slate-700 hover:text-slate-900 active:scale-95 dark:text-slate-400 dark:hover:text-slate-200'
                         } focus:outline-none focus:ring-2 focus:ring-blue-500/50`}
                       >
                         {isActive ? (
@@ -750,20 +1055,23 @@ export default function NeoQrGeneratorPage() {
                               stiffness: 380,
                               damping: 35,
                             }}
-                            className="absolute inset-0 -z-10 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 shadow-lg shadow-blue-500/50"
+                            className="absolute inset-0 -z-10 rounded-full bg-linear-to-r from-blue-600 to-cyan-500 shadow-lg shadow-blue-500/50"
                           />
                         ) : null}
                         <span className="hidden sm:inline text-center">
                           {tab.label}
                         </span>
-                      </button>
+                      </motion.button>
                     );
                   })}
                 </div>
+              </div>
 
-                {/* Section Title */}
-                <div className="mb-4 border-t border-slate-700/50 pt-4">
-                  <h3 className="text-center font-semibold text-lg text-white">
+              {/* Description & Inputs - Merged without card styling */}
+              <div className="mb-8 space-y-6">
+                {/* Description */}
+                <div className="border-slate-200 border-b pb-6 dark:border-slate-700">
+                  <h3 className="text-center font-semibold text-lg text-slate-900 dark:text-white">
                     {currentTabInfo?.description ||
                       'Redirect to an existing web URL'}
                   </h3>
@@ -1145,118 +1453,151 @@ export default function NeoQrGeneratorPage() {
                 </div>
               </div>
 
-              {/* UPDATED: Customize options moved up, logo upload removed (moved to Options modal) */}
-              <div className="mt-6 space-y-3 rounded-lg p-4">
-                <div className="mb-4 flex items-center justify-between">
-                  <h2 className="font-semibold text-lg text-white">
-                    Customize QR Code
-                  </h2>
+              {/* Customize Options - Merged without separate card */}
+              <div className="space-y-4 border-slate-200 border-t pt-6 dark:border-slate-700">
+                <h4 className="font-semibold text-base text-slate-900 dark:text-white">
+                  QR Customization
+                </h4>
+
+                {/* Color Pickers */}
+                <div className="flex justify-center gap-8">
+                  <div className="flex flex-col items-center gap-3">
+                    <input
+                      type="color"
+                      value={fgColor}
+                      onChange={(e) => setFgColor(e.target.value)}
+                      className="h-12 w-16 cursor-pointer rounded-lg border border-slate-300 transition-all hover:shadow-md dark:border-slate-600"
+                      title="Foreground color"
+                    />
+                    <div className="text-center">
+                      <p className="font-medium text-slate-700 text-sm dark:text-slate-300">
+                        Foreground
+                      </p>
+                      <p className="text-slate-500 text-xs dark:text-slate-400">
+                        color
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col items-center gap-3">
+                    <input
+                      type="color"
+                      value={bgColor}
+                      onChange={(e) => setBgColor(e.target.value)}
+                      className="h-12 w-16 cursor-pointer rounded-lg border border-slate-300 transition-all hover:shadow-md dark:border-slate-600"
+                      title="Background color"
+                    />
+                    <div className="text-center">
+                      <p className="font-medium text-slate-700 text-sm dark:text-slate-300">
+                        Background
+                      </p>
+                      <p className="text-slate-500 text-xs dark:text-slate-400">
+                        color
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="space-y-4">
-                  <div className="flex justify-center gap-6">
-                    <div className="space-y-2">
-                      <input
-                        type="color"
-                        value={fgColor}
-                        onChange={(e) => setFgColor(e.target.value)}
-                        className="h-10 w-14 cursor-pointer rounded-lg border border-slate-600"
-                      />
-                      <Label className="text-slate-300">
-                        <span className="block leading-tight">Foreground</span>
-                        <span className="block leading-tight">color</span>
-                      </Label>
-                    </div>
-
-                    <div className="space-y-2">
-                      <input
-                        type="color"
-                        value={bgColor}
-                        onChange={(e) => setBgColor(e.target.value)}
-                        className="h-10 w-14 cursor-pointer rounded-lg border border-slate-600"
-                      />
-                      <Label className="text-slate-300">
-                        <span className="block leading-tight">Background</span>
-                        <span className="block leading-tight">color</span>
-                      </Label>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label className="text-slate-300">
-                      QR size ({qrSize}px)
+                {/* QR Size Slider */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label className="font-medium text-slate-700 dark:text-slate-300">
+                      QR Size
                     </Label>
-                    {/* UPDATED: QR size slider - updates in real-time while dragging */}
+                    <span className="font-semibold text-blue-600 text-sm dark:text-blue-400">
+                      {isDraggingSlider ? previewQrSize : qrSize}px
+                    </span>
+                  </div>
+                  <div
+                    className="space-y-1"
+                    onPointerDown={handleQrSizeSliderPointerDown}
+                    onPointerUp={handleQrSizeSliderPointerUp}
+                    onPointerLeave={
+                      isDraggingSlider ? handleQrSizeSliderPointerUp : undefined
+                    }
+                  >
                     <Slider
-                      min={180}
+                      min={190}
                       max={420}
                       step={10}
-                      value={[qrSize]}
-                      onValueChange={(v) => setQrSize(v[0] ?? qrSize)}
+                      value={[isDraggingSlider ? previewQrSize : qrSize]}
+                      onValueChange={handleQrSizeSliderChange}
                       className="py-1"
                     />
+                    {isDraggingSlider && (
+                      <p className="text-right font-medium text-blue-500 text-xs dark:text-blue-400">
+                        Release to apply
+                      </p>
+                    )}
                   </div>
+                </div>
 
-                  <div className="space-y-2">
-                    <Label className="text-slate-300">Error correction</Label>
-                    <Select
-                      value={errorLevel}
-                      onValueChange={(v) => setErrorLevel(v as QrErrorLevel)}
-                    >
-                      <SelectTrigger className="rounded-lg border-slate-600 bg-slate-700/50 text-white">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="border-slate-600 bg-slate-800 text-white">
-                        <SelectItem value="L">Low (~7%)</SelectItem>
-                        <SelectItem value="M">Medium (~15%)</SelectItem>
-                        <SelectItem value="Q">Quartile (~25%)</SelectItem>
-                        <SelectItem value="H">High (~30%)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                {/* Error Correction */}
+                <div className="space-y-2">
+                  <Label className="font-medium text-slate-700 dark:text-slate-300">
+                    Error Correction
+                  </Label>
+                  <Select
+                    value={errorLevel}
+                    onValueChange={(v) => setErrorLevel(v as QrErrorLevel)}
+                  >
+                    <SelectTrigger className="rounded-lg border-slate-300 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="border-slate-300 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
+                      <SelectItem value="L">Low (~7%)</SelectItem>
+                      <SelectItem value="M">Medium (~15%)</SelectItem>
+                      <SelectItem value="Q">Quartile (~25%)</SelectItem>
+                      <SelectItem value="H">High (~30%)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-                  <div className="flex items-center gap-3">
-                    <Checkbox
-                      id="quiet-zone-modal"
-                      checked={quietZone}
-                      onCheckedChange={(c) => setQuietZone(c === true)}
-                    />
-                    <Label
-                      htmlFor="quiet-zone-modal"
-                      className="cursor-pointer text-slate-300"
-                    >
-                      Quiet zone (recommended)
-                    </Label>
-                  </div>
+                {/* Quiet Zone */}
+                <div className="flex items-center gap-3 pt-2">
+                  <Checkbox
+                    id="quiet-zone"
+                    checked={quietZone}
+                    onCheckedChange={(c) => setQuietZone(c === true)}
+                  />
+                  <Label
+                    htmlFor="quiet-zone"
+                    className="cursor-pointer font-medium text-slate-700 dark:text-slate-300"
+                  >
+                    Quiet zone (recommended)
+                  </Label>
                 </div>
               </div>
             </div>
 
             {/* Right Column: QR Preview and Actions */}
-            <div className="rounded-xl bg-gradient-to-b p-6 backdrop-blur-sm lg:top-24">
-              <div className="mb-6">
-                <h3 className="text-center font-semibold text-lg text-white">
+            <div className="flex flex-1 flex-col gap-6 p-6 sm:p-8 lg:pl-8">
+              <div className="pt-2">
+                <h3 className='text-center font-semibold text-lg text-slate-900 tracking-wide dark:text-white'>
                   Live Preview
                 </h3>
               </div>
 
               {/* QR Code Preview with Fade-in Animation */}
-              <div className="flex flex-col items-center justify-center">
+              <div className='flex flex-col items-center justify-center gap-6 border-slate-200 border-t px-8 py-10 dark:border-slate-700'>
                 {qrValue.trim() ? (
                   <div
                     key={`qr-${qrType}-${qrValue.slice(0, 40)}`}
-                    className="flex animate-fadeIn flex-col items-center justify-center gap-4 rounded-lg bg-white p-4 shadow-xl transition-all duration-300 ease-in-out"
+                    className="qr-container flex animate-fadeIn flex-col items-center justify-center gap-6 rounded-xl p-6 transition-all duration-300 ease-in-out"
                   >
                     {/* UPDATED: Logo positioned at bottom-right corner */}
                     <div className="relative">
                       <div
                         className="transition-all duration-300 ease-in-out"
-                        style={{ width: qrSize, height: qrSize }}
+                        style={{
+                          width: qrSize,
+                          height: qrSize,
+                        }}
                       >
                         <div ref={qrContainerRef} />
                       </div>
                       {logoDataUrl && (
-                        <div className="absolute -bottom-2 -right-2">
+                        <div className="absolute -right-2 -bottom-2">
                           <div
                             style={{
                               height: logoSize,
@@ -1266,31 +1607,33 @@ export default function NeoQrGeneratorPage() {
                               backgroundRepeat: 'no-repeat',
                               backgroundPosition: 'center',
                             }}
-                            className="rounded-lg border-2 border-white shadow-lg"
+                            className="rounded-lg border-2 border-white shadow-lg dark:border-slate-600"
                           />
                         </div>
                       )}
                     </div>
                   </div>
                 ) : (
-                  <div className="flex min-h-[300px] w-full items-center justify-center text-center text-slate-400 text-sm">
-                    <div>
-                      <p className="font-semibold text-lg text-slate-600">
+                  <div className="qr-container flex min-h-75 w-full items-center justify-center rounded-xl border-2 border-slate-300 border-dashed text-center transition-all duration-300 dark:border-slate-700">
+                    <div className="space-y-3 px-6">
+                      <p className="font-semibold text-lg text-slate-600 dark:text-slate-400">
                         No QR Code yet
                       </p>
-                      <p className="mt-2">Enter details to generate</p>
+                      <p className="text-slate-500 text-sm dark:text-slate-500">
+                        Enter details on the left to generate a QR code
+                      </p>
                     </div>
                   </div>
                 )}
               </div>
 
-              {/* Action Buttons */}
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              {/* Action Buttons - Merged into flow */}
+              <div className="flex flex-wrap items-center justify-center gap-3 border-slate-200 border-t pt-6 dark:border-slate-700">
                 <Button
                   type="button"
                   onClick={download}
                   disabled={!qrCanDownload}
-                  className="rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white transition-all duration-200 hover:scale-105 hover:bg-blue-700 hover:brightness-110 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 disabled:hover:bg-blue-600"
+                  className="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition-all duration-200 hover:scale-105 hover:bg-blue-700 hover:shadow-lg active:scale-95 disabled:opacity-50 disabled:hover:scale-100 disabled:hover:bg-blue-600 disabled:hover:shadow-none dark:hover:shadow-blue-500/50"
                 >
                   <span className="inline-flex items-center gap-2">
                     <svg
@@ -1331,7 +1674,7 @@ export default function NeoQrGeneratorPage() {
                   type="button"
                   variant="outline"
                   disabled={!qrCanDownload || copied}
-                  className="rounded-lg border border-slate-600 bg-slate-800/50 text-white transition-all duration-200 hover:scale-105 hover:border-slate-500 hover:bg-slate-700 hover:brightness-110 active:scale-95 disabled:opacity-50"
+                  className="rounded-lg border border-slate-300 bg-white text-slate-900 transition-all duration-200 hover:scale-105 hover:border-blue-500 hover:bg-slate-50 hover:shadow-md active:scale-95 disabled:opacity-50 disabled:hover:scale-100 dark:border-slate-600 dark:bg-slate-900 dark:text-white dark:hover:border-blue-400 dark:hover:bg-slate-800"
                   onClick={handleCopy}
                 >
                   <span className="inline-flex items-center gap-2">
@@ -1365,7 +1708,7 @@ export default function NeoQrGeneratorPage() {
                   type="button"
                   onClick={() => setShowOptionsModal(true)}
                   variant="outline"
-                  className="rounded-lg border border-slate-600 bg-transparent text-white transition-all duration-200 hover:scale-105 hover:border-slate-500 hover:bg-slate-800/50 hover:brightness-110 active:scale-95"
+                  className="rounded-lg border border-slate-300 bg-white text-slate-900 transition-all duration-200 hover:scale-105 hover:border-blue-500 hover:bg-slate-50 hover:shadow-md active:scale-95 dark:border-slate-600 dark:bg-slate-900 dark:text-white dark:hover:border-blue-400 dark:hover:bg-slate-800"
                 >
                   Options
                 </Button>
@@ -1494,14 +1837,14 @@ function CustomizeModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md animate-slideUp rounded-xl border border-slate-700 bg-slate-800 p-6 shadow-2xl"
+        className="w-full max-w-md animate-slideUp rounded-xl border border-slate-300 bg-white p-6 shadow-2xl transition-all duration-300 dark:border-slate-700 dark:bg-slate-900"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mt-6 flex gap-3">
           <Button
             type="button"
             onClick={onClose}
-            className="flex-1 rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white transition-all duration-200 hover:scale-105 hover:bg-blue-700 hover:brightness-110 active:scale-95"
+            className="flex-1 rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white transition-all duration-200 hover:scale-105 hover:bg-blue-700 active:scale-95"
           >
             Done
           </Button>
@@ -1509,7 +1852,7 @@ function CustomizeModal({
             type="button"
             onClick={handleCancel}
             variant="outline"
-            className="flex-1 rounded-lg border border-slate-600 bg-slate-800/50 text-white transition-all duration-200 hover:scale-105 hover:border-slate-500 hover:bg-slate-700 hover:brightness-110 active:scale-95"
+            className="flex-1 rounded-lg border border-slate-300 bg-white text-slate-900 transition-all duration-200 hover:scale-105 hover:bg-slate-50 active:scale-95 dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
           >
             Cancel
           </Button>
@@ -1616,15 +1959,17 @@ function OptionsModal({
       onClick={onClose}
     >
       <div
-        className="max-h-[90vh] w-full max-w-md animate-slideUp overflow-y-auto rounded-xl border border-slate-700 bg-slate-800 p-6 shadow-2xl"
+        className="max-h-[90vh] w-full max-w-md animate-slideUp overflow-y-auto rounded-xl border border-slate-300 bg-white p-6 shadow-2xl transition-all duration-300 dark:border-slate-700 dark:bg-slate-900"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="font-semibold text-lg text-white">⚙️ More Options</h2>
+          <h2 className="font-semibold text-lg text-slate-900 dark:text-white">
+            More Options
+          </h2>
           <button
             type="button"
             onClick={onClose}
-            className="text-slate-400 transition-all duration-200 hover:scale-110 hover:text-white active:scale-95"
+            className="text-slate-400 transition-all duration-200 hover:scale-110 hover:text-slate-900 active:scale-95 dark:hover:text-white"
           >
             ✕
           </button>
@@ -1633,15 +1978,17 @@ function OptionsModal({
         <div className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label className="text-slate-300">Frame style</Label>
+              <Label className="font-medium text-slate-700 dark:text-slate-300">
+                Frame style
+              </Label>
               <Select
                 value={frameStyle}
                 onValueChange={(v) => setFrameStyle(v as QrFrameStyle)}
               >
-                <SelectTrigger className="rounded-lg border-slate-600 bg-slate-700/50 text-white">
+                <SelectTrigger className="rounded-lg border-slate-300 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="border-slate-600 bg-slate-800 text-white">
+                <SelectContent className="border-slate-300 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
                   <SelectItem value="neo">Neo border</SelectItem>
                   <SelectItem value="gold">Gold glow</SelectItem>
                   <SelectItem value="soft">Soft frame</SelectItem>
@@ -1652,15 +1999,17 @@ function OptionsModal({
             </div>
 
             <div className="space-y-2">
-              <Label className="text-slate-300">Dot shape</Label>
+              <Label className="font-medium text-slate-700 dark:text-slate-300">
+                Dot shape
+              </Label>
               <Select
                 value={dotShape}
                 onValueChange={(v) => setDotShape(v as QrDotShape)}
               >
-                <SelectTrigger className="rounded-lg border-slate-600 bg-slate-700/50 text-white">
+                <SelectTrigger className="rounded-lg border-slate-300 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="border-slate-600 bg-slate-800 text-white">
+                <SelectContent className="border-slate-300 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
                   <SelectItem value="square">Square</SelectItem>
                   <SelectItem value="rounded">Rounded</SelectItem>
                   <SelectItem value="dots">Dots</SelectItem>
@@ -1670,9 +2019,11 @@ function OptionsModal({
           </div>
 
           {/* MOVED TO OPTIONS: Logo upload section */}
-          <div className="space-y-3 border-t border-slate-700 pt-4">
+          <div className="space-y-3 border-slate-200 border-t pt-4 dark:border-slate-700">
             <div>
-              <p className="font-medium text-sm text-white">Logo</p>
+              <p className="font-medium text-slate-900 text-sm dark:text-white">
+                Logo
+              </p>
             </div>
 
             {!logoDataUrl ? (
@@ -1684,7 +2035,7 @@ function OptionsModal({
                   'image/webp': ['.webp'],
                 }}
                 maxFiles={1}
-                className="border-slate-600 bg-slate-800/50 text-white transition-all duration-200 hover:bg-slate-700 hover:brightness-110"
+                className="border-slate-300 bg-slate-50 text-slate-900 transition-all duration-200 hover:bg-slate-100 hover:shadow-md dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
               >
                 <DropzoneEmptyState />
               </Dropzone>
@@ -1692,13 +2043,15 @@ function OptionsModal({
 
             {logoDataUrl ? (
               <div className="flex items-center justify-between">
-                <span className="text-slate-300 text-xs">Logo uploaded</span>
+                <span className="font-medium text-slate-700 text-xs dark:text-slate-300">
+                  Logo uploaded
+                </span>
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
                   onClick={() => setLogoDataUrl('')}
-                  className="border-slate-600 bg-slate-800/50 text-white transition-all duration-200 hover:scale-105 hover:bg-slate-700 hover:brightness-110 active:scale-95"
+                  className="border-slate-300 bg-white text-slate-900 transition-all duration-200 hover:scale-105 hover:bg-slate-50 active:scale-95 dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
                 >
                   Remove
                 </Button>
@@ -1708,9 +2061,9 @@ function OptionsModal({
             {logoDataUrl && (
               <div className="space-y-3">
                 <div className="space-y-2">
-                  <Label className="flex justify-between text-slate-300 text-xs">
+                  <Label className="flex justify-between font-medium text-slate-700 text-xs dark:text-slate-300">
                     <span>Logo size</span>
-                    <span className="text-[10px] text-slate-400">
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400">
                       {logoSize}px | Max: {maxLogoSize}px
                     </span>
                   </Label>
@@ -1729,26 +2082,30 @@ function OptionsModal({
           </div>
 
           {/* Download options */}
-          <div className="space-y-3 border-t border-slate-700 pt-4">
+          <div className="space-y-3 border-slate-200 border-t pt-4 dark:border-slate-700">
             <div className="space-y-2">
-              <Label className="text-slate-300">File name</Label>
+              <Label className="font-medium text-slate-700 dark:text-slate-300">
+                File name
+              </Label>
               <input
                 value={downloadName}
                 onChange={(e) => setDownloadName(e.target.value || 'qrcode')}
-                className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-2 text-sm text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2 text-slate-900 text-sm placeholder-slate-400 transition-colors focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500"
               />
             </div>
 
             <div className="space-y-2">
-              <Label className="text-slate-300">Download format</Label>
+              <Label className="font-medium text-slate-700 dark:text-slate-300">
+                Download format
+              </Label>
               <Select
                 value={downloadFormat}
                 onValueChange={(v) => setDownloadFormat(v as QrDownloadFormat)}
               >
-                <SelectTrigger className="rounded-lg border-slate-600 bg-slate-700/50 text-white">
+                <SelectTrigger className="rounded-lg border-slate-300 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="border-slate-600 bg-slate-800 text-white">
+                <SelectContent className="border-slate-300 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
                   <SelectItem value="png">PNG (screen)</SelectItem>
                   <SelectItem value="jpeg">JPG (screen)</SelectItem>
                   <SelectItem value="svg">SVG (print quality)</SelectItem>
@@ -1771,7 +2128,7 @@ function OptionsModal({
             type="button"
             onClick={handleCancel}
             variant="outline"
-            className="flex-1 rounded-lg border border-slate-600 bg-slate-800/50 text-white transition-all duration-200 hover:scale-105 hover:border-slate-500 hover:bg-slate-700 active:scale-95"
+            className="flex-1 rounded-lg border border-slate-300 bg-white text-slate-900 transition-all duration-200 hover:scale-105 hover:bg-slate-50 active:scale-95 dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
           >
             Cancel
           </Button>
