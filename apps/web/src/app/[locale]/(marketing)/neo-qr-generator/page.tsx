@@ -1024,7 +1024,7 @@ export default function NeoQrGeneratorPage() {
         <div className="rounded-2xl border border-slate-200 bg-white shadow-lg transition-all duration-300 dark:border-slate-700 dark:bg-slate-900">
           <div className="flex flex-col lg:flex-row lg:gap-0">
             {/* Left Column: Input Section */}
-            <div className='flex-1 border-slate-200 border-b p-6 sm:p-8 lg:border-r lg:border-b-0 lg:pr-8 dark:border-slate-700'>
+            <div className="flex-1 border-slate-200 border-b p-6 sm:p-8 lg:border-r lg:border-b-0 lg:pr-8 dark:border-slate-700">
               {/* Navbar - Type Switcher */}
               <div className="mb-8">
                 <div className="relative flex flex-wrap justify-center gap-1.5 overflow-x-auto rounded-full border border-slate-200 bg-slate-100 p-2 transition-colors duration-300 dark:border-slate-700 dark:bg-slate-800">
@@ -1573,13 +1573,13 @@ export default function NeoQrGeneratorPage() {
             {/* Right Column: QR Preview and Actions */}
             <div className="flex flex-1 flex-col gap-6 p-6 sm:p-8 lg:pl-8">
               <div className="pt-2">
-                <h3 className='text-center font-semibold text-lg text-slate-900 tracking-wide dark:text-white'>
+                <h3 className="text-center font-semibold text-lg text-slate-900 tracking-wide dark:text-white">
                   Live Preview
                 </h3>
               </div>
 
               {/* QR Code Preview with Fade-in Animation */}
-              <div className='flex flex-col items-center justify-center gap-6 border-slate-200 border-t px-8 py-10 dark:border-slate-700'>
+              <div className="flex flex-col items-center justify-center gap-6 border-slate-200 border-t px-8 py-10 dark:border-slate-700">
                 {qrValue.trim() ? (
                   <div
                     key={`qr-${qrType}-${qrValue.slice(0, 40)}`}
