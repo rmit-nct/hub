@@ -38,7 +38,6 @@ type QrType =
 type QrDownloadFormat = 'png' | 'jpeg' | 'svg' | 'eps';
 type QrErrorLevel = 'L' | 'M' | 'Q' | 'H';
 type QrDotShape = 'square' | 'rounded' | 'dots';
-type QrFrameStyle = 'none' | 'neo' | 'gold' | 'soft' | 'dashed';
 
 function triggerDownload(blobOrUrl: Blob | string, fileName: string) {
   const url =
@@ -221,8 +220,8 @@ function buildQrOptions({
   margin: number;
   errorLevel: QrErrorLevel;
 }) {
-  // BULLETPROOF: Enforce minimum size of 190px
-  const safeSize = Math.max(190, Math.ceil(displaySize));
+  // BULLETPROOF: Enforce minimum size of 180px
+  const safeSize = Math.max(180, Math.ceil(displaySize));
 
   // BULLETPROOF: Default values for all colors
   const safeFgColor =
@@ -327,9 +326,27 @@ function buildQrOptions({
 }
 
 export default function NeoQrGeneratorPage() {
+  // Initialize colors from CSS variables (theme-aware)
+  const getInitialFgColor = () => {
+    if (typeof window === 'undefined') return '#000000';
+    const isDark =
+      document.documentElement.classList.contains('dark') ||
+      window.matchMedia('(prefers-color-scheme: dark)').matches;
+    // Primary foreground for light mode (dark text), theme-inverted for dark mode
+    return isDark ? '#ffffff' : '#000000';
+  };
+
+  const getInitialBgColor = () => {
+    if (typeof window === 'undefined') return '#ffffff';
+    const isDark =
+      document.documentElement.classList.contains('dark') ||
+      window.matchMedia('(prefers-color-scheme: dark)').matches;
+    // Light background for light mode, dark background for dark mode
+    return isDark ? '#1e293b' : '#ffffff';
+  };
+
   const [qrType, setQrType] = useState<QrType>('url');
   const [qrValue, setQrValue] = useState('');
-  const [showCustomizeModal, setShowCustomizeModal] = useState(false);
   const [showOptionsModal, setShowOptionsModal] = useState(false);
   const [copied, setCopied] = useState(false);
   const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -370,19 +387,18 @@ export default function NeoQrGeneratorPage() {
   // File-based inputs
   const [fileObjectUrl, setFileObjectUrl] = useState<string>('');
 
-  // Customize options - Theme-aware defaults
-  const [bgColor, setBgColor] = useState('#ffffff');
-  const [fgColor, setFgColor] = useState('#000000');
+  // Customize options - Theme-aware colors from CSS variables
+  const [bgColor, setBgColor] = useState(getInitialBgColor());
+  const [fgColor, setFgColor] = useState(getInitialFgColor());
   const [qrSize, setQrSize] = useState(260);
   const [previewQrSize, setPreviewQrSize] = useState(260);
   const [isDraggingSlider, setIsDraggingSlider] = useState(false);
   const [errorLevel, setErrorLevel] = useState<QrErrorLevel>('H');
   const [quietZone, setQuietZone] = useState(true);
 
-  const [frameStyle, setFrameStyle] = useState<QrFrameStyle>('neo');
   const [dotShape, setDotShape] = useState<QrDotShape>('rounded');
   const [logoDataUrl, setLogoDataUrl] = useState<string>('');
-  const [logoSize, setLogoSize] = useState(24);
+  const [logoSize, setLogoSize] = useState(58); // Fixed 48px
 
   // Export options
   const [downloadFormat, setDownloadFormat] = useState<QrDownloadFormat>('png');
@@ -407,18 +423,6 @@ export default function NeoQrGeneratorPage() {
 
   const urlInputValid = isValidHttpUrl(urlInput);
   const facebookUrlValid = isValidHttpUrl(facebookUrl);
-
-  // UPDATED RANGE: Calculate max logo size - fixed at 96px
-  const maxLogoSize = useMemo(() => {
-    return 96;
-  }, []);
-
-  // UPDATED RANGE: Enforce the max logo size at 96px
-  useEffect(() => {
-    if (logoSize > 96) {
-      setLogoSize(96);
-    }
-  }, [logoSize]);
 
   // Slider drag behavior: slider and label update in real-time, QR image/background frozen
   const handleQrSizeSliderStart = useCallback(() => {
@@ -887,12 +891,11 @@ export default function NeoQrGeneratorPage() {
         return;
       }
 
-      // UPDATED: Logo positioned at bottom-right corner (10-15% of QR size)
-      const logoWidth = Math.max(20, Math.min(60, Math.floor(qrSize * 0.15)));
-      const logoHeight = logoWidth;
-      const padding = 8;
-      const logoX = qrSize - logoWidth - padding;
-      const logoY = qrSize - logoHeight - padding;
+      // Logo positioned at center (fixed 48px)
+      const logoWidth = 48;
+      const logoHeight = 48;
+      const logoX = (qrSize - logoWidth) / 2;
+      const logoY = (qrSize - logoHeight) / 2;
 
       canvas.width = qrSize;
       canvas.height = qrSize;
@@ -904,9 +907,11 @@ export default function NeoQrGeneratorPage() {
       // Draw QR code
       ctx.drawImage(qrImg, 0, 0, qrSize, qrSize);
 
-      // Draw Logo with border
+      // Draw Logo with white border for visibility
+      ctx.fillStyle = bgColor;
+      ctx.fillRect(logoX - 4, logoY - 4, logoWidth + 8, logoHeight + 8);
       ctx.fillStyle = 'white';
-      ctx.fillRect(logoX - 3, logoY - 3, logoWidth + 6, logoHeight + 6);
+      ctx.fillRect(logoX - 2, logoY - 2, logoWidth + 4, logoHeight + 4);
       ctx.drawImage(logoImg, logoX, logoY, logoWidth, logoHeight);
 
       canvas.toBlob((blob) => {
@@ -922,12 +927,11 @@ export default function NeoQrGeneratorPage() {
       if (!svgBlob) return;
       const svgText = await (svgBlob as Blob).text();
 
-      // UPDATED: Logo positioned at bottom-right corner (10-15% of QR size)
-      const logoWidth = Math.max(20, Math.min(60, Math.floor(qrSize * 0.15)));
-      const logoHeight = logoWidth;
-      const padding = 8;
-      const logoX = qrSize - logoWidth - padding;
-      const logoY = qrSize - logoHeight - padding;
+      // Logo positioned at center (fixed 48px)
+      const logoWidth = 48;
+      const logoHeight = 48;
+      const logoX = (qrSize - logoWidth) / 2;
+      const logoY = (qrSize - logoHeight) / 2;
 
       const parser = new DOMParser();
       const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
@@ -1055,10 +1059,10 @@ export default function NeoQrGeneratorPage() {
                               stiffness: 380,
                               damping: 35,
                             }}
-                            className="absolute inset-0 -z-10 rounded-full bg-linear-to-r from-blue-600 to-cyan-500 shadow-lg shadow-blue-500/50"
+                            className="absolute inset-0 -z-10 rounded-full bg-linear-to-r from-blue-600 to-cyan-500 shadow-blue-500/50 shadow-lg"
                           />
                         ) : null}
-                        <span className="hidden sm:inline text-center">
+                        <span className="hidden text-center sm:inline">
                           {tab.label}
                         </span>
                       </motion.button>
@@ -1459,41 +1463,63 @@ export default function NeoQrGeneratorPage() {
                   QR Customization
                 </h4>
 
-                {/* Color Pickers */}
-                <div className="flex justify-center gap-8">
-                  <div className="flex flex-col items-center gap-3">
-                    <input
-                      type="color"
-                      value={fgColor}
-                      onChange={(e) => setFgColor(e.target.value)}
-                      className="h-12 w-16 cursor-pointer rounded-lg border border-slate-300 transition-all hover:shadow-md dark:border-slate-600"
-                      title="Foreground color"
-                    />
-                    <div className="text-center">
-                      <p className="font-medium text-slate-700 text-sm dark:text-slate-300">
-                        Foreground
-                      </p>
-                      <p className="text-slate-500 text-xs dark:text-slate-400">
-                        color
-                      </p>
+                {/* Inline Color Pickers with HEX Input */}
+                <div className="space-y-4">
+                  {/* Foreground Color Picker */}
+                  <div className="space-y-2">
+                    <Label className="font-medium text-slate-700 dark:text-slate-300">
+                      Foreground Color
+                    </Label>
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="color"
+                        value={fgColor}
+                        onChange={(e) => setFgColor(e.target.value)}
+                        className="h-12 w-14 cursor-pointer rounded-lg border border-slate-300 transition-all hover:shadow-md dark:border-slate-600"
+                        title="Foreground color picker"
+                      />
+                      <input
+                        type="text"
+                        value={fgColor.toUpperCase()}
+                        onChange={(e) => {
+                          const val = e.target.value.toUpperCase();
+                          if (/^#[0-9A-F]{6}$/.test(val)) {
+                            setFgColor(val);
+                          }
+                        }}
+                        placeholder="#000000"
+                        maxLength={7}
+                        className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 font-mono text-slate-900 text-sm placeholder-slate-400 transition-colors focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500"
+                      />
                     </div>
                   </div>
 
-                  <div className="flex flex-col items-center gap-3">
-                    <input
-                      type="color"
-                      value={bgColor}
-                      onChange={(e) => setBgColor(e.target.value)}
-                      className="h-12 w-16 cursor-pointer rounded-lg border border-slate-300 transition-all hover:shadow-md dark:border-slate-600"
-                      title="Background color"
-                    />
-                    <div className="text-center">
-                      <p className="font-medium text-slate-700 text-sm dark:text-slate-300">
-                        Background
-                      </p>
-                      <p className="text-slate-500 text-xs dark:text-slate-400">
-                        color
-                      </p>
+                  {/* Background Color Picker */}
+                  <div className="space-y-2">
+                    <Label className="font-medium text-slate-700 dark:text-slate-300">
+                      Background Color
+                    </Label>
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="color"
+                        value={bgColor}
+                        onChange={(e) => setBgColor(e.target.value)}
+                        className="h-12 w-14 cursor-pointer rounded-lg border border-slate-300 transition-all hover:shadow-md dark:border-slate-600"
+                        title="Background color picker"
+                      />
+                      <input
+                        type="text"
+                        value={bgColor.toUpperCase()}
+                        onChange={(e) => {
+                          const val = e.target.value.toUpperCase();
+                          if (/^#[0-9A-F]{6}$/.test(val)) {
+                            setBgColor(val);
+                          }
+                        }}
+                        placeholder="#FFFFFF"
+                        maxLength={7}
+                        className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 font-mono text-slate-900 text-sm placeholder-slate-400 transition-colors focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500"
+                      />
                     </div>
                   </div>
                 </div>
@@ -1517,7 +1543,7 @@ export default function NeoQrGeneratorPage() {
                     }
                   >
                     <Slider
-                      min={190}
+                      min={180}
                       max={420}
                       step={10}
                       value={[isDraggingSlider ? previewQrSize : qrSize]}
@@ -1585,8 +1611,8 @@ export default function NeoQrGeneratorPage() {
                     key={`qr-${qrType}-${qrValue.slice(0, 40)}`}
                     className="qr-container flex animate-fadeIn flex-col items-center justify-center gap-6 rounded-xl p-6 transition-all duration-300 ease-in-out"
                   >
-                    {/* UPDATED: Logo positioned at bottom-right corner */}
-                    <div className="relative">
+                    {/* Logo positioned at center */}
+                    <div className="relative inline-block">
                       <div
                         className="transition-all duration-300 ease-in-out"
                         style={{
@@ -1597,7 +1623,16 @@ export default function NeoQrGeneratorPage() {
                         <div ref={qrContainerRef} />
                       </div>
                       {logoDataUrl && (
-                        <div className="absolute -right-2 -bottom-2">
+                        <div
+                          className="absolute flex items-center justify-center"
+                          style={{
+                            left: '50%',
+                            top: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            width: logoSize,
+                            height: logoSize,
+                          }}
+                        >
                           <div
                             style={{
                               height: logoSize,
@@ -1607,7 +1642,7 @@ export default function NeoQrGeneratorPage() {
                               backgroundRepeat: 'no-repeat',
                               backgroundPosition: 'center',
                             }}
-                            className="rounded-lg border-2 border-white shadow-lg dark:border-slate-600"
+                            className="rounded-md border-2 border-white shadow-lg dark:border-slate-600"
                           />
                         </div>
                       )}
@@ -1718,31 +1753,11 @@ export default function NeoQrGeneratorPage() {
         </div>
       </div>
 
-      {/* Customize Modal */}
-      {showCustomizeModal && (
-        <CustomizeModal
-          isOpen={showCustomizeModal}
-          onClose={() => setShowCustomizeModal(false)}
-          bgColor={bgColor}
-          setBgColor={setBgColor}
-          fgColor={fgColor}
-          setFgColor={setFgColor}
-          qrSize={qrSize}
-          setQrSize={setQrSize}
-          errorLevel={errorLevel}
-          setErrorLevel={setErrorLevel}
-          quietZone={quietZone}
-          setQuietZone={setQuietZone}
-        />
-      )}
-
       {/* Options Modal */}
       {showOptionsModal && (
         <OptionsModal
           isOpen={showOptionsModal}
           onClose={() => setShowOptionsModal(false)}
-          frameStyle={frameStyle}
-          setFrameStyle={setFrameStyle}
           dotShape={dotShape}
           setDotShape={setDotShape}
           downloadName={downloadName}
@@ -1753,111 +1768,9 @@ export default function NeoQrGeneratorPage() {
           setLogoDataUrl={setLogoDataUrl}
           logoSize={logoSize}
           setLogoSize={setLogoSize}
-          maxLogoSize={maxLogoSize}
           onDropLogo={onDropLogo}
         />
       )}
-    </div>
-  );
-}
-
-// Customize Modal Component
-interface CustomizeModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  bgColor: string;
-  setBgColor: (color: string) => void;
-  fgColor: string;
-  setFgColor: (color: string) => void;
-  qrSize: number;
-  setQrSize: (size: number) => void;
-  errorLevel: QrErrorLevel;
-  setErrorLevel: (level: QrErrorLevel) => void;
-  quietZone: boolean;
-  setQuietZone: (enabled: boolean) => void;
-}
-
-function CustomizeModal({
-  isOpen,
-  onClose,
-  bgColor,
-  setBgColor,
-  fgColor,
-  setFgColor,
-  qrSize,
-  setQrSize,
-  errorLevel,
-  setErrorLevel,
-  quietZone,
-  setQuietZone,
-}: CustomizeModalProps) {
-  const initialStateRef = useRef<{
-    fgColor: string;
-    bgColor: string;
-    qrSize: number;
-    errorLevel: QrErrorLevel;
-    quietZone: boolean;
-  } | null>(null);
-
-  useEffect(() => {
-    if (!isOpen) {
-      initialStateRef.current = null;
-      return;
-    }
-
-    // Snapshot once per modal open; keep it stable for Cancel revert.
-    if (initialStateRef.current === null) {
-      initialStateRef.current = {
-        fgColor,
-        bgColor,
-        qrSize,
-        errorLevel,
-        quietZone,
-      };
-    }
-  }, [bgColor, errorLevel, fgColor, isOpen, qrSize, quietZone]);
-
-  if (!isOpen) return null;
-
-  const handleCancel = () => {
-    const initial = initialStateRef.current;
-    if (initial) {
-      setFgColor(initial.fgColor);
-      setBgColor(initial.bgColor);
-      setQrSize(initial.qrSize);
-      setErrorLevel(initial.errorLevel);
-      setQuietZone(initial.quietZone);
-    }
-    onClose();
-  };
-
-  return (
-    <div
-      className="fixed inset-0 z-50 flex animate-fadeIn items-center justify-center bg-black/50 backdrop-blur-md"
-      onClick={onClose}
-    >
-      <div
-        className="w-full max-w-md animate-slideUp rounded-xl border border-slate-300 bg-white p-6 shadow-2xl transition-all duration-300 dark:border-slate-700 dark:bg-slate-900"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="mt-6 flex gap-3">
-          <Button
-            type="button"
-            onClick={onClose}
-            className="flex-1 rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white transition-all duration-200 hover:scale-105 hover:bg-blue-700 active:scale-95"
-          >
-            Done
-          </Button>
-          <Button
-            type="button"
-            onClick={handleCancel}
-            variant="outline"
-            className="flex-1 rounded-lg border border-slate-300 bg-white text-slate-900 transition-all duration-200 hover:scale-105 hover:bg-slate-50 active:scale-95 dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
-          >
-            Cancel
-          </Button>
-        </div>
-      </div>
     </div>
   );
 }
@@ -1866,44 +1779,35 @@ function CustomizeModal({
 interface OptionsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  frameStyle: QrFrameStyle;
-  setFrameStyle: (style: QrFrameStyle) => void;
   dotShape: QrDotShape;
   setDotShape: (shape: QrDotShape) => void;
   downloadName: string;
   setDownloadName: (name: string) => void;
   downloadFormat: QrDownloadFormat;
   setDownloadFormat: (format: QrDownloadFormat) => void;
-  // UPDATED: Added logo upload props
   logoDataUrl: string;
   setLogoDataUrl: (url: string) => void;
   logoSize: number;
   setLogoSize: (size: number) => void;
-  maxLogoSize: number;
   onDropLogo: (files: File[]) => void;
 }
 
 function OptionsModal({
   isOpen,
   onClose,
-  frameStyle,
-  setFrameStyle,
   dotShape,
   setDotShape,
   downloadName,
   setDownloadName,
   downloadFormat,
   setDownloadFormat,
-  // UPDATED: Added logo upload parameters
   logoDataUrl,
   setLogoDataUrl,
   logoSize,
   setLogoSize,
-  maxLogoSize,
   onDropLogo,
 }: OptionsModalProps) {
   const initialStateRef = useRef<{
-    frameStyle: QrFrameStyle;
     dotShape: QrDotShape;
     downloadName: string;
     downloadFormat: QrDownloadFormat;
@@ -1917,10 +1821,8 @@ function OptionsModal({
       return;
     }
 
-    // Snapshot once per modal open; keep it stable for Cancel revert.
     if (initialStateRef.current === null) {
       initialStateRef.current = {
-        frameStyle,
         dotShape,
         downloadName,
         downloadFormat,
@@ -1928,22 +1830,13 @@ function OptionsModal({
         logoSize,
       };
     }
-  }, [
-    dotShape,
-    downloadFormat,
-    downloadName,
-    frameStyle,
-    isOpen,
-    logoDataUrl,
-    logoSize,
-  ]);
+  }, [dotShape, downloadFormat, downloadName, isOpen, logoDataUrl, logoSize]);
 
   if (!isOpen) return null;
 
   const handleCancel = () => {
     const initial = initialStateRef.current;
     if (initial) {
-      setFrameStyle(initial.frameStyle);
       setDotShape(initial.dotShape);
       setDownloadName(initial.downloadName);
       setDownloadFormat(initial.downloadFormat);
@@ -1976,49 +1869,26 @@ function OptionsModal({
         </div>
 
         <div className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label className="font-medium text-slate-700 dark:text-slate-300">
-                Frame style
-              </Label>
-              <Select
-                value={frameStyle}
-                onValueChange={(v) => setFrameStyle(v as QrFrameStyle)}
-              >
-                <SelectTrigger className="rounded-lg border-slate-300 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="border-slate-300 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
-                  <SelectItem value="neo">Neo border</SelectItem>
-                  <SelectItem value="gold">Gold glow</SelectItem>
-                  <SelectItem value="soft">Soft frame</SelectItem>
-                  <SelectItem value="dashed">Dashed</SelectItem>
-                  <SelectItem value="none">None</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label className="font-medium text-slate-700 dark:text-slate-300">
-                Dot shape
-              </Label>
-              <Select
-                value={dotShape}
-                onValueChange={(v) => setDotShape(v as QrDotShape)}
-              >
-                <SelectTrigger className="rounded-lg border-slate-300 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="border-slate-300 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
-                  <SelectItem value="square">Square</SelectItem>
-                  <SelectItem value="rounded">Rounded</SelectItem>
-                  <SelectItem value="dots">Dots</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          <div className="space-y-2">
+            <Label className="font-medium text-slate-700 dark:text-slate-300">
+              Dot shape
+            </Label>
+            <Select
+              value={dotShape}
+              onValueChange={(v) => setDotShape(v as QrDotShape)}
+            >
+              <SelectTrigger className="rounded-lg border-slate-300 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="border-slate-300 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
+                <SelectItem value="square">Square</SelectItem>
+                <SelectItem value="rounded">Rounded</SelectItem>
+                <SelectItem value="dots">Dots</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
-          {/* MOVED TO OPTIONS: Logo upload section */}
+          {/* Logo upload section */}
           <div className="space-y-3 border-slate-200 border-t pt-4 dark:border-slate-700">
             <div>
               <p className="font-medium text-slate-900 text-sm dark:text-white">
@@ -2057,28 +1927,6 @@ function OptionsModal({
                 </Button>
               </div>
             ) : null}
-
-            {logoDataUrl && (
-              <div className="space-y-3">
-                <div className="space-y-2">
-                  <Label className="flex justify-between font-medium text-slate-700 text-xs dark:text-slate-300">
-                    <span>Logo size</span>
-                    <span className="text-[10px] text-slate-500 dark:text-slate-400">
-                      {logoSize}px | Max: {maxLogoSize}px
-                    </span>
-                  </Label>
-                  {/* UPDATED RANGE: Logo size slider fixed to 20-96px range */}
-                  <Slider
-                    min={20}
-                    max={96}
-                    step={2}
-                    value={[logoSize]}
-                    onValueChange={(v) => setLogoSize(v[0] ?? logoSize)}
-                    className="py-1"
-                  />
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Download options */}
