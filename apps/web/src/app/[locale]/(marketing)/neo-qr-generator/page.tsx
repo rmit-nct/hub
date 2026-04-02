@@ -397,6 +397,10 @@ export default function NeoQrGeneratorPage() {
   const [quietZone, setQuietZone] = useState(true);
 
   const [dotShape, setDotShape] = useState<QrDotShape>('rounded');
+  const [customizationTab, setCustomizationTab] = useState<
+    'customization' | 'logo' | 'frame'
+  >('customization');
+  const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [logoDataUrl, setLogoDataUrl] = useState<string>('');
   const [logoSize, setLogoSize] = useState(58); // Fixed 48px
 
@@ -742,8 +746,101 @@ export default function NeoQrGeneratorPage() {
 
   const copyQRCode = useCallback(async () => {
     if (!qrValue.trim()) return;
-    await navigator.clipboard.writeText(qrValue);
-  }, [qrValue]);
+
+    // If logo exists, merge QR and logo before copying (same as download)
+    if (logoDataUrl) {
+      try {
+        if (!qrRef.current) return;
+
+        const qrBlob = await qrRef.current.getRawData('png');
+        if (!qrBlob) return;
+        const qrUrl = URL.createObjectURL(qrBlob as Blob);
+
+        // Create and load images
+        const qrImg = document.createElement('img') as HTMLImageElement;
+        const logoImg = document.createElement('img') as HTMLImageElement;
+
+        await Promise.all([
+          new Promise((res) => {
+            qrImg.onload = res;
+            qrImg.src = qrUrl;
+          }),
+          new Promise((res) => {
+            logoImg.onload = res;
+            logoImg.src = logoDataUrl;
+          }),
+        ]);
+
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          URL.revokeObjectURL(qrUrl);
+          return;
+        }
+
+        // Logo positioned at center (fixed 48px)
+        const logoWidth = 48;
+        const logoHeight = 48;
+        const logoX = (qrSize - logoWidth) / 2;
+        const logoY = (qrSize - logoHeight) / 2;
+
+        canvas.width = qrSize;
+        canvas.height = qrSize;
+
+        // Fill background
+        ctx.fillStyle = bgColor;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Draw QR code
+        ctx.drawImage(qrImg, 0, 0, qrSize, qrSize);
+
+        // Draw Logo with white border for visibility
+        ctx.fillStyle = bgColor;
+        ctx.fillRect(logoX - 4, logoY - 4, logoWidth + 8, logoHeight + 8);
+        ctx.fillStyle = 'white';
+        ctx.fillRect(logoX - 2, logoY - 2, logoWidth + 4, logoHeight + 4);
+        ctx.drawImage(logoImg, logoX, logoY, logoWidth, logoHeight);
+
+        // Convert canvas to blob and copy to clipboard
+        canvas.toBlob(async (blob) => {
+          if (blob) {
+            try {
+              const item = new ClipboardItem({ 'image/png': blob });
+              await navigator.clipboard.write([item]);
+            } catch (error) {
+              console.warn('Failed to copy QR with logo to clipboard:', error);
+            }
+          }
+          URL.revokeObjectURL(qrUrl);
+        }, 'image/png');
+
+        return;
+      } catch (error) {
+        console.warn('Failed to copy QR with logo, falling back:', error);
+      }
+    }
+
+    // If no logo, try to copy just the QR image as PNG
+    try {
+      if (qrRef.current) {
+        const pngBlob = (await qrRef.current.getRawData('png')) as Blob | null;
+        if (pngBlob) {
+          const item = new ClipboardItem({ 'image/png': pngBlob });
+          await navigator.clipboard.write([item]);
+          return;
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to copy QR image, falling back to text:', error);
+    }
+
+    // Final fallback: copy text
+    try {
+      await navigator.clipboard.writeText(qrValue);
+    } catch (textError) {
+      console.warn('Failed to copy QR value:', textError);
+    }
+  }, [qrValue, logoDataUrl, qrSize, bgColor]);
 
   const handleCopy = async () => {
     await copyQRCode();
@@ -1457,142 +1554,389 @@ export default function NeoQrGeneratorPage() {
                 </div>
               </div>
 
-              {/* Customize Options - Merged without separate card */}
-              <div className="space-y-4 border-slate-200 border-t pt-6 dark:border-slate-700">
-                <h4 className="font-semibold text-base text-slate-900 dark:text-white">
-                  QR Customization
-                </h4>
-
-                {/* Inline Color Pickers with HEX Input */}
-                <div className="space-y-4">
-                  {/* Foreground Color Picker */}
-                  <div className="space-y-2">
-                    <Label className="font-medium text-slate-700 dark:text-slate-300">
-                      Foreground Color
-                    </Label>
-                    <div className="flex items-center gap-3">
-                      <input
-                        type="color"
-                        value={fgColor}
-                        onChange={(e) => setFgColor(e.target.value)}
-                        className="h-12 w-14 cursor-pointer rounded-lg border border-slate-300 transition-all hover:shadow-md dark:border-slate-600"
-                        title="Foreground color picker"
-                      />
-                      <input
-                        type="text"
-                        value={fgColor.toUpperCase()}
-                        onChange={(e) => {
-                          const val = e.target.value.toUpperCase();
-                          if (/^#[0-9A-F]{6}$/.test(val)) {
-                            setFgColor(val);
-                          }
-                        }}
-                        placeholder="#000000"
-                        maxLength={7}
-                        className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 font-mono text-slate-900 text-sm placeholder-slate-400 transition-colors focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Background Color Picker */}
-                  <div className="space-y-2">
-                    <Label className="font-medium text-slate-700 dark:text-slate-300">
-                      Background Color
-                    </Label>
-                    <div className="flex items-center gap-3">
-                      <input
-                        type="color"
-                        value={bgColor}
-                        onChange={(e) => setBgColor(e.target.value)}
-                        className="h-12 w-14 cursor-pointer rounded-lg border border-slate-300 transition-all hover:shadow-md dark:border-slate-600"
-                        title="Background color picker"
-                      />
-                      <input
-                        type="text"
-                        value={bgColor.toUpperCase()}
-                        onChange={(e) => {
-                          const val = e.target.value.toUpperCase();
-                          if (/^#[0-9A-F]{6}$/.test(val)) {
-                            setBgColor(val);
-                          }
-                        }}
-                        placeholder="#FFFFFF"
-                        maxLength={7}
-                        className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 font-mono text-slate-900 text-sm placeholder-slate-400 transition-colors focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500"
-                      />
-                    </div>
-                  </div>
+              {/* Customize Options - Tabbed Interface */}
+              <div
+                className="space-y-4 border-t pt-6"
+                style={{ borderColor: 'var(--border)' }}
+              >
+                {/* Tab Navigation */}
+                <div
+                  className="flex gap-2 rounded-lg border p-1"
+                  style={{
+                    borderColor: 'var(--border)',
+                    backgroundColor: 'var(--secondary)',
+                  }}
+                >
+                  {(['customization', 'logo', 'frame'] as const).map((tab) => (
+                    <button
+                      type="button"
+                      key={tab}
+                      onClick={() => setCustomizationTab(tab)}
+                      className="flex-1 rounded-md px-3 py-2 font-medium text-sm transition-all duration-200"
+                      style={{
+                        backgroundColor:
+                          customizationTab === tab
+                            ? 'var(--card)'
+                            : 'transparent',
+                        color:
+                          customizationTab === tab
+                            ? 'var(--primary)'
+                            : 'var(--muted-foreground)',
+                        boxShadow:
+                          customizationTab === tab
+                            ? '0 1px 3px rgba(0, 0, 0, 0.1)'
+                            : 'none',
+                      }}
+                    >
+                      {tab === 'customization'
+                        ? 'Customization'
+                        : tab === 'logo'
+                          ? 'Logo'
+                          : 'Frame'}
+                    </button>
+                  ))}
                 </div>
 
-                {/* QR Size Slider */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label className="font-medium text-slate-700 dark:text-slate-300">
-                      QR Size
-                    </Label>
-                    <span className="font-semibold text-blue-600 text-sm dark:text-blue-400">
-                      {isDraggingSlider ? previewQrSize : qrSize}px
-                    </span>
+                {/* Customization Tab - 3 Rows Structure */}
+                {customizationTab === 'customization' && (
+                  <div className="space-y-4">
+                    {/* Row 1: Foreground + Background Color Pickers on Same Line */}
+                    <div className="grid grid-cols-2 gap-4">
+                      {/* Foreground Color Picker */}
+                      <div className="space-y-2">
+                        <Label
+                          className="font-medium"
+                          style={{ color: 'var(--foreground)' }}
+                        >
+                          Foreground Color
+                        </Label>
+                        <div className="flex items-stretch gap-2">
+                          <input
+                            type="color"
+                            value={fgColor}
+                            onChange={(e) => setFgColor(e.target.value)}
+                            className="h-10 w-full min-w-0 cursor-pointer rounded-lg border transition-all hover:shadow-md"
+                            style={{
+                              borderColor: 'var(--border)',
+                              flex: '2 1 0%',
+                            }}
+                            title="Foreground color picker"
+                          />
+                          <input
+                            type="text"
+                            value={fgColor.toUpperCase()}
+                            onChange={(e) => {
+                              const val = e.target.value.toUpperCase();
+                              if (/^#[0-9A-F]{6}$/.test(val)) {
+                                setFgColor(val);
+                              }
+                            }}
+                            placeholder="#000000"
+                            maxLength={7}
+                            className="h-10 min-w-0 rounded-lg border px-3 font-mono text-sm transition-colors focus:outline-none"
+                            style={{
+                              borderColor: 'var(--border)',
+                              backgroundColor: 'var(--card)',
+                              color: 'var(--foreground)',
+                              flex: '7 1 0%',
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Background Color Picker */}
+                      <div className="space-y-2">
+                        <Label
+                          className="font-medium"
+                          style={{ color: 'var(--foreground)' }}
+                        >
+                          Background Color
+                        </Label>
+                        <div className="flex items-stretch gap-2">
+                          <input
+                            type="color"
+                            value={bgColor}
+                            onChange={(e) => setBgColor(e.target.value)}
+                            className="h-10 w-full min-w-0 cursor-pointer rounded-lg border transition-all hover:shadow-md"
+                            style={{
+                              borderColor: 'var(--border)',
+                              flex: '2 1 0%',
+                            }}
+                            title="Background color picker"
+                          />
+                          <input
+                            type="text"
+                            value={bgColor.toUpperCase()}
+                            onChange={(e) => {
+                              const val = e.target.value.toUpperCase();
+                              if (/^#[0-9A-F]{6}$/.test(val)) {
+                                setBgColor(val);
+                              }
+                            }}
+                            placeholder="#FFFFFF"
+                            maxLength={7}
+                            className="h-10 min-w-0 rounded-lg border px-3 font-mono text-sm transition-colors focus:outline-none"
+                            style={{
+                              borderColor: 'var(--border)',
+                              backgroundColor: 'var(--card)',
+                              color: 'var(--foreground)',
+                              flex: '7 1 0%',
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Row 2: Error Correction (Full Width) */}
+                    <div className="space-y-2">
+                      <Label
+                        className="font-medium"
+                        style={{ color: 'var(--foreground)' }}
+                      >
+                        Error Correction
+                      </Label>
+                      <Select
+                        value={errorLevel}
+                        onValueChange={(v) => setErrorLevel(v as QrErrorLevel)}
+                      >
+                        <SelectTrigger
+                          className="rounded-lg"
+                          style={{
+                            borderColor: 'var(--border)',
+                            backgroundColor: 'var(--card)',
+                            color: 'var(--foreground)',
+                          }}
+                        >
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent
+                          style={{
+                            borderColor: 'var(--border)',
+                            backgroundColor: 'var(--card)',
+                            color: 'var(--foreground)',
+                          }}
+                        >
+                          <SelectItem value="L">Low (~7%)</SelectItem>
+                          <SelectItem value="M">Medium (~15%)</SelectItem>
+                          <SelectItem value="Q">Quartile (~25%)</SelectItem>
+                          <SelectItem value="H">High (~30%)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Row 3: QR Size Slider */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <Label
+                          className="font-medium"
+                          style={{ color: 'var(--foreground)' }}
+                        >
+                          QR Size
+                        </Label>
+                        <span
+                          className="font-semibold text-sm"
+                          style={{ color: 'var(--primary)' }}
+                        >
+                          {isDraggingSlider ? previewQrSize : qrSize}px
+                        </span>
+                      </div>
+                      <div
+                        className="space-y-1"
+                        onPointerDown={handleQrSizeSliderPointerDown}
+                        onPointerUp={handleQrSizeSliderPointerUp}
+                        onPointerLeave={
+                          isDraggingSlider
+                            ? handleQrSizeSliderPointerUp
+                            : undefined
+                        }
+                      >
+                        <Slider
+                          min={180}
+                          max={420}
+                          step={10}
+                          value={[isDraggingSlider ? previewQrSize : qrSize]}
+                          onValueChange={handleQrSizeSliderChange}
+                          className="py-1"
+                        />
+                        {isDraggingSlider && (
+                          <p
+                            className="text-right font-medium text-xs"
+                            style={{ color: 'var(--primary)' }}
+                          >
+                            Release to apply
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Quiet Zone Checkbox */}
+                    <div className="flex items-center gap-3 pt-1">
+                      <Checkbox
+                        id="quiet-zone"
+                        checked={quietZone}
+                        onCheckedChange={(c) => setQuietZone(c === true)}
+                      />
+                      <Label
+                        htmlFor="quiet-zone"
+                        className="cursor-pointer font-medium"
+                        style={{ color: 'var(--foreground)' }}
+                      >
+                        Quiet zone (recommended)
+                      </Label>
+                    </div>
                   </div>
-                  <div
-                    className="space-y-1"
-                    onPointerDown={handleQrSizeSliderPointerDown}
-                    onPointerUp={handleQrSizeSliderPointerUp}
-                    onPointerLeave={
-                      isDraggingSlider ? handleQrSizeSliderPointerUp : undefined
-                    }
-                  >
-                    <Slider
-                      min={180}
-                      max={420}
-                      step={10}
-                      value={[isDraggingSlider ? previewQrSize : qrSize]}
-                      onValueChange={handleQrSizeSliderChange}
-                      className="py-1"
-                    />
-                    {isDraggingSlider && (
-                      <p className="text-right font-medium text-blue-500 text-xs dark:text-blue-400">
-                        Release to apply
-                      </p>
+                )}
+
+                {/* Logo Tab - File Upload Dropzone */}
+                {customizationTab === 'logo' && (
+                  <div className="space-y-4">
+                    <div
+                      className="group relative cursor-pointer space-y-4 rounded-lg border-2 border-dashed p-6 text-center transition-all hover:border-opacity-80"
+                      style={{
+                        borderColor: 'var(--border)',
+                        backgroundColor: 'var(--secondary)',
+                      }}
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                      }}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const files = Array.from(e.dataTransfer.files);
+                        onDropLogo(files);
+                      }}
+                    >
+                      <input
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp"
+                        multiple={false}
+                        onChange={(e) => {
+                          const files = Array.from(e.currentTarget.files || []);
+                          if (files.length > 0) {
+                            onDropLogo(files);
+                          }
+                        }}
+                        className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                        title="Drag and drop logo or click to select"
+                      />
+                      <div>
+                        <svg
+                          width="32"
+                          height="32"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="mx-auto mb-2 opacity-60 transition-opacity group-hover:opacity-100"
+                          style={{ color: 'var(--foreground)' }}
+                        >
+                          <title>Upload</title>
+                          <path
+                            d="M13 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V11"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M18 3v5m2-2l-2-2m-2 2l2-2"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        <p
+                          className="font-semibold text-sm"
+                          style={{ color: 'var(--foreground)' }}
+                        >
+                          Drag logo here or click to select
+                        </p>
+                        <p
+                          className="text-xs"
+                          style={{ color: 'var(--muted-foreground)' }}
+                        >
+                          PNG, JPG, or WebP (max 2MB)
+                        </p>
+                      </div>
+                    </div>
+                    {logoDataUrl && (
+                      <div className="space-y-2">
+                        <p
+                          className="font-medium text-sm"
+                          style={{ color: 'var(--foreground)' }}
+                        >
+                          Logo Preview:
+                        </p>
+                        <div className="flex items-center justify-center">
+                          <div
+                            className="max-h-20 w-20 rounded-lg border"
+                            style={{
+                              borderColor: 'var(--border)',
+                              backgroundImage: `url('${logoDataUrl}')`,
+                              backgroundSize: 'contain',
+                              backgroundRepeat: 'no-repeat',
+                              backgroundPosition: 'center',
+                            }}
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setLogoDataUrl('')}
+                          className="w-full rounded-lg px-3 py-2 font-medium text-sm transition-all duration-200 hover:opacity-80"
+                          style={{
+                            color: 'var(--foreground)',
+                            backgroundColor: 'var(--card)',
+                            border: '1px solid',
+                            borderColor: 'var(--border)',
+                          }}
+                        >
+                          Remove Logo
+                        </button>
+                      </div>
                     )}
                   </div>
-                </div>
+                )}
 
-                {/* Error Correction */}
-                <div className="space-y-2">
-                  <Label className="font-medium text-slate-700 dark:text-slate-300">
-                    Error Correction
-                  </Label>
-                  <Select
-                    value={errorLevel}
-                    onValueChange={(v) => setErrorLevel(v as QrErrorLevel)}
-                  >
-                    <SelectTrigger className="rounded-lg border-slate-300 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="border-slate-300 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
-                      <SelectItem value="L">Low (~7%)</SelectItem>
-                      <SelectItem value="M">Medium (~15%)</SelectItem>
-                      <SelectItem value="Q">Quartile (~25%)</SelectItem>
-                      <SelectItem value="H">High (~30%)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Quiet Zone */}
-                <div className="flex items-center gap-3 pt-2">
-                  <Checkbox
-                    id="quiet-zone"
-                    checked={quietZone}
-                    onCheckedChange={(c) => setQuietZone(c === true)}
-                  />
-                  <Label
-                    htmlFor="quiet-zone"
-                    className="cursor-pointer font-medium text-slate-700 dark:text-slate-300"
-                  >
-                    Quiet zone (recommended)
-                  </Label>
-                </div>
+                {/* Frame Tab */}
+                {customizationTab === 'frame' && (
+                  <div className="space-y-3">
+                    <div className="space-y-2">
+                      <Label
+                        className="font-medium"
+                        style={{ color: 'var(--foreground)' }}
+                      >
+                        Dot Shape
+                      </Label>
+                      <Select
+                        value={dotShape}
+                        onValueChange={(v) => setDotShape(v as QrDotShape)}
+                      >
+                        <SelectTrigger
+                          className="rounded-lg"
+                          style={{
+                            borderColor: 'var(--border)',
+                            backgroundColor: 'var(--card)',
+                            color: 'var(--foreground)',
+                          }}
+                        >
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent
+                          style={{
+                            borderColor: 'var(--border)',
+                            backgroundColor: 'var(--card)',
+                            color: 'var(--foreground)',
+                          }}
+                        >
+                          <SelectItem value="square">Square</SelectItem>
+                          <SelectItem value="rounded">Rounded</SelectItem>
+                          <SelectItem value="dots">Dots</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -1662,13 +2006,26 @@ export default function NeoQrGeneratorPage() {
                 )}
               </div>
 
-              {/* Action Buttons - Merged into flow */}
-              <div className="flex flex-wrap items-center justify-center gap-3 border-slate-200 border-t pt-6 dark:border-slate-700">
+              {/* Action Buttons - Download and Copy Only */}
+              <div
+                className="flex flex-wrap items-center justify-center gap-3 border-t pt-6"
+                style={{ borderColor: 'var(--border)' }}
+              >
                 <Button
                   type="button"
-                  onClick={download}
+                  onClick={() => setShowDownloadModal(true)}
                   disabled={!qrCanDownload}
-                  className="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition-all duration-200 hover:scale-105 hover:bg-blue-700 hover:shadow-lg active:scale-95 disabled:opacity-50 disabled:hover:scale-100 disabled:hover:bg-blue-600 disabled:hover:shadow-none dark:hover:shadow-blue-500/50"
+                  className="rounded-lg px-6 py-3 font-semibold transition-all duration-200 hover:scale-105 hover:shadow-lg active:scale-95 disabled:opacity-50 disabled:hover:scale-100 disabled:hover:shadow-none"
+                  style={{
+                    backgroundColor: 'var(--primary)',
+                    color: 'var(--primary-foreground)',
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLElement).style.opacity = '0.9';
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLElement).style.opacity = '1';
+                  }}
                 >
                   <span className="inline-flex items-center gap-2">
                     <svg
@@ -1709,7 +2066,12 @@ export default function NeoQrGeneratorPage() {
                   type="button"
                   variant="outline"
                   disabled={!qrCanDownload || copied}
-                  className="rounded-lg border border-slate-300 bg-white text-slate-900 transition-all duration-200 hover:scale-105 hover:border-blue-500 hover:bg-slate-50 hover:shadow-md active:scale-95 disabled:opacity-50 disabled:hover:scale-100 dark:border-slate-600 dark:bg-slate-900 dark:text-white dark:hover:border-blue-400 dark:hover:bg-slate-800"
+                  className="rounded-lg transition-all duration-200 hover:scale-105 hover:shadow-md active:scale-95 disabled:opacity-50 disabled:hover:scale-100"
+                  style={{
+                    borderColor: 'var(--border)',
+                    backgroundColor: 'var(--card)',
+                    color: 'var(--foreground)',
+                  }}
                   onClick={handleCopy}
                 >
                   <span className="inline-flex items-center gap-2">
@@ -1739,19 +2101,24 @@ export default function NeoQrGeneratorPage() {
                     {copied ? 'Copied' : 'Copy'}
                   </span>
                 </Button>
-                <Button
-                  type="button"
-                  onClick={() => setShowOptionsModal(true)}
-                  variant="outline"
-                  className="rounded-lg border border-slate-300 bg-white text-slate-900 transition-all duration-200 hover:scale-105 hover:border-blue-500 hover:bg-slate-50 hover:shadow-md active:scale-95 dark:border-slate-600 dark:bg-slate-900 dark:text-white dark:hover:border-blue-400 dark:hover:bg-slate-800"
-                >
-                  Options
-                </Button>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Download Modal */}
+      {showDownloadModal && (
+        <DownloadModal
+          isOpen={showDownloadModal}
+          onClose={() => setShowDownloadModal(false)}
+          downloadName={downloadName}
+          setDownloadName={setDownloadName}
+          downloadFormat={downloadFormat}
+          setDownloadFormat={setDownloadFormat}
+          onDownload={download}
+        />
+      )}
 
       {/* Options Modal */}
       {showOptionsModal && (
@@ -1771,6 +2138,152 @@ export default function NeoQrGeneratorPage() {
           onDropLogo={onDropLogo}
         />
       )}
+    </div>
+  );
+}
+
+// Download Modal Component
+interface DownloadModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  downloadName: string;
+  setDownloadName: (name: string) => void;
+  downloadFormat: QrDownloadFormat;
+  setDownloadFormat: (format: QrDownloadFormat) => void;
+  onDownload: () => Promise<void>;
+}
+
+function DownloadModal({
+  isOpen,
+  onClose,
+  downloadName,
+  setDownloadName,
+  downloadFormat,
+  setDownloadFormat,
+  onDownload,
+}: DownloadModalProps) {
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleDownload = async () => {
+    setIsDownloading(true);
+    try {
+      await onDownload();
+      onClose();
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex animate-fadeIn items-center justify-center backdrop-blur-md"
+      style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+      onClick={onClose}
+    >
+      <div
+        className="mx-4 w-full max-w-sm rounded-xl border p-6 shadow-lg"
+        style={{
+          backgroundColor: 'var(--card)',
+          borderColor: 'var(--border)',
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h2
+          className="mb-4 font-semibold text-lg"
+          style={{ color: 'var(--foreground)' }}
+        >
+          Download QR Code
+        </h2>
+
+        <div className="space-y-4">
+          {/* File Name Input */}
+          <div className="space-y-2">
+            <label
+              className="font-medium text-sm"
+              style={{ color: 'var(--foreground)' }}
+            >
+              File Name
+            </label>
+            <input
+              type="text"
+              value={downloadName}
+              onChange={(e) => setDownloadName(e.target.value || 'qrcode')}
+              placeholder="qrcode"
+              className="w-full rounded-lg border px-4 py-2 text-sm transition-colors focus:outline-none"
+              style={{
+                borderColor: 'var(--border)',
+                backgroundColor: 'var(--background)',
+                color: 'var(--foreground)',
+              }}
+            />
+          </div>
+
+          {/* Format Selection */}
+          <div className="space-y-2">
+            <label
+              className="font-medium text-sm"
+              style={{ color: 'var(--foreground)' }}
+            >
+              Format
+            </label>
+            <Select
+              value={downloadFormat}
+              onValueChange={(v) => setDownloadFormat(v as QrDownloadFormat)}
+            >
+              <SelectTrigger
+                className="rounded-lg"
+                style={{
+                  borderColor: 'var(--border)',
+                  backgroundColor: 'var(--background)',
+                  color: 'var(--foreground)',
+                }}
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent
+                style={{
+                  borderColor: 'var(--border)',
+                  backgroundColor: 'var(--card)',
+                  color: 'var(--foreground)',
+                }}
+              >
+                <SelectItem value="png">PNG (Screen)</SelectItem>
+                <SelectItem value="jpeg">JPG (Screen)</SelectItem>
+                <SelectItem value="svg">SVG (Print Quality)</SelectItem>
+                <SelectItem value="eps">EPS (SVG Fallback)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="mt-6 flex gap-3">
+          <Button
+            type="button"
+            onClick={handleDownload}
+            disabled={isDownloading}
+            className="flex-1 rounded-lg px-4 py-2 font-semibold text-white transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50"
+            style={{ backgroundColor: 'var(--primary)' }}
+          >
+            {isDownloading ? 'Downloading...' : 'Download'}
+          </Button>
+          <Button
+            type="button"
+            onClick={onClose}
+            variant="outline"
+            className="flex-1 rounded-lg border px-4 py-2 font-semibold transition-all duration-200 hover:scale-105 active:scale-95"
+            style={{
+              borderColor: 'var(--border)',
+              backgroundColor: 'var(--background)',
+              color: 'var(--foreground)',
+            }}
+          >
+            Cancel
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
