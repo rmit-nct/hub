@@ -1,0 +1,286 @@
+/* QR Generator Theme Variables & Styles */
+
+:root {
+  /* Light mode colors */
+
+  --qr-bg-primary: #ffffff;
+
+  --qr-bg-secondary: #f8fafc;
+
+  --qr-bg-tertiary: #f1f5f9;
+
+  --qr-text-primary: #1e293b;
+
+  --qr-text-secondary: #64748b;
+
+  --qr-text-muted: #94a3b8;
+
+  --qr-border-light: #e2e8f0;
+
+  --qr-border-medium: #cbd5e1;
+
+  --qr-border-strong: #94a3b8;
+
+  --qr-accent: #0ea5e9;
+
+  --qr-accent-hover: #0284c7;
+
+  --qr-success: #10b981;
+
+  --qr-error: #ef4444;
+
+  /* Input & Control colors */
+
+  --qr-input-bg: #f8fafc;
+
+  --qr-input-border: #e2e8f0;
+
+  --qr-input-text: #1e293b;
+
+  --qr-input-placeholder: #94a3b8;
+
+  /* Shadow depths */
+
+  --qr-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+
+  --qr-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+
+  --qr-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+  --qr-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.dark,
+[data-theme="dark"] {
+  /* Dark mode colors */
+
+  --qr-bg-primary: #1e293b;
+
+  --qr-bg-secondary: #0f172a;
+
+  --qr-bg-tertiary: #334155;
+
+  --qr-text-primary: #f1f5f9;
+
+  --qr-text-secondary: #cbd5e1;
+
+  --qr-text-muted: #64748b;
+
+  --qr-border-light: #334155;
+
+  --qr-border-medium: #475569;
+
+  --qr-border-strong: #64748b;
+
+  --qr-accent: #38bdf8;
+
+  --qr-accent-hover: #0ea5e9;
+
+  --qr-success: #34d399;
+
+  --qr-error: #f87171;
+
+  /* Input & Control colors (dark) */
+
+  --qr-input-bg: #0f172a;
+
+  --qr-input-border: #334155;
+
+  --qr-input-text: #f1f5f9;
+
+  --qr-input-placeholder: #64748b;
+
+  /* Shadow depths (adjusted for dark mode) */
+
+  --qr-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+
+  --qr-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+
+  --qr-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+
+  --qr-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
+}
+
+/* OPTIMIZED: Smooth transitions for theme switching without lag */
+
+* {
+  transition:
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Prevent transition delay on SVG elements (for QR code rendering) */
+
+svg,
+svg * {
+  transition: none !important;
+}
+
+/* QR Container - Theme aware */
+
+.qr-container {
+  background-color: var(--qr-bg-primary);
+
+  color: var(--qr-text-primary);
+
+  border-color: var(--qr-border-medium);
+}
+
+/* Input styling with theme */
+
+.qr-input,
+.qr-textarea {
+  background-color: var(--qr-input-bg);
+
+  color: var(--qr-input-text);
+
+  border-color: var(--qr-input-border);
+
+  transition:
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.qr-input::placeholder,
+.qr-textarea::placeholder {
+  color: var(--qr-input-placeholder);
+
+  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.qr-input:focus,
+.qr-textarea:focus {
+  border-color: var(--qr-accent);
+
+  outline: none;
+
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Label styling */
+
+.qr-label {
+  color: var(--qr-text-secondary);
+
+  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Button hover states with smooth transitions */
+
+.qr-btn-primary:hover {
+  background-color: var(--qr-accent-hover);
+
+  transform: translateY(-1px);
+
+  box-shadow: var(--qr-shadow-lg);
+}
+
+.qr-btn-secondary:hover {
+  background-color: var(--qr-bg-tertiary);
+
+  border-color: var(--qr-accent);
+
+  transform: translateY(-1px);
+}
+
+/* Slider styling */
+
+.qr-slider {
+  accent-color: var(--qr-accent);
+
+  transition: accent-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.qr-slider:hover {
+  accent-color: var(--qr-accent-hover);
+}
+
+/* Tab styling */
+
+.qr-tab {
+  color: var(--qr-text-secondary);
+
+  border-color: transparent;
+
+  transition: all 0.2s ease;
+}
+
+.qr-tab:hover {
+  color: var(--qr-text-primary);
+
+  background-color: var(--qr-bg-tertiary);
+}
+
+.qr-tab-active {
+  color: var(--qr-text-primary);
+
+  border-color: var(--qr-accent);
+
+  background-color: var(--qr-bg-secondary);
+}
+
+/* Modal backdrop */
+
+.qr-modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Smooth fade animations */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 1;
+
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+
+    transform: translateY(10px);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.animate-slideUp {
+  animation: slideUp 0.3s ease-out;
+}
+
+/* Responsive adjustments */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+
+    animation: none !important;
+  }
+}
