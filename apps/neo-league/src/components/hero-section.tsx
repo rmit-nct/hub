@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import type { MouseEvent } from 'react';
+import CountdownTimer from '@/components/countdown-timer';
 
 export default function HeroSection() {
   const handleScrollClick = () => {
@@ -44,6 +45,8 @@ export default function HeroSection() {
             </video>
           </div>
 
+          <CountdownTimer />
+
           <h1 className="sr-only">
             NEO League 2026 — RMIT IoT Competition & Innovation Humanity
             Challenge | Student IoT Hackathon Vietnam
@@ -67,7 +70,7 @@ export default function HeroSection() {
             style={{ animationDelay: '0.4s' }}
           >
             <Link
-              href="https://forms.office.com/r/GdkwnUbty6?origin=lprLink"
+              href="https://forms.gle/yGpdUDxdeFYnuWMV9"
               target="_blank"
               rel="noopener noreferrer"
               prefetch={false}
