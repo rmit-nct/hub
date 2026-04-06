@@ -38,7 +38,6 @@ type QrType =
 type QrDownloadFormat = 'png' | 'jpeg' | 'svg' | 'eps';
 type QrErrorLevel = 'L' | 'M' | 'Q' | 'H';
 type QrDotShape = 'square' | 'rounded' | 'dots';
-type QrFrameStyle = 'none' | 'neo' | 'gold' | 'soft' | 'dashed';
 
 function triggerDownload(blobOrUrl: Blob | string, fileName: string) {
   const url =
@@ -221,8 +220,8 @@ function buildQrOptions({
   margin: number;
   errorLevel: QrErrorLevel;
 }) {
-  // BULLETPROOF: Enforce minimum size of 190px
-  const safeSize = Math.max(190, Math.ceil(displaySize));
+  // BULLETPROOF: Enforce minimum size of 180px
+  const safeSize = Math.max(180, Math.ceil(displaySize));
 
   // BULLETPROOF: Default values for all colors
   const safeFgColor =
@@ -327,9 +326,27 @@ function buildQrOptions({
 }
 
 export default function NeoQrGeneratorPage() {
+  // Initialize colors from CSS variables (theme-aware)
+  const getInitialFgColor = () => {
+    if (typeof window === 'undefined') return '#000000';
+    const isDark =
+      document.documentElement.classList.contains('dark') ||
+      window.matchMedia('(prefers-color-scheme: dark)').matches;
+    // Primary foreground for light mode (dark text), theme-inverted for dark mode
+    return isDark ? '#ffffff' : '#000000';
+  };
+
+  const getInitialBgColor = () => {
+    if (typeof window === 'undefined') return '#ffffff';
+    const isDark =
+      document.documentElement.classList.contains('dark') ||
+      window.matchMedia('(prefers-color-scheme: dark)').matches;
+    // Light background for light mode, dark background for dark mode
+    return isDark ? '#1e293b' : '#ffffff';
+  };
+
   const [qrType, setQrType] = useState<QrType>('url');
   const [qrValue, setQrValue] = useState('');
-  const [showCustomizeModal, setShowCustomizeModal] = useState(false);
   const [showOptionsModal, setShowOptionsModal] = useState(false);
   const [copied, setCopied] = useState(false);
   const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -370,19 +387,22 @@ export default function NeoQrGeneratorPage() {
   // File-based inputs
   const [fileObjectUrl, setFileObjectUrl] = useState<string>('');
 
-  // Customize options - Theme-aware defaults
-  const [bgColor, setBgColor] = useState('#ffffff');
-  const [fgColor, setFgColor] = useState('#000000');
+  // Customize options - Theme-aware colors from CSS variables
+  const [bgColor, setBgColor] = useState(getInitialBgColor());
+  const [fgColor, setFgColor] = useState(getInitialFgColor());
   const [qrSize, setQrSize] = useState(260);
   const [previewQrSize, setPreviewQrSize] = useState(260);
   const [isDraggingSlider, setIsDraggingSlider] = useState(false);
   const [errorLevel, setErrorLevel] = useState<QrErrorLevel>('H');
   const [quietZone, setQuietZone] = useState(true);
 
-  const [frameStyle, setFrameStyle] = useState<QrFrameStyle>('neo');
   const [dotShape, setDotShape] = useState<QrDotShape>('rounded');
+  const [customizationTab, setCustomizationTab] = useState<
+    'customization' | 'logo' | 'frame'
+  >('customization');
+  const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [logoDataUrl, setLogoDataUrl] = useState<string>('');
-  const [logoSize, setLogoSize] = useState(24);
+  const [logoSize, setLogoSize] = useState(58); // Fixed 48px
 
   // Export options
   const [downloadFormat, setDownloadFormat] = useState<QrDownloadFormat>('png');
@@ -407,18 +427,6 @@ export default function NeoQrGeneratorPage() {
 
   const urlInputValid = isValidHttpUrl(urlInput);
   const facebookUrlValid = isValidHttpUrl(facebookUrl);
-
-  // UPDATED RANGE: Calculate max logo size - fixed at 96px
-  const maxLogoSize = useMemo(() => {
-    return 96;
-  }, []);
-
-  // UPDATED RANGE: Enforce the max logo size at 96px
-  useEffect(() => {
-    if (logoSize > 96) {
-      setLogoSize(96);
-    }
-  }, [logoSize]);
 
   // Slider drag behavior: slider and label update in real-time, QR image/background frozen
   const handleQrSizeSliderStart = useCallback(() => {
@@ -738,8 +746,101 @@ export default function NeoQrGeneratorPage() {
 
   const copyQRCode = useCallback(async () => {
     if (!qrValue.trim()) return;
-    await navigator.clipboard.writeText(qrValue);
-  }, [qrValue]);
+
+    // If logo exists, merge QR and logo before copying (same as download)
+    if (logoDataUrl) {
+      try {
+        if (!qrRef.current) return;
+
+        const qrBlob = await qrRef.current.getRawData('png');
+        if (!qrBlob) return;
+        const qrUrl = URL.createObjectURL(qrBlob as Blob);
+
+        // Create and load images
+        const qrImg = document.createElement('img') as HTMLImageElement;
+        const logoImg = document.createElement('img') as HTMLImageElement;
+
+        await Promise.all([
+          new Promise((res) => {
+            qrImg.onload = res;
+            qrImg.src = qrUrl;
+          }),
+          new Promise((res) => {
+            logoImg.onload = res;
+            logoImg.src = logoDataUrl;
+          }),
+        ]);
+
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          URL.revokeObjectURL(qrUrl);
+          return;
+        }
+
+        // Logo positioned at center (fixed 48px)
+        const logoWidth = 48;
+        const logoHeight = 48;
+        const logoX = (qrSize - logoWidth) / 2;
+        const logoY = (qrSize - logoHeight) / 2;
+
+        canvas.width = qrSize;
+        canvas.height = qrSize;
+
+        // Fill background
+        ctx.fillStyle = bgColor;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Draw QR code
+        ctx.drawImage(qrImg, 0, 0, qrSize, qrSize);
+
+        // Draw Logo with white border for visibility
+        ctx.fillStyle = bgColor;
+        ctx.fillRect(logoX - 4, logoY - 4, logoWidth + 8, logoHeight + 8);
+        ctx.fillStyle = 'white';
+        ctx.fillRect(logoX - 2, logoY - 2, logoWidth + 4, logoHeight + 4);
+        ctx.drawImage(logoImg, logoX, logoY, logoWidth, logoHeight);
+
+        // Convert canvas to blob and copy to clipboard
+        canvas.toBlob(async (blob) => {
+          if (blob) {
+            try {
+              const item = new ClipboardItem({ 'image/png': blob });
+              await navigator.clipboard.write([item]);
+            } catch (error) {
+              console.warn('Failed to copy QR with logo to clipboard:', error);
+            }
+          }
+          URL.revokeObjectURL(qrUrl);
+        }, 'image/png');
+
+        return;
+      } catch (error) {
+        console.warn('Failed to copy QR with logo, falling back:', error);
+      }
+    }
+
+    // If no logo, try to copy just the QR image as PNG
+    try {
+      if (qrRef.current) {
+        const pngBlob = (await qrRef.current.getRawData('png')) as Blob | null;
+        if (pngBlob) {
+          const item = new ClipboardItem({ 'image/png': pngBlob });
+          await navigator.clipboard.write([item]);
+          return;
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to copy QR image, falling back to text:', error);
+    }
+
+    // Final fallback: copy text
+    try {
+      await navigator.clipboard.writeText(qrValue);
+    } catch (textError) {
+      console.warn('Failed to copy QR value:', textError);
+    }
+  }, [qrValue, logoDataUrl, qrSize, bgColor]);
 
   const handleCopy = async () => {
     await copyQRCode();
@@ -887,12 +988,11 @@ export default function NeoQrGeneratorPage() {
         return;
       }
 
-      // UPDATED: Logo positioned at bottom-right corner (10-15% of QR size)
-      const logoWidth = Math.max(20, Math.min(60, Math.floor(qrSize * 0.15)));
-      const logoHeight = logoWidth;
-      const padding = 8;
-      const logoX = qrSize - logoWidth - padding;
-      const logoY = qrSize - logoHeight - padding;
+      // Logo positioned at center (fixed 48px)
+      const logoWidth = 48;
+      const logoHeight = 48;
+      const logoX = (qrSize - logoWidth) / 2;
+      const logoY = (qrSize - logoHeight) / 2;
 
       canvas.width = qrSize;
       canvas.height = qrSize;
@@ -904,9 +1004,11 @@ export default function NeoQrGeneratorPage() {
       // Draw QR code
       ctx.drawImage(qrImg, 0, 0, qrSize, qrSize);
 
-      // Draw Logo with border
+      // Draw Logo with white border for visibility
+      ctx.fillStyle = bgColor;
+      ctx.fillRect(logoX - 4, logoY - 4, logoWidth + 8, logoHeight + 8);
       ctx.fillStyle = 'white';
-      ctx.fillRect(logoX - 3, logoY - 3, logoWidth + 6, logoHeight + 6);
+      ctx.fillRect(logoX - 2, logoY - 2, logoWidth + 4, logoHeight + 4);
       ctx.drawImage(logoImg, logoX, logoY, logoWidth, logoHeight);
 
       canvas.toBlob((blob) => {
@@ -922,12 +1024,11 @@ export default function NeoQrGeneratorPage() {
       if (!svgBlob) return;
       const svgText = await (svgBlob as Blob).text();
 
-      // UPDATED: Logo positioned at bottom-right corner (10-15% of QR size)
-      const logoWidth = Math.max(20, Math.min(60, Math.floor(qrSize * 0.15)));
-      const logoHeight = logoWidth;
-      const padding = 8;
-      const logoX = qrSize - logoWidth - padding;
-      const logoY = qrSize - logoHeight - padding;
+      // Logo positioned at center (fixed 48px)
+      const logoWidth = 48;
+      const logoHeight = 48;
+      const logoX = (qrSize - logoWidth) / 2;
+      const logoY = (qrSize - logoHeight) / 2;
 
       const parser = new DOMParser();
       const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
@@ -1453,120 +1554,389 @@ export default function NeoQrGeneratorPage() {
                 </div>
               </div>
 
-              {/* Customize Options - Merged without separate card */}
-              <div className="space-y-4 border-slate-200 border-t pt-6 dark:border-slate-700">
-                <h4 className="font-semibold text-base text-slate-900 dark:text-white">
-                  QR Customization
-                </h4>
-
-                {/* Color Pickers */}
-                <div className="flex justify-center gap-8">
-                  <div className="flex flex-col items-center gap-3">
-                    <input
-                      type="color"
-                      value={fgColor}
-                      onChange={(e) => setFgColor(e.target.value)}
-                      className="h-12 w-16 cursor-pointer rounded-lg border border-slate-300 transition-all hover:shadow-md dark:border-slate-600"
-                      title="Foreground color"
-                    />
-                    <div className="text-center">
-                      <p className="font-medium text-slate-700 text-sm dark:text-slate-300">
-                        Foreground
-                      </p>
-                      <p className="text-slate-500 text-xs dark:text-slate-400">
-                        color
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col items-center gap-3">
-                    <input
-                      type="color"
-                      value={bgColor}
-                      onChange={(e) => setBgColor(e.target.value)}
-                      className="h-12 w-16 cursor-pointer rounded-lg border border-slate-300 transition-all hover:shadow-md dark:border-slate-600"
-                      title="Background color"
-                    />
-                    <div className="text-center">
-                      <p className="font-medium text-slate-700 text-sm dark:text-slate-300">
-                        Background
-                      </p>
-                      <p className="text-slate-500 text-xs dark:text-slate-400">
-                        color
-                      </p>
-                    </div>
-                  </div>
+              {/* Customize Options - Tabbed Interface */}
+              <div
+                className="space-y-4 border-t pt-6"
+                style={{ borderColor: 'var(--border)' }}
+              >
+                {/* Tab Navigation */}
+                <div
+                  className="flex gap-2 rounded-lg border p-1"
+                  style={{
+                    borderColor: 'var(--border)',
+                    backgroundColor: 'var(--secondary)',
+                  }}
+                >
+                  {(['customization', 'logo', 'frame'] as const).map((tab) => (
+                    <button
+                      type="button"
+                      key={tab}
+                      onClick={() => setCustomizationTab(tab)}
+                      className="flex-1 rounded-md px-3 py-2 font-medium text-sm transition-all duration-200"
+                      style={{
+                        backgroundColor:
+                          customizationTab === tab
+                            ? 'var(--card)'
+                            : 'transparent',
+                        color:
+                          customizationTab === tab
+                            ? 'var(--primary)'
+                            : 'var(--muted-foreground)',
+                        boxShadow:
+                          customizationTab === tab
+                            ? '0 1px 3px rgba(0, 0, 0, 0.1)'
+                            : 'none',
+                      }}
+                    >
+                      {tab === 'customization'
+                        ? 'Customization'
+                        : tab === 'logo'
+                          ? 'Logo'
+                          : 'Frame'}
+                    </button>
+                  ))}
                 </div>
 
-                {/* QR Size Slider */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label className="font-medium text-slate-700 dark:text-slate-300">
-                      QR Size
-                    </Label>
-                    <span className="font-semibold text-blue-600 text-sm dark:text-blue-400">
-                      {isDraggingSlider ? previewQrSize : qrSize}px
-                    </span>
+                {/* Customization Tab - 3 Rows Structure */}
+                {customizationTab === 'customization' && (
+                  <div className="space-y-4">
+                    {/* Row 1: Foreground + Background Color Pickers on Same Line */}
+                    <div className="grid grid-cols-2 gap-4">
+                      {/* Foreground Color Picker */}
+                      <div className="space-y-2">
+                        <Label
+                          className="font-medium"
+                          style={{ color: 'var(--foreground)' }}
+                        >
+                          Foreground Color
+                        </Label>
+                        <div className="flex items-stretch gap-2">
+                          <input
+                            type="color"
+                            value={fgColor}
+                            onChange={(e) => setFgColor(e.target.value)}
+                            className="h-10 w-full min-w-0 cursor-pointer rounded-lg border transition-all hover:shadow-md"
+                            style={{
+                              borderColor: 'var(--border)',
+                              flex: '2 1 0%',
+                            }}
+                            title="Foreground color picker"
+                          />
+                          <input
+                            type="text"
+                            value={fgColor.toUpperCase()}
+                            onChange={(e) => {
+                              const val = e.target.value.toUpperCase();
+                              if (/^#[0-9A-F]{6}$/.test(val)) {
+                                setFgColor(val);
+                              }
+                            }}
+                            placeholder="#000000"
+                            maxLength={7}
+                            className="h-10 min-w-0 rounded-lg border px-3 font-mono text-sm transition-colors focus:outline-none"
+                            style={{
+                              borderColor: 'var(--border)',
+                              backgroundColor: 'var(--card)',
+                              color: 'var(--foreground)',
+                              flex: '7 1 0%',
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Background Color Picker */}
+                      <div className="space-y-2">
+                        <Label
+                          className="font-medium"
+                          style={{ color: 'var(--foreground)' }}
+                        >
+                          Background Color
+                        </Label>
+                        <div className="flex items-stretch gap-2">
+                          <input
+                            type="color"
+                            value={bgColor}
+                            onChange={(e) => setBgColor(e.target.value)}
+                            className="h-10 w-full min-w-0 cursor-pointer rounded-lg border transition-all hover:shadow-md"
+                            style={{
+                              borderColor: 'var(--border)',
+                              flex: '2 1 0%',
+                            }}
+                            title="Background color picker"
+                          />
+                          <input
+                            type="text"
+                            value={bgColor.toUpperCase()}
+                            onChange={(e) => {
+                              const val = e.target.value.toUpperCase();
+                              if (/^#[0-9A-F]{6}$/.test(val)) {
+                                setBgColor(val);
+                              }
+                            }}
+                            placeholder="#FFFFFF"
+                            maxLength={7}
+                            className="h-10 min-w-0 rounded-lg border px-3 font-mono text-sm transition-colors focus:outline-none"
+                            style={{
+                              borderColor: 'var(--border)',
+                              backgroundColor: 'var(--card)',
+                              color: 'var(--foreground)',
+                              flex: '7 1 0%',
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Row 2: Error Correction (Full Width) */}
+                    <div className="space-y-2">
+                      <Label
+                        className="font-medium"
+                        style={{ color: 'var(--foreground)' }}
+                      >
+                        Error Correction
+                      </Label>
+                      <Select
+                        value={errorLevel}
+                        onValueChange={(v) => setErrorLevel(v as QrErrorLevel)}
+                      >
+                        <SelectTrigger
+                          className="rounded-lg"
+                          style={{
+                            borderColor: 'var(--border)',
+                            backgroundColor: 'var(--card)',
+                            color: 'var(--foreground)',
+                          }}
+                        >
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent
+                          style={{
+                            borderColor: 'var(--border)',
+                            backgroundColor: 'var(--card)',
+                            color: 'var(--foreground)',
+                          }}
+                        >
+                          <SelectItem value="L">Low (~7%)</SelectItem>
+                          <SelectItem value="M">Medium (~15%)</SelectItem>
+                          <SelectItem value="Q">Quartile (~25%)</SelectItem>
+                          <SelectItem value="H">High (~30%)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Row 3: QR Size Slider */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <Label
+                          className="font-medium"
+                          style={{ color: 'var(--foreground)' }}
+                        >
+                          QR Size
+                        </Label>
+                        <span
+                          className="font-semibold text-sm"
+                          style={{ color: 'var(--primary)' }}
+                        >
+                          {isDraggingSlider ? previewQrSize : qrSize}px
+                        </span>
+                      </div>
+                      <div
+                        className="space-y-1"
+                        onPointerDown={handleQrSizeSliderPointerDown}
+                        onPointerUp={handleQrSizeSliderPointerUp}
+                        onPointerLeave={
+                          isDraggingSlider
+                            ? handleQrSizeSliderPointerUp
+                            : undefined
+                        }
+                      >
+                        <Slider
+                          min={180}
+                          max={420}
+                          step={10}
+                          value={[isDraggingSlider ? previewQrSize : qrSize]}
+                          onValueChange={handleQrSizeSliderChange}
+                          className="py-1"
+                        />
+                        {isDraggingSlider && (
+                          <p
+                            className="text-right font-medium text-xs"
+                            style={{ color: 'var(--primary)' }}
+                          >
+                            Release to apply
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Quiet Zone Checkbox */}
+                    <div className="flex items-center gap-3 pt-1">
+                      <Checkbox
+                        id="quiet-zone"
+                        checked={quietZone}
+                        onCheckedChange={(c) => setQuietZone(c === true)}
+                      />
+                      <Label
+                        htmlFor="quiet-zone"
+                        className="cursor-pointer font-medium"
+                        style={{ color: 'var(--foreground)' }}
+                      >
+                        Quiet zone (recommended)
+                      </Label>
+                    </div>
                   </div>
-                  <div
-                    className="space-y-1"
-                    onPointerDown={handleQrSizeSliderPointerDown}
-                    onPointerUp={handleQrSizeSliderPointerUp}
-                    onPointerLeave={
-                      isDraggingSlider ? handleQrSizeSliderPointerUp : undefined
-                    }
-                  >
-                    <Slider
-                      min={190}
-                      max={420}
-                      step={10}
-                      value={[isDraggingSlider ? previewQrSize : qrSize]}
-                      onValueChange={handleQrSizeSliderChange}
-                      className="py-1"
-                    />
-                    {isDraggingSlider && (
-                      <p className="text-right font-medium text-blue-500 text-xs dark:text-blue-400">
-                        Release to apply
-                      </p>
+                )}
+
+                {/* Logo Tab - File Upload Dropzone */}
+                {customizationTab === 'logo' && (
+                  <div className="space-y-4">
+                    <div
+                      className="group relative cursor-pointer space-y-4 rounded-lg border-2 border-dashed p-6 text-center transition-all hover:border-opacity-80"
+                      style={{
+                        borderColor: 'var(--border)',
+                        backgroundColor: 'var(--secondary)',
+                      }}
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                      }}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const files = Array.from(e.dataTransfer.files);
+                        onDropLogo(files);
+                      }}
+                    >
+                      <input
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp"
+                        multiple={false}
+                        onChange={(e) => {
+                          const files = Array.from(e.currentTarget.files || []);
+                          if (files.length > 0) {
+                            onDropLogo(files);
+                          }
+                        }}
+                        className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                        title="Drag and drop logo or click to select"
+                      />
+                      <div>
+                        <svg
+                          width="32"
+                          height="32"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="mx-auto mb-2 opacity-60 transition-opacity group-hover:opacity-100"
+                          style={{ color: 'var(--foreground)' }}
+                        >
+                          <title>Upload</title>
+                          <path
+                            d="M13 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V11"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M18 3v5m2-2l-2-2m-2 2l2-2"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        <p
+                          className="font-semibold text-sm"
+                          style={{ color: 'var(--foreground)' }}
+                        >
+                          Drag logo here or click to select
+                        </p>
+                        <p
+                          className="text-xs"
+                          style={{ color: 'var(--muted-foreground)' }}
+                        >
+                          PNG, JPG, or WebP (max 2MB)
+                        </p>
+                      </div>
+                    </div>
+                    {logoDataUrl && (
+                      <div className="space-y-2">
+                        <p
+                          className="font-medium text-sm"
+                          style={{ color: 'var(--foreground)' }}
+                        >
+                          Logo Preview:
+                        </p>
+                        <div className="flex items-center justify-center">
+                          <div
+                            className="max-h-20 w-20 rounded-lg border"
+                            style={{
+                              borderColor: 'var(--border)',
+                              backgroundImage: `url('${logoDataUrl}')`,
+                              backgroundSize: 'contain',
+                              backgroundRepeat: 'no-repeat',
+                              backgroundPosition: 'center',
+                            }}
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setLogoDataUrl('')}
+                          className="w-full rounded-lg px-3 py-2 font-medium text-sm transition-all duration-200 hover:opacity-80"
+                          style={{
+                            color: 'var(--foreground)',
+                            backgroundColor: 'var(--card)',
+                            border: '1px solid',
+                            borderColor: 'var(--border)',
+                          }}
+                        >
+                          Remove Logo
+                        </button>
+                      </div>
                     )}
                   </div>
-                </div>
+                )}
 
-                {/* Error Correction */}
-                <div className="space-y-2">
-                  <Label className="font-medium text-slate-700 dark:text-slate-300">
-                    Error Correction
-                  </Label>
-                  <Select
-                    value={errorLevel}
-                    onValueChange={(v) => setErrorLevel(v as QrErrorLevel)}
-                  >
-                    <SelectTrigger className="rounded-lg border-slate-300 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="border-slate-300 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
-                      <SelectItem value="L">Low (~7%)</SelectItem>
-                      <SelectItem value="M">Medium (~15%)</SelectItem>
-                      <SelectItem value="Q">Quartile (~25%)</SelectItem>
-                      <SelectItem value="H">High (~30%)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Quiet Zone */}
-                <div className="flex items-center gap-3 pt-2">
-                  <Checkbox
-                    id="quiet-zone"
-                    checked={quietZone}
-                    onCheckedChange={(c) => setQuietZone(c === true)}
-                  />
-                  <Label
-                    htmlFor="quiet-zone"
-                    className="cursor-pointer font-medium text-slate-700 dark:text-slate-300"
-                  >
-                    Quiet zone (recommended)
-                  </Label>
-                </div>
+                {/* Frame Tab */}
+                {customizationTab === 'frame' && (
+                  <div className="space-y-3">
+                    <div className="space-y-2">
+                      <Label
+                        className="font-medium"
+                        style={{ color: 'var(--foreground)' }}
+                      >
+                        Dot Shape
+                      </Label>
+                      <Select
+                        value={dotShape}
+                        onValueChange={(v) => setDotShape(v as QrDotShape)}
+                      >
+                        <SelectTrigger
+                          className="rounded-lg"
+                          style={{
+                            borderColor: 'var(--border)',
+                            backgroundColor: 'var(--card)',
+                            color: 'var(--foreground)',
+                          }}
+                        >
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent
+                          style={{
+                            borderColor: 'var(--border)',
+                            backgroundColor: 'var(--card)',
+                            color: 'var(--foreground)',
+                          }}
+                        >
+                          <SelectItem value="square">Square</SelectItem>
+                          <SelectItem value="rounded">Rounded</SelectItem>
+                          <SelectItem value="dots">Dots</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -1585,8 +1955,8 @@ export default function NeoQrGeneratorPage() {
                     key={`qr-${qrType}-${qrValue.slice(0, 40)}`}
                     className="qr-container flex animate-fadeIn flex-col items-center justify-center gap-6 rounded-xl p-6 transition-all duration-300 ease-in-out"
                   >
-                    {/* UPDATED: Logo positioned at bottom-right corner */}
-                    <div className="relative">
+                    {/* Logo positioned at center */}
+                    <div className="relative inline-block">
                       <div
                         className="transition-all duration-300 ease-in-out"
                         style={{
@@ -1597,7 +1967,16 @@ export default function NeoQrGeneratorPage() {
                         <div ref={qrContainerRef} />
                       </div>
                       {logoDataUrl && (
-                        <div className="absolute -right-2 -bottom-2">
+                        <div
+                          className="absolute flex items-center justify-center"
+                          style={{
+                            left: '50%',
+                            top: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            width: logoSize,
+                            height: logoSize,
+                          }}
+                        >
                           <div
                             style={{
                               height: logoSize,
@@ -1607,7 +1986,7 @@ export default function NeoQrGeneratorPage() {
                               backgroundRepeat: 'no-repeat',
                               backgroundPosition: 'center',
                             }}
-                            className="rounded-lg border-2 border-white shadow-lg dark:border-slate-600"
+                            className="rounded-md border-2 border-white shadow-lg dark:border-slate-600"
                           />
                         </div>
                       )}
@@ -1627,13 +2006,26 @@ export default function NeoQrGeneratorPage() {
                 )}
               </div>
 
-              {/* Action Buttons - Merged into flow */}
-              <div className="flex flex-wrap items-center justify-center gap-3 border-slate-200 border-t pt-6 dark:border-slate-700">
+              {/* Action Buttons - Download and Copy Only */}
+              <div
+                className="flex flex-wrap items-center justify-center gap-3 border-t pt-6"
+                style={{ borderColor: 'var(--border)' }}
+              >
                 <Button
                   type="button"
-                  onClick={download}
+                  onClick={() => setShowDownloadModal(true)}
                   disabled={!qrCanDownload}
-                  className="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition-all duration-200 hover:scale-105 hover:bg-blue-700 hover:shadow-lg active:scale-95 disabled:opacity-50 disabled:hover:scale-100 disabled:hover:bg-blue-600 disabled:hover:shadow-none dark:hover:shadow-blue-500/50"
+                  className="rounded-lg px-6 py-3 font-semibold transition-all duration-200 hover:scale-105 hover:shadow-lg active:scale-95 disabled:opacity-50 disabled:hover:scale-100 disabled:hover:shadow-none"
+                  style={{
+                    backgroundColor: 'var(--primary)',
+                    color: 'var(--primary-foreground)',
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLElement).style.opacity = '0.9';
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLElement).style.opacity = '1';
+                  }}
                 >
                   <span className="inline-flex items-center gap-2">
                     <svg
@@ -1674,7 +2066,12 @@ export default function NeoQrGeneratorPage() {
                   type="button"
                   variant="outline"
                   disabled={!qrCanDownload || copied}
-                  className="rounded-lg border border-slate-300 bg-white text-slate-900 transition-all duration-200 hover:scale-105 hover:border-blue-500 hover:bg-slate-50 hover:shadow-md active:scale-95 disabled:opacity-50 disabled:hover:scale-100 dark:border-slate-600 dark:bg-slate-900 dark:text-white dark:hover:border-blue-400 dark:hover:bg-slate-800"
+                  className="rounded-lg transition-all duration-200 hover:scale-105 hover:shadow-md active:scale-95 disabled:opacity-50 disabled:hover:scale-100"
+                  style={{
+                    borderColor: 'var(--border)',
+                    backgroundColor: 'var(--card)',
+                    color: 'var(--foreground)',
+                  }}
                   onClick={handleCopy}
                 >
                   <span className="inline-flex items-center gap-2">
@@ -1704,35 +2101,22 @@ export default function NeoQrGeneratorPage() {
                     {copied ? 'Copied' : 'Copy'}
                   </span>
                 </Button>
-                <Button
-                  type="button"
-                  onClick={() => setShowOptionsModal(true)}
-                  variant="outline"
-                  className="rounded-lg border border-slate-300 bg-white text-slate-900 transition-all duration-200 hover:scale-105 hover:border-blue-500 hover:bg-slate-50 hover:shadow-md active:scale-95 dark:border-slate-600 dark:bg-slate-900 dark:text-white dark:hover:border-blue-400 dark:hover:bg-slate-800"
-                >
-                  Options
-                </Button>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Customize Modal */}
-      {showCustomizeModal && (
-        <CustomizeModal
-          isOpen={showCustomizeModal}
-          onClose={() => setShowCustomizeModal(false)}
-          bgColor={bgColor}
-          setBgColor={setBgColor}
-          fgColor={fgColor}
-          setFgColor={setFgColor}
-          qrSize={qrSize}
-          setQrSize={setQrSize}
-          errorLevel={errorLevel}
-          setErrorLevel={setErrorLevel}
-          quietZone={quietZone}
-          setQuietZone={setQuietZone}
+      {/* Download Modal */}
+      {showDownloadModal && (
+        <DownloadModal
+          isOpen={showDownloadModal}
+          onClose={() => setShowDownloadModal(false)}
+          downloadName={downloadName}
+          setDownloadName={setDownloadName}
+          downloadFormat={downloadFormat}
+          setDownloadFormat={setDownloadFormat}
+          onDownload={download}
         />
       )}
 
@@ -1741,8 +2125,6 @@ export default function NeoQrGeneratorPage() {
         <OptionsModal
           isOpen={showOptionsModal}
           onClose={() => setShowOptionsModal(false)}
-          frameStyle={frameStyle}
-          setFrameStyle={setFrameStyle}
           dotShape={dotShape}
           setDotShape={setDotShape}
           downloadName={downloadName}
@@ -1753,7 +2135,6 @@ export default function NeoQrGeneratorPage() {
           setLogoDataUrl={setLogoDataUrl}
           logoSize={logoSize}
           setLogoSize={setLogoSize}
-          maxLogoSize={maxLogoSize}
           onDropLogo={onDropLogo}
         />
       )}
@@ -1761,98 +2142,143 @@ export default function NeoQrGeneratorPage() {
   );
 }
 
-// Customize Modal Component
-interface CustomizeModalProps {
+// Download Modal Component
+interface DownloadModalProps {
   isOpen: boolean;
   onClose: () => void;
-  bgColor: string;
-  setBgColor: (color: string) => void;
-  fgColor: string;
-  setFgColor: (color: string) => void;
-  qrSize: number;
-  setQrSize: (size: number) => void;
-  errorLevel: QrErrorLevel;
-  setErrorLevel: (level: QrErrorLevel) => void;
-  quietZone: boolean;
-  setQuietZone: (enabled: boolean) => void;
+  downloadName: string;
+  setDownloadName: (name: string) => void;
+  downloadFormat: QrDownloadFormat;
+  setDownloadFormat: (format: QrDownloadFormat) => void;
+  onDownload: () => Promise<void>;
 }
 
-function CustomizeModal({
+function DownloadModal({
   isOpen,
   onClose,
-  bgColor,
-  setBgColor,
-  fgColor,
-  setFgColor,
-  qrSize,
-  setQrSize,
-  errorLevel,
-  setErrorLevel,
-  quietZone,
-  setQuietZone,
-}: CustomizeModalProps) {
-  const initialStateRef = useRef<{
-    fgColor: string;
-    bgColor: string;
-    qrSize: number;
-    errorLevel: QrErrorLevel;
-    quietZone: boolean;
-  } | null>(null);
+  downloadName,
+  setDownloadName,
+  downloadFormat,
+  setDownloadFormat,
+  onDownload,
+}: DownloadModalProps) {
+  const [isDownloading, setIsDownloading] = useState(false);
 
-  useEffect(() => {
-    if (!isOpen) {
-      initialStateRef.current = null;
-      return;
+  const handleDownload = async () => {
+    setIsDownloading(true);
+    try {
+      await onDownload();
+      onClose();
+    } finally {
+      setIsDownloading(false);
     }
-
-    // Snapshot once per modal open; keep it stable for Cancel revert.
-    if (initialStateRef.current === null) {
-      initialStateRef.current = {
-        fgColor,
-        bgColor,
-        qrSize,
-        errorLevel,
-        quietZone,
-      };
-    }
-  }, [bgColor, errorLevel, fgColor, isOpen, qrSize, quietZone]);
+  };
 
   if (!isOpen) return null;
 
-  const handleCancel = () => {
-    const initial = initialStateRef.current;
-    if (initial) {
-      setFgColor(initial.fgColor);
-      setBgColor(initial.bgColor);
-      setQrSize(initial.qrSize);
-      setErrorLevel(initial.errorLevel);
-      setQuietZone(initial.quietZone);
-    }
-    onClose();
-  };
-
   return (
     <div
-      className="fixed inset-0 z-50 flex animate-fadeIn items-center justify-center bg-black/50 backdrop-blur-md"
+      className="fixed inset-0 z-50 flex animate-fadeIn items-center justify-center backdrop-blur-md"
+      style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md animate-slideUp rounded-xl border border-slate-300 bg-white p-6 shadow-2xl transition-all duration-300 dark:border-slate-700 dark:bg-slate-900"
+        className="mx-4 w-full max-w-sm rounded-xl border p-6 shadow-lg"
+        style={{
+          backgroundColor: 'var(--card)',
+          borderColor: 'var(--border)',
+        }}
         onClick={(e) => e.stopPropagation()}
       >
+        <h2
+          className="mb-4 font-semibold text-lg"
+          style={{ color: 'var(--foreground)' }}
+        >
+          Download QR Code
+        </h2>
+
+        <div className="space-y-4">
+          {/* File Name Input */}
+          <div className="space-y-2">
+            <label
+              className="font-medium text-sm"
+              style={{ color: 'var(--foreground)' }}
+            >
+              File Name
+            </label>
+            <input
+              type="text"
+              value={downloadName}
+              onChange={(e) => setDownloadName(e.target.value || 'qrcode')}
+              placeholder="qrcode"
+              className="w-full rounded-lg border px-4 py-2 text-sm transition-colors focus:outline-none"
+              style={{
+                borderColor: 'var(--border)',
+                backgroundColor: 'var(--background)',
+                color: 'var(--foreground)',
+              }}
+            />
+          </div>
+
+          {/* Format Selection */}
+          <div className="space-y-2">
+            <label
+              className="font-medium text-sm"
+              style={{ color: 'var(--foreground)' }}
+            >
+              Format
+            </label>
+            <Select
+              value={downloadFormat}
+              onValueChange={(v) => setDownloadFormat(v as QrDownloadFormat)}
+            >
+              <SelectTrigger
+                className="rounded-lg"
+                style={{
+                  borderColor: 'var(--border)',
+                  backgroundColor: 'var(--background)',
+                  color: 'var(--foreground)',
+                }}
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent
+                style={{
+                  borderColor: 'var(--border)',
+                  backgroundColor: 'var(--card)',
+                  color: 'var(--foreground)',
+                }}
+              >
+                <SelectItem value="png">PNG (Screen)</SelectItem>
+                <SelectItem value="jpeg">JPG (Screen)</SelectItem>
+                <SelectItem value="svg">SVG (Print Quality)</SelectItem>
+                <SelectItem value="eps">EPS (SVG Fallback)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
         <div className="mt-6 flex gap-3">
           <Button
             type="button"
-            onClick={onClose}
-            className="flex-1 rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white transition-all duration-200 hover:scale-105 hover:bg-blue-700 active:scale-95"
+            onClick={handleDownload}
+            disabled={isDownloading}
+            className="flex-1 rounded-lg px-4 py-2 font-semibold text-white transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50"
+            style={{ backgroundColor: 'var(--primary)' }}
           >
-            Done
+            {isDownloading ? 'Downloading...' : 'Download'}
           </Button>
           <Button
             type="button"
-            onClick={handleCancel}
+            onClick={onClose}
             variant="outline"
-            className="flex-1 rounded-lg border border-slate-300 bg-white text-slate-900 transition-all duration-200 hover:scale-105 hover:bg-slate-50 active:scale-95 dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
+            className="flex-1 rounded-lg border px-4 py-2 font-semibold transition-all duration-200 hover:scale-105 active:scale-95"
+            style={{
+              borderColor: 'var(--border)',
+              backgroundColor: 'var(--background)',
+              color: 'var(--foreground)',
+            }}
           >
             Cancel
           </Button>
@@ -1866,44 +2292,35 @@ function CustomizeModal({
 interface OptionsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  frameStyle: QrFrameStyle;
-  setFrameStyle: (style: QrFrameStyle) => void;
   dotShape: QrDotShape;
   setDotShape: (shape: QrDotShape) => void;
   downloadName: string;
   setDownloadName: (name: string) => void;
   downloadFormat: QrDownloadFormat;
   setDownloadFormat: (format: QrDownloadFormat) => void;
-  // UPDATED: Added logo upload props
   logoDataUrl: string;
   setLogoDataUrl: (url: string) => void;
   logoSize: number;
   setLogoSize: (size: number) => void;
-  maxLogoSize: number;
   onDropLogo: (files: File[]) => void;
 }
 
 function OptionsModal({
   isOpen,
   onClose,
-  frameStyle,
-  setFrameStyle,
   dotShape,
   setDotShape,
   downloadName,
   setDownloadName,
   downloadFormat,
   setDownloadFormat,
-  // UPDATED: Added logo upload parameters
   logoDataUrl,
   setLogoDataUrl,
   logoSize,
   setLogoSize,
-  maxLogoSize,
   onDropLogo,
 }: OptionsModalProps) {
   const initialStateRef = useRef<{
-    frameStyle: QrFrameStyle;
     dotShape: QrDotShape;
     downloadName: string;
     downloadFormat: QrDownloadFormat;
@@ -1917,10 +2334,8 @@ function OptionsModal({
       return;
     }
 
-    // Snapshot once per modal open; keep it stable for Cancel revert.
     if (initialStateRef.current === null) {
       initialStateRef.current = {
-        frameStyle,
         dotShape,
         downloadName,
         downloadFormat,
@@ -1928,22 +2343,13 @@ function OptionsModal({
         logoSize,
       };
     }
-  }, [
-    dotShape,
-    downloadFormat,
-    downloadName,
-    frameStyle,
-    isOpen,
-    logoDataUrl,
-    logoSize,
-  ]);
+  }, [dotShape, downloadFormat, downloadName, isOpen, logoDataUrl, logoSize]);
 
   if (!isOpen) return null;
 
   const handleCancel = () => {
     const initial = initialStateRef.current;
     if (initial) {
-      setFrameStyle(initial.frameStyle);
       setDotShape(initial.dotShape);
       setDownloadName(initial.downloadName);
       setDownloadFormat(initial.downloadFormat);
@@ -1976,49 +2382,26 @@ function OptionsModal({
         </div>
 
         <div className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label className="font-medium text-slate-700 dark:text-slate-300">
-                Frame style
-              </Label>
-              <Select
-                value={frameStyle}
-                onValueChange={(v) => setFrameStyle(v as QrFrameStyle)}
-              >
-                <SelectTrigger className="rounded-lg border-slate-300 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="border-slate-300 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
-                  <SelectItem value="neo">Neo border</SelectItem>
-                  <SelectItem value="gold">Gold glow</SelectItem>
-                  <SelectItem value="soft">Soft frame</SelectItem>
-                  <SelectItem value="dashed">Dashed</SelectItem>
-                  <SelectItem value="none">None</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label className="font-medium text-slate-700 dark:text-slate-300">
-                Dot shape
-              </Label>
-              <Select
-                value={dotShape}
-                onValueChange={(v) => setDotShape(v as QrDotShape)}
-              >
-                <SelectTrigger className="rounded-lg border-slate-300 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="border-slate-300 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
-                  <SelectItem value="square">Square</SelectItem>
-                  <SelectItem value="rounded">Rounded</SelectItem>
-                  <SelectItem value="dots">Dots</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          <div className="space-y-2">
+            <Label className="font-medium text-slate-700 dark:text-slate-300">
+              Dot shape
+            </Label>
+            <Select
+              value={dotShape}
+              onValueChange={(v) => setDotShape(v as QrDotShape)}
+            >
+              <SelectTrigger className="rounded-lg border-slate-300 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="border-slate-300 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
+                <SelectItem value="square">Square</SelectItem>
+                <SelectItem value="rounded">Rounded</SelectItem>
+                <SelectItem value="dots">Dots</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
-          {/* MOVED TO OPTIONS: Logo upload section */}
+          {/* Logo upload section */}
           <div className="space-y-3 border-slate-200 border-t pt-4 dark:border-slate-700">
             <div>
               <p className="font-medium text-slate-900 text-sm dark:text-white">
@@ -2057,28 +2440,6 @@ function OptionsModal({
                 </Button>
               </div>
             ) : null}
-
-            {logoDataUrl && (
-              <div className="space-y-3">
-                <div className="space-y-2">
-                  <Label className="flex justify-between font-medium text-slate-700 text-xs dark:text-slate-300">
-                    <span>Logo size</span>
-                    <span className="text-[10px] text-slate-500 dark:text-slate-400">
-                      {logoSize}px | Max: {maxLogoSize}px
-                    </span>
-                  </Label>
-                  {/* UPDATED RANGE: Logo size slider fixed to 20-96px range */}
-                  <Slider
-                    min={20}
-                    max={96}
-                    step={2}
-                    value={[logoSize]}
-                    onValueChange={(v) => setLogoSize(v[0] ?? logoSize)}
-                    className="py-1"
-                  />
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Download options */}
