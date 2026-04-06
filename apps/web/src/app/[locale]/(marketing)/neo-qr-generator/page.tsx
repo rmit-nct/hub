@@ -4,6 +4,7 @@ import { Button } from '@ncthub/ui/button';
 import { Checkbox } from '@ncthub/ui/checkbox';
 import { Dropzone, DropzoneEmptyState } from '@ncthub/ui/dropzone';
 import { Label } from '@ncthub/ui/label';
+import { Popover, PopoverContent, PopoverTrigger } from '@ncthub/ui/popover';
 import {
   Select,
   SelectContent,
@@ -14,10 +15,15 @@ import {
 import { Slider } from '@ncthub/ui/slider';
 import { motion } from 'framer-motion';
 import QRCodeStyling, { type TypeNumber } from 'qr-code-styling';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { ColorPicker } from 'react-color-pikr';
 import NeoGeneratorHero from './hero';
-import '@/style/animations.css';
-import '@/style/qr-generator.css';
 
 // Type definitions
 interface QRTypeTab {
@@ -227,7 +233,7 @@ function buildQrOptions({
   const safeFgColor =
     fgColor && typeof fgColor === 'string' ? fgColor : '#000000';
   const safeBgColor =
-    bgColor && typeof bgColor === 'string' ? bgColor : '#ffffff';
+    bgColor && typeof bgColor === 'string' ? bgColor : '#000000';
 
   // BULLETPROOF: Sanitize all dot types - always have fallback
   const safeDotType = sanitizeDotType(dotConfig?.dots) || 'square';
@@ -317,7 +323,7 @@ function buildQrOptions({
       },
       backgroundOptions: {
         round: 0,
-        color: '#ffffff',
+        color: '#000000',
       },
     } as any;
   }
@@ -328,21 +334,16 @@ function buildQrOptions({
 export default function NeoQrGeneratorPage() {
   // Initialize colors from CSS variables (theme-aware)
   const getInitialFgColor = () => {
-    if (typeof window === 'undefined') return '#000000';
+    if (typeof window === 'undefined') return '#090A0B';
     const isDark =
       document.documentElement.classList.contains('dark') ||
       window.matchMedia('(prefers-color-scheme: dark)').matches;
     // Primary foreground for light mode (dark text), theme-inverted for dark mode
-    return isDark ? '#ffffff' : '#000000';
+    return isDark ? '#FAFAFA' : '#090A0B';
   };
 
   const getInitialBgColor = () => {
-    if (typeof window === 'undefined') return '#ffffff';
-    const isDark =
-      document.documentElement.classList.contains('dark') ||
-      window.matchMedia('(prefers-color-scheme: dark)').matches;
-    // Light background for light mode, dark background for dark mode
-    return isDark ? '#1e293b' : '#ffffff';
+    return '#000000';
   };
 
   const [qrType, setQrType] = useState<QrType>('url');
@@ -1600,90 +1601,88 @@ export default function NeoQrGeneratorPage() {
                 {/* Customization Tab - 3 Rows Structure */}
                 {customizationTab === 'customization' && (
                   <div className="space-y-4">
-                    {/* Row 1: Foreground + Background Color Pickers on Same Line */}
-                    <div className="grid grid-cols-2 gap-4">
+                    {/* Row 1: Foreground + Background Color Pickers */}
+                    <div className="flex flex-col gap-5">
                       {/* Foreground Color Picker */}
                       <div className="space-y-2">
-                        <Label
-                          className="font-medium"
-                          style={{ color: 'var(--foreground)' }}
-                        >
-                          Foreground Color
+                        <Label className="font-medium text-foreground">
+                          QR Color
                         </Label>
-                        <div className="flex items-stretch gap-2">
-                          <input
-                            type="color"
-                            value={fgColor}
-                            onChange={(e) => setFgColor(e.target.value)}
-                            className="h-10 w-full min-w-0 cursor-pointer rounded-lg border transition-all hover:shadow-md"
-                            style={{
-                              borderColor: 'var(--border)',
-                              flex: '2 1 0%',
-                            }}
-                            title="Foreground color picker"
-                          />
-                          <input
-                            type="text"
-                            value={fgColor.toUpperCase()}
-                            onChange={(e) => {
-                              const val = e.target.value.toUpperCase();
-                              if (/^#[0-9A-F]{6}$/.test(val)) {
-                                setFgColor(val);
-                              }
-                            }}
-                            placeholder="#000000"
-                            maxLength={7}
-                            className="h-10 min-w-0 rounded-lg border px-3 font-mono text-sm transition-colors focus:outline-none"
-                            style={{
-                              borderColor: 'var(--border)',
-                              backgroundColor: 'var(--card)',
-                              color: 'var(--foreground)',
-                              flex: '7 1 0%',
-                            }}
-                          />
-                        </div>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className="w-full justify-start rounded-lg border bg-card text-left font-normal text-foreground hover:bg-accent hover:text-accent-foreground"
+                              style={{ borderColor: 'var(--border)' }}
+                            >
+                              <div
+                                className="mr-3 h-5 w-5 rounded-sm border shadow-sm"
+                                style={{
+                                  backgroundColor: fgColor,
+                                  borderColor: 'var(--border)',
+                                }}
+                              />
+                              <span>
+                                {typeof fgColor === 'string'
+                                  ? fgColor.toUpperCase()
+                                  : fgColor}
+                              </span>
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent
+                            className="w-auto border-border bg-card p-2 shadow-xl"
+                            align="start"
+                          >
+                            <div className="[&>div]:!w-full [&>div]:!min-w-0 [&>div]:!bg-transparent [&>div]:!shadow-none [&_*]:!border-border [&_*]:!text-foreground [&_input]:!bg-background [&_input]:!text-foreground [&_button]:!text-black [&_span]:!text-black w-full overflow-hidden">
+                              <ColorPicker
+                                value={fgColor}
+                                onChange={(c: any) => setFgColor(c.hex || c)}
+                              />
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </div>
 
                       {/* Background Color Picker */}
                       <div className="space-y-2">
-                        <Label
-                          className="font-medium"
-                          style={{ color: 'var(--foreground)' }}
-                        >
+                        <Label className="font-medium text-foreground">
                           Background Color
                         </Label>
-                        <div className="flex items-stretch gap-2">
-                          <input
-                            type="color"
-                            value={bgColor}
-                            onChange={(e) => setBgColor(e.target.value)}
-                            className="h-10 w-full min-w-0 cursor-pointer rounded-lg border transition-all hover:shadow-md"
-                            style={{
-                              borderColor: 'var(--border)',
-                              flex: '2 1 0%',
-                            }}
-                            title="Background color picker"
-                          />
-                          <input
-                            type="text"
-                            value={bgColor.toUpperCase()}
-                            onChange={(e) => {
-                              const val = e.target.value.toUpperCase();
-                              if (/^#[0-9A-F]{6}$/.test(val)) {
-                                setBgColor(val);
-                              }
-                            }}
-                            placeholder="#FFFFFF"
-                            maxLength={7}
-                            className="h-10 min-w-0 rounded-lg border px-3 font-mono text-sm transition-colors focus:outline-none"
-                            style={{
-                              borderColor: 'var(--border)',
-                              backgroundColor: 'var(--card)',
-                              color: 'var(--foreground)',
-                              flex: '7 1 0%',
-                            }}
-                          />
-                        </div>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className="w-full justify-start rounded-lg border bg-card text-left font-normal text-foreground hover:bg-accent hover:text-accent-foreground"
+                              style={{ borderColor: 'var(--border)' }}
+                            >
+                              <div
+                                className="mr-3 h-5 w-5 rounded-sm border shadow-sm"
+                                style={{
+                                  backgroundColor: bgColor,
+                                  borderColor: 'var(--border)',
+                                }}
+                              />
+                              <span>
+                                {typeof bgColor === 'string'
+                                  ? bgColor.toUpperCase()
+                                  : bgColor}
+                              </span>
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent
+                            className="w-auto border-border bg-card p-2 shadow-xl"
+                            align="start"
+                          >
+                            <div className="[&>div]:!w-full [&>div]:!min-w-0 [&>div]:!bg-transparent [&>div]:!shadow-none [&_*]:!border-border [&_*]:!text-foreground [&_input]:!bg-background [&_input]:!text-foreground [&_button]:!text-black [&_span]:!text-black w-full overflow-hidden">
+                              <ColorPicker
+                                value={bgColor}
+                                onChange={(c: any) => setBgColor(c.hex || c)}
+                              />
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </div>
                     </div>
 

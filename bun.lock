@@ -6,6 +6,7 @@
       "name": "hub",
       "dependencies": {
         "qr-code-styling": "^1.9.2",
+        "react-color-pikr": "^1.1.2",
         "react-qr-code": "^2.0.18",
       },
       "devDependencies": {
@@ -2664,6 +2665,8 @@
     "rbush": ["rbush@3.0.1", "", { "dependencies": { "quickselect": "^2.0.0" } }, "sha512-XRaVO0YecOpEuIvbhbpTrZgoiI6xBlz6hnlr6EHhd+0x9ase6EmeN+hdwwUaJvLcsFFQ8iWVF1GAK1yB0BWi0w=="],
 
     "react": ["react@19.2.4", "", {}, "sha512-9nfp2hYpCwOjAN+8TZFGhtWEwgvWHXqESH8qT89AT/lWklpLON22Lc8pEtnpsZz7VmawabSU0gCjnj8aC0euHQ=="],
+
+    "react-color-pikr": ["react-color-pikr@1.1.2", "", { "dependencies": { "react": "^19.1.0", "react-dom": "^19.1.0" } }, "sha512-Zb1VL+VTmwlMKeLsCUu4gEROrgyRkOuo2PDy0J36hoKgvYEzXdDC1s3s1SI504Y9qaBdMcQWp/7ApAwZSsp4qw=="],
 
     "react-colorful": ["react-colorful@5.6.1", "", { "peerDependencies": { "react": ">=16.8.0", "react-dom": ">=16.8.0" } }, "sha512-1exovf0uGTGyq5mXQT0zgQ80uvj2PCwvF8zY1RN9/vbJVSjSo3fsB/4L3ObbF7u70NduSiK4xu4Y6q1MHoUGEw=="],
 
