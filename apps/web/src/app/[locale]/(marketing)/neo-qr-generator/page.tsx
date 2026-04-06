@@ -1055,10 +1055,10 @@ export default function NeoQrGeneratorPage() {
                               stiffness: 380,
                               damping: 35,
                             }}
-                            className="absolute inset-0 -z-10 rounded-full bg-linear-to-r from-blue-600 to-cyan-500 shadow-lg shadow-blue-500/50"
+                            className="absolute inset-0 -z-10 rounded-full bg-linear-to-r from-blue-600 to-cyan-500 shadow-blue-500/50 shadow-lg"
                           />
                         ) : null}
-                        <span className="hidden sm:inline text-center">
+                        <span className="hidden text-center sm:inline">
                           {tab.label}
                         </span>
                       </motion.button>

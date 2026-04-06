@@ -318,3 +318,12 @@
     @apply mx-auto;
   }
 }
+
+@layer components {
+  .neo-qr-generator {
+    @apply inline-block rounded-lg border bg-background p-4;
+  }
+  .neo-qr-generator svg path {
+    @apply fill-foreground;
+  }
+}
