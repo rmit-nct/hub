@@ -1,6 +1,7 @@
 'use server';
 
 import { createClient } from '@ncthub/supabase/next/server';
+import { revalidatePath } from 'next/cache';
 import { customAlphabet } from 'nanoid';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
@@ -9,6 +10,9 @@ const generateSlug = customAlphabet(
   '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
   6
 );
+
+const SHORT_LINK_LIMIT = 30;
+const SHORTENER_PAGE_PATH = '/neo-shortener';
 
 const slugSchema = z
   .string()
@@ -25,6 +29,8 @@ const createShortLinkSchema = z.object({
   customSlug: z.string().optional().default(''),
 });
 
+const deleteShortLinkSchema = z.string().uuid('Invalid short link id');
+
 const SHORT_LINK_LIMIT_ERROR =
   'You have reached the 30-link limit for your account';
 
@@ -37,6 +43,23 @@ export interface CreatedShortLink {
   shortUrl: string;
   slug: string;
 }
+
+export interface ShortLinksOverview {
+  isAuthenticated: boolean;
+  limit: number;
+  remainingCount: number;
+  usedCount: number;
+  links: CreatedShortLink[];
+}
+
+type ShortenedLinkRow = {
+  created_at: string;
+  creator_id: string;
+  domain: string;
+  id: string;
+  link: string;
+  slug: string;
+};
 
 function resolveShortenerBaseUrl() {
   return (
@@ -78,6 +101,90 @@ function getDomainFromShortenerBaseUrl() {
   }
 }
 
+function mapShortenedLink(row: ShortenedLinkRow): CreatedShortLink {
+  const shortenerBaseUrl = resolveShortenerBaseUrl();
+
+  return {
+    createdAt: row.created_at,
+    creatorId: row.creator_id,
+    domain: row.domain,
+    id: row.id,
+    link: row.link,
+    shortUrl: `${shortenerBaseUrl}/${row.slug}`,
+    slug: row.slug,
+  };
+}
+
+async function getAuthState() {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  return {
+    supabase,
+    user: user ?? null,
+    error,
+  };
+}
+
+async function requireAuthenticatedUser() {
+  const { supabase, user, error } = await getAuthState();
+
+  if (error || !user) {
+    if (error) {
+      console.error(error);
+    }
+
+    redirect(`/login?nextUrl=${encodeURIComponent(SHORTENER_PAGE_PATH)}`);
+  }
+
+  return { supabase, user };
+}
+
+export async function getMyShortLinksOverview(): Promise<ShortLinksOverview> {
+  const { supabase, user, error } = await getAuthState();
+
+  if (error) {
+    console.error(error);
+  }
+
+  if (!user) {
+    return {
+      isAuthenticated: false,
+      limit: SHORT_LINK_LIMIT,
+      usedCount: 0,
+      remainingCount: SHORT_LINK_LIMIT,
+      links: [],
+    };
+  }
+
+  const { data, error: queryError } = await supabase
+    .from('shortened_links')
+    .select('id, link, slug, domain, creator_id, created_at')
+    .eq('creator_id', user.id)
+    .order('created_at', { ascending: false });
+
+  if (queryError) {
+    console.error(queryError);
+    throw new Error(queryError.message || 'Failed to load your short links');
+  }
+
+  const links = (data ?? []).map((row) =>
+    mapShortenedLink(row as ShortenedLinkRow)
+  );
+
+  return {
+    isAuthenticated: true,
+    limit: SHORT_LINK_LIMIT,
+    usedCount: links.length,
+    remainingCount: Math.max(SHORT_LINK_LIMIT - links.length, 0),
+    links,
+  };
+}
+
 export async function createShortLink(
   formData: FormData
 ): Promise<CreatedShortLink> {
@@ -114,17 +221,7 @@ export async function createShortLink(
     }
   }
 
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-
-  if (userError || !user) {
-    console.error(userError);
-    redirect(`/login?nextUrl=${encodeURIComponent('/neo-shortener')}`);
-  }
+  const { supabase, user } = await requireAuthenticatedUser();
 
   const attemptLimit = requestedSlug ? 1 : 10;
 
@@ -145,15 +242,9 @@ export async function createShortLink(
       .single();
 
     if (!error && data) {
-      return {
-        createdAt: data.created_at,
-        creatorId: data.creator_id,
-        domain: data.domain,
-        id: data.id,
-        link: data.link,
-        shortUrl: `${shortenerBaseUrl}/${data.slug}`,
-        slug: data.slug,
-      };
+      const createdLink = mapShortenedLink(data as ShortenedLinkRow);
+      revalidatePath(SHORTENER_PAGE_PATH);
+      return createdLink;
     }
 
     if (error?.code === '23505') {
@@ -173,4 +264,37 @@ export async function createShortLink(
   }
 
   throw new Error('Could not generate a unique short link after 10 attempts');
+}
+
+export async function deleteShortLink(shortLinkId: string) {
+  const parsedId = deleteShortLinkSchema.safeParse(shortLinkId);
+
+  if (!parsedId.success) {
+    throw new Error(
+      parsedId.error.issues[0]?.message || 'Invalid short link id'
+    );
+  }
+
+  const { supabase, user } = await requireAuthenticatedUser();
+
+  const { data, error } = await supabase
+    .from('shortened_links')
+    .delete()
+    .eq('id', parsedId.data)
+    .eq('creator_id', user.id)
+    .select('id')
+    .maybeSingle();
+
+  if (error) {
+    console.error(error);
+    throw new Error(error.message || 'Failed to delete short link');
+  }
+
+  if (!data) {
+    throw new Error('Short link not found or you do not have permission');
+  }
+
+  revalidatePath(SHORTENER_PAGE_PATH);
+
+  return { deletedId: data.id };
 }
