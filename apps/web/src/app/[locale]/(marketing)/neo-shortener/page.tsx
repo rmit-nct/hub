@@ -218,8 +218,6 @@ export default function NeoShortenerPage() {
                       </div>
 
                       <div className="flex items-start gap-3">
-                        
-
                         <div className="space-y-1">
                           <CardTitle className="text-xl md:text-2xl">
                             Create a short link
@@ -253,11 +251,11 @@ export default function NeoShortenerPage() {
                         </Badge>
                       </div>
                       <div className="mt-4 h-2 overflow-hidden rounded-full bg-secondary">
-  <div
-    className="h-full rounded-full bg-brand-light-blue transition-all duration-300"
-    style={{ width: `${usagePercent}%` }}
-  />
-</div>
+                        <div
+                          className="h-full rounded-full bg-brand-light-blue transition-all duration-300"
+                          style={{ width: `${usagePercent}%` }}
+                        />
+                      </div>
 
                       <div className="mt-3 flex items-center justify-between text-xs">
                         <span className="text-muted-foreground">
@@ -322,7 +320,9 @@ export default function NeoShortenerPage() {
                       }
                       className="h-12 w-full rounded-[1.25rem] bg-brand-light-blue font-semibold text-brand-dark-blue shadow-none hover:bg-brand-light-blue/90"
                     >
-                      {isPending ? 'Creating short link...' : 'Create short link'}
+                      {isPending
+                        ? 'Creating short link...'
+                        : 'Create short link'}
                     </Button>
 
                     {usedCount >= SHORT_LINK_LIMIT ? (
@@ -441,7 +441,9 @@ export default function NeoShortenerPage() {
                 <CardHeader className="space-y-3 border-b border-border/60 pb-5">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div className="space-y-1">
-                      <CardTitle className="text-xl">Your short links</CardTitle>
+                      <CardTitle className="text-xl">
+                        Your short links
+                      </CardTitle>
                       <CardDescription>
                         Review, copy, open, or delete the links you have
                         created.
@@ -568,15 +570,14 @@ export default function NeoShortenerPage() {
                                       </a>
                                     </Button>
                                     <Button
-  type="button"
-  variant="destructive"
-  className="rounded-xl shadow-none"
-  onClick={() => handleDelete(shortLink)}
-  disabled={isDeleting || isPending}
->
-  {isDeleting ? 'Deleting...' : 'Delete'}
-</Button>
-
+                                      type="button"
+                                      variant="destructive"
+                                      className="rounded-xl shadow-none"
+                                      onClick={() => handleDelete(shortLink)}
+                                      disabled={isDeleting || isPending}
+                                    >
+                                      {isDeleting ? 'Deleting...' : 'Delete'}
+                                    </Button>
                                   </div>
                                 </div>
                               </CardContent>
