@@ -76,7 +76,8 @@ export default function NeoShortenerPage() {
                   Create a short link
                 </CardTitle>
                 <CardDescription className="max-w-2xl text-slate-600 dark:text-slate-300">
-                  Paste any destination URL and optionally choose a custom slug to create your short link.
+                  Paste any destination URL and optionally choose a custom slug
+                  to create your short link.
                 </CardDescription>
               </CardHeader>
 
@@ -84,14 +85,14 @@ export default function NeoShortenerPage() {
                 <form className="space-y-5" onSubmit={handleSubmit}>
                   <div className="space-y-2">
                     <div>
-                        <Label
-                          htmlFor="url"
-                          className="text-slate-700 dark:text-slate-100"
-                        >
-                          Destination URL
-                        </Label>
+                      <Label
+                        htmlFor="url"
+                        className="text-slate-700 dark:text-slate-100"
+                      >
+                        Destination URL
+                      </Label>
                     </div>
-                    
+
                     <Textarea
                       id="url"
                       name="url"
@@ -110,14 +111,14 @@ export default function NeoShortenerPage() {
 
                   <div className="space-y-2">
                     <div>
-                    <Label
-                      htmlFor="customSlug"
-                      className="text-slate-700 dark:text-slate-100"
-                    >
-                      Custom slug
-                    </Label>
+                      <Label
+                        htmlFor="customSlug"
+                        className="text-slate-700 dark:text-slate-100"
+                      >
+                        Custom slug
+                      </Label>
                     </div>
-                    
+
                     <Input
                       id="customSlug"
                       name="customSlug"

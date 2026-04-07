@@ -34,7 +34,7 @@ export default function NeoShortenerHero() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.25 }}
       >
-        NEO {' '}
+        NEO{' '}
         <span className="border-[#FBC721] border-b-4 text-[#5FC6E5]">
           Shortener
         </span>
