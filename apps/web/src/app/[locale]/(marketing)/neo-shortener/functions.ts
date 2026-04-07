@@ -2,6 +2,7 @@
 
 import { createClient } from '@ncthub/supabase/next/server';
 import { customAlphabet } from 'nanoid';
+import { redirect } from 'next/navigation';
 import { z } from 'zod';
 
 const generateSlug = customAlphabet(
@@ -119,7 +120,7 @@ export async function createShortLink(
 
   if (userError || !user) {
     console.error(userError);
-    throw new Error('Please sign in to create a short link');
+    redirect(`/login?nextUrl=${encodeURIComponent('/neo-shortener')}`);
   }
 
   const attemptLimit = requestedSlug ? 1 : 10;
