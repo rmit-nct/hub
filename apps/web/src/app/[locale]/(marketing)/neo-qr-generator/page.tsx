@@ -1,5 +1,6 @@
 'use client';
 
+import { url } from 'node:inspector';
 import { Button } from '@ncthub/ui/button';
 import { Checkbox } from '@ncthub/ui/checkbox';
 import { Dropzone, DropzoneEmptyState } from '@ncthub/ui/dropzone';
@@ -63,7 +64,19 @@ function getExt(fileName: string) {
   const idx = fileName.lastIndexOf('.');
   return idx === -1 ? '' : fileName.slice(idx + 1).toLowerCase();
 }
-
+//Email validator
+function isEmailValid(email: string) {
+  if (!email.trim()) return true;
+  const emailRegex =
+    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+  return emailRegex.test(email);
+}
+function isUrlValid(url: string) {
+  if (!url.trim()) return true;
+  const urlRegex =
+    /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/;
+  return urlRegex.test(url);
+}
 function buildWifiPayload({
   ssid,
   password,
@@ -376,6 +389,8 @@ export default function NeoQrGeneratorPage() {
   // File-based inputs
   const [fileObjectUrl, setFileObjectUrl] = useState<string>('');
 
+  const [isGenerated, setIsGenerated] = useState<boolean>(false);
+
   // Customize options - Use safe default to avoid hydration mismatch
   const [bgColor, setBgColor] = useState('#000000');
   const [fgColor, setFgColor] = useState('#090A0B');
@@ -424,6 +439,15 @@ export default function NeoQrGeneratorPage() {
 
   const urlInputValid = isValidHttpUrl(urlInput);
   const facebookUrlValid = isValidHttpUrl(facebookUrl);
+  const emailToValid = isEmailValid(emailTo);
+  const vEmailValid = isEmailValid(vEmail);
+  const urlValid = isUrlValid(urlInput);
+
+  let isCurrentInputValid = true;
+  if (qrType === 'url') isCurrentInputValid = urlValid;
+  else if (qrType === 'facebook') isCurrentInputValid = facebookUrlValid;
+  else if (qrType === 'email') isCurrentInputValid = emailToValid;
+  else if (qrType === 'vcard') isCurrentInputValid = vEmailValid;
 
   // Slider drag behavior: smooth visual scaling via transform during drag, then update QR on release
   const handleQrSizeSliderStart = useCallback(() => {
@@ -525,6 +549,7 @@ export default function NeoQrGeneratorPage() {
   // Normalize QR value into a single source of truth.
   useEffect(() => {
     setQrValue(qrPayload);
+    setIsGenerated(false);
   }, [qrPayload]);
 
   // Extract the actual QR update logic into a separate function for clarity
@@ -938,7 +963,7 @@ export default function NeoQrGeneratorPage() {
     reader.readAsDataURL(file);
   }, []);
 
-  const qrCanDownload = qrValue.trim().length > 0;
+  const qrCanDownload = qrValue.trim().length > 0 && isGenerated;
 
   const download = useCallback(async () => {
     if (!qrRef.current || !qrCanDownload) return;
@@ -1110,11 +1135,6 @@ export default function NeoQrGeneratorPage() {
       label: 'Contact',
       description: 'Digital business card',
     },
-    {
-      value: 'facebook',
-      label: 'App',
-      description: 'Link to app profile',
-    },
   ];
 
   const currentTabInfo = qrTypeTabs.find((t) => t.value === qrType);
@@ -1205,6 +1225,11 @@ export default function NeoQrGeneratorPage() {
                             : 'border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-600 dark:focus:border-blue-500'
                         }`}
                       />
+                      {urlInput.trim() && !urlValid && (
+                        <p className="text-red-500 text-sm dark:text-red-400">
+                          Please enter correct format URL
+                        </p>
+                      )}
                       <p className="text-foreground text-xs">
                         Try something like https://example.com/
                       </p>
@@ -1233,61 +1258,6 @@ export default function NeoQrGeneratorPage() {
                             : 'border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-600 dark:focus:border-blue-500'
                         }`}
                       />
-                    </motion.div>
-                  ) : null}
-
-                  {/* App Stores Selection */}
-                  {qrType === 'appstores' ? (
-                    <motion.div
-                      key="appstores-input"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.2, ease: 'easeInOut' }}
-                      className="space-y-4"
-                    >
-                      <div className="grid gap-3 sm:grid-cols-2">
-                        <div className="space-y-2">
-                          <Label className="text-slate-700 dark:text-slate-300">
-                            Platform
-                          </Label>
-                          <Select
-                            value={appPlatform}
-                            onValueChange={(v) =>
-                              setAppPlatform(v as 'ios' | 'android')
-                            }
-                          >
-                            <SelectTrigger className="rounded-lg border-slate-200 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-700/50 dark:text-white">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent className="border-slate-200 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white">
-                              <SelectItem value="ios">iOS</SelectItem>
-                              <SelectItem value="android">Android</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="space-y-2">
-                          <Label className="text-slate-700 dark:text-slate-300">
-                            Store URL
-                          </Label>
-                          <input
-                            id="store-url"
-                            value={
-                              appPlatform === 'ios'
-                                ? iosStoreUrl
-                                : androidStoreUrl
-                            }
-                            onChange={(e) => {
-                              if (appPlatform === 'ios')
-                                setIosStoreUrl(e.target.value);
-                              else setAndroidStoreUrl(e.target.value);
-                            }}
-                            onFocus={(e) => e.currentTarget.select()}
-                            placeholder="Paste URL"
-                            className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 text-sm placeholder-slate-400 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400"
-                          />
-                        </div>
-                      </div>
                     </motion.div>
                   ) : null}
 
@@ -1397,8 +1367,18 @@ export default function NeoQrGeneratorPage() {
                           onChange={(e) => setEmailTo(e.target.value)}
                           onFocus={(e) => e.currentTarget.select()}
                           placeholder="someone@example.com"
-                          className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400"
+                          className={`w-full rounded-lg border bg-white px-4 py-3 text-slate-900 placeholder-slate-400 transition-colors focus:outline-none dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400 ${
+                            emailTo.trim() && !emailToValid
+                              ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500/20'
+                              : 'border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-600 dark:focus:border-blue-500'
+                          }`}
                         />
+
+                        {emailTo.trim() && !emailToValid && (
+                          <p className="text-red-500 text-sm dark:text-red-400">
+                            Please enter a valid email address.
+                          </p>
+                        )}
                       </div>
                       <div className="space-y-2">
                         <Label className="text-slate-700 dark:text-slate-300">
@@ -1585,8 +1565,17 @@ export default function NeoQrGeneratorPage() {
                           onChange={(e) => setVEmail(e.target.value)}
                           onFocus={(e) => e.currentTarget.select()}
                           placeholder="Enter email address"
-                          className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400"
+                          className={`w-full rounded-lg border bg-white px-4 py-3 text-slate-900 placeholder-slate-400 transition-colors focus:outline-none dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400 ${
+                            vEmail.trim() && !vEmailValid
+                              ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500/20'
+                              : 'border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-600 dark:focus:border-blue-500'
+                          }`}
                         />
+                        {vEmail.trim() && !vEmailValid && (
+                          <p className="text-red-500 text-sm dark:text-red-400">
+                            Please enter a valid email address.
+                          </p>
+                        )}
                       </div>
                     </motion.div>
                   ) : null}
@@ -2006,17 +1995,21 @@ export default function NeoQrGeneratorPage() {
 
               {/* QR Code Preview with Fade-in Animation - Fixed Height Container */}
               <div
-                className="flex flex-col items-center justify-center gap-6 border-slate-200 border-t px-8 py-10 dark:border-slate-700"
-                style={{ height: '550px', overflow: 'hidden' }}
+                className="flex flex-col items-center justify-center gap-6 border-slate-200 border-t px-6 py-4 dark:border-slate-700"
+                style={{ minHeight: '420px', overflow: 'hidden' }}
               >
                 {qrValue.trim() ? (
                   <div
                     key={`qr-${qrType}-${qrValue.slice(0, 40)}`}
-                    className="qr-container flex animate-fadeIn flex-col items-center justify-center gap-6 rounded-xl p-6"
+                    className="qr-container flex animate-fadeIn flex-col items-center justify-center gap-4 rounded-xl p-4"
                   >
                     {/* Unified wrapper: scales both QR image and background container together */}
                     <div
-                      className="relative inline-flex items-center justify-center will-change-transform"
+                      className={`relative inline-flex items-center justify-center transition-all duration-500 will-change-transform ${
+                        !isGenerated
+                          ? 'pointer-events-none select-none opacity-40 blur-md grayscale-[50%]'
+                          : ''
+                      }`}
                       style={{
                         width: qrSize,
                         height: qrSize,
@@ -2024,7 +2017,7 @@ export default function NeoQrGeneratorPage() {
                         transformOrigin: 'center center',
                         transition: isDraggingSlider
                           ? 'none'
-                          : 'transform 0.2s ease-out',
+                          : 'transform 0.2s ease-out, filter 0.5s, opacity 0.5s',
                       }}
                     >
                       {/* QR Code container */}
@@ -2079,6 +2072,20 @@ export default function NeoQrGeneratorPage() {
                   </div>
                 )}
               </div>
+              {!isGenerated && (
+                <Button
+                  type="button"
+                  onClick={() => setIsGenerated(true)}
+                  disabled={!qrValue.trim() || !isCurrentInputValid}
+                  className="z-10 -mt-4 mb-2 rounded-full px-6 py-6 font-bold text-lg shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 disabled:pointer-events-none disabled:opacity-50 disabled:hover:scale-100"
+                  style={{
+                    backgroundColor: 'var(--primary)',
+                    color: 'var(--primary-foreground)',
+                  }}
+                >
+                  Generate QR Code
+                </Button>
+              )}
 
               {/* Divider - Fixed and stable */}
               <div
