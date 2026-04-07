@@ -21,7 +21,7 @@ export default function NeoShortenerHero() {
         <Sparkles className="h-5 w-5 text-[#FBC721]" />
         <Badge
           variant="outline"
-          className="border-[#5FC6E5]/50 bg-white/60 px-3 py-1 text-[#127A9B] text-sm"
+          className="border-[#5FC6E5]/50 px-3 py-1 text-sm text-[#5FC6E5]"
         >
           Link Shortener
         </Badge>
@@ -34,14 +34,14 @@ export default function NeoShortenerHero() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.25 }}
       >
-        Build shareable links with{' '}
+        NEO {' '}
         <span className="border-[#FBC721] border-b-4 text-[#5FC6E5]">
-          Neo Shortener
+          Shortener
         </span>
       </motion.h1>
 
       <motion.p
-        className="mx-auto max-w-2xl text-base text-muted-foreground md:text-lg"
+        className="mx-auto max-w-3xl text-base text-muted-foreground md:text-lg"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, delay: 0.4 }}

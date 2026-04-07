@@ -69,24 +69,29 @@ export default function NeoShortenerPage() {
           <NeoShortenerHero />
 
           <div className="mx-auto max-w-3xl">
-            <Card className="border-border/60 bg-slate-950 text-slate-100 shadow-2xl">
+            <Card className="border-border/60 bg-white/95 text-foreground shadow-2xl shadow-slate-200/70 backdrop-blur supports-[backdrop-filter]:bg-white/90 dark:bg-slate-950 dark:text-slate-50 dark:shadow-black/30 dark:supports-[backdrop-filter]:bg-slate-950/90">
               <CardHeader className="space-y-3">
                 <CardTitle className="flex items-center gap-2 text-xl">
                   <Link2 className="h-5 w-5 text-[#5FC6E5]" />
                   Create a short link
                 </CardTitle>
-                <CardDescription className="max-w-xl text-slate-300">
-                  Paste any destination URL and optionally choose a custom slug
-                  to create your short link.
+                <CardDescription className="max-w-2xl text-slate-600 dark:text-slate-300">
+                  Paste any destination URL and optionally choose a custom slug to create your short link.
                 </CardDescription>
               </CardHeader>
 
               <CardContent className="space-y-6">
                 <form className="space-y-5" onSubmit={handleSubmit}>
                   <div className="space-y-2">
-                    <Label htmlFor="url" className="text-slate-100">
-                      Destination URL
-                    </Label>
+                    <div>
+                        <Label
+                          htmlFor="url"
+                          className="text-slate-700 dark:text-slate-100"
+                        >
+                          Destination URL
+                        </Label>
+                    </div>
+                    
                     <Textarea
                       id="url"
                       name="url"
@@ -95,30 +100,34 @@ export default function NeoShortenerPage() {
                       onChange={(event) => setUrl(event.target.value)}
                       disabled={isPending}
                       required
-                      className="min-h-28 resize-none rounded-xl border-slate-800 bg-slate-900 px-4 py-3 text-slate-100 placeholder:text-slate-500"
+                      className="min-h-28 resize-none rounded-xl border-slate-200 bg-white text-foreground placeholder:text-slate-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500"
                     />
-                    <p className="text-slate-400 text-xs">
+                    <p className="text-slate-500 text-xs dark:text-slate-400">
                       If you paste `example.com`, it will be stored as
                       `https://example.com`.
                     </p>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="customSlug" className="text-slate-100">
+                    <div>
+                    <Label
+                      htmlFor="customSlug"
+                      className="text-slate-700 dark:text-slate-100"
+                    >
                       Custom slug
                     </Label>
-                    <div className="rounded-xl border border-slate-800 bg-slate-900 p-4">
-                      <Input
-                        id="customSlug"
-                        name="customSlug"
-                        placeholder="leave blank to auto-generate"
-                        value={customSlug}
-                        onChange={(event) => setCustomSlug(event.target.value)}
-                        disabled={isPending}
-                        className="h-11 rounded-xl border-slate-700 bg-slate-950 text-slate-100 placeholder:text-slate-500"
-                      />
                     </div>
-                    <p className="text-slate-400 text-xs">
+                    
+                    <Input
+                      id="customSlug"
+                      name="customSlug"
+                      placeholder="leave blank to auto-generate"
+                      value={customSlug}
+                      onChange={(event) => setCustomSlug(event.target.value)}
+                      disabled={isPending}
+                      className="h-11 rounded-xl border-slate-200 bg-white text-slate-950 placeholder:text-slate-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500"
+                    />
+                    <p className="text-slate-500 text-xs dark:text-slate-400">
                       Letters, numbers, hyphens, and underscores only.
                     </p>
                   </div>
@@ -127,14 +136,14 @@ export default function NeoShortenerPage() {
                     type="submit"
                     size="lg"
                     disabled={isPending}
-                    className="h-11 w-full rounded-xl bg-[#5FC6E5] font-semibold text-slate-950 hover:bg-[#7bd4ee]"
+                    className="h-11 w-full rounded-xl bg-slate-900 font-semibold text-white hover:bg-slate-800 dark:bg-white dark:text-slate-950 dark:hover:bg-slate-100"
                   >
-                    {isPending ? 'Creating short link...' : 'Create short link'}
+                    {isPending ? 'Creating Short Link...' : 'Create Short Link'}
                   </Button>
                 </form>
 
                 {error ? (
-                  <div className="rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-red-200 text-sm">
+                  <div className="rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-red-700 text-sm dark:text-red-200">
                     {error}
                   </div>
                 ) : null}
@@ -143,21 +152,21 @@ export default function NeoShortenerPage() {
                   <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4">
                     <div className="mb-4 flex items-start justify-between gap-4">
                       <div>
-                        <p className="font-medium text-emerald-100 text-sm">
+                        <p className="font-medium text-emerald-800 text-sm dark:text-emerald-100">
                           Short link created
                         </p>
-                        <p className="text-emerald-200/80 text-xs">
+                        <p className="text-emerald-700/90 text-xs dark:text-emerald-200/80">
                           Stored under domain {result.domain} with slug{' '}
                           {result.slug}.
                         </p>
                       </div>
-                      <div className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 font-medium text-emerald-100 text-xs">
+                      <div className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 font-medium text-emerald-800 text-xs dark:text-emerald-100">
                         Saved
                       </div>
                     </div>
 
-                    <div className="rounded-xl border border-white/10 bg-slate-950/70 p-4">
-                      <p className="mb-2 font-medium text-[11px] text-slate-500 uppercase tracking-[0.22em]">
+                    <div className="rounded-xl border border-slate-200 bg-white/80 p-4 dark:border-white/10 dark:bg-slate-950/70">
+                      <p className="mb-2 font-medium text-[11px] text-slate-500 uppercase tracking-[0.22em] dark:text-slate-500">
                         Short URL
                       </p>
                       <a
@@ -169,10 +178,10 @@ export default function NeoShortenerPage() {
                         {result.shortUrl}
                       </a>
 
-                      <p className="mt-4 mb-2 font-medium text-[11px] text-slate-500 uppercase tracking-[0.22em]">
+                      <p className="mt-4 mb-2 font-medium text-[11px] text-slate-500 uppercase tracking-[0.22em] dark:text-slate-500">
                         Destination
                       </p>
-                      <p className="break-all text-slate-200 text-sm">
+                      <p className="break-all text-slate-700 text-sm blur-[0.3px] dark:text-slate-200 dark:blur-none">
                         {result.link}
                       </p>
                     </div>
@@ -182,8 +191,9 @@ export default function NeoShortenerPage() {
                         type="button"
                         variant="outline"
                         className={cn(
-                          'rounded-xl border-white/15 bg-white/5 text-slate-100 hover:bg-white/10 hover:text-slate-100',
-                          copied && 'border-emerald-400/40 text-emerald-200'
+                          'rounded-xl border-slate-300 bg-white text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:border-white/15 dark:bg-white/5 dark:text-slate-100 dark:hover:bg-white/10 dark:hover:text-slate-100',
+                          copied &&
+                            'border-emerald-400/40 text-emerald-700 dark:text-emerald-200'
                         )}
                         onClick={handleCopy}
                       >
@@ -203,7 +213,7 @@ export default function NeoShortenerPage() {
                       <Button
                         type="button"
                         asChild
-                        className="rounded-xl bg-slate-100 text-slate-950 hover:bg-white"
+                        className="rounded-xl bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-950 dark:hover:bg-white"
                       >
                         <a
                           href={result.shortUrl}
