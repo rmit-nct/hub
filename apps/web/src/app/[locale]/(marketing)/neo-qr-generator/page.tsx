@@ -165,18 +165,6 @@ function buildVCardPayload({
     .join('\n');
 }
 
-function buildAppStorePayload({
-  platform,
-  iosUrl,
-  androidUrl,
-}: {
-  platform: 'ios' | 'android';
-  iosUrl: string;
-  androidUrl: string;
-}) {
-  return platform === 'ios' ? iosUrl.trim() : androidUrl.trim();
-}
-
 // Validate and sanitize dot types to prevent qr-code-styling crashes
 function sanitizeDotType(type: unknown): string {
   const validTypes = [
