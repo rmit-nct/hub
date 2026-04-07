@@ -208,11 +208,11 @@ export default function NeoShortenerPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.45 }}
             >
-              <Card className="overflow-hidden rounded-[2rem] border-border/60 bg-card/95 shadow-xl backdrop-blur supports-[backdrop-filter]:bg-card/90">
-                <CardHeader className="space-y-6 border-b border-border/60 pb-6">
+              <Card className="overflow-hidden rounded-4xl border-border/60 bg-card/95 shadow-xl backdrop-blur supports-backdrop-filter:bg-card/90">
+                <CardHeader className="space-y-6 border-border/60 border-b pb-6">
                   <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
                     <div className="space-y-4">
-                      <div className="inline-flex items-center gap-2 rounded-full border border-brand-light-blue/20 bg-brand-light-blue/10 px-3 py-1 text-sm text-brand-light-blue">
+                      <div className="inline-flex items-center gap-2 rounded-full border border-brand-light-blue/20 bg-brand-light-blue/10 px-3 py-1 text-brand-light-blue text-sm">
                         <Link2 className="h-4 w-4" />
                         <span className="font-medium">NEO Shortener</span>
                       </div>
@@ -230,17 +230,17 @@ export default function NeoShortenerPage() {
                       </div>
                     </div>
 
-                    <div className="w-full max-w-[280px] rounded-[1.5rem] border border-brand-light-blue/15 bg-muted/40 p-5">
+                    <div className="w-full max-w-70 rounded-3xl border border-brand-light-blue/15 bg-muted/40 p-5">
                       <div className="flex items-start justify-between gap-4">
                         <div>
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-muted-foreground text-sm">
                             Links left
                           </p>
                           <div className="mt-1 flex items-end gap-2">
                             <span className="font-bold text-3xl text-foreground">
                               {remainingCount}
                             </span>
-                            <span className="pb-1 text-sm text-muted-foreground">
+                            <span className="pb-1 text-muted-foreground text-sm">
                               {remainingCount === 1 ? 'link' : 'links'}
                             </span>
                           </div>
@@ -286,9 +286,9 @@ export default function NeoShortenerPage() {
                         onChange={(event) => setUrl(event.target.value)}
                         disabled={isPending || pendingDeleteId !== null}
                         required
-                        className="min-h-[120px] rounded-[1.25rem] border-border bg-background text-base shadow-sm placeholder:text-muted-foreground focus-visible:ring-brand-light-blue/25"
+                        className="min-h-30 rounded-[1.25rem] border-border bg-background text-base shadow-sm placeholder:text-muted-foreground focus-visible:ring-brand-light-blue/25"
                       />
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-muted-foreground text-sm">
                         If you paste `example.com`, it will be stored as
                         `https://example.com`.
                       </p>
@@ -305,7 +305,7 @@ export default function NeoShortenerPage() {
                         disabled={isPending || pendingDeleteId !== null}
                         className="h-12 rounded-[1.25rem] border-border bg-background text-base shadow-sm placeholder:text-muted-foreground focus-visible:ring-brand-light-blue/25"
                       />
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-muted-foreground text-sm">
                         Letters, numbers, hyphens, and underscores only.
                       </p>
                     </div>
@@ -326,7 +326,7 @@ export default function NeoShortenerPage() {
                     </Button>
 
                     {usedCount >= SHORT_LINK_LIMIT ? (
-                      <div className="rounded-[1.25rem] border border-dynamic-light-yellow/20 bg-dynamic-light-yellow/10 px-4 py-3 text-sm text-foreground">
+                      <div className="rounded-[1.25rem] border border-dynamic-light-yellow/20 bg-dynamic-light-yellow/10 px-4 py-3 text-foreground text-sm">
                         You have reached the {SHORT_LINK_LIMIT}-link limit.
                         Delete an existing link to create a new one.
                       </div>
@@ -334,7 +334,7 @@ export default function NeoShortenerPage() {
                   </form>
 
                   {error ? (
-                    <div className="rounded-[1.25rem] border border-destructive/20 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                    <div className="rounded-[1.25rem] border border-destructive/20 bg-destructive/10 px-4 py-3 text-destructive text-sm">
                       {error}
                     </div>
                   ) : null}
@@ -345,7 +345,7 @@ export default function NeoShortenerPage() {
                       animate={{ opacity: 1, scale: 1, y: 0 }}
                       transition={{ duration: 0.25 }}
                     >
-                      <Card className="rounded-[1.5rem] border border-brand-light-blue/20 bg-brand-light-blue/5 shadow-none">
+                      <Card className="rounded-3xl border border-brand-light-blue/20 bg-brand-light-blue/5 shadow-none">
                         <CardHeader className="pb-4">
                           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                             <div>
@@ -366,7 +366,7 @@ export default function NeoShortenerPage() {
 
                         <CardContent className="space-y-4">
                           <div className="rounded-[1.25rem] border border-border/60 bg-background/80 p-4">
-                            <p className="mb-2 text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                            <p className="mb-2 font-medium text-muted-foreground text-xs uppercase tracking-[0.18em]">
                               Short URL
                             </p>
                             <a
@@ -378,10 +378,10 @@ export default function NeoShortenerPage() {
                               {result.shortUrl}
                             </a>
 
-                            <p className="mt-4 mb-2 text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                            <p className="mt-4 mb-2 font-medium text-muted-foreground text-xs uppercase tracking-[0.18em]">
                               Destination
                             </p>
-                            <p className="break-all text-sm text-foreground">
+                            <p className="break-all text-foreground text-sm">
                               {result.link}
                             </p>
                           </div>
@@ -437,8 +437,8 @@ export default function NeoShortenerPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.45, delay: 0.08 }}
             >
-              <Card className="rounded-[2rem] border-border/60 bg-card/95 shadow-xl backdrop-blur supports-[backdrop-filter]:bg-card/90">
-                <CardHeader className="space-y-3 border-b border-border/60 pb-5">
+              <Card className="rounded-4xl border-border/60 bg-card/95 shadow-xl backdrop-blur supports-backdrop-filter:bg-card/90">
+                <CardHeader className="space-y-3 border-border/60 border-b pb-5">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div className="space-y-1">
                       <CardTitle className="text-xl">
@@ -458,18 +458,18 @@ export default function NeoShortenerPage() {
 
                 <CardContent className="pt-6">
                   {isLoadingLinks ? (
-                    <div className="rounded-[1.25rem] border border-border/60 bg-muted/40 px-4 py-8 text-center text-sm text-muted-foreground">
+                    <div className="rounded-[1.25rem] border border-border/60 bg-muted/40 px-4 py-8 text-center text-muted-foreground text-sm">
                       Loading your short links...
                     </div>
                   ) : links.length === 0 ? (
-                    <div className="rounded-[1.5rem] border border-dashed border-border px-6 py-14 text-center">
+                    <div className="rounded-3xl border border-border border-dashed px-6 py-14 text-center">
                       <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand-light-blue/10 text-brand-light-blue">
                         <Link2 className="h-7 w-7" />
                       </div>
-                      <h3 className="mb-2 text-lg font-semibold">
+                      <h3 className="mb-2 font-semibold text-lg">
                         No short links yet
                       </h3>
-                      <p className="mx-auto max-w-md text-sm text-muted-foreground">
+                      <p className="mx-auto max-w-md text-muted-foreground text-sm">
                         Create your first short link above. It will appear here
                         so you can copy, open, or delete it later.
                       </p>
@@ -491,7 +491,7 @@ export default function NeoShortenerPage() {
                             }}
                             whileHover={{ y: -2 }}
                           >
-                            <Card className="rounded-[1.5rem] border-border/60 bg-muted/25 shadow-sm transition-shadow hover:shadow-md">
+                            <Card className="rounded-3xl border-border/60 bg-muted/25 shadow-sm transition-shadow hover:shadow-md">
                               <CardContent className="p-5">
                                 <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                                   <div className="min-w-0 flex-1 space-y-4">
@@ -499,14 +499,14 @@ export default function NeoShortenerPage() {
                                       <Badge className="rounded-full border border-brand-light-blue/15 bg-brand-light-blue/10 text-brand-light-blue hover:bg-brand-light-blue/10">
                                         {shortLink.slug}
                                       </Badge>
-                                      <span className="text-xs text-muted-foreground">
+                                      <span className="text-muted-foreground text-xs">
                                         Created{' '}
                                         {formatCreatedAt(shortLink.createdAt)}
                                       </span>
                                     </div>
 
-                                    <div className="rounded-[1rem] border border-border/60 bg-background p-3">
-                                      <p className="mb-1 text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                                    <div className="rounded-2xl border border-border/60 bg-background p-3">
+                                      <p className="mb-1 font-medium text-muted-foreground text-xs uppercase tracking-[0.18em]">
                                         Short URL
                                       </p>
                                       <a
@@ -519,17 +519,17 @@ export default function NeoShortenerPage() {
                                       </a>
                                     </div>
 
-                                    <div className="rounded-[1rem] border border-border/60 bg-background p-3">
-                                      <p className="mb-1 text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                                    <div className="rounded-2xl border border-border/60 bg-background p-3">
+                                      <p className="mb-1 font-medium text-muted-foreground text-xs uppercase tracking-[0.18em]">
                                         Destination
                                       </p>
-                                      <p className="break-all text-sm text-foreground">
+                                      <p className="break-all text-foreground text-sm">
                                         {shortLink.link}
                                       </p>
                                     </div>
                                   </div>
 
-                                  <div className="flex flex-wrap gap-2 lg:w-[270px] lg:justify-end">
+                                  <div className="flex flex-wrap gap-2 lg:w-67.5 lg:justify-end">
                                     <Button
                                       type="button"
                                       variant="outline"
