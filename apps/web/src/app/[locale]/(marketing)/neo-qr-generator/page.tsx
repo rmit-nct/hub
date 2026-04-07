@@ -332,20 +332,8 @@ function buildQrOptions({
 }
 
 export default function NeoQrGeneratorPage() {
-  // Initialize colors from CSS variables (theme-aware)
-  const getInitialFgColor = () => {
-    if (typeof window === 'undefined') return '#090A0B';
-    const isDark =
-      document.documentElement.classList.contains('dark') ||
-      window.matchMedia('(prefers-color-scheme: dark)').matches;
-    // Primary foreground for light mode (dark text), theme-inverted for dark mode
-    return isDark ? '#FAFAFA' : '#090A0B';
-  };
-
-  const getInitialBgColor = () => {
-    return '#000000';
-  };
-
+  // Initialize colors with safe defaults to avoid hydration mismatch
+  // Use a consistent default on both server and client, then update after hydration
   const [qrType, setQrType] = useState<QrType>('url');
   const [qrValue, setQrValue] = useState('');
   const [showOptionsModal, setShowOptionsModal] = useState(false);
@@ -388,11 +376,11 @@ export default function NeoQrGeneratorPage() {
   // File-based inputs
   const [fileObjectUrl, setFileObjectUrl] = useState<string>('');
 
-  // Customize options - Theme-aware colors from CSS variables
-  const [bgColor, setBgColor] = useState(getInitialBgColor());
-  const [fgColor, setFgColor] = useState(getInitialFgColor());
+  // Customize options - Use safe default to avoid hydration mismatch
+  const [bgColor, setBgColor] = useState('#000000');
+  const [fgColor, setFgColor] = useState('#090A0B');
   const [qrSize, setQrSize] = useState(260);
-  const [previewQrSize, setPreviewQrSize] = useState(260);
+  const [displayScale, setDisplayScale] = useState(1);
   const [isDraggingSlider, setIsDraggingSlider] = useState(false);
   const [errorLevel, setErrorLevel] = useState<QrErrorLevel>('H');
   const [quietZone, setQuietZone] = useState(true);
@@ -415,6 +403,14 @@ export default function NeoQrGeneratorPage() {
   const prevQrTypeRef = useRef<QrType>(qrType);
   const prevQrContainerElRef = useRef<HTMLDivElement | null>(null);
 
+  // Effect to update foreground color after hydration based on actual theme
+  useEffect(() => {
+    const isDark =
+      document.documentElement.classList.contains('dark') ||
+      window.matchMedia('(prefers-color-scheme: dark)').matches;
+    setFgColor(isDark ? '#FAFAFA' : '#090A0B');
+  }, []);
+
   const isValidHttpUrl = (value: string) => {
     const v = value.trim();
     if (!v) return true;
@@ -429,33 +425,39 @@ export default function NeoQrGeneratorPage() {
   const urlInputValid = isValidHttpUrl(urlInput);
   const facebookUrlValid = isValidHttpUrl(facebookUrl);
 
-  // Slider drag behavior: slider and label update in real-time, QR image/background frozen
+  // Slider drag behavior: smooth visual scaling via transform during drag, then update QR on release
   const handleQrSizeSliderStart = useCallback(() => {
     setIsDraggingSlider(true);
-    setPreviewQrSize(qrSize);
-  }, [qrSize]);
+    setDisplayScale(1); // Reset scale at start
+  }, []);
 
   const handleQrSizeSliderChange = useCallback(
     (v: number[]) => {
-      // Update preview slider value in real-time
-      setPreviewQrSize(v[0] ?? qrSize);
+      // Calculate smooth scale factor for live visual feedback during drag
+      const newSize = v[0] ?? qrSize;
+      const scale = newSize / qrSize;
+      setDisplayScale(scale);
     },
     [qrSize]
   );
 
-  const handleQrSizeSliderEnd = useCallback(() => {
-    // Apply final size to QR
-    setQrSize(previewQrSize);
+  const handleQrSizeSliderEnd = useCallback((finalSize: number) => {
+    // Apply final size to QR and update rendering
+    setQrSize(finalSize);
+    setDisplayScale(1); // Reset scale after updating actual size
     setIsDraggingSlider(false);
-  }, [previewQrSize]);
+  }, []);
 
   const handleQrSizeSliderPointerDown = useCallback(() => {
     handleQrSizeSliderStart();
   }, [handleQrSizeSliderStart]);
 
-  const handleQrSizeSliderPointerUp = useCallback(() => {
-    handleQrSizeSliderEnd();
-  }, [handleQrSizeSliderEnd]);
+  const handleQrSizeSliderPointerUp = useCallback(
+    (finalSize: number) => {
+      handleQrSizeSliderEnd(finalSize);
+    },
+    [handleQrSizeSliderEnd]
+  );
 
   const qrPayload = useMemo(() => {
     switch (qrType) {
@@ -1197,10 +1199,10 @@ export default function NeoQrGeneratorPage() {
                         onChange={(e) => setUrlInput(e.target.value)}
                         onFocus={(e) => e.currentTarget.select()}
                         placeholder="Enter URL"
-                        className={`w-full rounded-lg border bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 transition-colors focus:outline-none ${
+                        className={`w-full rounded-lg border bg-white px-4 py-3 text-slate-900 placeholder-slate-400 transition-colors focus:outline-none dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400 ${
                           urlInput.trim() && !urlInputValid
                             ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500/20'
-                            : 'border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
+                            : 'border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-600 dark:focus:border-blue-500'
                         }`}
                       />
                       <p className="text-foreground text-xs">
@@ -1225,10 +1227,10 @@ export default function NeoQrGeneratorPage() {
                         onChange={(e) => setFacebookUrl(e.target.value)}
                         onFocus={(e) => e.currentTarget.select()}
                         placeholder="https://facebook.com/..."
-                        className={`w-full rounded-lg border bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 transition-colors focus:outline-none ${
+                        className={`w-full rounded-lg border bg-white px-4 py-3 text-slate-900 placeholder-slate-400 transition-colors focus:outline-none dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400 ${
                           facebookUrl.trim() && !facebookUrlValid
                             ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500/20'
-                            : 'border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
+                            : 'border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-600 dark:focus:border-blue-500'
                         }`}
                       />
                     </motion.div>
@@ -1246,24 +1248,28 @@ export default function NeoQrGeneratorPage() {
                     >
                       <div className="grid gap-3 sm:grid-cols-2">
                         <div className="space-y-2">
-                          <Label className="text-slate-300">Platform</Label>
+                          <Label className="text-slate-700 dark:text-slate-300">
+                            Platform
+                          </Label>
                           <Select
                             value={appPlatform}
                             onValueChange={(v) =>
                               setAppPlatform(v as 'ios' | 'android')
                             }
                           >
-                            <SelectTrigger className="rounded-lg border-slate-600 bg-slate-700/50 text-white">
+                            <SelectTrigger className="rounded-lg border-slate-200 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-700/50 dark:text-white">
                               <SelectValue />
                             </SelectTrigger>
-                            <SelectContent className="border-slate-600 bg-slate-800 text-white">
+                            <SelectContent className="border-slate-200 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white">
                               <SelectItem value="ios">iOS</SelectItem>
                               <SelectItem value="android">Android</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
                         <div className="space-y-2">
-                          <Label className="text-slate-300">Store URL</Label>
+                          <Label className="text-slate-700 dark:text-slate-300">
+                            Store URL
+                          </Label>
                           <input
                             id="store-url"
                             value={
@@ -1278,7 +1284,7 @@ export default function NeoQrGeneratorPage() {
                             }}
                             onFocus={(e) => e.currentTarget.select()}
                             placeholder="Paste URL"
-                            className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-3 py-2 text-sm text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                            className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 text-sm placeholder-slate-400 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400"
                           />
                         </div>
                       </div>
@@ -1296,7 +1302,7 @@ export default function NeoQrGeneratorPage() {
                       className="space-y-4"
                     >
                       <div className="space-y-2">
-                        <Label className="text-slate-300">
+                        <Label className="text-slate-700 dark:text-slate-300">
                           Network name (SSID)
                         </Label>
                         <input
@@ -1305,12 +1311,14 @@ export default function NeoQrGeneratorPage() {
                           onChange={(e) => setWifiSsid(e.target.value)}
                           onFocus={(e) => e.currentTarget.select()}
                           placeholder="My_WiFi"
-                          className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                          className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400"
                         />
                       </div>
 
                       <div className="space-y-2">
-                        <Label className="text-slate-300">Password</Label>
+                        <Label className="text-slate-700 dark:text-slate-300">
+                          Password
+                        </Label>
                         <input
                           id="wifi-password"
                           value={wifiPassword}
@@ -1320,13 +1328,15 @@ export default function NeoQrGeneratorPage() {
                           disabled={
                             wifiSecurity === 'nopass' || wifiSecurity === 'NONE'
                           }
-                          className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none disabled:opacity-50"
+                          className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none disabled:opacity-50 dark:border-slate-600 dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400"
                         />
                       </div>
 
                       <div className="grid gap-3 sm:grid-cols-2">
                         <div className="space-y-2">
-                          <Label className="text-slate-300">Security</Label>
+                          <Label className="text-slate-700 dark:text-slate-300">
+                            Security
+                          </Label>
                           <Select
                             value={wifiSecurity}
                             onValueChange={(v) =>
@@ -1335,10 +1345,10 @@ export default function NeoQrGeneratorPage() {
                               )
                             }
                           >
-                            <SelectTrigger className="rounded-lg border-slate-600 bg-slate-700/50 text-white">
+                            <SelectTrigger className="rounded-lg border-slate-200 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-700/50 dark:text-white">
                               <SelectValue />
                             </SelectTrigger>
-                            <SelectContent className="border-slate-600 bg-slate-800 text-white">
+                            <SelectContent className="border-slate-200 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white">
                               <SelectItem value="WPA2">WPA2</SelectItem>
                               <SelectItem value="WPA">WPA</SelectItem>
                               <SelectItem value="WEP">WEP</SelectItem>
@@ -1358,7 +1368,7 @@ export default function NeoQrGeneratorPage() {
                           />
                           <Label
                             htmlFor="wifi-hidden"
-                            className="cursor-pointer text-slate-300"
+                            className="cursor-pointer text-slate-700 dark:text-slate-300"
                           >
                             Hidden
                           </Label>
@@ -1378,36 +1388,42 @@ export default function NeoQrGeneratorPage() {
                       className="space-y-4"
                     >
                       <div className="space-y-2">
-                        <Label className="text-slate-300">To</Label>
+                        <Label className="text-slate-700 dark:text-slate-300">
+                          To
+                        </Label>
                         <input
                           id="email-to"
                           value={emailTo}
                           onChange={(e) => setEmailTo(e.target.value)}
                           onFocus={(e) => e.currentTarget.select()}
                           placeholder="someone@example.com"
-                          className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                          className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400"
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-slate-300">Subject</Label>
+                        <Label className="text-slate-700 dark:text-slate-300">
+                          Subject
+                        </Label>
                         <input
                           id="email-subject"
                           value={emailSubject}
                           onChange={(e) => setEmailSubject(e.target.value)}
                           onFocus={(e) => e.currentTarget.select()}
                           placeholder="Optional"
-                          className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                          className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400"
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-slate-300">Body</Label>
+                        <Label className="text-slate-700 dark:text-slate-300">
+                          Body
+                        </Label>
                         <textarea
                           id="email-body"
                           rows={3}
                           value={emailBody}
                           onChange={(e) => setEmailBody(e.target.value)}
                           onFocus={(e) => e.currentTarget.select()}
-                          className="w-full resize-none rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                          className="w-full resize-none rounded-lg border border-slate-200 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400"
                           placeholder="Write a message..."
                         />
                       </div>
@@ -1425,25 +1441,29 @@ export default function NeoQrGeneratorPage() {
                       className="space-y-4"
                     >
                       <div className="space-y-2">
-                        <Label className="text-slate-300">Number</Label>
+                        <Label className="text-slate-700 dark:text-slate-300">
+                          Number
+                        </Label>
                         <input
                           id="sms-number"
                           value={smsNumber}
                           onChange={(e) => setSmsNumber(e.target.value)}
                           onFocus={(e) => e.currentTarget.select()}
                           placeholder="+1 555 123 456"
-                          className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                          className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400"
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-slate-300">Message</Label>
+                        <Label className="text-slate-700 dark:text-slate-300">
+                          Message
+                        </Label>
                         <textarea
                           id="sms-message"
                           rows={3}
                           value={smsMessage}
                           onChange={(e) => setSmsMessage(e.target.value)}
                           onFocus={(e) => e.currentTarget.select()}
-                          className="w-full resize-none rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                          className="w-full resize-none rounded-lg border border-slate-200 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400"
                           placeholder="Your message..."
                         />
                       </div>
@@ -1462,7 +1482,10 @@ export default function NeoQrGeneratorPage() {
                     >
                       <div className="grid gap-3 sm:grid-cols-2">
                         <div className="space-y-2">
-                          <Label htmlFor="v-first" className="text-slate-300">
+                          <Label
+                            htmlFor="v-first"
+                            className="text-slate-700 dark:text-slate-300"
+                          >
                             First name
                           </Label>
                           {/* UPDATED: Added placeholder for Contact tab */}
@@ -1472,11 +1495,14 @@ export default function NeoQrGeneratorPage() {
                             onChange={(e) => setVFirstName(e.target.value)}
                             onFocus={(e) => e.currentTarget.select()}
                             placeholder="Enter full name"
-                            className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                            className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400"
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="v-last" className="text-slate-300">
+                          <Label
+                            htmlFor="v-last"
+                            className="text-slate-700 dark:text-slate-300"
+                          >
                             Last name
                           </Label>
                           {/* UPDATED: Added placeholder for Contact tab */}
@@ -1486,13 +1512,16 @@ export default function NeoQrGeneratorPage() {
                             onChange={(e) => setVLastName(e.target.value)}
                             onFocus={(e) => e.currentTarget.select()}
                             placeholder="Enter last name"
-                            className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                            className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400"
                           />
                         </div>
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="v-org" className="text-slate-300">
+                        <Label
+                          htmlFor="v-org"
+                          className="text-slate-700 dark:text-slate-300"
+                        >
                           Organization
                         </Label>
                         {/* UPDATED: Added placeholder for Contact tab */}
@@ -1502,12 +1531,15 @@ export default function NeoQrGeneratorPage() {
                           onChange={(e) => setVOrg(e.target.value)}
                           onFocus={(e) => e.currentTarget.select()}
                           placeholder="Enter company name"
-                          className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                          className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400"
                         />
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="v-title" className="text-slate-300">
+                        <Label
+                          htmlFor="v-title"
+                          className="text-slate-700 dark:text-slate-300"
+                        >
                           Title
                         </Label>
                         {/* UPDATED: Added placeholder for Contact tab */}
@@ -1517,12 +1549,15 @@ export default function NeoQrGeneratorPage() {
                           onChange={(e) => setVTitle(e.target.value)}
                           onFocus={(e) => e.currentTarget.select()}
                           placeholder="Enter job title"
-                          className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                          className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400"
                         />
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="v-tel" className="text-slate-300">
+                        <Label
+                          htmlFor="v-tel"
+                          className="text-slate-700 dark:text-slate-300"
+                        >
                           Phone
                         </Label>
                         {/* UPDATED: Added placeholder for Contact tab */}
@@ -1532,12 +1567,15 @@ export default function NeoQrGeneratorPage() {
                           onChange={(e) => setVTel(e.target.value)}
                           onFocus={(e) => e.currentTarget.select()}
                           placeholder="Enter phone number"
-                          className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                          className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400"
                         />
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="v-email" className="text-slate-300">
+                        <Label
+                          htmlFor="v-email"
+                          className="text-slate-700 dark:text-slate-300"
+                        >
                           Email
                         </Label>
                         {/* UPDATED: Added placeholder for Contact tab */}
@@ -1547,7 +1585,7 @@ export default function NeoQrGeneratorPage() {
                           onChange={(e) => setVEmail(e.target.value)}
                           onFocus={(e) => e.currentTarget.select()}
                           placeholder="Enter email address"
-                          className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+                          className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400"
                         />
                       </div>
                     </motion.div>
@@ -1614,16 +1652,15 @@ export default function NeoQrGeneratorPage() {
                               type="button"
                               variant="outline"
                               className="w-full justify-start rounded-lg border bg-card text-left font-normal text-foreground hover:bg-accent hover:text-accent-foreground"
-                              style={{ borderColor: 'var(--border)' }}
                             >
                               <div
                                 className="mr-3 h-5 w-5 rounded-sm border shadow-sm"
+                                suppressHydrationWarning
                                 style={{
                                   backgroundColor: fgColor,
-                                  borderColor: 'var(--border)',
                                 }}
                               />
-                              <span>
+                              <span suppressHydrationWarning>
                                 {typeof fgColor === 'string'
                                   ? fgColor.toUpperCase()
                                   : fgColor}
@@ -1655,16 +1692,15 @@ export default function NeoQrGeneratorPage() {
                               type="button"
                               variant="outline"
                               className="w-full justify-start rounded-lg border bg-card text-left font-normal text-foreground hover:bg-accent hover:text-accent-foreground"
-                              style={{ borderColor: 'var(--border)' }}
                             >
                               <div
                                 className="mr-3 h-5 w-5 rounded-sm border shadow-sm"
+                                suppressHydrationWarning
                                 style={{
                                   backgroundColor: bgColor,
-                                  borderColor: 'var(--border)',
                                 }}
                               />
-                              <span>
+                              <span suppressHydrationWarning>
                                 {typeof bgColor === 'string'
                                   ? bgColor.toUpperCase()
                                   : bgColor}
@@ -1736,24 +1772,45 @@ export default function NeoQrGeneratorPage() {
                           className="font-semibold text-sm"
                           style={{ color: 'var(--primary)' }}
                         >
-                          {isDraggingSlider ? previewQrSize : qrSize}px
+                          {isDraggingSlider
+                            ? Math.round(qrSize * displayScale)
+                            : qrSize}
+                          px
                         </span>
                       </div>
                       <div
                         className="space-y-1"
                         onPointerDown={handleQrSizeSliderPointerDown}
-                        onPointerUp={handleQrSizeSliderPointerUp}
-                        onPointerLeave={
-                          isDraggingSlider
-                            ? handleQrSizeSliderPointerUp
-                            : undefined
-                        }
+                        onPointerUp={(e) => {
+                          // Calculate final size based on slider position
+                          const sliderElement = e.currentTarget;
+                          const rect = sliderElement.getBoundingClientRect();
+                          const percent = Math.max(
+                            0,
+                            Math.min(1, (e.clientX - rect.left) / rect.width)
+                          );
+                          const finalSize = Math.round(
+                            180 + (360 - 180) * percent
+                          );
+                          handleQrSizeSliderPointerUp(finalSize);
+                        }}
+                        onPointerLeave={() => {
+                          if (isDraggingSlider) {
+                            // If pointer leaves without releasing properly, apply current scale
+                            const finalSize = Math.round(qrSize * displayScale);
+                            handleQrSizeSliderPointerUp(finalSize);
+                          }
+                        }}
                       >
                         <Slider
                           min={180}
-                          max={420}
+                          max={360}
                           step={10}
-                          value={[isDraggingSlider ? previewQrSize : qrSize]}
+                          value={[
+                            Math.round(
+                              qrSize * (isDraggingSlider ? displayScale : 1)
+                            ),
+                          ]}
                           onValueChange={handleQrSizeSliderChange}
                           className="py-1"
                         />
@@ -1947,24 +2004,42 @@ export default function NeoQrGeneratorPage() {
                 </h3>
               </div>
 
-              {/* QR Code Preview with Fade-in Animation */}
-              <div className="flex flex-col items-center justify-center gap-6 border-slate-200 border-t px-8 py-10 dark:border-slate-700">
+              {/* QR Code Preview with Fade-in Animation - Fixed Height Container */}
+              <div
+                className="flex flex-col items-center justify-center gap-6 border-slate-200 border-t px-8 py-10 dark:border-slate-700"
+                style={{ height: '550px', overflow: 'hidden' }}
+              >
                 {qrValue.trim() ? (
                   <div
                     key={`qr-${qrType}-${qrValue.slice(0, 40)}`}
-                    className="qr-container flex animate-fadeIn flex-col items-center justify-center gap-6 rounded-xl p-6 transition-all duration-300 ease-in-out"
+                    className="qr-container flex animate-fadeIn flex-col items-center justify-center gap-6 rounded-xl p-6"
                   >
-                    {/* Logo positioned at center */}
-                    <div className="relative inline-block">
+                    {/* Unified wrapper: scales both QR image and background container together */}
+                    <div
+                      className="relative inline-flex items-center justify-center will-change-transform"
+                      style={{
+                        width: qrSize,
+                        height: qrSize,
+                        transform: `scale(${displayScale})`,
+                        transformOrigin: 'center center',
+                        transition: isDraggingSlider
+                          ? 'none'
+                          : 'transform 0.2s ease-out',
+                      }}
+                    >
+                      {/* QR Code container */}
                       <div
-                        className="transition-all duration-300 ease-in-out"
+                        ref={qrContainerRef}
                         style={{
-                          width: qrSize,
-                          height: qrSize,
+                          width: '100%',
+                          height: '100%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
                         }}
-                      >
-                        <div ref={qrContainerRef} />
-                      </div>
+                      />
+
+                      {/* Logo overlay - positioned at center and scales with container */}
                       {logoDataUrl && (
                         <div
                           className="absolute flex items-center justify-center"
@@ -2005,11 +2080,14 @@ export default function NeoQrGeneratorPage() {
                 )}
               </div>
 
-              {/* Action Buttons - Download and Copy Only */}
+              {/* Divider - Fixed and stable */}
               <div
-                className="flex flex-wrap items-center justify-center gap-3 border-t pt-6"
-                style={{ borderColor: 'var(--border)' }}
-              >
+                className="border-t"
+                style={{ borderColor: 'var(--border)', height: '1px' }}
+              />
+
+              {/* Action Buttons - Download and Copy Only */}
+              <div className="flex flex-wrap items-center justify-center gap-3 pt-6">
                 <Button
                   type="button"
                   onClick={() => setShowDownloadModal(true)}
