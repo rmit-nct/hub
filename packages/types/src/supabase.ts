@@ -3570,6 +3570,49 @@ export type Database = {
           },
         ];
       };
+      shortened_link_usage: {
+        Row: {
+          created_at: string;
+          updated_at: string;
+          used_count: number;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          updated_at?: string;
+          used_count?: number;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          updated_at?: string;
+          used_count?: number;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'shortened_link_usage_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: true;
+            referencedRelation: 'nova_user_challenge_leaderboard';
+            referencedColumns: ['user_id'];
+          },
+          {
+            foreignKeyName: 'shortened_link_usage_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: true;
+            referencedRelation: 'nova_user_leaderboard';
+            referencedColumns: ['user_id'];
+          },
+          {
+            foreignKeyName: 'shortened_link_usage_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: true;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       shortened_links: {
         Row: {
           created_at: string;

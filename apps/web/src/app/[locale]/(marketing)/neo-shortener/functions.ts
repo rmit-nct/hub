@@ -25,6 +25,9 @@ const createShortLinkSchema = z.object({
   customSlug: z.string().optional().default(''),
 });
 
+const SHORT_LINK_LIMIT_ERROR =
+  'You have reached the 30-link limit for your account';
+
 export interface CreatedShortLink {
   createdAt: string;
   creatorId: string;
@@ -159,6 +162,10 @@ export async function createShortLink(
       }
 
       continue;
+    }
+
+    if (error?.message?.includes(SHORT_LINK_LIMIT_ERROR)) {
+      throw new Error(SHORT_LINK_LIMIT_ERROR);
     }
 
     console.error(error);
