@@ -4143,24 +4143,6 @@ export type Database = {
           },
         ];
       };
-      user: {
-        Row: {
-          created_at: string;
-          id: number;
-          password: string | null;
-        };
-        Insert: {
-          created_at?: string;
-          id?: number;
-          password?: string | null;
-        };
-        Update: {
-          created_at?: string;
-          id?: number;
-          password?: string | null;
-        };
-        Relationships: [];
-      };
       user_feedbacks: {
         Row: {
           content: string;

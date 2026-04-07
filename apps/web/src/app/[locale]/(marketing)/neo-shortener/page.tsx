@@ -8,11 +8,11 @@ import {
   CardHeader,
   CardTitle,
 } from '@ncthub/ui/card';
+import { Check, Copy, Link2 } from '@ncthub/ui/icons';
 import { Input } from '@ncthub/ui/input';
 import { Label } from '@ncthub/ui/label';
 import { Textarea } from '@ncthub/ui/textarea';
 import { cn } from '@ncthub/utils/format';
-import { Check, Copy, Link2 } from 'lucide-react';
 import type React from 'react';
 import { useState, useTransition } from 'react';
 import { type CreatedShortLink, createShortLink } from './functions';

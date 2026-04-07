@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { Poppins } from 'next/font/google';
 import '@ncthub/ui/globals.css';
 import './globals.css';
+import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
+import { SpeedInsights as VercelInsights } from '@vercel/speed-insights/next';
 import { BASE_URL } from '@/constants/configs';
 import JsonLd from '../components/json-ld';
 
@@ -13,9 +15,8 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default:
-      'Neo League 2026 — RMIT IoT Competition & Innovation Humanity Challenge',
-    template: '%s | Neo League 2026 — RMIT IoT Competition',
+    default: 'Neo League Season 2 - Innovation Humanity Challenge',
+    template: '%s | Neo League Season 2 - Innovation Humanity Challenge',
   },
   description:
     'RMIT NEO League Season 2 — the premier IoT competition for university students in Vietnam. Hosted by RMIT NEO Culture Technology Club, teams engineer integrated IoT solutions addressing UN Sustainable Development Goals through hardware prototyping, sensor integration, and smart technologies. March 2 – May 29, 2026, Ho Chi Minh City.',
@@ -127,7 +128,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <JsonLd />
-      <body className={`${poppins.className} antialiased`}>{children}</body>
+      <body className={`${poppins.className} antialiased`}>
+        <VercelAnalytics />
+        <VercelInsights />
+        {children}
+      </body>
     </html>
   );
 }
