@@ -1199,11 +1199,15 @@ export default function NeoQrGeneratorPage() {
                         onChange={(e) => setUrlInput(e.target.value)}
                         onFocus={(e) => e.currentTarget.select()}
                         placeholder="Enter URL"
+                        className={
+                          `w-full rounded-lg border bg-white px-4 py-3 text-slate-900 placeholder-slate-400 transition-colors focus:outline-none dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400${
                         className={`w-full rounded-lg border bg-white px-4 py-3 text-slate-900 placeholder-slate-400 transition-colors focus:outline-none dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400 ${
                           urlInput.trim() && !urlInputValid
                             ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500/20'
                             : 'border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-600 dark:focus:border-blue-500'
-                        }`}
+                            : 'border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-600 dark:focus:border-blue-500'
+                        }`
+                        }
                       />
                       <p className="text-foreground text-xs">
                         Try something like https://example.com/
@@ -1284,7 +1288,7 @@ export default function NeoQrGeneratorPage() {
                             }}
                             onFocus={(e) => e.currentTarget.select()}
                             placeholder="Paste URL"
-                            className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 text-sm placeholder-slate-400 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400"
+                            className='w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 text-sm placeholder-slate-400 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400'
                           />
                         </div>
                       </div>
