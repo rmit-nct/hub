@@ -359,9 +359,6 @@ export default function NeoQrGeneratorPage() {
   // URL-like inputs
   const [urlInput, setUrlInput] = useState('');
   const [facebookUrl, setFacebookUrl] = useState('');
-  const [appPlatform, setAppPlatform] = useState<'ios' | 'android'>('ios');
-  const [iosStoreUrl, setIosStoreUrl] = useState('');
-  const [androidStoreUrl, setAndroidStoreUrl] = useState('');
 
   // Structured inputs
   const [wifiSsid, setWifiSsid] = useState('');
