@@ -485,12 +485,6 @@ export default function NeoQrGeneratorPage() {
         return urlInput.trim();
       case 'facebook':
         return facebookUrl.trim();
-      case 'appstores':
-        return buildAppStorePayload({
-          platform: appPlatform,
-          iosUrl: iosStoreUrl,
-          androidUrl: androidStoreUrl,
-        });
       case 'wifi':
         return buildWifiPayload({
           ssid: wifiSsid,
@@ -523,9 +517,6 @@ export default function NeoQrGeneratorPage() {
     emailSubject,
     emailTo,
     facebookUrl,
-    appPlatform,
-    androidStoreUrl,
-    iosStoreUrl,
     qrType,
     smsMessage,
     smsNumber,
