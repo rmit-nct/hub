@@ -344,7 +344,7 @@ export const departments: DepartmentData[] = [
       ],
       images: [
         '/departments/human-resources/bonding-trip-2025c.jpeg',
-        '/departments/human-resources/welcome-day-c-2025.jpg',
+        '/departments/human-resources/welcome-day-2026a.jpg',
         '/departments/human-resources/neo-award-2025c.jpg',
         '/departments/human-resources/sportday-2025c.jpeg',
       ],
@@ -389,7 +389,7 @@ export const departments: DepartmentData[] = [
         },
       ],
       images: [
-        '/departments/marketing/logo-2026a.png',
+        '/departments/marketing/secret-santa-2025c.jpg',
         '/departments/marketing/club-day-2025c.png',
         '/departments/marketing/linkedin-posts.png',
         '/departments/marketing/souvenirs.png',
