@@ -15,13 +15,8 @@ import {
 import { Slider } from '@ncthub/ui/slider';
 import { motion } from 'framer-motion';
 import QRCodeStyling, { type TypeNumber } from 'qr-code-styling';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import type React from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ColorPicker } from 'react-color-pikr';
 import NeoGeneratorHero from './hero';
 
@@ -63,6 +58,15 @@ function getExt(fileName: string) {
   const idx = fileName.lastIndexOf('.');
   return idx === -1 ? '' : fileName.slice(idx + 1).toLowerCase();
 }
+
+//QR code frame selection
+export type FrameStyle = 'none' | 'minimal' | 'rounded' | 'banner' | 'polaroid';
+export interface QRconfig {
+  value: string;
+  frame: FrameStyle;
+  color: string;
+}
+
 //Email validator
 function isEmailValid(email: string) {
   if (!email.trim()) return true;
@@ -336,6 +340,8 @@ export default function NeoQrGeneratorPage() {
   // Use a consistent default on both server and client, then update after hydration
   const [qrType, setQrType] = useState<QrType>('url');
   const [qrValue, setQrValue] = useState('');
+  const [frameStyle, setFrameStyle] = useState<FrameStyle>('none');
+  const [frameText, setFrameText] = useState('SCAN ME');
   const [showOptionsModal, setShowOptionsModal] = useState(false);
   const [copied, setCopied] = useState(false);
   const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -376,15 +382,15 @@ export default function NeoQrGeneratorPage() {
   const [isGenerated, setIsGenerated] = useState<boolean>(false);
 
   // Customize options - Use safe default to avoid hydration mismatch
-  const [bgColor, setBgColor] = useState('#000000');
-  const [fgColor, setFgColor] = useState('#090A0B');
+  const [bgColor, setBgColor] = useState('#ffffff');
+  const [fgColor, setFgColor] = useState('#000000');
   const [qrSize, setQrSize] = useState(260);
   const [displayScale, setDisplayScale] = useState(1);
   const [isDraggingSlider, setIsDraggingSlider] = useState(false);
   const [errorLevel, setErrorLevel] = useState<QrErrorLevel>('H');
   const [quietZone, setQuietZone] = useState(true);
 
-  const [dotShape, setDotShape] = useState<QrDotShape>('rounded');
+  const [dotShape, setDotShape] = useState<QrDotShape>('square');
   const [customizationTab, setCustomizationTab] = useState<
     'customization' | 'logo' | 'frame'
   >('customization');
@@ -407,7 +413,8 @@ export default function NeoQrGeneratorPage() {
     const isDark =
       document.documentElement.classList.contains('dark') ||
       window.matchMedia('(prefers-color-scheme: dark)').matches;
-    setFgColor(isDark ? '#FAFAFA' : '#090A0B');
+    setFgColor(isDark ? '#ffffff' : '#000000');
+    setBgColor(isDark ? '#000000' : '#ffffff');
   }, []);
 
   const isValidHttpUrl = (value: string) => {
@@ -747,83 +754,437 @@ export default function NeoQrGeneratorPage() {
     [resetFormForType]
   );
 
+  const getFrameConfig = useCallback(() => {
+    let framePaddingX = 0;
+    let framePaddingY = 0;
+    let bannerHeight = 0;
+    let bottomTextHeight = 0;
+    let borderWidth = 0;
+    let borderRadius = 0;
+
+    if (frameStyle === 'minimal') {
+      framePaddingX = 16;
+      framePaddingY = 16;
+      borderWidth = 6;
+    } else if (frameStyle === 'rounded') {
+      framePaddingX = 20;
+      framePaddingY = 20;
+      borderWidth = 6;
+      borderRadius = 24;
+    } else if (frameStyle === 'banner') {
+      framePaddingX = 16;
+      framePaddingY = 16;
+      borderWidth = 6;
+      bannerHeight = 46;
+      borderRadius = 16;
+    } else if (frameStyle === 'polaroid') {
+      framePaddingX = 16;
+      framePaddingY = 16;
+      borderWidth = 6;
+      bottomTextHeight = 50;
+      borderRadius = 4;
+    }
+
+    return {
+      framePaddingX,
+      framePaddingY,
+      bannerHeight,
+      bottomTextHeight,
+      borderWidth,
+      borderRadius,
+      totalWidth: qrSize + framePaddingX * 2 + borderWidth * 2,
+      totalHeight:
+        qrSize +
+        framePaddingY * 2 +
+        borderWidth * 2 +
+        bannerHeight +
+        bottomTextHeight,
+      qrOffsetX: framePaddingX + borderWidth,
+      qrOffsetY: framePaddingY + borderWidth + bannerHeight,
+    };
+  }, [frameStyle, qrSize]);
+
+  const generateCanvas =
+    useCallback(async (): Promise<HTMLCanvasElement | null> => {
+      if (!qrRef.current) return null;
+
+      const qrBlob = await qrRef.current.getRawData('png');
+      if (!qrBlob) return null;
+      const qrUrl = URL.createObjectURL(qrBlob as Blob);
+
+      const qrImg = document.createElement('img') as HTMLImageElement;
+      const promises: Promise<any>[] = [
+        new Promise((res) => {
+          qrImg.onload = res;
+          qrImg.src = qrUrl;
+        }),
+      ];
+
+      let logoImg: HTMLImageElement | null = null;
+      if (logoDataUrl) {
+        logoImg = document.createElement('img');
+        promises.push(
+          new Promise((res) => {
+            logoImg!.onload = res;
+            logoImg!.src = logoDataUrl;
+          })
+        );
+      }
+
+      await Promise.all(promises);
+
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        URL.revokeObjectURL(qrUrl);
+        return null;
+      }
+
+      const config = getFrameConfig();
+      canvas.width = config.totalWidth;
+      canvas.height = config.totalHeight;
+
+      if (frameStyle !== 'none') {
+        // Draw Background
+        ctx.fillStyle = bgColor;
+        ctx.beginPath();
+        if (config.borderRadius && ctx.roundRect) {
+          ctx.roundRect(
+            0,
+            0,
+            config.totalWidth,
+            config.totalHeight,
+            config.borderRadius
+          );
+        } else {
+          ctx.rect(0, 0, config.totalWidth, config.totalHeight);
+        }
+        ctx.fill();
+
+        // Draw Border
+        if (config.borderWidth > 0) {
+          ctx.lineWidth = config.borderWidth;
+          ctx.strokeStyle = fgColor;
+          ctx.beginPath();
+          const r = config.borderRadius
+            ? Math.max(0, config.borderRadius - config.borderWidth / 2)
+            : 0;
+          const bw = config.borderWidth;
+          if (r > 0 && ctx.roundRect) {
+            ctx.roundRect(
+              bw / 2,
+              bw / 2,
+              config.totalWidth - bw,
+              config.totalHeight - bw,
+              r
+            );
+          } else {
+            ctx.rect(
+              bw / 2,
+              bw / 2,
+              config.totalWidth - bw,
+              config.totalHeight - bw
+            );
+          }
+          ctx.stroke();
+        }
+      }
+
+      // Draw Banner Header
+      if (frameStyle === 'banner') {
+        ctx.fillStyle = fgColor;
+        ctx.beginPath();
+        if (ctx.roundRect) {
+          ctx.roundRect(
+            0,
+            0,
+            config.totalWidth,
+            config.bannerHeight + config.borderRadius,
+            [config.borderRadius, config.borderRadius, 0, 0]
+          );
+        } else {
+          ctx.rect(0, 0, config.totalWidth, config.bannerHeight);
+        }
+        ctx.fill();
+
+        // Banner Text
+        ctx.fillStyle = bgColor;
+        ctx.font = 'bold 20px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(
+          frameText,
+          config.totalWidth / 2,
+          config.bannerHeight / 2 + 2
+        );
+      }
+
+      // Draw Polaroid Footer Text
+      if (frameStyle === 'polaroid') {
+        ctx.fillStyle = fgColor;
+        ctx.font = 'bold 20px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(
+          frameText,
+          config.totalWidth / 2,
+          config.totalHeight - config.bottomTextHeight / 2
+        );
+      }
+
+      // Draw QR code inside the frame
+      ctx.drawImage(qrImg, config.qrOffsetX, config.qrOffsetY, qrSize, qrSize);
+
+      // Draw Logo
+      if (logoImg) {
+        const logoX = config.qrOffsetX + (qrSize - logoSize) / 2;
+        const logoY = config.qrOffsetY + (qrSize - logoSize) / 2;
+
+        ctx.fillStyle = bgColor;
+        ctx.beginPath();
+        if (ctx.roundRect) {
+          ctx.roundRect(logoX - 4, logoY - 4, logoSize + 8, logoSize + 8, 6);
+        } else {
+          ctx.rect(logoX - 4, logoY - 4, logoSize + 8, logoSize + 8);
+        }
+        ctx.fill();
+
+        ctx.fillStyle = 'white';
+        ctx.beginPath();
+        if (ctx.roundRect) {
+          ctx.roundRect(logoX - 2, logoY - 2, logoSize + 4, logoSize + 4, 4);
+        } else {
+          ctx.rect(logoX - 2, logoY - 2, logoSize + 4, logoSize + 4);
+        }
+        ctx.fill();
+
+        ctx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
+      }
+
+      URL.revokeObjectURL(qrUrl);
+      return canvas;
+    }, [
+      logoDataUrl,
+      bgColor,
+      fgColor,
+      frameStyle,
+      frameText,
+      qrSize,
+      logoSize,
+      getFrameConfig,
+    ]);
+
+  const generateSVG = useCallback(async (): Promise<Blob | null> => {
+    if (!qrRef.current) return null;
+    const svgBlob = await qrRef.current.getRawData('svg');
+    if (!svgBlob) return null;
+    const svgText = await (svgBlob as Blob).text();
+
+    const parser = new DOMParser();
+    const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
+    const svgElement = svgDoc.documentElement;
+
+    const config = getFrameConfig();
+
+    svgElement.setAttribute(
+      'viewBox',
+      `0 0 ${config.totalWidth} ${config.totalHeight}`
+    );
+    svgElement.setAttribute('width', `${config.totalWidth}`);
+    svgElement.setAttribute('height', `${config.totalHeight}`);
+
+    const qrGroup = svgDoc.createElementNS('http://www.w3.org/2000/svg', 'g');
+    qrGroup.setAttribute(
+      'transform',
+      `translate(${config.qrOffsetX}, ${config.qrOffsetY})`
+    );
+
+    while (svgElement.firstChild) {
+      qrGroup.appendChild(svgElement.firstChild);
+    }
+
+    const frameGroup = svgDoc.createElementNS(
+      'http://www.w3.org/2000/svg',
+      'g'
+    );
+
+    if (frameStyle !== 'none') {
+      // Background
+      const bgRect = svgDoc.createElementNS(
+        'http://www.w3.org/2000/svg',
+        'rect'
+      );
+      bgRect.setAttribute('width', `${config.totalWidth}`);
+      bgRect.setAttribute('height', `${config.totalHeight}`);
+      bgRect.setAttribute('fill', bgColor);
+      if (config.borderRadius)
+        bgRect.setAttribute('rx', `${config.borderRadius}`);
+      frameGroup.appendChild(bgRect);
+
+      // Border
+      if (config.borderWidth > 0) {
+        const borderRect = svgDoc.createElementNS(
+          'http://www.w3.org/2000/svg',
+          'rect'
+        );
+        borderRect.setAttribute('x', `${config.borderWidth / 2}`);
+        borderRect.setAttribute('y', `${config.borderWidth / 2}`);
+        borderRect.setAttribute(
+          'width',
+          `${config.totalWidth - config.borderWidth}`
+        );
+        borderRect.setAttribute(
+          'height',
+          `${config.totalHeight - config.borderWidth}`
+        );
+        borderRect.setAttribute('fill', 'none');
+        borderRect.setAttribute('stroke', fgColor);
+        borderRect.setAttribute('stroke-width', `${config.borderWidth}`);
+        if (config.borderRadius)
+          borderRect.setAttribute(
+            'rx',
+            `${Math.max(0, config.borderRadius - config.borderWidth / 2)}`
+          );
+        frameGroup.appendChild(borderRect);
+      }
+    }
+
+    // Banner Header
+    if (frameStyle === 'banner') {
+      const bannerPath = svgDoc.createElementNS(
+        'http://www.w3.org/2000/svg',
+        'path'
+      );
+      const r = config.borderRadius;
+      const w = config.totalWidth;
+      const h = config.bannerHeight;
+      const pathData = `M 0,${r} A ${r},${r} 0 0,1 ${r},0 L ${w - r},0 A ${r},${r} 0 0,1 ${w},${r} L ${w},${h} L 0,${h} Z`;
+      bannerPath.setAttribute('d', pathData);
+      bannerPath.setAttribute('fill', fgColor);
+      frameGroup.appendChild(bannerPath);
+
+      const textEl = svgDoc.createElementNS(
+        'http://www.w3.org/2000/svg',
+        'text'
+      );
+      textEl.setAttribute('x', `${config.totalWidth / 2}`);
+      textEl.setAttribute('y', `${config.bannerHeight / 2}`);
+      textEl.setAttribute('fill', bgColor);
+      textEl.setAttribute('font-family', 'sans-serif');
+      textEl.setAttribute('font-weight', 'bold');
+      textEl.setAttribute('font-size', '20px');
+      textEl.setAttribute('text-anchor', 'middle');
+      textEl.setAttribute('dominant-baseline', 'central');
+      textEl.textContent = frameText;
+      frameGroup.appendChild(textEl);
+    }
+
+    // Polaroid Footer Text
+    if (frameStyle === 'polaroid') {
+      const textEl = svgDoc.createElementNS(
+        'http://www.w3.org/2000/svg',
+        'text'
+      );
+      textEl.setAttribute('x', `${config.totalWidth / 2}`);
+      textEl.setAttribute(
+        'y',
+        `${config.totalHeight - config.bottomTextHeight / 2}`
+      );
+      textEl.setAttribute('fill', fgColor);
+      textEl.setAttribute('font-family', 'sans-serif');
+      textEl.setAttribute('font-weight', 'bold');
+      textEl.setAttribute('font-size', '20px');
+      textEl.setAttribute('text-anchor', 'middle');
+      textEl.setAttribute('dominant-baseline', 'central');
+      textEl.textContent = frameText;
+      frameGroup.appendChild(textEl);
+    }
+
+    svgElement.appendChild(frameGroup);
+    svgElement.appendChild(qrGroup);
+
+    // Logo
+    if (logoDataUrl) {
+      const logoX = config.qrOffsetX + (qrSize - logoSize) / 2;
+      const logoY = config.qrOffsetY + (qrSize - logoSize) / 2;
+
+      const borderOuter = svgDoc.createElementNS(
+        'http://www.w3.org/2000/svg',
+        'rect'
+      );
+      borderOuter.setAttribute('x', `${logoX - 4}`);
+      borderOuter.setAttribute('y', `${logoY - 4}`);
+      borderOuter.setAttribute('width', `${logoSize + 8}`);
+      borderOuter.setAttribute('height', `${logoSize + 8}`);
+      borderOuter.setAttribute('fill', bgColor);
+      borderOuter.setAttribute('rx', '6');
+      svgElement.appendChild(borderOuter);
+
+      const borderInner = svgDoc.createElementNS(
+        'http://www.w3.org/2000/svg',
+        'rect'
+      );
+      borderInner.setAttribute('x', `${logoX - 2}`);
+      borderInner.setAttribute('y', `${logoY - 2}`);
+      borderInner.setAttribute('width', `${logoSize + 4}`);
+      borderInner.setAttribute('height', `${logoSize + 4}`);
+      borderInner.setAttribute('fill', 'white');
+      borderInner.setAttribute('rx', '4');
+      svgElement.appendChild(borderInner);
+
+      const imageElement = svgDoc.createElementNS(
+        'http://www.w3.org/2000/svg',
+        'image'
+      );
+      imageElement.setAttribute('href', logoDataUrl);
+      imageElement.setAttribute('x', `${logoX}`);
+      imageElement.setAttribute('y', `${logoY}`);
+      imageElement.setAttribute('width', `${logoSize}`);
+      imageElement.setAttribute('height', `${logoSize}`);
+      svgElement.appendChild(imageElement);
+    }
+
+    const serializer = new XMLSerializer();
+    const finalSvgText = serializer.serializeToString(svgDoc);
+    return new Blob([finalSvgText], { type: 'image/svg+xml' });
+  }, [
+    logoDataUrl,
+    bgColor,
+    fgColor,
+    frameStyle,
+    frameText,
+    qrSize,
+    logoSize,
+    getFrameConfig,
+  ]);
+
   const copyQRCode = useCallback(async () => {
     if (!qrValue.trim()) return;
 
-    // If logo exists, merge QR and logo before copying (same as download)
-    if (logoDataUrl) {
+    if (logoDataUrl || frameStyle !== 'none') {
       try {
-        if (!qrRef.current) return;
+        const canvas = await generateCanvas();
+        if (!canvas) return;
 
-        const qrBlob = await qrRef.current.getRawData('png');
-        if (!qrBlob) return;
-        const qrUrl = URL.createObjectURL(qrBlob as Blob);
-
-        // Create and load images
-        const qrImg = document.createElement('img') as HTMLImageElement;
-        const logoImg = document.createElement('img') as HTMLImageElement;
-
-        await Promise.all([
-          new Promise((res) => {
-            qrImg.onload = res;
-            qrImg.src = qrUrl;
-          }),
-          new Promise((res) => {
-            logoImg.onload = res;
-            logoImg.src = logoDataUrl;
-          }),
-        ]);
-
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          URL.revokeObjectURL(qrUrl);
-          return;
-        }
-
-        // Logo positioned at center (fixed 48px)
-        const logoWidth = 48;
-        const logoHeight = 48;
-        const logoX = (qrSize - logoWidth) / 2;
-        const logoY = (qrSize - logoHeight) / 2;
-
-        canvas.width = qrSize;
-        canvas.height = qrSize;
-
-        // Fill background
-        ctx.fillStyle = bgColor;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // Draw QR code
-        ctx.drawImage(qrImg, 0, 0, qrSize, qrSize);
-
-        // Draw Logo with white border for visibility
-        ctx.fillStyle = bgColor;
-        ctx.fillRect(logoX - 4, logoY - 4, logoWidth + 8, logoHeight + 8);
-        ctx.fillStyle = 'white';
-        ctx.fillRect(logoX - 2, logoY - 2, logoWidth + 4, logoHeight + 4);
-        ctx.drawImage(logoImg, logoX, logoY, logoWidth, logoHeight);
-
-        // Convert canvas to blob and copy to clipboard
         canvas.toBlob(async (blob) => {
           if (blob) {
             try {
               const item = new ClipboardItem({ 'image/png': blob });
               await navigator.clipboard.write([item]);
             } catch (error) {
-              console.warn('Failed to copy QR with logo to clipboard:', error);
+              console.warn(
+                'Failed to copy QR with frame/logo to clipboard:',
+                error
+              );
             }
           }
-          URL.revokeObjectURL(qrUrl);
         }, 'image/png');
-
         return;
       } catch (error) {
-        console.warn('Failed to copy QR with logo, falling back:', error);
+        console.warn('Failed to copy QR with frame/logo, falling back:', error);
       }
     }
 
-    // If no logo, try to copy just the QR image as PNG
     try {
       if (qrRef.current) {
         const pngBlob = (await qrRef.current.getRawData('png')) as Blob | null;
@@ -843,7 +1204,7 @@ export default function NeoQrGeneratorPage() {
     } catch (textError) {
       console.warn('Failed to copy QR value:', textError);
     }
-  }, [qrValue, logoDataUrl, qrSize, bgColor]);
+  }, [qrValue, logoDataUrl, frameStyle, generateCanvas]);
 
   const handleCopy = async () => {
     await copyQRCode();
@@ -943,7 +1304,7 @@ export default function NeoQrGeneratorPage() {
   const download = useCallback(async () => {
     if (!qrRef.current || !qrCanDownload) return;
 
-    if (!logoDataUrl) {
+    if (!logoDataUrl && frameStyle === 'none') {
       if (downloadFormat === 'eps') {
         const svgBlob = await qrRef.current.getRawData('svg');
         if (!svgBlob) return;
@@ -963,125 +1324,31 @@ export default function NeoQrGeneratorPage() {
       return;
     }
 
-    // Merge QR code and logo for raster downloads
     if (downloadFormat === 'png' || downloadFormat === 'jpeg') {
-      const qrBlob = await qrRef.current.getRawData('png');
-      if (!qrBlob) return;
-      const qrUrl = URL.createObjectURL(qrBlob as Blob);
-
-      // UPDATED: Explicitly typed Image creation
-      const qrImg = document.createElement('img') as HTMLImageElement;
-      const logoImg = document.createElement('img') as HTMLImageElement;
-
-      await Promise.all([
-        new Promise((res) => {
-          qrImg.onload = res;
-          qrImg.src = qrUrl;
-        }),
-        new Promise((res) => {
-          logoImg.onload = res;
-          logoImg.src = logoDataUrl;
-        }),
-      ]);
-
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      if (!ctx) {
-        URL.revokeObjectURL(qrUrl);
-        return;
-      }
-
-      // Logo positioned at center (fixed 48px)
-      const logoWidth = 48;
-      const logoHeight = 48;
-      const logoX = (qrSize - logoWidth) / 2;
-      const logoY = (qrSize - logoHeight) / 2;
-
-      canvas.width = qrSize;
-      canvas.height = qrSize;
-
-      // Fill background
-      ctx.fillStyle = bgColor;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Draw QR code
-      ctx.drawImage(qrImg, 0, 0, qrSize, qrSize);
-
-      // Draw Logo with white border for visibility
-      ctx.fillStyle = bgColor;
-      ctx.fillRect(logoX - 4, logoY - 4, logoWidth + 8, logoHeight + 8);
-      ctx.fillStyle = 'white';
-      ctx.fillRect(logoX - 2, logoY - 2, logoWidth + 4, logoHeight + 4);
-      ctx.drawImage(logoImg, logoX, logoY, logoWidth, logoHeight);
-
+      const canvas = await generateCanvas();
+      if (!canvas) return;
       canvas.toBlob((blob) => {
         if (blob) triggerDownload(blob, `${downloadName}.${downloadFormat}`);
-        URL.revokeObjectURL(qrUrl);
       }, `image/${downloadFormat}`);
       return;
     }
 
-    // Merge QR code and logo for vector downloads
     if (downloadFormat === 'svg' || downloadFormat === 'eps') {
-      const svgBlob = await qrRef.current.getRawData('svg');
+      const svgBlob = await generateSVG();
       if (!svgBlob) return;
-      const svgText = await (svgBlob as Blob).text();
-
-      // Logo positioned at center (fixed 48px)
-      const logoWidth = 48;
-      const logoHeight = 48;
-      const logoX = (qrSize - logoWidth) / 2;
-      const logoY = (qrSize - logoHeight) / 2;
-
-      const parser = new DOMParser();
-      const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
-      const svgElement = svgDoc.documentElement;
-
-      svgElement.setAttribute('viewBox', `0 0 ${qrSize} ${qrSize}`);
-      svgElement.setAttribute('height', `${qrSize}`);
-      svgElement.setAttribute('width', `${qrSize}`);
-
-      // Add white border behind logo for visibility
-      const borderRect = svgDoc.createElementNS(
-        'http://www.w3.org/2000/svg',
-        'rect'
-      );
-      borderRect.setAttribute('x', `${logoX - 3}`);
-      borderRect.setAttribute('y', `${logoY - 3}`);
-      borderRect.setAttribute('width', `${logoWidth + 6}`);
-      borderRect.setAttribute('height', `${logoHeight + 6}`);
-      borderRect.setAttribute('fill', 'white');
-      borderRect.setAttribute('rx', '4');
-      svgElement.appendChild(borderRect);
-
-      const imageElement = svgDoc.createElementNS(
-        'http://www.w3.org/2000/svg',
-        'image'
-      );
-      imageElement.setAttribute('href', logoDataUrl);
-      imageElement.setAttribute('x', `${logoX}`);
-      imageElement.setAttribute('y', `${logoY}`);
-      imageElement.setAttribute('width', `${logoWidth}`);
-      imageElement.setAttribute('height', `${logoHeight}`);
-      imageElement.setAttribute('rx', '2');
-      svgElement.appendChild(imageElement);
-
-      const serializer = new XMLSerializer();
-      const finalSvgText = serializer.serializeToString(svgDoc);
-      const finalBlob = new Blob([finalSvgText], { type: 'image/svg+xml' });
-
       triggerDownload(
-        finalBlob,
+        svgBlob,
         `${downloadName}.${downloadFormat === 'eps' ? 'eps' : 'svg'}`
       );
     }
   }, [
-    bgColor,
     downloadFormat,
     downloadName,
     logoDataUrl,
+    frameStyle,
     qrCanDownload,
-    qrSize,
+    generateCanvas,
+    generateSVG,
   ]);
 
   const qrTypeTabs: QRTypeTab[] = [
@@ -1114,13 +1381,95 @@ export default function NeoQrGeneratorPage() {
 
   const currentTabInfo = qrTypeTabs.find((t) => t.value === qrType);
 
+  const renderFrame = useCallback(
+    (children: React.ReactNode) => {
+      const config = getFrameConfig();
+      return (
+        <div
+          style={{
+            position: 'relative',
+            width: config.totalWidth,
+            height: config.totalHeight,
+            backgroundColor: frameStyle === 'none' ? 'transparent' : bgColor,
+            border:
+              frameStyle === 'none'
+                ? 'none'
+                : `${config.borderWidth}px solid ${fgColor}`,
+            borderRadius: config.borderRadius,
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
+            boxSizing: 'border-box',
+          }}
+        >
+          {frameStyle === 'banner' && (
+            <div
+              style={{
+                width: '100%',
+                height: config.bannerHeight,
+                backgroundColor: fgColor,
+                color: bgColor,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 'bold',
+                fontSize: '18px',
+                fontFamily: 'sans-serif',
+                letterSpacing: '0.1em',
+              }}
+            >
+              {frameText}
+            </div>
+          )}
+          <div
+            style={{
+              paddingTop: config.framePaddingY,
+              paddingBottom: config.framePaddingY,
+              paddingLeft: config.framePaddingX,
+              paddingRight: config.framePaddingX,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flex: 1,
+            }}
+          >
+            {children}
+          </div>
+          {frameStyle === 'polaroid' && (
+            <div
+              style={{
+                width: '100%',
+                height: config.bottomTextHeight,
+                backgroundColor: bgColor,
+                color: fgColor,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 'bold',
+                fontSize: '18px',
+                fontFamily: 'sans-serif',
+                letterSpacing: '0.1em',
+              }}
+            >
+              {frameText}
+            </div>
+          )}
+        </div>
+      );
+    },
+    [frameStyle, frameText, bgColor, fgColor, getFrameConfig]
+  );
+
   return (
     <div className="min-h-screen">
       <NeoGeneratorHero />
 
       <div className="mx-auto max-w-6xl px-4 py-16 pb-0 sm:px-6 lg:px-8">
         {/* Unified Main Container - All sections merged */}
-        <div className="rounded-2xl border border-slate-200 bg-white shadow-lg transition-all duration-300 dark:border-slate-700 dark:bg-slate-900">
+        <div
+          className="rounded-2xl border bg-white shadow-lg transition-all duration-300"
+          style={{ backgroundColor: 'var(--background)' }}
+        >
           <div className="flex flex-col lg:flex-row lg:gap-0">
             {/* Left Column: Input Section */}
             <div className="flex-1 border-slate-200 border-b p-6 sm:p-8 lg:border-r lg:border-b-0 lg:pr-8 dark:border-slate-700">
@@ -1920,7 +2269,65 @@ export default function NeoQrGeneratorPage() {
 
                 {/* Frame Tab */}
                 {customizationTab === 'frame' && (
-                  <div className="space-y-3">
+                  <div className="space-y-6">
+                    <div className="space-y-3">
+                      <Label className="font-medium text-slate-700 dark:text-slate-300">
+                        Frame Style
+                      </Label>
+                      <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+                        {[
+                          { value: 'none', label: 'None' },
+                          { value: 'minimal', label: 'Minimal' },
+                          { value: 'rounded', label: 'Rounded' },
+                          { value: 'banner', label: 'Banner' },
+                          { value: 'polaroid', label: 'Polaroid' },
+                        ].map((f) => (
+                          <button
+                            key={f.value}
+                            type="button"
+                            onClick={() => setFrameStyle(f.value as FrameStyle)}
+                            className={`flex flex-col items-center justify-center rounded-xl border-2 p-3 transition-all ${
+                              frameStyle === f.value
+                                ? 'border-blue-500 bg-blue-50/50 dark:border-blue-500 dark:bg-blue-900/20'
+                                : 'border-slate-200 bg-white hover:border-slate-300 dark:border-slate-700 dark:bg-slate-800'
+                            }`}
+                          >
+                            <div
+                              className={`mb-2 h-8 w-8 bg-slate-100 dark:bg-slate-700 ${
+                                f.value === 'rounded'
+                                  ? 'rounded-lg border-2 border-slate-300 dark:border-slate-500'
+                                  : f.value === 'minimal'
+                                    ? 'border-2 border-slate-300 dark:border-slate-500'
+                                    : f.value === 'banner'
+                                      ? 'border-2 border-slate-300 border-t-[6px] dark:border-slate-500'
+                                      : f.value === 'polaroid'
+                                        ? 'border-2 border-slate-300 border-b-[6px] dark:border-slate-500'
+                                        : 'border-2 border-transparent'
+                              }`}
+                            />
+                            <span className="font-medium text-slate-700 text-xs dark:text-slate-300">
+                              {f.label}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {(frameStyle === 'banner' || frameStyle === 'polaroid') && (
+                      <div className="space-y-2">
+                        <Label className="font-medium text-slate-700 dark:text-slate-300">
+                          Frame Text
+                        </Label>
+                        <input
+                          value={frameText}
+                          onChange={(e) => setFrameText(e.target.value)}
+                          maxLength={20}
+                          className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-slate-900 text-sm transition-colors focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700/50 dark:text-white"
+                          placeholder="SCAN ME"
+                        />
+                      </div>
+                    )}
+
                     <div className="space-y-2">
                       <Label
                         className="font-medium"
@@ -1986,8 +2393,6 @@ export default function NeoQrGeneratorPage() {
                           : ''
                       }`}
                       style={{
-                        width: qrSize,
-                        height: qrSize,
                         transform: `scale(${displayScale})`,
                         transformOrigin: 'center center',
                         transition: isDraggingSlider
@@ -1995,41 +2400,51 @@ export default function NeoQrGeneratorPage() {
                           : 'transform 0.2s ease-out, filter 0.5s, opacity 0.5s',
                       }}
                     >
-                      {/* QR Code container */}
-                      <div
-                        ref={qrContainerRef}
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                        }}
-                      />
-
-                      {/* Logo overlay - positioned at center and scales with container */}
-                      {logoDataUrl && (
+                      {renderFrame(
                         <div
-                          className="absolute flex items-center justify-center"
                           style={{
-                            left: '50%',
-                            top: '50%',
-                            transform: 'translate(-50%, -50%)',
-                            width: logoSize,
-                            height: logoSize,
+                            position: 'relative',
+                            width: qrSize,
+                            height: qrSize,
                           }}
                         >
+                          {/* QR Code container */}
                           <div
+                            ref={qrContainerRef}
                             style={{
-                              height: logoSize,
-                              width: logoSize,
-                              backgroundImage: `url('${logoDataUrl}')`,
-                              backgroundSize: 'contain',
-                              backgroundRepeat: 'no-repeat',
-                              backgroundPosition: 'center',
+                              width: '100%',
+                              height: '100%',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
                             }}
-                            className="rounded-md border-2 border-white shadow-lg dark:border-slate-600"
                           />
+
+                          {/* Logo overlay - positioned at center and scales with container */}
+                          {logoDataUrl && (
+                            <div
+                              className="absolute flex items-center justify-center"
+                              style={{
+                                left: '50%',
+                                top: '50%',
+                                transform: 'translate(-50%, -50%)',
+                                width: logoSize,
+                                height: logoSize,
+                              }}
+                            >
+                              <div
+                                style={{
+                                  height: logoSize,
+                                  width: logoSize,
+                                  backgroundImage: `url('${logoDataUrl}')`,
+                                  backgroundSize: 'contain',
+                                  backgroundRepeat: 'no-repeat',
+                                  backgroundPosition: 'center',
+                                }}
+                                className="rounded-md border-2 border-white shadow-lg dark:border-slate-600"
+                              />
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
@@ -2195,6 +2610,10 @@ export default function NeoQrGeneratorPage() {
           logoSize={logoSize}
           setLogoSize={setLogoSize}
           onDropLogo={onDropLogo}
+          frameStyle={frameStyle}
+          setFrameStyle={setFrameStyle}
+          frameText={frameText}
+          setFrameText={setFrameText}
         />
       )}
     </div>
@@ -2238,7 +2657,7 @@ function DownloadModal({
   return (
     <div
       className="fixed inset-0 z-50 flex animate-fadeIn items-center justify-center backdrop-blur-md"
-      style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+      style={{ backgroundColor: 'var(--background)' }}
       onClick={onClose}
     >
       <div
@@ -2362,6 +2781,10 @@ interface OptionsModalProps {
   logoSize: number;
   setLogoSize: (size: number) => void;
   onDropLogo: (files: File[]) => void;
+  frameStyle: FrameStyle;
+  setFrameStyle: (style: FrameStyle) => void;
+  frameText: string;
+  setFrameText: (text: string) => void;
 }
 
 function OptionsModal({
@@ -2378,6 +2801,10 @@ function OptionsModal({
   logoSize,
   setLogoSize,
   onDropLogo,
+  frameStyle,
+  setFrameStyle,
+  frameText,
+  setFrameText,
 }: OptionsModalProps) {
   const initialStateRef = useRef<{
     dotShape: QrDotShape;
@@ -2385,6 +2812,8 @@ function OptionsModal({
     downloadFormat: QrDownloadFormat;
     logoDataUrl: string;
     logoSize: number;
+    frameStyle: FrameStyle;
+    frameText: string;
   } | null>(null);
 
   useEffect(() => {
@@ -2400,9 +2829,20 @@ function OptionsModal({
         downloadFormat,
         logoDataUrl,
         logoSize,
+        frameStyle,
+        frameText,
       };
     }
-  }, [dotShape, downloadFormat, downloadName, isOpen, logoDataUrl, logoSize]);
+  }, [
+    dotShape,
+    downloadFormat,
+    downloadName,
+    isOpen,
+    logoDataUrl,
+    logoSize,
+    frameStyle,
+    frameText,
+  ]);
 
   if (!isOpen) return null;
 
@@ -2414,6 +2854,8 @@ function OptionsModal({
       setDownloadFormat(initial.downloadFormat);
       setLogoDataUrl(initial.logoDataUrl);
       setLogoSize(initial.logoSize);
+      setFrameStyle(initial.frameStyle);
+      setFrameText(initial.frameText);
     }
     onClose();
   };
@@ -2441,6 +2883,52 @@ function OptionsModal({
         </div>
 
         <div className="space-y-4">
+          {/* Frame Section */}
+          <div className="space-y-4 border-slate-200 border-t pt-4 dark:border-slate-700">
+            <div className="space-y-2">
+              <Label className="font-medium text-slate-700 dark:text-slate-300">
+                Frame Style
+              </Label>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+                {[
+                  { value: 'none', label: 'None' },
+                  { value: 'minimal', label: 'Minimal' },
+                  { value: 'rounded', label: 'Rounded' },
+                  { value: 'banner', label: 'Banner' },
+                  { value: 'polaroid', label: 'Polaroid' },
+                ].map((f) => (
+                  <button
+                    key={f.value}
+                    type="button"
+                    onClick={() => setFrameStyle(f.value as FrameStyle)}
+                    className={`flex flex-col items-center justify-center rounded-xl border-2 p-3 transition-all ${
+                      frameStyle === f.value
+                        ? 'border-blue-500 bg-blue-50/50 dark:border-blue-500 dark:bg-blue-900/20'
+                        : 'border-slate-200 bg-white hover:border-slate-300 dark:border-slate-700 dark:bg-slate-800'
+                    }`}
+                  >
+                    <span className="font-medium text-slate-700 text-xs dark:text-slate-300">
+                      {f.label}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+            {(frameStyle === 'banner' || frameStyle === 'polaroid') && (
+              <div className="space-y-2">
+                <Label className="font-medium text-slate-700 dark:text-slate-300">
+                  Frame Text
+                </Label>
+                <input
+                  value={frameText}
+                  onChange={(e) => setFrameText(e.target.value)}
+                  maxLength={20}
+                  className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2 text-slate-900 text-sm transition-colors focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+                />
+              </div>
+            )}
+          </div>
+
           <div className="space-y-2">
             <Label className="font-medium text-slate-700 dark:text-slate-300">
               Dot shape
