@@ -1375,7 +1375,7 @@ export default function NeoQrGeneratorPage() {
     {
       value: 'vcard',
       label: 'Contact',
-      description: 'Digital business card',
+      description: 'Adding New Contact',
     },
   ];
 
@@ -1503,7 +1503,7 @@ export default function NeoQrGeneratorPage() {
                               stiffness: 380,
                               damping: 35,
                             }}
-                            className="absolute inset-0 -z-10 rounded-full bg-linear-to-r from-blue-600 to-cyan-500 shadow-blue-500/50 shadow-lg"
+                            className="absolute inset-0 -z-10 rounded-full bg-linear-to-r shadow-blue-500/50 shadow-lg"
                           />
                         ) : null}
                         <span className="hidden text-center sm:inline">
@@ -1822,39 +1822,7 @@ export default function NeoQrGeneratorPage() {
                       </div>
 
                       <div className="space-y-2">
-                        <Label
-                          htmlFor="v-org"
-                          className="text-slate-700 dark:text-slate-300"
-                        >
-                          Organization
-                        </Label>
                         {/* UPDATED: Added placeholder for Contact tab */}
-                        <input
-                          id="v-org"
-                          value={vOrg}
-                          onChange={(e) => setVOrg(e.target.value)}
-                          onFocus={(e) => e.currentTarget.select()}
-                          placeholder="Enter company name"
-                          className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400"
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label
-                          htmlFor="v-title"
-                          className="text-slate-700 dark:text-slate-300"
-                        >
-                          Title
-                        </Label>
-                        {/* UPDATED: Added placeholder for Contact tab */}
-                        <input
-                          id="v-title"
-                          value={vTitle}
-                          onChange={(e) => setVTitle(e.target.value)}
-                          onFocus={(e) => e.currentTarget.select()}
-                          placeholder="Enter job title"
-                          className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400"
-                        />
                       </div>
 
                       <div className="space-y-2">
