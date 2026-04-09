@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
-import { Button } from "@ncthub/ui/button";
-import { Checkbox } from "@ncthub/ui/checkbox";
-import { Dropzone, DropzoneEmptyState } from "@ncthub/ui/dropzone";
-import { Label } from "@ncthub/ui/label";
-import { Popover, PopoverContent, PopoverTrigger } from "@ncthub/ui/popover";
+import { Button } from '@ncthub/ui/button';
+import { Checkbox } from '@ncthub/ui/checkbox';
+import { Dropzone, DropzoneEmptyState } from '@ncthub/ui/dropzone';
+import { Label } from '@ncthub/ui/label';
+import { Popover, PopoverContent, PopoverTrigger } from '@ncthub/ui/popover';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@ncthub/ui/select";
-import { Slider } from "@ncthub/ui/slider";
-import { motion } from "framer-motion";
-import QRCodeStyling, { type TypeNumber } from "qr-code-styling";
-import type React from "react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ColorPicker } from "react-color-pikr";
-import NeoGeneratorHero from "./hero";
+} from '@ncthub/ui/select';
+import { Slider } from '@ncthub/ui/slider';
+import { motion } from 'framer-motion';
+import QRCodeStyling, { type TypeNumber } from 'qr-code-styling';
+import type React from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ColorPicker } from 'react-color-pikr';
+import NeoGeneratorHero from './hero';
 
 // Type definitions
 interface QRTypeTab {
@@ -28,39 +28,39 @@ interface QRTypeTab {
 }
 
 type QrType =
-  | "url"
-  | "wifi"
-  | "email"
-  | "sms"
-  | "vcard"
-  | "facebook"
-  | "appstores"
-  | "images";
-type QrDownloadFormat = "png" | "jpeg" | "svg" | "eps";
-type QrErrorLevel = "L" | "M" | "Q" | "H";
-type QrDotShape = "square" | "rounded" | "dots";
+  | 'url'
+  | 'wifi'
+  | 'email'
+  | 'sms'
+  | 'vcard'
+  | 'facebook'
+  | 'appstores'
+  | 'images';
+type QrDownloadFormat = 'png' | 'jpeg' | 'svg' | 'eps';
+type QrErrorLevel = 'L' | 'M' | 'Q' | 'H';
+type QrDotShape = 'square' | 'rounded' | 'dots';
 
 function triggerDownload(blobOrUrl: Blob | string, fileName: string) {
   const url =
-    typeof blobOrUrl === "string" ? blobOrUrl : URL.createObjectURL(blobOrUrl);
-  const downloadLink = document.createElement("a");
+    typeof blobOrUrl === 'string' ? blobOrUrl : URL.createObjectURL(blobOrUrl);
+  const downloadLink = document.createElement('a');
   downloadLink.href = url;
   downloadLink.download = fileName;
   document.body.appendChild(downloadLink);
   downloadLink.click();
   document.body.removeChild(downloadLink);
-  if (typeof blobOrUrl !== "string") {
+  if (typeof blobOrUrl !== 'string') {
     setTimeout(() => URL.revokeObjectURL(url), 5000);
   }
 }
 
 function getExt(fileName: string) {
-  const idx = fileName.lastIndexOf(".");
-  return idx === -1 ? "" : fileName.slice(idx + 1).toLowerCase();
+  const idx = fileName.lastIndexOf('.');
+  return idx === -1 ? '' : fileName.slice(idx + 1).toLowerCase();
 }
 
 //QR code frame selection
-export type FrameStyle = "none" | "minimal" | "rounded" | "banner" | "polaroid";
+export type FrameStyle = 'none' | 'minimal' | 'rounded' | 'banner' | 'polaroid';
 export interface QRconfig {
   value: string;
   frame: FrameStyle;
@@ -88,26 +88,26 @@ function buildWifiPayload({
 }: {
   ssid: string;
   password: string;
-  security: "WPA" | "WEP" | "nopass" | "WPA2" | "NONE";
+  security: 'WPA' | 'WEP' | 'nopass' | 'WPA2' | 'NONE';
   hidden: boolean;
 }) {
-  const ssidEscaped = ssid.replace(/;/g, ":");
-  const passwordEscaped = password.replace(/;/g, ":");
+  const ssidEscaped = ssid.replace(/;/g, ':');
+  const passwordEscaped = password.replace(/;/g, ':');
   const wifiType =
-    security === "NONE"
-      ? "nopass"
-      : security === "nopass"
-        ? "nopass"
+    security === 'NONE'
+      ? 'nopass'
+      : security === 'nopass'
+        ? 'nopass'
         : security;
   const parts = [
     `T:${wifiType}`,
     `S:${ssidEscaped}`,
-    security === "nopass" || security === "NONE"
+    security === 'nopass' || security === 'NONE'
       ? `P:`
       : `P:${passwordEscaped}`,
-    `H:${hidden ? "true" : "false"}`,
+    `H:${hidden ? 'true' : 'false'}`,
   ];
-  return `WIFI:${parts.join(";")};;`;
+  return `WIFI:${parts.join(';')};;`;
 }
 
 function buildEmailPayload({
@@ -120,10 +120,10 @@ function buildEmailPayload({
   body: string;
 }) {
   const params = new URLSearchParams();
-  if (subject.trim()) params.set("subject", subject);
-  if (body.trim()) params.set("body", body);
+  if (subject.trim()) params.set('subject', subject);
+  if (body.trim()) params.set('body', body);
   const query = params.toString();
-  return `mailto:${to.trim()}${query ? `?${query}` : ""}`;
+  return `mailto:${to.trim()}${query ? `?${query}` : ''}`;
 }
 
 function buildSmsPayload({
@@ -155,58 +155,58 @@ function buildVCardPayload({
   const first = lastName ? firstName : firstName;
   const last = lastName ? lastName : lastName;
   return [
-    "BEGIN:VCARD",
-    "VERSION:3.0",
+    'BEGIN:VCARD',
+    'VERSION:3.0',
     `N:${last};${first};;;`,
-    `FN:${fullName || `${firstName || ""} ${lastName || ""}`.trim()}`,
-    org.trim() ? `ORG:${org.trim()}` : "",
-    title.trim() ? `TITLE:${title.trim()}` : "",
-    tel.trim() ? `TEL:${tel.trim()}` : "",
-    email.trim() ? `EMAIL:${email.trim()}` : "",
-    "END:VCARD",
+    `FN:${fullName || `${firstName || ''} ${lastName || ''}`.trim()}`,
+    org.trim() ? `ORG:${org.trim()}` : '',
+    title.trim() ? `TITLE:${title.trim()}` : '',
+    tel.trim() ? `TEL:${tel.trim()}` : '',
+    email.trim() ? `EMAIL:${email.trim()}` : '',
+    'END:VCARD',
   ]
     .filter(Boolean)
-    .join("\n");
+    .join('\n');
 }
 
 // Validate and sanitize dot types to prevent qr-code-styling crashes
 function sanitizeDotType(type: unknown): string {
   const validTypes = [
-    "square",
-    "dots",
-    "rounded",
-    "extra-rounded",
-    "classy",
-    "classy-rounded",
+    'square',
+    'dots',
+    'rounded',
+    'extra-rounded',
+    'classy',
+    'classy-rounded',
   ];
-  if (typeof type === "string" && validTypes.includes(type)) {
+  if (typeof type === 'string' && validTypes.includes(type)) {
     return type;
   }
-  return "square"; // Safe fallback
+  return 'square'; // Safe fallback
 }
 
 function dotStyle(dotShape: QrDotShape) {
   switch (dotShape) {
-    case "rounded":
+    case 'rounded':
       return {
-        shape: "square" as const,
-        dots: "rounded" as const,
-        cornerSquare: "extra-rounded" as const,
-        cornerDot: "dots" as const,
+        shape: 'square' as const,
+        dots: 'rounded' as const,
+        cornerSquare: 'extra-rounded' as const,
+        cornerDot: 'dots' as const,
       };
-    case "dots":
+    case 'dots':
       return {
-        shape: "square" as const,
-        dots: "dots" as const,
-        cornerSquare: "dots" as const,
-        cornerDot: "dots" as const,
+        shape: 'square' as const,
+        dots: 'dots' as const,
+        cornerSquare: 'dots' as const,
+        cornerDot: 'dots' as const,
       };
     default:
       return {
-        shape: "square" as const,
-        dots: "square" as const,
-        cornerSquare: "square" as const,
-        cornerDot: "square" as const,
+        shape: 'square' as const,
+        dots: 'square' as const,
+        cornerSquare: 'square' as const,
+        cornerDot: 'square' as const,
       };
   }
 }
@@ -235,29 +235,29 @@ function buildQrOptions({
 
   // BULLETPROOF: Default values for all colors
   const safeFgColor =
-    fgColor && typeof fgColor === "string" ? fgColor : "#000000";
+    fgColor && typeof fgColor === 'string' ? fgColor : '#000000';
   const safeBgColor =
-    bgColor && typeof bgColor === "string" ? bgColor : "#000000";
+    bgColor && typeof bgColor === 'string' ? bgColor : '#000000';
 
   // BULLETPROOF: Sanitize all dot types - always have fallback
-  const safeDotType = sanitizeDotType(dotConfig?.dots) || "square";
+  const safeDotType = sanitizeDotType(dotConfig?.dots) || 'square';
   const safeCornerSquareType =
-    sanitizeDotType(dotConfig?.cornerSquare) || "square";
-  const safeCornerDotType = sanitizeDotType(dotConfig?.cornerDot) || "square";
+    sanitizeDotType(dotConfig?.cornerSquare) || 'square';
+  const safeCornerDotType = sanitizeDotType(dotConfig?.cornerDot) || 'square';
 
   // BULLETPROOF: Ensure shape exists
-  const safeShape = dotConfig?.shape || "square";
+  const safeShape = dotConfig?.shape || 'square';
 
   // BULLETPROOF: Validate qrValue
   const safeData =
-    qrValue && qrValue.trim().length > 0 ? qrValue : "https://example.com";
+    qrValue && qrValue.trim().length > 0 ? qrValue : 'https://example.com';
 
   // BULLETPROOF: Validate margin
   const safeMargin = Number.isFinite(margin) ? Math.max(0, margin) : 0;
 
   // Build options with ALL fields explicitly set
   const options = {
-    type: "svg" as const,
+    type: 'svg' as const,
     shape: safeShape,
     width: safeSize,
     height: safeSize,
@@ -265,7 +265,7 @@ function buildQrOptions({
     data: safeData,
     qrOptions: {
       typeNumber: 0 as unknown as TypeNumber | undefined,
-      errorCorrectionLevel: errorLevel || "H",
+      errorCorrectionLevel: errorLevel || 'H',
     },
     dotsOptions: {
       type: safeDotType,
@@ -298,36 +298,36 @@ function buildQrOptions({
     !options.backgroundOptions.color
   ) {
     console.warn(
-      "[QR WARN] Options object has missing fields, using safe defaults",
+      '[QR WARN] Options object has missing fields, using safe defaults'
     );
     // Return absolute fallback
     return {
-      type: "svg" as const,
-      shape: "square",
+      type: 'svg' as const,
+      shape: 'square',
       width: 260,
       height: 260,
       margin: 0,
-      data: "https://example.com",
+      data: 'https://example.com',
       qrOptions: {
         typeNumber: 0 as unknown as TypeNumber | undefined,
-        errorCorrectionLevel: "H",
+        errorCorrectionLevel: 'H',
       },
       dotsOptions: {
-        type: "square",
-        color: "#000000",
+        type: 'square',
+        color: '#000000',
         roundSize: false,
       },
       cornersSquareOptions: {
-        type: "square",
-        color: "#000000",
+        type: 'square',
+        color: '#000000',
       },
       cornersDotOptions: {
-        type: "square",
-        color: "#000000",
+        type: 'square',
+        color: '#000000',
       },
       backgroundOptions: {
         round: 0,
-        color: "#000000",
+        color: '#000000',
       },
     } as any;
   }
@@ -338,10 +338,10 @@ function buildQrOptions({
 export default function NeoQrGeneratorPage() {
   // Initialize colors with safe defaults to avoid hydration mismatch
   // Use a consistent default on both server and client, then update after hydration
-  const [qrType, setQrType] = useState<QrType>("url");
-  const [qrValue, setQrValue] = useState("");
-  const [frameStyle, setFrameStyle] = useState<FrameStyle>("none");
-  const [frameText, setFrameText] = useState("SCAN ME");
+  const [qrType, setQrType] = useState<QrType>('url');
+  const [qrValue, setQrValue] = useState('');
+  const [frameStyle, setFrameStyle] = useState<FrameStyle>('none');
+  const [frameText, setFrameText] = useState('SCAN ME');
   const [showOptionsModal, setShowOptionsModal] = useState(false);
   const [copied, setCopied] = useState(false);
   const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -351,57 +351,57 @@ export default function NeoQrGeneratorPage() {
   const qrUpdateTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // URL-like inputs
-  const [urlInput, setUrlInput] = useState("");
-  const [facebookUrl, setFacebookUrl] = useState("");
+  const [urlInput, setUrlInput] = useState('');
+  const [facebookUrl, setFacebookUrl] = useState('');
 
   // Structured inputs
-  const [wifiSsid, setWifiSsid] = useState("");
-  const [wifiPassword, setWifiPassword] = useState("");
+  const [wifiSsid, setWifiSsid] = useState('');
+  const [wifiPassword, setWifiPassword] = useState('');
   const [wifiSecurity, setWifiSecurity] = useState<
-    "WPA" | "WEP" | "nopass" | "WPA2" | "NONE"
-  >("WPA2");
+    'WPA' | 'WEP' | 'nopass' | 'WPA2' | 'NONE'
+  >('WPA2');
   const [wifiHidden, setWifiHidden] = useState(false);
 
-  const [emailTo, setEmailTo] = useState("");
-  const [emailSubject, setEmailSubject] = useState("");
-  const [emailBody, setEmailBody] = useState("");
+  const [emailTo, setEmailTo] = useState('');
+  const [emailSubject, setEmailSubject] = useState('');
+  const [emailBody, setEmailBody] = useState('');
 
-  const [smsNumber, setSmsNumber] = useState("");
-  const [smsMessage, setSmsMessage] = useState("");
+  const [smsNumber, setSmsNumber] = useState('');
+  const [smsMessage, setSmsMessage] = useState('');
 
-  const [vFirstName, setVFirstName] = useState("");
-  const [vLastName, setVLastName] = useState("");
-  const [vOrg, setVOrg] = useState("");
-  const [vTitle, setVTitle] = useState("");
-  const [vTel, setVTel] = useState("");
-  const [vEmail, setVEmail] = useState("");
+  const [vFirstName, setVFirstName] = useState('');
+  const [vLastName, setVLastName] = useState('');
+  const [vOrg, setVOrg] = useState('');
+  const [vTitle, setVTitle] = useState('');
+  const [vTel, setVTel] = useState('');
+  const [vEmail, setVEmail] = useState('');
 
   // File-based inputs
-  const [fileObjectUrl, setFileObjectUrl] = useState<string>("");
+  const [fileObjectUrl, setFileObjectUrl] = useState<string>('');
 
   const [isGenerated, setIsGenerated] = useState<boolean>(false);
 
   // Customize options - Use safe default to avoid hydration mismatch
-  const [bgColor, setBgColor] = useState("#ffffff");
-  const [fgColor, setFgColor] = useState("#000000");
+  const [bgColor, setBgColor] = useState('#ffffff');
+  const [fgColor, setFgColor] = useState('#000000');
   const [qrSize, setQrSize] = useState(260);
   const [displayScale, setDisplayScale] = useState(1);
   const [isDraggingSlider, setIsDraggingSlider] = useState(false);
   const [currentSliderValue, setCurrentSliderValue] = useState(260);
-  const [errorLevel, setErrorLevel] = useState<QrErrorLevel>("H");
+  const [errorLevel, setErrorLevel] = useState<QrErrorLevel>('H');
   const [quietZone, setQuietZone] = useState(true);
 
-  const [dotShape, setDotShape] = useState<QrDotShape>("square");
+  const [dotShape, setDotShape] = useState<QrDotShape>('square');
   const [customizationTab, setCustomizationTab] = useState<
-    "customization" | "logo" | "frame"
-  >("customization");
+    'customization' | 'logo' | 'frame'
+  >('customization');
   const [showDownloadModal, setShowDownloadModal] = useState(false);
-  const [logoDataUrl, setLogoDataUrl] = useState<string>("");
+  const [logoDataUrl, setLogoDataUrl] = useState<string>('');
   const [logoSize, setLogoSize] = useState(58); // Fixed 48px
 
   // Export options
-  const [downloadFormat, setDownloadFormat] = useState<QrDownloadFormat>("png");
-  const [downloadName, setDownloadName] = useState("qrcode");
+  const [downloadFormat, setDownloadFormat] = useState<QrDownloadFormat>('png');
+  const [downloadName, setDownloadName] = useState('qrcode');
 
   // Preview / render
   const qrContainerRef = useRef<HTMLDivElement | null>(null);
@@ -412,10 +412,10 @@ export default function NeoQrGeneratorPage() {
   // Effect to update foreground color after hydration based on actual theme
   useEffect(() => {
     const isDark =
-      document.documentElement.classList.contains("dark") ||
-      window.matchMedia("(prefers-color-scheme: dark)").matches;
-    setFgColor(isDark ? "#ffffff" : "#000000");
-    setBgColor(isDark ? "#000000" : "#ffffff");
+      document.documentElement.classList.contains('dark') ||
+      window.matchMedia('(prefers-color-scheme: dark)').matches;
+    setFgColor(isDark ? '#ffffff' : '#000000');
+    setBgColor(isDark ? '#000000' : '#ffffff');
   }, []);
 
   const isValidHttpUrl = (value: string) => {
@@ -423,7 +423,7 @@ export default function NeoQrGeneratorPage() {
     if (!v) return true;
     try {
       const url = new URL(v);
-      return url.protocol === "http:" || url.protocol === "https:";
+      return url.protocol === 'http:' || url.protocol === 'https:';
     } catch {
       return false;
     }
@@ -436,10 +436,10 @@ export default function NeoQrGeneratorPage() {
   const urlValid = isUrlValid(urlInput);
 
   let isCurrentInputValid = true;
-  if (qrType === "url") isCurrentInputValid = urlValid;
-  else if (qrType === "facebook") isCurrentInputValid = facebookUrlValid;
-  else if (qrType === "email") isCurrentInputValid = emailToValid;
-  else if (qrType === "vcard") isCurrentInputValid = vEmailValid;
+  if (qrType === 'url') isCurrentInputValid = urlValid;
+  else if (qrType === 'facebook') isCurrentInputValid = facebookUrlValid;
+  else if (qrType === 'email') isCurrentInputValid = emailToValid;
+  else if (qrType === 'vcard') isCurrentInputValid = vEmailValid;
 
   // Slider drag behavior: smooth visual scaling via transform during drag, then update QR on release
   const handleQrSizeSliderStart = useCallback(() => {
@@ -456,7 +456,7 @@ export default function NeoQrGeneratorPage() {
       const scale = newSize / qrSize;
       setDisplayScale(scale);
     },
-    [qrSize],
+    [qrSize]
   );
 
   const handleQrSizeSliderEnd = useCallback(() => {
@@ -476,26 +476,26 @@ export default function NeoQrGeneratorPage() {
 
   const qrPayload = useMemo(() => {
     switch (qrType) {
-      case "url":
+      case 'url':
         return urlInput.trim();
-      case "facebook":
+      case 'facebook':
         return facebookUrl.trim();
-      case "wifi":
+      case 'wifi':
         return buildWifiPayload({
           ssid: wifiSsid,
           password: wifiPassword,
           security: wifiSecurity,
           hidden: wifiHidden,
         });
-      case "email":
+      case 'email':
         return buildEmailPayload({
           to: emailTo,
           subject: emailSubject,
           body: emailBody,
         });
-      case "sms":
+      case 'sms':
         return buildSmsPayload({ number: smsNumber, message: smsMessage });
-      case "vcard":
+      case 'vcard':
         return buildVCardPayload({
           firstName: vFirstName,
           lastName: vLastName,
@@ -505,7 +505,7 @@ export default function NeoQrGeneratorPage() {
           email: vEmail,
         });
       default:
-        return "";
+        return '';
     }
   }, [
     emailBody,
@@ -545,7 +545,7 @@ export default function NeoQrGeneratorPage() {
     if (!qrValue.trim()) {
       // Clear container if no value
       if (qrRef.current) {
-        currentContainer.innerHTML = "";
+        currentContainer.innerHTML = '';
       }
       return;
     }
@@ -557,7 +557,7 @@ export default function NeoQrGeneratorPage() {
 
     // Defensive: Ensure dot style returns expected shape
     if (!dot || !dot.shape || !dot.dots) {
-      console.warn("Invalid dot style configuration");
+      console.warn('Invalid dot style configuration');
       return;
     }
 
@@ -582,7 +582,7 @@ export default function NeoQrGeneratorPage() {
       if (needsRecreate) {
         // Clean up old instance
         if (qrRef.current && currentContainer) {
-          currentContainer.innerHTML = "";
+          currentContainer.innerHTML = '';
         }
 
         // Create new instance with validated options
@@ -594,50 +594,50 @@ export default function NeoQrGeneratorPage() {
       } else {
         // BULLETPROOF: Validate all critical fields before update
         if (!qrRef.current) {
-          console.warn("[QR WARN] qrRef.current is null, cannot update");
+          console.warn('[QR WARN] qrRef.current is null, cannot update');
           return;
         }
 
         if (!options) {
-          console.warn("[QR WARN] options object is null, cannot update");
+          console.warn('[QR WARN] options object is null, cannot update');
           return;
         }
 
         // BULLETPROOF: Validate nested options object structure with comprehensive checks
         const hasValidDotsOptions =
           options.dotsOptions &&
-          typeof options.dotsOptions === "object" &&
-          "type" in options.dotsOptions &&
-          "color" in options.dotsOptions &&
-          typeof options.dotsOptions.type === "string" &&
-          typeof options.dotsOptions.color === "string";
+          typeof options.dotsOptions === 'object' &&
+          'type' in options.dotsOptions &&
+          'color' in options.dotsOptions &&
+          typeof options.dotsOptions.type === 'string' &&
+          typeof options.dotsOptions.color === 'string';
 
         const hasValidCornersSquare =
           options.cornersSquareOptions &&
-          typeof options.cornersSquareOptions === "object" &&
-          "type" in options.cornersSquareOptions &&
-          "color" in options.cornersSquareOptions &&
-          typeof options.cornersSquareOptions.type === "string" &&
-          typeof options.cornersSquareOptions.color === "string";
+          typeof options.cornersSquareOptions === 'object' &&
+          'type' in options.cornersSquareOptions &&
+          'color' in options.cornersSquareOptions &&
+          typeof options.cornersSquareOptions.type === 'string' &&
+          typeof options.cornersSquareOptions.color === 'string';
 
         const hasValidCornersDot =
           options.cornersDotOptions &&
-          typeof options.cornersDotOptions === "object" &&
-          "type" in options.cornersDotOptions &&
-          "color" in options.cornersDotOptions &&
-          typeof options.cornersDotOptions.type === "string" &&
-          typeof options.cornersDotOptions.color === "string";
+          typeof options.cornersDotOptions === 'object' &&
+          'type' in options.cornersDotOptions &&
+          'color' in options.cornersDotOptions &&
+          typeof options.cornersDotOptions.type === 'string' &&
+          typeof options.cornersDotOptions.color === 'string';
 
         const hasValidBackground =
           options.backgroundOptions &&
-          typeof options.backgroundOptions === "object" &&
-          "color" in options.backgroundOptions &&
-          typeof options.backgroundOptions.color === "string";
+          typeof options.backgroundOptions === 'object' &&
+          'color' in options.backgroundOptions &&
+          typeof options.backgroundOptions.color === 'string';
 
         const hasValidQrOptions =
           options.qrOptions &&
-          typeof options.qrOptions === "object" &&
-          "errorCorrectionLevel" in options.qrOptions;
+          typeof options.qrOptions === 'object' &&
+          'errorCorrectionLevel' in options.qrOptions;
 
         if (
           !hasValidDotsOptions ||
@@ -647,18 +647,18 @@ export default function NeoQrGeneratorPage() {
           !hasValidQrOptions
         ) {
           console.warn(
-            "[QR WARN] Options structure validation failed, recreating instead:",
+            '[QR WARN] Options structure validation failed, recreating instead:',
             {
               hasValidDotsOptions,
               hasValidCornersSquare,
               hasValidCornersDot,
               hasValidBackground,
               hasValidQrOptions,
-            },
+            }
           );
           // Fallback: Recreate the QR code instead of updating
           if (currentContainer) {
-            currentContainer.innerHTML = "";
+            currentContainer.innerHTML = '';
           }
           qrRef.current = new QRCodeStyling(options);
           qrRef.current.append(currentContainer);
@@ -671,24 +671,24 @@ export default function NeoQrGeneratorPage() {
           qrRef.current.update(options);
         } catch (updateError) {
           console.warn(
-            "[QR WARN] Update failed, attempting recreation:",
-            updateError,
+            '[QR WARN] Update failed, attempting recreation:',
+            updateError
           );
           // If update fails, recreate the QR code
           if (currentContainer) {
-            currentContainer.innerHTML = "";
+            currentContainer.innerHTML = '';
           }
           qrRef.current = new QRCodeStyling(options);
           qrRef.current.append(currentContainer);
         }
       }
     } catch (error) {
-      console.error("Failed to create/update QR code:", error, {
+      console.error('Failed to create/update QR code:', error, {
         options,
         hasQrRef: !!qrRef.current,
       });
       if (currentContainer) {
-        currentContainer.innerHTML = "";
+        currentContainer.innerHTML = '';
       }
     }
   }, [
@@ -723,26 +723,26 @@ export default function NeoQrGeneratorPage() {
   }, [performQrUpdate]);
 
   const resetFormForType = useCallback(() => {
-    setUrlInput("");
-    setFacebookUrl("");
-    setWifiSsid("");
-    setWifiPassword("");
-    setWifiSecurity("WPA2");
+    setUrlInput('');
+    setFacebookUrl('');
+    setWifiSsid('');
+    setWifiPassword('');
+    setWifiSecurity('WPA2');
     setWifiHidden(false);
-    setEmailTo("");
-    setEmailSubject("");
-    setEmailBody("");
-    setSmsNumber("");
-    setSmsMessage("");
-    setVFirstName("");
-    setVLastName("");
-    setVOrg("");
-    setVTitle("");
-    setVTel("");
-    setVEmail("");
+    setEmailTo('');
+    setEmailSubject('');
+    setEmailBody('');
+    setSmsNumber('');
+    setSmsMessage('');
+    setVFirstName('');
+    setVLastName('');
+    setVOrg('');
+    setVTitle('');
+    setVTel('');
+    setVEmail('');
     setFileObjectUrl((prev) => {
       if (prev) URL.revokeObjectURL(prev);
-      return "";
+      return '';
     });
   }, []);
 
@@ -751,7 +751,7 @@ export default function NeoQrGeneratorPage() {
       setQrType(type);
       resetFormForType();
     },
-    [resetFormForType],
+    [resetFormForType]
   );
 
   const getFrameConfig = useCallback(() => {
@@ -762,22 +762,22 @@ export default function NeoQrGeneratorPage() {
     let borderWidth = 0;
     let borderRadius = 0;
 
-    if (frameStyle === "minimal") {
+    if (frameStyle === 'minimal') {
       framePaddingX = 16;
       framePaddingY = 16;
       borderWidth = 6;
-    } else if (frameStyle === "rounded") {
+    } else if (frameStyle === 'rounded') {
       framePaddingX = 20;
       framePaddingY = 20;
       borderWidth = 6;
       borderRadius = 24;
-    } else if (frameStyle === "banner") {
+    } else if (frameStyle === 'banner') {
       framePaddingX = 16;
       framePaddingY = 16;
       borderWidth = 6;
       bannerHeight = 46;
       borderRadius = 16;
-    } else if (frameStyle === "polaroid") {
+    } else if (frameStyle === 'polaroid') {
       framePaddingX = 16;
       framePaddingY = 16;
       borderWidth = 6;
@@ -808,11 +808,11 @@ export default function NeoQrGeneratorPage() {
     useCallback(async (): Promise<HTMLCanvasElement | null> => {
       if (!qrRef.current) return null;
 
-      const qrBlob = await qrRef.current.getRawData("png");
+      const qrBlob = await qrRef.current.getRawData('png');
       if (!qrBlob) return null;
       const qrUrl = URL.createObjectURL(qrBlob as Blob);
 
-      const qrImg = document.createElement("img") as HTMLImageElement;
+      const qrImg = document.createElement('img') as HTMLImageElement;
       const promises: Promise<any>[] = [
         new Promise((res) => {
           qrImg.onload = res;
@@ -822,19 +822,19 @@ export default function NeoQrGeneratorPage() {
 
       let logoImg: HTMLImageElement | null = null;
       if (logoDataUrl) {
-        logoImg = document.createElement("img");
+        logoImg = document.createElement('img');
         promises.push(
           new Promise((res) => {
             logoImg!.onload = res;
             logoImg!.src = logoDataUrl;
-          }),
+          })
         );
       }
 
       await Promise.all(promises);
 
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
       if (!ctx) {
         URL.revokeObjectURL(qrUrl);
         return null;
@@ -844,7 +844,7 @@ export default function NeoQrGeneratorPage() {
       canvas.width = config.totalWidth;
       canvas.height = config.totalHeight;
 
-      if (frameStyle !== "none") {
+      if (frameStyle !== 'none') {
         // Draw Background
         ctx.fillStyle = bgColor;
         ctx.beginPath();
@@ -854,7 +854,7 @@ export default function NeoQrGeneratorPage() {
             0,
             config.totalWidth,
             config.totalHeight,
-            config.borderRadius,
+            config.borderRadius
           );
         } else {
           ctx.rect(0, 0, config.totalWidth, config.totalHeight);
@@ -876,14 +876,14 @@ export default function NeoQrGeneratorPage() {
               bw / 2,
               config.totalWidth - bw,
               config.totalHeight - bw,
-              r,
+              r
             );
           } else {
             ctx.rect(
               bw / 2,
               bw / 2,
               config.totalWidth - bw,
-              config.totalHeight - bw,
+              config.totalHeight - bw
             );
           }
           ctx.stroke();
@@ -891,7 +891,7 @@ export default function NeoQrGeneratorPage() {
       }
 
       // Draw Banner Header
-      if (frameStyle === "banner") {
+      if (frameStyle === 'banner') {
         ctx.fillStyle = fgColor;
         ctx.beginPath();
         if (ctx.roundRect) {
@@ -900,7 +900,7 @@ export default function NeoQrGeneratorPage() {
             0,
             config.totalWidth,
             config.bannerHeight + config.borderRadius,
-            [config.borderRadius, config.borderRadius, 0, 0],
+            [config.borderRadius, config.borderRadius, 0, 0]
           );
         } else {
           ctx.rect(0, 0, config.totalWidth, config.bannerHeight);
@@ -909,26 +909,26 @@ export default function NeoQrGeneratorPage() {
 
         // Banner Text
         ctx.fillStyle = bgColor;
-        ctx.font = "bold 20px sans-serif";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
+        ctx.font = 'bold 20px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
         ctx.fillText(
           frameText,
           config.totalWidth / 2,
-          config.bannerHeight / 2 + 2,
+          config.bannerHeight / 2 + 2
         );
       }
 
       // Draw Polaroid Footer Text
-      if (frameStyle === "polaroid") {
+      if (frameStyle === 'polaroid') {
         ctx.fillStyle = fgColor;
-        ctx.font = "bold 20px sans-serif";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
+        ctx.font = 'bold 20px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
         ctx.fillText(
           frameText,
           config.totalWidth / 2,
-          config.totalHeight - config.bottomTextHeight / 2,
+          config.totalHeight - config.bottomTextHeight / 2
         );
       }
 
@@ -949,7 +949,7 @@ export default function NeoQrGeneratorPage() {
         }
         ctx.fill();
 
-        ctx.fillStyle = "white";
+        ctx.fillStyle = 'white';
         ctx.beginPath();
         if (ctx.roundRect) {
           ctx.roundRect(logoX - 2, logoY - 2, logoSize + 4, logoSize + 4, 4);
@@ -976,27 +976,27 @@ export default function NeoQrGeneratorPage() {
 
   const generateSVG = useCallback(async (): Promise<Blob | null> => {
     if (!qrRef.current) return null;
-    const svgBlob = await qrRef.current.getRawData("svg");
+    const svgBlob = await qrRef.current.getRawData('svg');
     if (!svgBlob) return null;
     const svgText = await (svgBlob as Blob).text();
 
     const parser = new DOMParser();
-    const svgDoc = parser.parseFromString(svgText, "image/svg+xml");
+    const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
     const svgElement = svgDoc.documentElement;
 
     const config = getFrameConfig();
 
     svgElement.setAttribute(
-      "viewBox",
-      `0 0 ${config.totalWidth} ${config.totalHeight}`,
+      'viewBox',
+      `0 0 ${config.totalWidth} ${config.totalHeight}`
     );
-    svgElement.setAttribute("width", `${config.totalWidth}`);
-    svgElement.setAttribute("height", `${config.totalHeight}`);
+    svgElement.setAttribute('width', `${config.totalWidth}`);
+    svgElement.setAttribute('height', `${config.totalHeight}`);
 
-    const qrGroup = svgDoc.createElementNS("http://www.w3.org/2000/svg", "g");
+    const qrGroup = svgDoc.createElementNS('http://www.w3.org/2000/svg', 'g');
     qrGroup.setAttribute(
-      "transform",
-      `translate(${config.qrOffsetX}, ${config.qrOffsetY})`,
+      'transform',
+      `translate(${config.qrOffsetX}, ${config.qrOffsetY})`
     );
 
     while (svgElement.firstChild) {
@@ -1004,98 +1004,98 @@ export default function NeoQrGeneratorPage() {
     }
 
     const frameGroup = svgDoc.createElementNS(
-      "http://www.w3.org/2000/svg",
-      "g",
+      'http://www.w3.org/2000/svg',
+      'g'
     );
 
-    if (frameStyle !== "none") {
+    if (frameStyle !== 'none') {
       // Background
       const bgRect = svgDoc.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "rect",
+        'http://www.w3.org/2000/svg',
+        'rect'
       );
-      bgRect.setAttribute("width", `${config.totalWidth}`);
-      bgRect.setAttribute("height", `${config.totalHeight}`);
-      bgRect.setAttribute("fill", bgColor);
+      bgRect.setAttribute('width', `${config.totalWidth}`);
+      bgRect.setAttribute('height', `${config.totalHeight}`);
+      bgRect.setAttribute('fill', bgColor);
       if (config.borderRadius)
-        bgRect.setAttribute("rx", `${config.borderRadius}`);
+        bgRect.setAttribute('rx', `${config.borderRadius}`);
       frameGroup.appendChild(bgRect);
 
       // Border
       if (config.borderWidth > 0) {
         const borderRect = svgDoc.createElementNS(
-          "http://www.w3.org/2000/svg",
-          "rect",
+          'http://www.w3.org/2000/svg',
+          'rect'
         );
-        borderRect.setAttribute("x", `${config.borderWidth / 2}`);
-        borderRect.setAttribute("y", `${config.borderWidth / 2}`);
+        borderRect.setAttribute('x', `${config.borderWidth / 2}`);
+        borderRect.setAttribute('y', `${config.borderWidth / 2}`);
         borderRect.setAttribute(
-          "width",
-          `${config.totalWidth - config.borderWidth}`,
+          'width',
+          `${config.totalWidth - config.borderWidth}`
         );
         borderRect.setAttribute(
-          "height",
-          `${config.totalHeight - config.borderWidth}`,
+          'height',
+          `${config.totalHeight - config.borderWidth}`
         );
-        borderRect.setAttribute("fill", "none");
-        borderRect.setAttribute("stroke", fgColor);
-        borderRect.setAttribute("stroke-width", `${config.borderWidth}`);
+        borderRect.setAttribute('fill', 'none');
+        borderRect.setAttribute('stroke', fgColor);
+        borderRect.setAttribute('stroke-width', `${config.borderWidth}`);
         if (config.borderRadius)
           borderRect.setAttribute(
-            "rx",
-            `${Math.max(0, config.borderRadius - config.borderWidth / 2)}`,
+            'rx',
+            `${Math.max(0, config.borderRadius - config.borderWidth / 2)}`
           );
         frameGroup.appendChild(borderRect);
       }
     }
 
     // Banner Header
-    if (frameStyle === "banner") {
+    if (frameStyle === 'banner') {
       const bannerPath = svgDoc.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "path",
+        'http://www.w3.org/2000/svg',
+        'path'
       );
       const r = config.borderRadius;
       const w = config.totalWidth;
       const h = config.bannerHeight;
       const pathData = `M 0,${r} A ${r},${r} 0 0,1 ${r},0 L ${w - r},0 A ${r},${r} 0 0,1 ${w},${r} L ${w},${h} L 0,${h} Z`;
-      bannerPath.setAttribute("d", pathData);
-      bannerPath.setAttribute("fill", fgColor);
+      bannerPath.setAttribute('d', pathData);
+      bannerPath.setAttribute('fill', fgColor);
       frameGroup.appendChild(bannerPath);
 
       const textEl = svgDoc.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "text",
+        'http://www.w3.org/2000/svg',
+        'text'
       );
-      textEl.setAttribute("x", `${config.totalWidth / 2}`);
-      textEl.setAttribute("y", `${config.bannerHeight / 2}`);
-      textEl.setAttribute("fill", bgColor);
-      textEl.setAttribute("font-family", "sans-serif");
-      textEl.setAttribute("font-weight", "bold");
-      textEl.setAttribute("font-size", "20px");
-      textEl.setAttribute("text-anchor", "middle");
-      textEl.setAttribute("dominant-baseline", "central");
+      textEl.setAttribute('x', `${config.totalWidth / 2}`);
+      textEl.setAttribute('y', `${config.bannerHeight / 2}`);
+      textEl.setAttribute('fill', bgColor);
+      textEl.setAttribute('font-family', 'sans-serif');
+      textEl.setAttribute('font-weight', 'bold');
+      textEl.setAttribute('font-size', '20px');
+      textEl.setAttribute('text-anchor', 'middle');
+      textEl.setAttribute('dominant-baseline', 'central');
       textEl.textContent = frameText;
       frameGroup.appendChild(textEl);
     }
 
     // Polaroid Footer Text
-    if (frameStyle === "polaroid") {
+    if (frameStyle === 'polaroid') {
       const textEl = svgDoc.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "text",
+        'http://www.w3.org/2000/svg',
+        'text'
       );
-      textEl.setAttribute("x", `${config.totalWidth / 2}`);
+      textEl.setAttribute('x', `${config.totalWidth / 2}`);
       textEl.setAttribute(
-        "y",
-        `${config.totalHeight - config.bottomTextHeight / 2}`,
+        'y',
+        `${config.totalHeight - config.bottomTextHeight / 2}`
       );
-      textEl.setAttribute("fill", fgColor);
-      textEl.setAttribute("font-family", "sans-serif");
-      textEl.setAttribute("font-weight", "bold");
-      textEl.setAttribute("font-size", "20px");
-      textEl.setAttribute("text-anchor", "middle");
-      textEl.setAttribute("dominant-baseline", "central");
+      textEl.setAttribute('fill', fgColor);
+      textEl.setAttribute('font-family', 'sans-serif');
+      textEl.setAttribute('font-weight', 'bold');
+      textEl.setAttribute('font-size', '20px');
+      textEl.setAttribute('text-anchor', 'middle');
+      textEl.setAttribute('dominant-baseline', 'central');
       textEl.textContent = frameText;
       frameGroup.appendChild(textEl);
     }
@@ -1109,44 +1109,44 @@ export default function NeoQrGeneratorPage() {
       const logoY = config.qrOffsetY + (qrSize - logoSize) / 2;
 
       const borderOuter = svgDoc.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "rect",
+        'http://www.w3.org/2000/svg',
+        'rect'
       );
-      borderOuter.setAttribute("x", `${logoX - 4}`);
-      borderOuter.setAttribute("y", `${logoY - 4}`);
-      borderOuter.setAttribute("width", `${logoSize + 8}`);
-      borderOuter.setAttribute("height", `${logoSize + 8}`);
-      borderOuter.setAttribute("fill", bgColor);
-      borderOuter.setAttribute("rx", "6");
+      borderOuter.setAttribute('x', `${logoX - 4}`);
+      borderOuter.setAttribute('y', `${logoY - 4}`);
+      borderOuter.setAttribute('width', `${logoSize + 8}`);
+      borderOuter.setAttribute('height', `${logoSize + 8}`);
+      borderOuter.setAttribute('fill', bgColor);
+      borderOuter.setAttribute('rx', '6');
       svgElement.appendChild(borderOuter);
 
       const borderInner = svgDoc.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "rect",
+        'http://www.w3.org/2000/svg',
+        'rect'
       );
-      borderInner.setAttribute("x", `${logoX - 2}`);
-      borderInner.setAttribute("y", `${logoY - 2}`);
-      borderInner.setAttribute("width", `${logoSize + 4}`);
-      borderInner.setAttribute("height", `${logoSize + 4}`);
-      borderInner.setAttribute("fill", "white");
-      borderInner.setAttribute("rx", "4");
+      borderInner.setAttribute('x', `${logoX - 2}`);
+      borderInner.setAttribute('y', `${logoY - 2}`);
+      borderInner.setAttribute('width', `${logoSize + 4}`);
+      borderInner.setAttribute('height', `${logoSize + 4}`);
+      borderInner.setAttribute('fill', 'white');
+      borderInner.setAttribute('rx', '4');
       svgElement.appendChild(borderInner);
 
       const imageElement = svgDoc.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "image",
+        'http://www.w3.org/2000/svg',
+        'image'
       );
-      imageElement.setAttribute("href", logoDataUrl);
-      imageElement.setAttribute("x", `${logoX}`);
-      imageElement.setAttribute("y", `${logoY}`);
-      imageElement.setAttribute("width", `${logoSize}`);
-      imageElement.setAttribute("height", `${logoSize}`);
+      imageElement.setAttribute('href', logoDataUrl);
+      imageElement.setAttribute('x', `${logoX}`);
+      imageElement.setAttribute('y', `${logoY}`);
+      imageElement.setAttribute('width', `${logoSize}`);
+      imageElement.setAttribute('height', `${logoSize}`);
       svgElement.appendChild(imageElement);
     }
 
     const serializer = new XMLSerializer();
     const finalSvgText = serializer.serializeToString(svgDoc);
-    return new Blob([finalSvgText], { type: "image/svg+xml" });
+    return new Blob([finalSvgText], { type: 'image/svg+xml' });
   }, [
     logoDataUrl,
     bgColor,
@@ -1161,7 +1161,7 @@ export default function NeoQrGeneratorPage() {
   const copyQRCode = useCallback(async () => {
     if (!qrValue.trim()) return;
 
-    if (logoDataUrl || frameStyle !== "none") {
+    if (logoDataUrl || frameStyle !== 'none') {
       try {
         const canvas = await generateCanvas();
         if (!canvas) return;
@@ -1169,40 +1169,40 @@ export default function NeoQrGeneratorPage() {
         canvas.toBlob(async (blob) => {
           if (blob) {
             try {
-              const item = new ClipboardItem({ "image/png": blob });
+              const item = new ClipboardItem({ 'image/png': blob });
               await navigator.clipboard.write([item]);
             } catch (error) {
               console.warn(
-                "Failed to copy QR with frame/logo to clipboard:",
-                error,
+                'Failed to copy QR with frame/logo to clipboard:',
+                error
               );
             }
           }
-        }, "image/png");
+        }, 'image/png');
         return;
       } catch (error) {
-        console.warn("Failed to copy QR with frame/logo, falling back:", error);
+        console.warn('Failed to copy QR with frame/logo, falling back:', error);
       }
     }
 
     try {
       if (qrRef.current) {
-        const pngBlob = (await qrRef.current.getRawData("png")) as Blob | null;
+        const pngBlob = (await qrRef.current.getRawData('png')) as Blob | null;
         if (pngBlob) {
-          const item = new ClipboardItem({ "image/png": pngBlob });
+          const item = new ClipboardItem({ 'image/png': pngBlob });
           await navigator.clipboard.write([item]);
           return;
         }
       }
     } catch (error) {
-      console.warn("Failed to copy QR image, falling back to text:", error);
+      console.warn('Failed to copy QR image, falling back to text:', error);
     }
 
     // Final fallback: copy text
     try {
       await navigator.clipboard.writeText(qrValue);
     } catch (textError) {
-      console.warn("Failed to copy QR value:", textError);
+      console.warn('Failed to copy QR value:', textError);
     }
   }, [qrValue, logoDataUrl, frameStyle, generateCanvas]);
 
@@ -1245,26 +1245,26 @@ export default function NeoQrGeneratorPage() {
 
     // 2MB file size limit for the logo
     if (file.size > 2 * 1024 * 1024) {
-      alert("Image size exceeds 2MB limit. Please upload a smaller image.");
+      alert('Image size exceeds 2MB limit. Please upload a smaller image.');
       return;
     }
 
     const ext = getExt(file.name);
-    const ok = ["png", "jpg", "jpeg", "webp"].includes(ext);
+    const ok = ['png', 'jpg', 'jpeg', 'webp'].includes(ext);
     if (!ok) {
-      setLogoDataUrl("");
+      setLogoDataUrl('');
       return;
     }
 
     const reader = new FileReader();
     reader.onload = () => {
       const result = reader.result;
-      if (typeof result === "string") {
+      if (typeof result === 'string') {
         // UPDATED: Explicitly typed Image creation
-        const img = document.createElement("img") as HTMLImageElement;
+        const img = document.createElement('img') as HTMLImageElement;
         img.onload = () => {
-          const canvas = document.createElement("canvas");
-          const ctx = canvas.getContext("2d");
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
           if (!ctx) {
             setLogoDataUrl(result);
             return;
@@ -1289,9 +1289,9 @@ export default function NeoQrGeneratorPage() {
             0,
             0,
             targetSize,
-            targetSize,
+            targetSize
           );
-          setLogoDataUrl(canvas.toDataURL("image/png"));
+          setLogoDataUrl(canvas.toDataURL('image/png'));
         };
         img.src = result;
       }
@@ -1304,9 +1304,9 @@ export default function NeoQrGeneratorPage() {
   const download = useCallback(async () => {
     if (!qrRef.current || !qrCanDownload) return;
 
-    if (!logoDataUrl && frameStyle === "none") {
-      if (downloadFormat === "eps") {
-        const svgBlob = await qrRef.current.getRawData("svg");
+    if (!logoDataUrl && frameStyle === 'none') {
+      if (downloadFormat === 'eps') {
+        const svgBlob = await qrRef.current.getRawData('svg');
         if (!svgBlob) return;
         triggerDownload(svgBlob as Blob, `${downloadName}.eps`);
         return;
@@ -1314,17 +1314,17 @@ export default function NeoQrGeneratorPage() {
 
       await qrRef.current.download({
         extension:
-          downloadFormat === "jpeg"
-            ? "jpeg"
-            : downloadFormat === "svg"
-              ? "svg"
+          downloadFormat === 'jpeg'
+            ? 'jpeg'
+            : downloadFormat === 'svg'
+              ? 'svg'
               : downloadFormat,
         name: downloadName,
       });
       return;
     }
 
-    if (downloadFormat === "png" || downloadFormat === "jpeg") {
+    if (downloadFormat === 'png' || downloadFormat === 'jpeg') {
       const canvas = await generateCanvas();
       if (!canvas) return;
       canvas.toBlob((blob) => {
@@ -1333,12 +1333,12 @@ export default function NeoQrGeneratorPage() {
       return;
     }
 
-    if (downloadFormat === "svg" || downloadFormat === "eps") {
+    if (downloadFormat === 'svg' || downloadFormat === 'eps') {
       const svgBlob = await generateSVG();
       if (!svgBlob) return;
       triggerDownload(
         svgBlob,
-        `${downloadName}.${downloadFormat === "eps" ? "eps" : "svg"}`,
+        `${downloadName}.${downloadFormat === 'eps' ? 'eps' : 'svg'}`
       );
     }
   }, [
@@ -1353,29 +1353,29 @@ export default function NeoQrGeneratorPage() {
 
   const qrTypeTabs: QRTypeTab[] = [
     {
-      value: "url",
-      label: "URL",
-      description: "Redirect to an existing web URL",
+      value: 'url',
+      label: 'URL',
+      description: 'Redirect to an existing web URL',
     },
     {
-      value: "email",
-      label: "Email",
-      description: "Pre-filled email composer",
+      value: 'email',
+      label: 'Email',
+      description: 'Pre-filled email composer',
     },
     {
-      value: "sms",
-      label: "SMS",
-      description: "Pre-filled text message",
+      value: 'sms',
+      label: 'SMS',
+      description: 'Pre-filled text message',
     },
     {
-      value: "wifi",
-      label: "WiFi",
-      description: "Share WiFi credentials",
+      value: 'wifi',
+      label: 'WiFi',
+      description: 'Share WiFi credentials',
     },
     {
-      value: "vcard",
-      label: "Contact",
-      description: "Digital business card",
+      value: 'vcard',
+      label: 'Contact',
+      description: 'Digital business card',
     },
   ];
 
@@ -1387,35 +1387,35 @@ export default function NeoQrGeneratorPage() {
       return (
         <div
           style={{
-            position: "relative",
+            position: 'relative',
             width: config.totalWidth,
             height: config.totalHeight,
-            backgroundColor: frameStyle === "none" ? "transparent" : bgColor,
+            backgroundColor: frameStyle === 'none' ? 'transparent' : bgColor,
             border:
-              frameStyle === "none"
-                ? "none"
+              frameStyle === 'none'
+                ? 'none'
                 : `${config.borderWidth}px solid ${fgColor}`,
             borderRadius: config.borderRadius,
-            overflow: "hidden",
-            display: "flex",
-            flexDirection: "column",
-            boxSizing: "border-box",
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
+            boxSizing: 'border-box',
           }}
         >
-          {frameStyle === "banner" && (
+          {frameStyle === 'banner' && (
             <div
               style={{
-                width: "100%",
+                width: '100%',
                 height: config.bannerHeight,
                 backgroundColor: fgColor,
                 color: bgColor,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontWeight: "bold",
-                fontSize: "18px",
-                fontFamily: "sans-serif",
-                letterSpacing: "0.1em",
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 'bold',
+                fontSize: '18px',
+                fontFamily: 'sans-serif',
+                letterSpacing: '0.1em',
               }}
             >
               {frameText}
@@ -1427,28 +1427,28 @@ export default function NeoQrGeneratorPage() {
               paddingBottom: config.framePaddingY,
               paddingLeft: config.framePaddingX,
               paddingRight: config.framePaddingX,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
               flex: 1,
             }}
           >
             {children}
           </div>
-          {frameStyle === "polaroid" && (
+          {frameStyle === 'polaroid' && (
             <div
               style={{
-                width: "100%",
+                width: '100%',
                 height: config.bottomTextHeight,
                 backgroundColor: bgColor,
                 color: fgColor,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontWeight: "bold",
-                fontSize: "18px",
-                fontFamily: "sans-serif",
-                letterSpacing: "0.1em",
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 'bold',
+                fontSize: '18px',
+                fontFamily: 'sans-serif',
+                letterSpacing: '0.1em',
               }}
             >
               {frameText}
@@ -1457,7 +1457,7 @@ export default function NeoQrGeneratorPage() {
         </div>
       );
     },
-    [frameStyle, frameText, bgColor, fgColor, getFrameConfig],
+    [frameStyle, frameText, bgColor, fgColor, getFrameConfig]
   );
 
   return (
@@ -1468,7 +1468,7 @@ export default function NeoQrGeneratorPage() {
         {/* Unified Main Container - All sections merged */}
         <div
           className="rounded-2xl border bg-white shadow-lg transition-all duration-300"
-          style={{ backgroundColor: "var(--background)" }}
+          style={{ backgroundColor: 'var(--background)' }}
         >
           <div className="flex flex-col lg:flex-row lg:gap-0">
             {/* Left Column: Input Section */}
@@ -1485,21 +1485,21 @@ export default function NeoQrGeneratorPage() {
                         onClick={() => handleTypeChange(tab.value)}
                         whileHover={
                           !isActive
-                            ? { backgroundColor: "rgba(255, 255, 255, 0.3)" }
+                            ? { backgroundColor: 'rgba(255, 255, 255, 0.3)' }
                             : {}
                         }
                         whileTap={{ scale: 0.95 }}
                         className={`relative shrink-0 overflow-hidden whitespace-nowrap rounded-full px-4 py-2.5 font-medium text-sm transition-all duration-300 ${
                           isActive
-                            ? "scale-100 text-white"
-                            : "text-slate-700 hover:text-slate-900 active:scale-95 dark:text-slate-400 dark:hover:text-slate-200"
+                            ? 'scale-100 text-white'
+                            : 'text-slate-700 hover:text-slate-900 active:scale-95 dark:text-slate-400 dark:hover:text-slate-200'
                         } focus:outline-none focus:ring-2 focus:ring-blue-500/50`}
                       >
                         {isActive ? (
                           <motion.div
                             layoutId="activeTabPill"
                             transition={{
-                              type: "spring",
+                              type: 'spring',
                               stiffness: 380,
                               damping: 35,
                             }}
@@ -1521,20 +1521,20 @@ export default function NeoQrGeneratorPage() {
                 <div className="border-slate-200 border-b pb-6 dark:border-slate-700">
                   <h3 className="text-center font-semibold text-lg text-slate-900 dark:text-white">
                     {currentTabInfo?.description ||
-                      "Redirect to an existing web URL"}
+                      'Redirect to an existing web URL'}
                   </h3>
                 </div>
 
                 {/* Input Section */}
                 <div className="space-y-4">
                   {/* URL Input */}
-                  {qrType === "url" ? (
+                  {qrType === 'url' ? (
                     <motion.div
                       key="url-input"
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.2, ease: "easeInOut" }}
+                      transition={{ duration: 0.2, ease: 'easeInOut' }}
                       className="space-y-3"
                     >
                       <input
@@ -1545,8 +1545,8 @@ export default function NeoQrGeneratorPage() {
                         placeholder="Enter URL"
                         className={`w-full rounded-lg border bg-white px-4 py-3 text-slate-900 placeholder-slate-400 transition-colors focus:outline-none dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400 ${
                           urlInput.trim() && !urlInputValid
-                            ? "border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500/20"
-                            : "border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-600 dark:focus:border-blue-500"
+                            ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500/20'
+                            : 'border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-600 dark:focus:border-blue-500'
                         }`}
                       />
                       {urlInput.trim() && !urlValid && (
@@ -1561,13 +1561,13 @@ export default function NeoQrGeneratorPage() {
                   ) : null}
 
                   {/* Facebook URL Input */}
-                  {qrType === "facebook" ? (
+                  {qrType === 'facebook' ? (
                     <motion.div
                       key="facebook-input"
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.2, ease: "easeInOut" }}
+                      transition={{ duration: 0.2, ease: 'easeInOut' }}
                       className="space-y-3"
                     >
                       <input
@@ -1578,21 +1578,21 @@ export default function NeoQrGeneratorPage() {
                         placeholder="https://facebook.com/..."
                         className={`w-full rounded-lg border bg-white px-4 py-3 text-slate-900 placeholder-slate-400 transition-colors focus:outline-none dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400 ${
                           facebookUrl.trim() && !facebookUrlValid
-                            ? "border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500/20"
-                            : "border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-600 dark:focus:border-blue-500"
+                            ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500/20'
+                            : 'border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-600 dark:focus:border-blue-500'
                         }`}
                       />
                     </motion.div>
                   ) : null}
 
                   {/* WiFi Configuration */}
-                  {qrType === "wifi" ? (
+                  {qrType === 'wifi' ? (
                     <motion.div
                       key="wifi-input"
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.2, ease: "easeInOut" }}
+                      transition={{ duration: 0.2, ease: 'easeInOut' }}
                       className="space-y-4"
                     >
                       <div className="space-y-2">
@@ -1620,7 +1620,7 @@ export default function NeoQrGeneratorPage() {
                           onFocus={(e) => e.currentTarget.select()}
                           placeholder="••••••••"
                           disabled={
-                            wifiSecurity === "nopass" || wifiSecurity === "NONE"
+                            wifiSecurity === 'nopass' || wifiSecurity === 'NONE'
                           }
                           className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none disabled:opacity-50 dark:border-slate-600 dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400"
                         />
@@ -1635,7 +1635,7 @@ export default function NeoQrGeneratorPage() {
                             value={wifiSecurity}
                             onValueChange={(v) =>
                               setWifiSecurity(
-                                v as "WPA" | "WEP" | "nopass" | "WPA2" | "NONE",
+                                v as 'WPA' | 'WEP' | 'nopass' | 'WPA2' | 'NONE'
                               )
                             }
                           >
@@ -1672,13 +1672,13 @@ export default function NeoQrGeneratorPage() {
                   ) : null}
 
                   {/* Email Configuration */}
-                  {qrType === "email" ? (
+                  {qrType === 'email' ? (
                     <motion.div
                       key="email-input"
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.2, ease: "easeInOut" }}
+                      transition={{ duration: 0.2, ease: 'easeInOut' }}
                       className="space-y-4"
                     >
                       <div className="space-y-2">
@@ -1693,8 +1693,8 @@ export default function NeoQrGeneratorPage() {
                           placeholder="someone@example.com"
                           className={`w-full rounded-lg border bg-white px-4 py-3 text-slate-900 placeholder-slate-400 transition-colors focus:outline-none dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400 ${
                             emailTo.trim() && !emailToValid
-                              ? "border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500/20"
-                              : "border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-600 dark:focus:border-blue-500"
+                              ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500/20'
+                              : 'border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-600 dark:focus:border-blue-500'
                           }`}
                         />
 
@@ -1735,13 +1735,13 @@ export default function NeoQrGeneratorPage() {
                   ) : null}
 
                   {/* SMS Configuration */}
-                  {qrType === "sms" ? (
+                  {qrType === 'sms' ? (
                     <motion.div
                       key="sms-input"
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.2, ease: "easeInOut" }}
+                      transition={{ duration: 0.2, ease: 'easeInOut' }}
                       className="space-y-4"
                     >
                       <div className="space-y-2">
@@ -1775,13 +1775,13 @@ export default function NeoQrGeneratorPage() {
                   ) : null}
 
                   {/* vCard Configuration */}
-                  {qrType === "vcard" ? (
+                  {qrType === 'vcard' ? (
                     <motion.div
                       key="vcard-input"
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.2, ease: "easeInOut" }}
+                      transition={{ duration: 0.2, ease: 'easeInOut' }}
                       className="space-y-4"
                     >
                       <div className="grid gap-3 sm:grid-cols-2">
@@ -1891,8 +1891,8 @@ export default function NeoQrGeneratorPage() {
                           placeholder="Enter email address"
                           className={`w-full rounded-lg border bg-white px-4 py-3 text-slate-900 placeholder-slate-400 transition-colors focus:outline-none dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400 ${
                             vEmail.trim() && !vEmailValid
-                              ? "border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500/20"
-                              : "border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-600 dark:focus:border-blue-500"
+                              ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500/20'
+                              : 'border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-600 dark:focus:border-blue-500'
                           }`}
                         />
                         {vEmail.trim() && !vEmailValid && (
@@ -1909,17 +1909,17 @@ export default function NeoQrGeneratorPage() {
               {/* Customize Options - Tabbed Interface */}
               <div
                 className="space-y-4 border-t pt-6"
-                style={{ borderColor: "var(--border)" }}
+                style={{ borderColor: 'var(--border)' }}
               >
                 {/* Tab Navigation */}
                 <div
                   className="flex gap-2 rounded-lg border p-1"
                   style={{
-                    borderColor: "var(--border)",
-                    backgroundColor: "var(--secondary)",
+                    borderColor: 'var(--border)',
+                    backgroundColor: 'var(--secondary)',
                   }}
                 >
-                  {(["customization", "logo", "frame"] as const).map((tab) => (
+                  {(['customization', 'logo', 'frame'] as const).map((tab) => (
                     <button
                       type="button"
                       key={tab}
@@ -1928,29 +1928,29 @@ export default function NeoQrGeneratorPage() {
                       style={{
                         backgroundColor:
                           customizationTab === tab
-                            ? "var(--card)"
-                            : "transparent",
+                            ? 'var(--card)'
+                            : 'transparent',
                         color:
                           customizationTab === tab
-                            ? "var(--primary)"
-                            : "var(--muted-foreground)",
+                            ? 'var(--primary)'
+                            : 'var(--muted-foreground)',
                         boxShadow:
                           customizationTab === tab
-                            ? "0 1px 3px rgba(0, 0, 0, 0.1)"
-                            : "none",
+                            ? '0 1px 3px rgba(0, 0, 0, 0.1)'
+                            : 'none',
                       }}
                     >
-                      {tab === "customization"
-                        ? "Customization"
-                        : tab === "logo"
-                          ? "Logo"
-                          : "Frame"}
+                      {tab === 'customization'
+                        ? 'Customization'
+                        : tab === 'logo'
+                          ? 'Logo'
+                          : 'Frame'}
                     </button>
                   ))}
                 </div>
 
                 {/* Customization Tab - 3 Rows Structure */}
-                {customizationTab === "customization" && (
+                {customizationTab === 'customization' && (
                   <div className="space-y-4">
                     {/* Row 1: Foreground + Background Color Pickers */}
                     <div className="flex flex-col gap-5">
@@ -1974,7 +1974,7 @@ export default function NeoQrGeneratorPage() {
                                 }}
                               />
                               <span suppressHydrationWarning>
-                                {typeof fgColor === "string"
+                                {typeof fgColor === 'string'
                                   ? fgColor.toUpperCase()
                                   : fgColor}
                               </span>
@@ -2014,7 +2014,7 @@ export default function NeoQrGeneratorPage() {
                                 }}
                               />
                               <span suppressHydrationWarning>
-                                {typeof bgColor === "string"
+                                {typeof bgColor === 'string'
                                   ? bgColor.toUpperCase()
                                   : bgColor}
                               </span>
@@ -2039,7 +2039,7 @@ export default function NeoQrGeneratorPage() {
                     <div className="space-y-2">
                       <Label
                         className="font-medium"
-                        style={{ color: "var(--foreground)" }}
+                        style={{ color: 'var(--foreground)' }}
                       >
                         Error Correction
                       </Label>
@@ -2050,18 +2050,18 @@ export default function NeoQrGeneratorPage() {
                         <SelectTrigger
                           className="rounded-lg"
                           style={{
-                            borderColor: "var(--border)",
-                            backgroundColor: "var(--card)",
-                            color: "var(--foreground)",
+                            borderColor: 'var(--border)',
+                            backgroundColor: 'var(--card)',
+                            color: 'var(--foreground)',
                           }}
                         >
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent
                           style={{
-                            borderColor: "var(--border)",
-                            backgroundColor: "var(--card)",
-                            color: "var(--foreground)",
+                            borderColor: 'var(--border)',
+                            backgroundColor: 'var(--card)',
+                            color: 'var(--foreground)',
                           }}
                         >
                           <SelectItem value="L">Low (~7%)</SelectItem>
@@ -2077,13 +2077,13 @@ export default function NeoQrGeneratorPage() {
                       <div className="flex items-center justify-between">
                         <Label
                           className="font-medium"
-                          style={{ color: "var(--foreground)" }}
+                          style={{ color: 'var(--foreground)' }}
                         >
                           QR Size
                         </Label>
                         <span
                           className="font-semibold text-sm"
-                          style={{ color: "var(--primary)" }}
+                          style={{ color: 'var(--primary)' }}
                         >
                           {isDraggingSlider ? currentSliderValue : qrSize}
                           px
@@ -2113,7 +2113,7 @@ export default function NeoQrGeneratorPage() {
                         {isDraggingSlider && (
                           <p
                             className="text-right font-medium text-xs"
-                            style={{ color: "var(--primary)" }}
+                            style={{ color: 'var(--primary)' }}
                           >
                             Release to apply
                           </p>
@@ -2131,7 +2131,7 @@ export default function NeoQrGeneratorPage() {
                       <Label
                         htmlFor="quiet-zone"
                         className="cursor-pointer font-medium"
-                        style={{ color: "var(--foreground)" }}
+                        style={{ color: 'var(--foreground)' }}
                       >
                         Quiet zone (recommended)
                       </Label>
@@ -2140,13 +2140,13 @@ export default function NeoQrGeneratorPage() {
                 )}
 
                 {/* Logo Tab - File Upload Dropzone */}
-                {customizationTab === "logo" && (
+                {customizationTab === 'logo' && (
                   <div className="space-y-4">
                     <div
                       className="group relative cursor-pointer space-y-4 rounded-lg border-2 border-dashed p-6 text-center transition-all hover:border-opacity-80"
                       style={{
-                        borderColor: "var(--border)",
-                        backgroundColor: "var(--secondary)",
+                        borderColor: 'var(--border)',
+                        backgroundColor: 'var(--secondary)',
                       }}
                       onDragOver={(e) => {
                         e.preventDefault();
@@ -2180,7 +2180,7 @@ export default function NeoQrGeneratorPage() {
                           fill="none"
                           xmlns="http://www.w3.org/2000/svg"
                           className="mx-auto mb-2 opacity-60 transition-opacity group-hover:opacity-100"
-                          style={{ color: "var(--foreground)" }}
+                          style={{ color: 'var(--foreground)' }}
                         >
                           <title>Upload</title>
                           <path
@@ -2200,13 +2200,13 @@ export default function NeoQrGeneratorPage() {
                         </svg>
                         <p
                           className="font-semibold text-sm"
-                          style={{ color: "var(--foreground)" }}
+                          style={{ color: 'var(--foreground)' }}
                         >
                           Drag logo here or click to select
                         </p>
                         <p
                           className="text-xs"
-                          style={{ color: "var(--muted-foreground)" }}
+                          style={{ color: 'var(--muted-foreground)' }}
                         >
                           PNG, JPG, or WebP (max 2MB)
                         </p>
@@ -2216,7 +2216,7 @@ export default function NeoQrGeneratorPage() {
                       <div className="space-y-2">
                         <p
                           className="font-medium text-sm"
-                          style={{ color: "var(--foreground)" }}
+                          style={{ color: 'var(--foreground)' }}
                         >
                           Logo Preview:
                         </p>
@@ -2224,23 +2224,23 @@ export default function NeoQrGeneratorPage() {
                           <div
                             className="max-h-20 w-20 rounded-lg border"
                             style={{
-                              borderColor: "var(--border)",
+                              borderColor: 'var(--border)',
                               backgroundImage: `url('${logoDataUrl}')`,
-                              backgroundSize: "contain",
-                              backgroundRepeat: "no-repeat",
-                              backgroundPosition: "center",
+                              backgroundSize: 'contain',
+                              backgroundRepeat: 'no-repeat',
+                              backgroundPosition: 'center',
                             }}
                           />
                         </div>
                         <button
                           type="button"
-                          onClick={() => setLogoDataUrl("")}
+                          onClick={() => setLogoDataUrl('')}
                           className="w-full rounded-lg px-3 py-2 font-medium text-sm transition-all duration-200 hover:opacity-80"
                           style={{
-                            color: "var(--foreground)",
-                            backgroundColor: "var(--card)",
-                            border: "1px solid",
-                            borderColor: "var(--border)",
+                            color: 'var(--foreground)',
+                            backgroundColor: 'var(--card)',
+                            border: '1px solid',
+                            borderColor: 'var(--border)',
                           }}
                         >
                           Remove Logo
@@ -2251,7 +2251,7 @@ export default function NeoQrGeneratorPage() {
                 )}
 
                 {/* Frame Tab */}
-                {customizationTab === "frame" && (
+                {customizationTab === 'frame' && (
                   <div className="space-y-6">
                     <div className="space-y-3">
                       <Label className="font-medium text-slate-700 dark:text-slate-300">
@@ -2259,11 +2259,11 @@ export default function NeoQrGeneratorPage() {
                       </Label>
                       <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
                         {[
-                          { value: "none", label: "None" },
-                          { value: "minimal", label: "Minimal" },
-                          { value: "rounded", label: "Rounded" },
-                          { value: "banner", label: "Banner" },
-                          { value: "polaroid", label: "Polaroid" },
+                          { value: 'none', label: 'None' },
+                          { value: 'minimal', label: 'Minimal' },
+                          { value: 'rounded', label: 'Rounded' },
+                          { value: 'banner', label: 'Banner' },
+                          { value: 'polaroid', label: 'Polaroid' },
                         ].map((f) => (
                           <button
                             key={f.value}
@@ -2271,21 +2271,21 @@ export default function NeoQrGeneratorPage() {
                             onClick={() => setFrameStyle(f.value as FrameStyle)}
                             className={`flex flex-col items-center justify-center rounded-xl border-2 p-3 transition-all ${
                               frameStyle === f.value
-                                ? "border-blue-500 bg-blue-50/50 dark:border-blue-500 dark:bg-blue-900/20"
-                                : "border-slate-200 bg-white hover:border-slate-300 dark:border-slate-700 dark:bg-slate-800"
+                                ? 'border-blue-500 bg-blue-50/50 dark:border-blue-500 dark:bg-blue-900/20'
+                                : 'border-slate-200 bg-white hover:border-slate-300 dark:border-slate-700 dark:bg-slate-800'
                             }`}
                           >
                             <div
                               className={`mb-2 h-8 w-8 bg-slate-100 dark:bg-slate-700 ${
-                                f.value === "rounded"
-                                  ? "rounded-lg border-2 border-slate-300 dark:border-slate-500"
-                                  : f.value === "minimal"
-                                    ? "border-2 border-slate-300 dark:border-slate-500"
-                                    : f.value === "banner"
-                                      ? "border-2 border-slate-300 border-t-[6px] dark:border-slate-500"
-                                      : f.value === "polaroid"
-                                        ? "border-2 border-slate-300 border-b-[6px] dark:border-slate-500"
-                                        : "border-2 border-transparent"
+                                f.value === 'rounded'
+                                  ? 'rounded-lg border-2 border-slate-300 dark:border-slate-500'
+                                  : f.value === 'minimal'
+                                    ? 'border-2 border-slate-300 dark:border-slate-500'
+                                    : f.value === 'banner'
+                                      ? 'border-2 border-slate-300 border-t-[6px] dark:border-slate-500'
+                                      : f.value === 'polaroid'
+                                        ? 'border-2 border-slate-300 border-b-[6px] dark:border-slate-500'
+                                        : 'border-2 border-transparent'
                               }`}
                             />
                             <span className="font-medium text-slate-700 text-xs dark:text-slate-300">
@@ -2296,7 +2296,7 @@ export default function NeoQrGeneratorPage() {
                       </div>
                     </div>
 
-                    {(frameStyle === "banner" || frameStyle === "polaroid") && (
+                    {(frameStyle === 'banner' || frameStyle === 'polaroid') && (
                       <div className="space-y-2">
                         <Label className="font-medium text-slate-700 dark:text-slate-300">
                           Frame Text
@@ -2314,7 +2314,7 @@ export default function NeoQrGeneratorPage() {
                     <div className="space-y-2">
                       <Label
                         className="font-medium"
-                        style={{ color: "var(--foreground)" }}
+                        style={{ color: 'var(--foreground)' }}
                       >
                         Dot Shape
                       </Label>
@@ -2325,18 +2325,18 @@ export default function NeoQrGeneratorPage() {
                         <SelectTrigger
                           className="rounded-lg"
                           style={{
-                            borderColor: "var(--border)",
-                            backgroundColor: "var(--card)",
-                            color: "var(--foreground)",
+                            borderColor: 'var(--border)',
+                            backgroundColor: 'var(--card)',
+                            color: 'var(--foreground)',
                           }}
                         >
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent
                           style={{
-                            borderColor: "var(--border)",
-                            backgroundColor: "var(--card)",
-                            color: "var(--foreground)",
+                            borderColor: 'var(--border)',
+                            backgroundColor: 'var(--card)',
+                            color: 'var(--foreground)',
                           }}
                         >
                           <SelectItem value="square">Square</SelectItem>
@@ -2370,21 +2370,21 @@ export default function NeoQrGeneratorPage() {
                     <div
                       className={`relative inline-flex items-center justify-center transition-all duration-500 will-change-transform ${
                         !isGenerated
-                          ? "pointer-events-none select-none opacity-40 blur-md grayscale-[50%]"
-                          : ""
+                          ? 'pointer-events-none select-none opacity-40 blur-md grayscale-[50%]'
+                          : ''
                       }`}
                       style={{
                         transform: `scale(${displayScale})`,
-                        transformOrigin: "center center",
+                        transformOrigin: 'center center',
                         transition: isDraggingSlider
-                          ? "none"
-                          : "transform 0.2s ease-out, filter 0.5s, opacity 0.5s",
+                          ? 'none'
+                          : 'transform 0.2s ease-out, filter 0.5s, opacity 0.5s',
                       }}
                     >
                       {renderFrame(
                         <div
                           style={{
-                            position: "relative",
+                            position: 'relative',
                             width: qrSize,
                             height: qrSize,
                           }}
@@ -2393,11 +2393,11 @@ export default function NeoQrGeneratorPage() {
                           <div
                             ref={qrContainerRef}
                             style={{
-                              width: "100%",
-                              height: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
+                              width: '100%',
+                              height: '100%',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
                             }}
                           />
 
@@ -2406,9 +2406,9 @@ export default function NeoQrGeneratorPage() {
                             <div
                               className="absolute flex items-center justify-center"
                               style={{
-                                left: "50%",
-                                top: "50%",
-                                transform: "translate(-50%, -50%)",
+                                left: '50%',
+                                top: '50%',
+                                transform: 'translate(-50%, -50%)',
                                 width: logoSize,
                                 height: logoSize,
                               }}
@@ -2418,22 +2418,22 @@ export default function NeoQrGeneratorPage() {
                                   height: logoSize,
                                   width: logoSize,
                                   backgroundImage: `url('${logoDataUrl}')`,
-                                  backgroundSize: "contain",
-                                  backgroundRepeat: "no-repeat",
-                                  backgroundPosition: "center",
+                                  backgroundSize: 'contain',
+                                  backgroundRepeat: 'no-repeat',
+                                  backgroundPosition: 'center',
                                 }}
                                 className="rounded-md border-2 border-white shadow-lg dark:border-slate-600"
                               />
                             </div>
                           )}
-                        </div>,
+                        </div>
                       )}
                     </div>
                   </div>
                 ) : (
                   <div
                     className="qr-container flex w-full items-center justify-center rounded-xl border-2 border-slate-300 border-dashed text-center transition-all duration-300 dark:border-slate-700"
-                    style={{ minHeight: "400px" }}
+                    style={{ minHeight: '400px' }}
                   >
                     <div className="space-y-3 px-6">
                       <p className="font-semibold text-lg text-slate-600 dark:text-slate-400">
@@ -2450,7 +2450,7 @@ export default function NeoQrGeneratorPage() {
               {/* Generate Button - If hidden, space is reserved */}
               <div
                 className="flex-shrink-0"
-                style={{ minHeight: !isGenerated ? "88px" : "0px" }}
+                style={{ minHeight: !isGenerated ? '88px' : '0px' }}
               >
                 {!isGenerated && (
                   <Button
@@ -2459,8 +2459,8 @@ export default function NeoQrGeneratorPage() {
                     disabled={!qrValue.trim() || !isCurrentInputValid}
                     className="z-10 m-6 w-[calc(100%-48px)] rounded-full px-6 py-6 font-bold text-lg shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 disabled:pointer-events-none disabled:opacity-50 disabled:hover:scale-100 sm:m-8 sm:w-[calc(100%-64px)]"
                     style={{
-                      backgroundColor: "var(--primary)",
-                      color: "var(--primary-foreground)",
+                      backgroundColor: 'var(--primary)',
+                      color: 'var(--primary-foreground)',
                     }}
                   >
                     Generate QR Code
@@ -2471,7 +2471,7 @@ export default function NeoQrGeneratorPage() {
               {/* Divider - Fixed and stable */}
               <div
                 className="flex-shrink-0 border-t"
-                style={{ borderColor: "var(--border)", height: "1px" }}
+                style={{ borderColor: 'var(--border)', height: '1px' }}
               />
 
               {/* Action Buttons - Fixed at bottom with padding */}
@@ -2482,14 +2482,14 @@ export default function NeoQrGeneratorPage() {
                   disabled={!qrCanDownload}
                   className="rounded-lg px-6 py-3 font-semibold transition-all duration-200 hover:scale-105 hover:shadow-lg active:scale-95 disabled:opacity-50 disabled:hover:scale-100 disabled:hover:shadow-none"
                   style={{
-                    backgroundColor: "var(--primary)",
-                    color: "var(--primary-foreground)",
+                    backgroundColor: 'var(--primary)',
+                    color: 'var(--primary-foreground)',
                   }}
                   onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLElement).style.opacity = "0.9";
+                    (e.currentTarget as HTMLElement).style.opacity = '0.9';
                   }}
                   onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLElement).style.opacity = "1";
+                    (e.currentTarget as HTMLElement).style.opacity = '1';
                   }}
                 >
                   <span className="inline-flex items-center gap-2">
@@ -2533,9 +2533,9 @@ export default function NeoQrGeneratorPage() {
                   disabled={!qrCanDownload || copied}
                   className="rounded-lg transition-all duration-200 hover:scale-105 hover:shadow-md active:scale-95 disabled:opacity-50 disabled:hover:scale-100"
                   style={{
-                    borderColor: "var(--border)",
-                    backgroundColor: "var(--card)",
-                    color: "var(--foreground)",
+                    borderColor: 'var(--border)',
+                    backgroundColor: 'var(--card)',
+                    color: 'var(--foreground)',
                   }}
                   onClick={handleCopy}
                 >
@@ -2563,7 +2563,7 @@ export default function NeoQrGeneratorPage() {
                         strokeLinejoin="round"
                       />
                     </svg>
-                    {copied ? "Copied" : "Copy"}
+                    {copied ? 'Copied' : 'Copy'}
                   </span>
                 </Button>
               </div>
@@ -2648,20 +2648,20 @@ function DownloadModal({
   return (
     <div
       className="fixed inset-0 z-50 flex animate-fadeIn items-center justify-center backdrop-blur-md"
-      style={{ backgroundColor: "var(--background)" }}
+      style={{ backgroundColor: 'var(--background)' }}
       onClick={onClose}
     >
       <div
         className="mx-4 w-full max-w-sm rounded-xl border p-6 shadow-lg"
         style={{
-          backgroundColor: "var(--card)",
-          borderColor: "var(--border)",
+          backgroundColor: 'var(--card)',
+          borderColor: 'var(--border)',
         }}
         onClick={(e) => e.stopPropagation()}
       >
         <h2
           className="mb-4 font-semibold text-lg"
-          style={{ color: "var(--foreground)" }}
+          style={{ color: 'var(--foreground)' }}
         >
           Download QR Code
         </h2>
@@ -2671,20 +2671,20 @@ function DownloadModal({
           <div className="space-y-2">
             <label
               className="font-medium text-sm"
-              style={{ color: "var(--foreground)" }}
+              style={{ color: 'var(--foreground)' }}
             >
               File Name
             </label>
             <input
               type="text"
               value={downloadName}
-              onChange={(e) => setDownloadName(e.target.value || "qrcode")}
+              onChange={(e) => setDownloadName(e.target.value || 'qrcode')}
               placeholder="qrcode"
               className="w-full rounded-lg border px-4 py-2 text-sm transition-colors focus:outline-none"
               style={{
-                borderColor: "var(--border)",
-                backgroundColor: "var(--background)",
-                color: "var(--foreground)",
+                borderColor: 'var(--border)',
+                backgroundColor: 'var(--background)',
+                color: 'var(--foreground)',
               }}
             />
           </div>
@@ -2693,7 +2693,7 @@ function DownloadModal({
           <div className="space-y-2">
             <label
               className="font-medium text-sm"
-              style={{ color: "var(--foreground)" }}
+              style={{ color: 'var(--foreground)' }}
             >
               Format
             </label>
@@ -2704,18 +2704,18 @@ function DownloadModal({
               <SelectTrigger
                 className="rounded-lg"
                 style={{
-                  borderColor: "var(--border)",
-                  backgroundColor: "var(--background)",
-                  color: "var(--foreground)",
+                  borderColor: 'var(--border)',
+                  backgroundColor: 'var(--background)',
+                  color: 'var(--foreground)',
                 }}
               >
                 <SelectValue />
               </SelectTrigger>
               <SelectContent
                 style={{
-                  borderColor: "var(--border)",
-                  backgroundColor: "var(--card)",
-                  color: "var(--foreground)",
+                  borderColor: 'var(--border)',
+                  backgroundColor: 'var(--card)',
+                  color: 'var(--foreground)',
                 }}
               >
                 <SelectItem value="png">PNG (Screen)</SelectItem>
@@ -2734,9 +2734,9 @@ function DownloadModal({
             onClick={handleDownload}
             disabled={isDownloading}
             className="flex-1 rounded-lg px-4 py-2 font-semibold text-white transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50"
-            style={{ backgroundColor: "var(--primary)" }}
+            style={{ backgroundColor: 'var(--primary)' }}
           >
-            {isDownloading ? "Downloading..." : "Download"}
+            {isDownloading ? 'Downloading...' : 'Download'}
           </Button>
           <Button
             type="button"
@@ -2744,9 +2744,9 @@ function DownloadModal({
             variant="outline"
             className="flex-1 rounded-lg border px-4 py-2 font-semibold transition-all duration-200 hover:scale-105 active:scale-95"
             style={{
-              borderColor: "var(--border)",
-              backgroundColor: "var(--background)",
-              color: "var(--foreground)",
+              borderColor: 'var(--border)',
+              backgroundColor: 'var(--background)',
+              color: 'var(--foreground)',
             }}
           >
             Cancel
@@ -2882,11 +2882,11 @@ function OptionsModal({
               </Label>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
                 {[
-                  { value: "none", label: "None" },
-                  { value: "minimal", label: "Minimal" },
-                  { value: "rounded", label: "Rounded" },
-                  { value: "banner", label: "Banner" },
-                  { value: "polaroid", label: "Polaroid" },
+                  { value: 'none', label: 'None' },
+                  { value: 'minimal', label: 'Minimal' },
+                  { value: 'rounded', label: 'Rounded' },
+                  { value: 'banner', label: 'Banner' },
+                  { value: 'polaroid', label: 'Polaroid' },
                 ].map((f) => (
                   <button
                     key={f.value}
@@ -2894,8 +2894,8 @@ function OptionsModal({
                     onClick={() => setFrameStyle(f.value as FrameStyle)}
                     className={`flex flex-col items-center justify-center rounded-xl border-2 p-3 transition-all ${
                       frameStyle === f.value
-                        ? "border-blue-500 bg-blue-50/50 dark:border-blue-500 dark:bg-blue-900/20"
-                        : "border-slate-200 bg-white hover:border-slate-300 dark:border-slate-700 dark:bg-slate-800"
+                        ? 'border-blue-500 bg-blue-50/50 dark:border-blue-500 dark:bg-blue-900/20'
+                        : 'border-slate-200 bg-white hover:border-slate-300 dark:border-slate-700 dark:bg-slate-800'
                     }`}
                   >
                     <span className="font-medium text-slate-700 text-xs dark:text-slate-300">
@@ -2905,7 +2905,7 @@ function OptionsModal({
                 ))}
               </div>
             </div>
-            {(frameStyle === "banner" || frameStyle === "polaroid") && (
+            {(frameStyle === 'banner' || frameStyle === 'polaroid') && (
               <div className="space-y-2">
                 <Label className="font-medium text-slate-700 dark:text-slate-300">
                   Frame Text
@@ -2951,9 +2951,9 @@ function OptionsModal({
               <Dropzone
                 onDrop={onDropLogo}
                 accept={{
-                  "image/png": [".png"],
-                  "image/jpeg": [".jpg", ".jpeg"],
-                  "image/webp": [".webp"],
+                  'image/png': ['.png'],
+                  'image/jpeg': ['.jpg', '.jpeg'],
+                  'image/webp': ['.webp'],
                 }}
                 maxFiles={1}
                 className="border-slate-300 bg-slate-50 text-slate-900 transition-all duration-200 hover:bg-slate-100 hover:shadow-md dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
@@ -2971,7 +2971,7 @@ function OptionsModal({
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => setLogoDataUrl("")}
+                  onClick={() => setLogoDataUrl('')}
                   className="border-slate-300 bg-white text-slate-900 transition-all duration-200 hover:scale-105 hover:bg-slate-50 active:scale-95 dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
                 >
                   Remove
@@ -2988,7 +2988,7 @@ function OptionsModal({
               </Label>
               <input
                 value={downloadName}
-                onChange={(e) => setDownloadName(e.target.value || "qrcode")}
+                onChange={(e) => setDownloadName(e.target.value || 'qrcode')}
                 className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2 text-slate-900 text-sm placeholder-slate-400 transition-colors focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500"
               />
             </div>
