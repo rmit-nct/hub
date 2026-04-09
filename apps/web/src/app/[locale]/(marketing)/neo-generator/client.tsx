@@ -144,7 +144,7 @@ export function TextGeneratorClient() {
                         disabled={isDemo}
                       >
                         {isCopied ? (
-                          <CheckIcon className="h-4 w-4 text-green-500" />
+                          <CheckIcon className="h-4 w-4 text-dynamic-green" />
                         ) : (
                           <CopyIcon className="h-4 w-4" />
                         )}

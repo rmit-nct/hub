@@ -35,7 +35,7 @@ export default function NeoMeetHeader() {
               ease: 'easeInOut',
             }}
           >
-            <Calendar className="inline-block h-8 w-8 text-yellow-400 md:h-10 md:w-10 lg:h-12 lg:w-12" />
+            <Calendar className="inline-block h-8 w-8 text-brand-light-yellow md:h-10 md:w-10 lg:h-12 lg:w-12" />
           </motion.div>
         </span>
       </h1>

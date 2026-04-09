@@ -90,7 +90,7 @@ export default function Projects() {
           <div className="flex justify-center">
             <div className="relative flex rounded-2xl border border-border/30 bg-card/60 p-1 shadow-md backdrop-blur-sm">
               <motion.div
-                className="absolute inset-y-1 rounded-xl bg-linear-to-r from-brand-light-blue to-[#1AF4E6] shadow-sm"
+                className="absolute inset-y-1 rounded-xl bg-linear-to-r from-brand-light-blue to-dynamic-cyan shadow-sm"
                 animate={{
                   x:
                     type === 'web'
@@ -129,7 +129,7 @@ export default function Projects() {
           <div className="flex justify-center">
             <div className="relative flex rounded-2xl border border-border/30 bg-card/60 p-1 shadow-md backdrop-blur-sm">
               <motion.div
-                className="absolute inset-y-1 rounded-xl bg-linear-to-r from-brand-light-blue to-[#1AF4E6] shadow-sm"
+                className="absolute inset-y-1 rounded-xl bg-linear-to-r from-brand-light-blue to-dynamic-cyan shadow-sm"
                 animate={{
                   x:
                     status === 'planning'

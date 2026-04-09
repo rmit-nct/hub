@@ -68,7 +68,7 @@ export default function BlogDetailClient({ blog }: { blog: BlogDetail }) {
           className="mb-8 space-y-6"
         >
           {/* Category Badge */}
-          <Badge className="bg-brand-light-blue text-white">
+          <Badge className="bg-brand-light-blue text-primary">
             {blog.category}
           </Badge>
 
@@ -134,7 +134,7 @@ export default function BlogDetailClient({ blog }: { blog: BlogDetail }) {
           className="mt-12 border-t pt-8"
         >
           <Link href="/blogs">
-            <Button className="bg-brand-light-blue hover:bg-brand-light-blue/90">
+            <Button className="bg-brand-light-blue text-primary hover:bg-brand-light-blue/90">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to All Blogs
             </Button>

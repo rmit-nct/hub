@@ -174,7 +174,7 @@ export default function Members() {
                   variants={cardVariants}
                 >
                   {isHidden(p.departments) && (
-                    <div className="absolute inset-0 z-10 rounded-lg bg-black/20 backdrop-blur-[1px]" />
+                    <div className="absolute inset-0 z-10 rounded-lg bg-foreground/20 backdrop-blur-[1px]" />
                   )}
                   <MemberCard
                     name={p.name}
@@ -215,7 +215,7 @@ export default function Members() {
                     variants={cardVariants}
                   >
                     {isHidden(p.departments) && (
-                      <div className="absolute inset-0 z-10 rounded-lg bg-black/20 backdrop-blur-[1px]" />
+                      <div className="absolute inset-0 z-10 rounded-lg bg-foreground/20 backdrop-blur-[1px]" />
                     )}
                     <MemberCard
                       name={p.name}
@@ -256,7 +256,7 @@ export default function Members() {
                       variants={cardVariants}
                     >
                       {isHidden(p.departments) && (
-                        <div className="absolute inset-0 z-10 rounded-lg bg-black/20 backdrop-blur-[1px]" />
+                        <div className="absolute inset-0 z-10 rounded-lg bg-foreground/20 backdrop-blur-[1px]" />
                       )}
                       <MemberCard
                         name={p.name}

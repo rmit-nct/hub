@@ -30,7 +30,7 @@ export default function MainProject() {
                   ease: 'easeInOut',
                 }}
               >
-                <Bot className="inline-block h-8 w-8 text-yellow-400 md:h-10 md:w-10 lg:h-12 lg:w-12" />
+                <Bot className="inline-block h-8 w-8 text-brand-light-yellow md:h-10 md:w-10 lg:h-12 lg:w-12" />
               </motion.div>
             </span>
           </div>
@@ -73,7 +73,7 @@ export default function MainProject() {
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.6 }}
             >
-              <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-blue-500/20 to-purple-600/20 p-1">
+              <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-dynamic-blue/20 to-dynamic-purple/20 p-1">
                 <div className="relative h-64 overflow-hidden rounded-xl md:h-80 lg:h-96">
                   <Image
                     src="/media/marketing/landing-page.jpg"
@@ -81,10 +81,10 @@ export default function MainProject() {
                     fill
                     className="object-cover"
                   />
-                  <div className="absolute inset-0 bg-linear-to-tr from-blue-500/10 to-purple-600/10"></div>
+                  <div className="absolute inset-0 bg-linear-to-tr from-dynamic-blue/10 to-dynamic-purple/10"></div>
                 </div>
               </div>
-              <div className="absolute -inset-4 rounded-3xl bg-linear-to-r from-blue-500/20 to-purple-600/20 opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-100"></div>
+              <div className="absolute -inset-4 rounded-3xl bg-linear-to-r from-dynamic-blue/20 to-dynamic-purple/20 opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-100"></div>
             </motion.div>
 
             <motion.div
@@ -109,21 +109,21 @@ export default function MainProject() {
 
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
-                  <div className="mt-3 h-2 w-2 shrink-0 rounded-full bg-[#F4B71A]"></div>
+                  <div className="mt-3 h-2 w-2 shrink-0 rounded-full bg-brand-light-yellow"></div>
                   <p className="font-medium text-muted-foreground">
                     Interactive games and entertainment features including Neo
                     Chess, Neo Crush, with engaging experiences for all players
                   </p>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="mt-3 h-2 w-2 shrink-0 rounded-full bg-[#1AF4E6]"></div>
+                  <div className="mt-3 h-2 w-2 shrink-0 rounded-full bg-dynamic-cyan"></div>
                   <p className="font-medium text-muted-foreground">
                     Practical utility applications like ID scanner, time
                     tracking tools, and various productivity enhancing features.
                   </p>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="mt-3 h-2 w-2 shrink-0 rounded-full bg-[#F4B71A]"></div>
+                  <div className="mt-3 h-2 w-2 shrink-0 rounded-full bg-brand-light-yellow"></div>
                   <p className="font-medium text-muted-foreground">
                     Comprehensive workspace management system for organizing
                     projects, managing team members, and streamlining club

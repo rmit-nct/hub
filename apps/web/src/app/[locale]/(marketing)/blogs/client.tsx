@@ -12,18 +12,20 @@ import { useEffect, useState } from 'react';
 // Category color mapping
 const getCategoryColor = (category: string) => {
   const colors = {
-    Announcement: 'bg-blue-500 text-white',
-    Event: 'bg-purple-500 text-white',
-    Tutorial: 'bg-green-500 text-white',
-    Technology: 'bg-brand-light-blue text-white',
-    'Project Showcase': 'bg-orange-500 text-white',
-    Interview: 'bg-pink-500 text-white',
-    Community: 'bg-yellow-500 text-white',
-    Career: 'bg-indigo-500 text-white',
-    Opinion: 'bg-red-500 text-white',
-    Resources: 'bg-teal-500 text-white',
+    Announcement: 'bg-dynamic-blue text-primary-foreground',
+    Event: 'bg-dynamic-purple text-primary-foreground',
+    Tutorial: 'bg-dynamic-green text-primary-foreground',
+    Technology: 'bg-brand-light-blue text-primary',
+    'Project Showcase': 'bg-dynamic-orange text-primary-foreground',
+    Interview: 'bg-dynamic-pink text-primary-foreground',
+    Community: 'bg-brand-light-yellow text-primary',
+    Career: 'bg-dynamic-indigo text-primary-foreground',
+    Opinion: 'bg-destructive text-destructive-foreground',
+    Resources: 'bg-dynamic-cyan text-primary',
   };
-  return colors[category as keyof typeof colors] || 'bg-gray-500 text-white';
+  return (
+    colors[category as keyof typeof colors] || 'bg-muted text-muted-foreground'
+  );
 };
 
 interface Blog {
@@ -68,8 +70,6 @@ export default function BlogsPageClient() {
 
     fetchBlogs();
   }, [supabase]);
-
-  console.log('Fetched blogs:', blogs);
 
   return (
     <div className="container mx-auto space-y-16 px-4 py-16">
@@ -159,7 +159,7 @@ export default function BlogsPageClient() {
                       fill
                       className="object-cover transition-transform duration-300 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
+                    <div className="absolute inset-0 bg-linear-to-t from-foreground/60 to-transparent" />
                     <Badge
                       variant="secondary"
                       className={`absolute top-4 left-4 ${getCategoryColor(blog.category)}`}
