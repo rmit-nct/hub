@@ -1,4 +1,3 @@
-import { Suspense } from 'react';
 import ServerPage from './server-page';
 
 interface RedirectPageProps {
@@ -6,9 +5,5 @@ interface RedirectPageProps {
 }
 
 export default async function RedirectPage({ params }: RedirectPageProps) {
-  return (
-    <Suspense>
-      <ServerPage params={params} />
-    </Suspense>
-  );
+  return <ServerPage params={params} />;
 }

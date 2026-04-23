@@ -9,9 +9,20 @@ import {
   CardHeader,
   CardTitle,
 } from '@ncthub/ui/card';
-import { Check, Copy, Link2 } from '@ncthub/ui/icons';
+import {
+  AlertCircle,
+  Check,
+  Copy,
+  Eye,
+  EyeOff,
+  Link2,
+  Loader2,
+  Lock,
+  XCircle,
+} from '@ncthub/ui/icons';
 import { Input } from '@ncthub/ui/input';
 import { Label } from '@ncthub/ui/label';
+import { Switch } from '@ncthub/ui/switch';
 import { Textarea } from '@ncthub/ui/textarea';
 import { cn } from '@ncthub/utils/format';
 import { motion } from 'framer-motion';
@@ -19,9 +30,11 @@ import type React from 'react';
 import { useEffect, useMemo, useState, useTransition } from 'react';
 import {
   type CreatedShortLink,
+  checkShortLinkSlugAvailability,
   createShortLink,
   deleteShortLink,
   getMyShortLinksOverview,
+  type SlugAvailabilityResult,
 } from './functions';
 import NeoShortenerHero from './hero';
 
@@ -29,9 +42,18 @@ const SHORT_LINK_LIMIT = 30;
 const SHORTENER_LOGIN_URL = `/login?nextUrl=${encodeURIComponent(
   '/neo-shortener'
 )}`;
+const SLUG_AVAILABILITY_DELAY = 500;
 
 type FetchInput = Parameters<typeof window.fetch>[0];
 type FetchInit = Parameters<typeof window.fetch>[1];
+type SlugAvailabilityState =
+  | SlugAvailabilityResult
+  | {
+      available: false;
+      message: string;
+      slug: string;
+      status: 'checking';
+    };
 
 function isLogoutRequest(input: FetchInput, init?: FetchInit) {
   let rawUrl = '';
@@ -59,16 +81,79 @@ function formatCreatedAt(value: string) {
   return new Date(value).toLocaleString();
 }
 
+function getSlugAvailabilityClassName(status: SlugAvailabilityState['status']) {
+  return cn(
+    'flex items-center gap-1.5 text-sm',
+    status === 'available' && 'text-green-600 dark:text-green-400',
+    status === 'checking' && 'text-muted-foreground',
+    (status === 'invalid' || status === 'taken') && 'text-destructive',
+    status === 'error' && 'text-dynamic-light-yellow'
+  );
+}
+
+function SlugAvailabilityIcon({
+  status,
+}: {
+  status: SlugAvailabilityState['status'];
+}) {
+  if (status === 'checking') {
+    return <Loader2 className="h-4 w-4 animate-spin" />;
+  }
+
+  if (status === 'available') {
+    return <Check className="h-4 w-4" />;
+  }
+
+  if (status === 'taken') {
+    return <XCircle className="h-4 w-4" />;
+  }
+
+  return <AlertCircle className="h-4 w-4" />;
+}
+
+function SlugAvailabilityFeedback({
+  availability,
+}: {
+  availability: SlugAvailabilityState | null;
+}) {
+  if (!availability) {
+    return (
+      <p id="customSlug-status" className="text-muted-foreground text-sm">
+        Letters, numbers, hyphens, and underscores only.
+      </p>
+    );
+  }
+
+  return (
+    <p
+      id="customSlug-status"
+      className={getSlugAvailabilityClassName(availability.status)}
+      aria-live="polite"
+    >
+      <SlugAvailabilityIcon status={availability.status} />
+      {availability.message}
+    </p>
+  );
+}
+
 export default function NeoShortenerPage() {
   const [url, setUrl] = useState('');
   const [customSlug, setCustomSlug] = useState('');
+  const [isPasswordProtected, setIsPasswordProtected] = useState(false);
+  const [password, setPassword] = useState('');
+  const [passwordHint, setPasswordHint] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [result, setResult] = useState<CreatedShortLink | null>(null);
   const [links, setLinks] = useState<CreatedShortLink[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [copiedValue, setCopiedValue] = useState<string | null>(null);
   const [isLoadingLinks, setIsLoadingLinks] = useState(true);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const [slugAvailability, setSlugAvailability] =
+    useState<SlugAvailabilityState | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  const trimmedCustomSlug = customSlug.trim();
 
   useEffect(() => {
     let cancelled = false;
@@ -105,6 +190,49 @@ export default function NeoShortenerPage() {
   }, []);
 
   useEffect(() => {
+    if (!trimmedCustomSlug) {
+      setSlugAvailability(null);
+      return;
+    }
+
+    let cancelled = false;
+
+    setSlugAvailability({
+      available: false,
+      message: 'Checking slug availability...',
+      slug: trimmedCustomSlug,
+      status: 'checking',
+    });
+
+    const timeoutId = window.setTimeout(() => {
+      void checkShortLinkSlugAvailability(trimmedCustomSlug)
+        .then((availability) => {
+          if (!cancelled) {
+            setSlugAvailability(availability);
+          }
+        })
+        .catch((availabilityError) => {
+          console.error(availabilityError);
+
+          if (!cancelled) {
+            setSlugAvailability({
+              available: false,
+              message:
+                'Could not check this slug right now. You can try again soon.',
+              slug: trimmedCustomSlug,
+              status: 'error',
+            });
+          }
+        });
+    }, SLUG_AVAILABILITY_DELAY);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timeoutId);
+    };
+  }, [trimmedCustomSlug]);
+
+  useEffect(() => {
     const originalFetch = window.fetch.bind(window);
 
     window.fetch = async (...args: Parameters<typeof window.fetch>) => {
@@ -124,6 +252,17 @@ export default function NeoShortenerPage() {
 
   const usedCount = links.length;
   const remainingCount = Math.max(SHORT_LINK_LIMIT - usedCount, 0);
+  const slugAvailabilityMatchesInput =
+    !trimmedCustomSlug || slugAvailability?.slug === trimmedCustomSlug;
+  const currentSlugAvailability = slugAvailabilityMatchesInput
+    ? slugAvailability
+    : null;
+  const isSlugBlockingSubmit =
+    (trimmedCustomSlug.length > 0 && !slugAvailabilityMatchesInput) ||
+    currentSlugAvailability?.status === 'checking' ||
+    currentSlugAvailability?.status === 'invalid' ||
+    currentSlugAvailability?.status === 'taken';
+  const isPasswordBlockingSubmit = isPasswordProtected && !password;
 
   const usagePercent = useMemo(() => {
     return Math.min((usedCount / SHORT_LINK_LIMIT) * 100, 100);
@@ -135,9 +274,24 @@ export default function NeoShortenerPage() {
     setError(null);
     setResult(null);
 
+    if (isSlugBlockingSubmit) {
+      setError(
+        currentSlugAvailability?.message ||
+          'Please wait for the custom slug check to finish'
+      );
+      return;
+    }
+
+    if (isPasswordBlockingSubmit) {
+      setError('Add a password or turn off password protection');
+      return;
+    }
+
     const formData = new FormData();
     formData.append('url', url);
     formData.append('customSlug', customSlug);
+    formData.append('password', isPasswordProtected ? password : '');
+    formData.append('passwordHint', isPasswordProtected ? passwordHint : '');
 
     startTransition(async () => {
       try {
@@ -147,6 +301,10 @@ export default function NeoShortenerPage() {
         setLinks((prev) => [createdLink, ...prev]);
         setUrl('');
         setCustomSlug('');
+        setIsPasswordProtected(false);
+        setPassword('');
+        setPasswordHint('');
+        setShowPassword(false);
       } catch (submitError) {
         setError(
           submitError instanceof Error
@@ -301,13 +459,116 @@ export default function NeoShortenerPage() {
                         name="customSlug"
                         placeholder="leave blank to auto-generate"
                         value={customSlug}
-                        onChange={(event) => setCustomSlug(event.target.value)}
+                        aria-describedby="customSlug-status"
+                        onChange={(event) => {
+                          setCustomSlug(event.target.value);
+                          setError(null);
+                        }}
                         disabled={isPending || pendingDeleteId !== null}
                         className="h-12 rounded-[1.25rem] border-border bg-background text-base shadow-sm placeholder:text-muted-foreground focus-visible:ring-brand-light-blue/25"
                       />
-                      <p className="text-muted-foreground text-sm">
-                        Letters, numbers, hyphens, and underscores only.
-                      </p>
+                      <div className="min-h-5">
+                        <SlugAvailabilityFeedback
+                          availability={currentSlugAvailability}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-3 rounded-[1.25rem] border border-border/60 bg-muted/25 p-4">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <Lock className="h-4 w-4 text-brand-light-blue" />
+                            <Label htmlFor="passwordProtection">
+                              Password protection
+                            </Label>
+                          </div>
+                          <p className="text-muted-foreground text-sm">
+                            Require a password before visitors can open this
+                            short link.
+                          </p>
+                        </div>
+
+                        <Switch
+                          id="passwordProtection"
+                          checked={isPasswordProtected}
+                          onCheckedChange={(checked) => {
+                            setIsPasswordProtected(checked);
+                            setError(null);
+
+                            if (!checked) {
+                              setPassword('');
+                              setPasswordHint('');
+                              setShowPassword(false);
+                            }
+                          }}
+                          disabled={isPending || pendingDeleteId !== null}
+                          aria-label="Toggle password protection"
+                        />
+                      </div>
+
+                      {isPasswordProtected ? (
+                        <div className="grid gap-4 md:grid-cols-2">
+                          <div className="space-y-2">
+                            <Label htmlFor="password">Password</Label>
+                            <div className="relative">
+                              <Input
+                                id="password"
+                                name="password"
+                                type={showPassword ? 'text' : 'password'}
+                                value={password}
+                                onChange={(event) => {
+                                  setPassword(event.target.value);
+                                  setError(null);
+                                }}
+                                placeholder="Enter a password"
+                                maxLength={256}
+                                required={isPasswordProtected}
+                                disabled={isPending || pendingDeleteId !== null}
+                                className="h-12 rounded-[1.25rem] border-border bg-background pr-11 text-base shadow-sm placeholder:text-muted-foreground focus-visible:ring-brand-light-blue/25"
+                              />
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setShowPassword(
+                                    (currentValue) => !currentValue
+                                  )
+                                }
+                                disabled={isPending || pendingDeleteId !== null}
+                                className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                                aria-label={
+                                  showPassword
+                                    ? 'Hide password'
+                                    : 'Show password'
+                                }
+                              >
+                                {showPassword ? (
+                                  <EyeOff className="h-4 w-4" />
+                                ) : (
+                                  <Eye className="h-4 w-4" />
+                                )}
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="passwordHint">Password hint</Label>
+                            <Input
+                              id="passwordHint"
+                              name="passwordHint"
+                              value={passwordHint}
+                              onChange={(event) => {
+                                setPasswordHint(event.target.value);
+                                setError(null);
+                              }}
+                              placeholder="optional"
+                              maxLength={200}
+                              disabled={isPending || pendingDeleteId !== null}
+                              className="h-12 rounded-[1.25rem] border-border bg-background text-base shadow-sm placeholder:text-muted-foreground focus-visible:ring-brand-light-blue/25"
+                            />
+                          </div>
+                        </div>
+                      ) : null}
                     </div>
 
                     <Button
@@ -316,6 +577,8 @@ export default function NeoShortenerPage() {
                       disabled={
                         isPending ||
                         pendingDeleteId !== null ||
+                        isSlugBlockingSubmit ||
+                        isPasswordBlockingSubmit ||
                         usedCount >= SHORT_LINK_LIMIT
                       }
                       className="h-12 w-full rounded-[1.25rem] bg-brand-light-blue font-semibold text-brand-dark-blue shadow-none hover:bg-brand-light-blue/90"
@@ -358,9 +621,17 @@ export default function NeoShortenerPage() {
                               </CardDescription>
                             </div>
 
-                            <Badge className="w-fit rounded-full border border-brand-light-blue/15 bg-brand-light-blue/10 text-brand-light-blue hover:bg-brand-light-blue/10">
-                              Saved
-                            </Badge>
+                            <div className="flex flex-wrap gap-2">
+                              {result.isPasswordProtected ? (
+                                <Badge className="w-fit rounded-full border border-dynamic-light-yellow/20 bg-dynamic-light-yellow/10 text-dynamic-light-yellow hover:bg-dynamic-light-yellow/10">
+                                  Password protected
+                                </Badge>
+                              ) : null}
+
+                              <Badge className="w-fit rounded-full border border-brand-light-blue/15 bg-brand-light-blue/10 text-brand-light-blue hover:bg-brand-light-blue/10">
+                                Saved
+                              </Badge>
+                            </div>
                           </div>
                         </CardHeader>
 
@@ -499,6 +770,11 @@ export default function NeoShortenerPage() {
                                       <Badge className="rounded-full border border-brand-light-blue/15 bg-brand-light-blue/10 text-brand-light-blue hover:bg-brand-light-blue/10">
                                         {shortLink.slug}
                                       </Badge>
+                                      {shortLink.isPasswordProtected ? (
+                                        <Badge className="rounded-full border border-dynamic-light-yellow/20 bg-dynamic-light-yellow/10 text-dynamic-light-yellow hover:bg-dynamic-light-yellow/10">
+                                          Protected
+                                        </Badge>
+                                      ) : null}
                                       <span className="text-muted-foreground text-xs">
                                         Created{' '}
                                         {formatCreatedAt(shortLink.createdAt)}

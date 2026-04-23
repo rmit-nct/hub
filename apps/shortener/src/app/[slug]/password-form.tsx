@@ -1,13 +1,33 @@
 'use client';
 
-import { Eye, EyeOff, Lock } from '@ncthub/ui/icons';
+import { Eye, EyeOff, Loader2, Lock } from '@ncthub/ui/icons';
 import { useRouter } from 'next/navigation';
+import type React from 'react';
 import { useState } from 'react';
 
 interface PasswordFormProps {
   linkId: string;
   slug: string;
   hint: string | null;
+}
+
+interface VerifyResponse {
+  error?: string;
+  url?: string;
+}
+
+async function readVerifyResponse(response: Response): Promise<VerifyResponse> {
+  const contentType = response.headers.get('content-type') ?? '';
+
+  if (contentType.includes('application/json')) {
+    return (await response.json()) as VerifyResponse;
+  }
+
+  return {
+    error: response.ok
+      ? 'The password was verified, but the redirect response was invalid.'
+      : 'Could not verify this link right now. Please try again.',
+  };
 }
 
 export default function PasswordForm({
@@ -39,14 +59,13 @@ export default function PasswordForm({
         }),
       });
 
-      const data = await response.json();
+      const data = await readVerifyResponse(response);
 
       if (!response.ok) {
         setError(data.error || 'Incorrect password. Please try again.');
         return;
       }
 
-      // Redirect to the destination URL
       if (data.url) {
         router.push(data.url);
       }
@@ -91,6 +110,7 @@ export default function PasswordForm({
                   onChange={(e) => setPassword(e.target.value)}
                   className="block w-full rounded-md border border-border px-3 py-2 pr-10 shadow-sm focus:border-dynamic-blue focus:outline-none focus:ring-2 focus:ring-dynamic-blue focus:ring-offset-2"
                   placeholder="Enter password"
+                  maxLength={256}
                   required
                   disabled={loading}
                 />
@@ -130,28 +150,7 @@ export default function PasswordForm({
             >
               {loading ? (
                 <span className="flex items-center gap-2">
-                  <svg
-                    className="h-4 w-4 animate-spin"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    role="img"
-                    aria-label="Loading"
-                  >
-                    <title>Loading spinner</title>
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
+                  <Loader2 className="h-4 w-4 animate-spin" />
                   Verifying...
                 </span>
               ) : (

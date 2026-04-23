@@ -3,11 +3,18 @@ import bcrypt from 'bcrypt';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { trackLinkClick } from '@/lib/analytics';
+import { isValidUrl } from '@/lib/utils';
 
 const verifySchema = z.object({
-  linkId: z.string(),
-  password: z.string(),
-  slug: z.string().optional(),
+  linkId: z.string().uuid(),
+  password: z.string().min(1).max(256),
+  slug: z
+    .string()
+    .trim()
+    .min(3)
+    .max(32)
+    .regex(/^[a-zA-Z0-9\-_]+$/)
+    .optional(),
 });
 
 /**
@@ -43,23 +50,32 @@ export async function POST(request: NextRequest) {
 
     const sbAdmin = await createAdminClient();
 
-    // Get the link with password hash
-    const { data: link, error: fetchError } = await sbAdmin
+    let query = sbAdmin
       .from('shortened_links')
-      .select('id, link, password_hash')
-      .eq('id', linkId)
-      .single();
+      .select('id, link, password_hash, slug')
+      .eq('id', linkId);
+
+    if (slug) {
+      query = query.eq('slug', slug);
+    }
+
+    const { data: link, error: fetchError } = await query.maybeSingle();
 
     if (fetchError || !link) {
       return NextResponse.json({ error: 'Link not found' }, { status: 404 });
     }
 
+    if (!isValidUrl(link.link)) {
+      return NextResponse.json(
+        { error: 'This short link is no longer available' },
+        { status: 410 }
+      );
+    }
+
     if (!link.password_hash) {
-      // Link is not password protected, redirect directly
       return NextResponse.json({ url: link.link });
     }
 
-    // Verify password
     const isValidPassword = await bcrypt.compare(password, link.password_hash);
 
     if (!isValidPassword) {
@@ -69,8 +85,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Track analytics on successful password verification
-    await trackLinkClick(link.id, slug ?? '');
+    await trackLinkClick(link.id, link.slug);
 
     return NextResponse.json({ url: link.link, success: true });
   } catch (error) {

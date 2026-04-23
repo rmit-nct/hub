@@ -1,5 +1,6 @@
 {
   "lockfileVersion": 1,
+  "configVersion": 0,
   "workspaces": {
     "": {
       "name": "hub",
@@ -116,6 +117,7 @@
         "@tldraw/sync": "^4.5.6",
         "@vercel/analytics": "^2.0.1",
         "@vercel/speed-insights": "^2.0.0",
+        "bcrypt": "^6.0.0",
         "canvas-confetti": "^1.9.4",
         "cron-parser": "^5.5.0",
         "cronstrue": "^3.14.0",
@@ -168,6 +170,7 @@
         "@next/bundle-analyzer": "16.2.2",
         "@tanstack/react-query-devtools": "^5.96.1",
         "@testing-library/react": "^16.3.2",
+        "@types/bcrypt": "^6.0.0",
         "@types/canvas-confetti": "^1.9.0",
         "@types/js-cookie": "^3.0.6",
         "@types/lodash": "^4.17.24",
