@@ -1,10 +1,7 @@
-import { AssigneeSelect } from './_components/assignee-select';
-import { TaskActions } from './task-actions';
-import { updateTask } from '@/lib/task-helper';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { createClient } from '@ncthub/supabase/next/client';
-import { Task as TaskType } from '@ncthub/types/primitives/TaskBoard';
+import type { Task as TaskType } from '@ncthub/types/primitives/TaskBoard';
 import { Badge } from '@ncthub/ui/badge';
 import { Button } from '@ncthub/ui/button';
 import { Card } from '@ncthub/ui/card';
@@ -23,6 +20,9 @@ import { cn } from '@ncthub/utils/format';
 import { useQueryClient } from '@tanstack/react-query';
 import { formatDistanceToNow } from 'date-fns';
 import { useState } from 'react';
+import { updateTask } from '@/lib/task-helper';
+import { AssigneeSelect } from './_components/assignee-select';
+import { TaskActions } from './task-actions';
 
 export interface Task extends TaskType {}
 
@@ -194,7 +194,7 @@ export function TaskCard({ task, boardId, isOverlay, onUpdate }: Props) {
               <div className="flex items-start justify-between gap-2">
                 <p
                   className={cn(
-                    'line-clamp-2 flex-1 leading-tight font-medium',
+                    'line-clamp-2 flex-1 font-medium leading-tight',
                     task.archived && 'text-muted-foreground line-through'
                   )}
                 >
@@ -255,7 +255,7 @@ export function TaskCard({ task, boardId, isOverlay, onUpdate }: Props) {
                 )}
               </div>
               {task.description && (
-                <p className="line-clamp-2 text-xs leading-normal text-muted-foreground">
+                <p className="line-clamp-2 text-muted-foreground text-xs leading-normal">
                   {task.description}
                 </p>
               )}
@@ -266,7 +266,7 @@ export function TaskCard({ task, boardId, isOverlay, onUpdate }: Props) {
             {task.priority && (
               <Badge
                 variant={getPriorityVariant(task.priority)}
-                className="text-[10px] font-medium"
+                className="font-medium text-[10px]"
               >
                 P{task.priority}
               </Badge>

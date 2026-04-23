@@ -1,6 +1,6 @@
-import MigrationDashboard from './migration-dashboard';
-import { ROOT_WORKSPACE_ID } from '@/constants/common';
 import { redirect } from 'next/navigation';
+import { ROOT_WORKSPACE_ID } from '@/constants/common';
+import MigrationDashboard from './migration-dashboard';
 
 interface Props {
   params: Promise<{

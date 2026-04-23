@@ -1,7 +1,7 @@
-import { ROOT_WORKSPACE_ID } from '@/constants/common';
 import { createAdminClient, createClient } from '@ncthub/supabase/next/server';
 import { headers } from 'next/headers';
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
+import { ROOT_WORKSPACE_ID } from '@/constants/common';
 
 interface Params {
   params: Promise<{

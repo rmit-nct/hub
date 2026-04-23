@@ -1,8 +1,8 @@
 import { Separator } from '@ncthub/ui/separator';
 import { isEqual } from 'lodash';
-import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
-import { ReactNode } from 'react';
+import { getTranslations } from 'next-intl/server';
+import type { ReactNode } from 'react';
 
 export async function CourseSection({
   href,
@@ -39,13 +39,13 @@ export async function CourseSection({
       {href ? (
         <Link
           href={href}
-          className="flex w-fit items-center gap-2 text-lg font-semibold hover:underline md:text-2xl"
+          className="flex w-fit items-center gap-2 font-semibold text-lg hover:underline md:text-2xl"
         >
           {icon}
           {title}
         </Link>
       ) : (
-        <div className="flex items-center gap-2 text-lg font-semibold md:text-2xl">
+        <div className="flex items-center gap-2 font-semibold text-lg md:text-2xl">
           {icon}
           {title}
         </div>

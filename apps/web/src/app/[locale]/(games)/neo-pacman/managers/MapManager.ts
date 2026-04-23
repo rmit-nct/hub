@@ -1,9 +1,9 @@
+import type * as Phaser from 'phaser';
 import { GAME_CONFIG } from '../config';
 import { MAPS_DATA } from '../maps';
 import type { MapData, TilePosition } from '../types';
 import { GhostType, TileType } from '../types';
 import { tileToPixel } from '../utils/helpers';
-import * as Phaser from 'phaser';
 
 export interface MapEntities {
   pacmanSpawn: TilePosition | null;
@@ -79,7 +79,7 @@ export class MapManager {
         const tilePos: TilePosition = { row, col };
 
         switch (tileType) {
-          case TileType.WALL:
+          case TileType.WALL: {
             // Create wall visual and physics
             const pos = tileToPixel(row, col);
             const wall = this.scene.add.rectangle(
@@ -92,6 +92,7 @@ export class MapManager {
             this.wallsGroup.add(wall);
             this.wallTiles.push(wall);
             break;
+          }
 
           case TileType.FOOD:
             // Store food position

@@ -1,6 +1,6 @@
 'use client';
 
-import { Product } from '@ncthub/types/primitives/Product';
+import type { Product } from '@ncthub/types/primitives/Product';
 import { Button } from '@ncthub/ui/button';
 import {
   DropdownMenu,
@@ -11,10 +11,10 @@ import {
 } from '@ncthub/ui/dropdown-menu';
 import { toast } from '@ncthub/ui/hooks/use-toast';
 import { Ellipsis, Eye } from '@ncthub/ui/icons';
-import { Row } from '@tanstack/react-table';
-import { useTranslations } from 'next-intl';
+import type { Row } from '@tanstack/react-table';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 interface ProductRowActionsProps {
   row: Row<Product>;

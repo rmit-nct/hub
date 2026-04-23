@@ -3,9 +3,9 @@
 import type { CrawledUrl } from '@ncthub/types/db';
 import { Button } from '@ncthub/ui/button';
 import { Eye } from '@ncthub/ui/icons';
-import { Row } from '@tanstack/react-table';
-import { useTranslations } from 'next-intl';
+import type { Row } from '@tanstack/react-table';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 interface RowActionsProps {
   row: Row<CrawledUrl>;

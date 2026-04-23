@@ -1,8 +1,8 @@
 'use client';
 
-import LogoInput from './logo-input';
-import { Workspace } from '@ncthub/types/db';
+import type { Workspace } from '@ncthub/types/db';
 import { useTranslations } from 'next-intl';
+import LogoInput from './logo-input';
 
 interface Props {
   workspace?: Workspace | null;
@@ -16,7 +16,7 @@ export default function WorkspaceLogoSettings({ workspace, allowEdit }: Props) {
 
   return (
     <div className="flex flex-col rounded-lg border border-border bg-foreground/5 p-4">
-      <div className="mb-1 text-2xl font-bold">{t('workspace_logo')}</div>
+      <div className="mb-1 font-bold text-2xl">{t('workspace_logo')}</div>
       <div className="mb-4 font-semibold text-foreground/80">
         {t('workspace_logo_description')}
       </div>

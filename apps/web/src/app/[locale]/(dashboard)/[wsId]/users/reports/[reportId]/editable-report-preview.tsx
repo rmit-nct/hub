@@ -1,16 +1,16 @@
 'use client';
 
-import UserMonthAttendance from '../../attendance/user-month-attendance';
-import UserReportForm from './form';
-import { WorkspaceUserReport } from '@ncthub/types/db';
-import { WorkspaceConfig } from '@ncthub/types/primitives/WorkspaceConfig';
+import type { WorkspaceUserReport } from '@ncthub/types/db';
+import type { WorkspaceConfig } from '@ncthub/types/primitives/WorkspaceConfig';
 import ReportPreview from '@ncthub/ui/custom/report-preview';
 import { useForm } from '@ncthub/ui/hooks/use-form';
 import { zodResolver } from '@ncthub/ui/resolvers';
 import { Separator } from '@ncthub/ui/separator';
 import { useLocale, useTranslations } from 'next-intl';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import * as z from 'zod';
+import UserMonthAttendance from '../../attendance/user-month-attendance';
+import UserReportForm from './form';
 
 export const UserReportFormSchema = z.object({
   title: z.string(),
@@ -107,7 +107,7 @@ export default function EditableReportPreview({
       <div className="grid h-fit gap-4">
         {isNew || (
           <div className="grid h-fit gap-2 rounded-lg border p-4">
-            <div className="text-lg font-semibold">User Data</div>
+            <div className="font-semibold text-lg">User Data</div>
             <Separator />
 
             <div>

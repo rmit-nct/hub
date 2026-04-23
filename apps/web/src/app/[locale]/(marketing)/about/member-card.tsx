@@ -36,14 +36,14 @@ export default function MemberCard({
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/5 to-transparent" />
           <div className="absolute bottom-0 w-full p-4">
-            <h3 className="text-xl font-bold text-white">{name}</h3>
-            <p className="text-md font-medium text-muted-foreground">{role}</p>
+            <h3 className="font-bold text-white text-xl">{name}</h3>
+            <p className="font-medium text-md text-muted-foreground">{role}</p>
           </div>
         </div>
       </CardHeader>
       <CardContent className="flex-1 p-4">
         <p className="text-muted-foreground italic">"{quote}"</p>
-        <p className="mt-2 text-sm text-foreground/80">{bio}</p>
+        <p className="mt-2 text-foreground/80 text-sm">{bio}</p>
       </CardContent>
       <CardFooter className="flex justify-center gap-4 p-4 pt-0">
         {socials.facebook ? (

@@ -1,8 +1,8 @@
-import { Filter } from '../filters';
 import { createClient } from '@ncthub/supabase/next/server';
-import { UserGroup } from '@ncthub/types/primitives/UserGroup';
+import type { UserGroup } from '@ncthub/types/primitives/UserGroup';
 import { MinusCircle, PlusCircle } from '@ncthub/ui/icons';
 import { getTranslations } from 'next-intl/server';
+import { Filter } from '../filters';
 
 interface SearchParams {
   q?: string;

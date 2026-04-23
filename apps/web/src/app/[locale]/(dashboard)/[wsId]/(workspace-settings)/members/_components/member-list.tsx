@@ -1,7 +1,5 @@
-import InviteMemberButton from './invite-member-button';
-import { MemberSettingsButton } from './member-settings-button';
-import { Workspace, type WorkspaceUserRole } from '@ncthub/types/db';
-import { User } from '@ncthub/types/primitives/User';
+import type { Workspace, WorkspaceUserRole } from '@ncthub/types/db';
+import type { User } from '@ncthub/types/primitives/User';
 import { Avatar, AvatarFallback, AvatarImage } from '@ncthub/ui/avatar';
 import { User as UserIcon } from '@ncthub/ui/icons';
 import { cn } from '@ncthub/utils/format';
@@ -9,6 +7,8 @@ import { getInitials } from '@ncthub/utils/name-helper';
 import { getCurrentUser } from '@ncthub/utils/user-helper';
 import moment from 'moment';
 import { getLocale, getTranslations } from 'next-intl/server';
+import InviteMemberButton from './invite-member-button';
+import { MemberSettingsButton } from './member-settings-button';
 
 interface Props {
   workspace?: (Workspace & { role: WorkspaceUserRole }) | null;
@@ -29,7 +29,7 @@ export default async function MemberList({
 
   if (!members || members.length === 0) {
     return (
-      <div className="col-span-full flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-primary-foreground/20 p-8">
+      <div className="col-span-full flex flex-col items-center justify-center gap-2 rounded-lg border border-border border-dashed bg-primary-foreground/20 p-8">
         <p className="text-center text-foreground/80">
           {invited ? t('no_invited_members_found') : t('no_members_match')}.
         </p>
@@ -82,7 +82,7 @@ export default async function MemberList({
             ) : null}
           </p>
           <p
-            className={`text-sm font-semibold ${
+            className={`font-semibold text-sm ${
               loading ? 'text-transparent' : 'text-foreground/60'
             }`}
           >
@@ -104,7 +104,7 @@ export default async function MemberList({
         </div>
       )}
 
-      <div className="mt-2 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-2 text-sm md:text-base lg:gap-4">
+      <div className="mt-2 flex flex-wrap items-center justify-between gap-2 border-border border-t pt-2 text-sm md:text-base lg:gap-4">
         {loading || member?.created_at ? (
           <div
             className={`line-clamp-1 ${

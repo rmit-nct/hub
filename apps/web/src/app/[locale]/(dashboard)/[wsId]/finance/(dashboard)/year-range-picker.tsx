@@ -1,5 +1,5 @@
-import { YearPicker } from './year-picker';
 import { useEffect } from 'react';
+import { YearPicker } from './year-picker';
 
 interface Props {
   startYear?: Date;
@@ -25,7 +25,7 @@ export function YearRangePicker({
   return (
     <div className={className}>
       <div className="flex flex-col gap-2">
-        <h2 className="text-lg font-semibold">Select start year</h2>
+        <h2 className="font-semibold text-lg">Select start year</h2>
         <YearPicker
           defaultValue={startYear}
           onValueChange={setStartYear}
@@ -33,7 +33,7 @@ export function YearRangePicker({
         />
       </div>
       <div className="flex flex-col gap-2">
-        <h2 className="text-lg font-semibold">Select end year</h2>
+        <h2 className="font-semibold text-lg">Select end year</h2>
         <YearPicker
           defaultValue={endYear}
           onValueChange={setEndYear}

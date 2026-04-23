@@ -2,7 +2,7 @@
 
 import { cn } from '@ncthub/utils/format';
 import * as ProgressPrimitive from '@radix-ui/react-progress';
-import * as React from 'react';
+import type * as React from 'react';
 
 function Progress({
   className,

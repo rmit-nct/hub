@@ -4,7 +4,7 @@ import { Button } from '@ncthub/ui/button';
 import { cn } from '@ncthub/utils/format';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 export default function LinkButton({
   href,

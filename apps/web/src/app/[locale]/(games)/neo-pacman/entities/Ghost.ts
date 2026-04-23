@@ -1,11 +1,11 @@
+import type * as Phaser from 'phaser';
 import { GAME_CONFIG } from '../config';
 import type { MapManager } from '../managers/MapManager';
-import { Direction, GhostState, GhostType } from '../types';
 import type { TilePosition } from '../types';
+import { Direction, GhostState, GhostType } from '../types';
 import { pixelToTile, tileToPixelCentered } from '../utils/helpers';
 import { findPath, getNeighbors } from '../utils/pathfinding';
 import type { Pacman } from './Pacman';
-import * as Phaser from 'phaser';
 
 export class Ghost {
   private scene: Phaser.Scene;
@@ -230,13 +230,14 @@ export class Ghost {
           col: pacmanTile.col + 2,
         };
 
-      case GhostType.CLYDE:
+      case GhostType.CLYDE: {
         // Chase if far, scatter if close
         const currentTile = this.getTilePosition();
         const distance =
           Math.abs(currentTile.row - pacmanTile.row) +
           Math.abs(currentTile.col - pacmanTile.col);
         return distance > 8 ? pacmanTile : this.getScatterTarget();
+      }
 
       default:
         return pacmanTile;

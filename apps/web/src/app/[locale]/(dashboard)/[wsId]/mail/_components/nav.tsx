@@ -1,7 +1,7 @@
 'use client';
 
 import { buttonVariants } from '@ncthub/ui/button';
-import { LucideIcon } from '@ncthub/ui/icons';
+import type { LucideIcon } from '@ncthub/ui/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@ncthub/ui/tooltip';
 import { cn } from '@ncthub/utils/format';
 import Link from 'next/link';

@@ -1,8 +1,8 @@
-import { Button } from '../button';
-import ModifiableDialogTrigger from './modifiable-dialog-trigger';
 import { cn } from '@ncthub/utils/format';
 import { Cog, Plus } from 'lucide-react';
-import { type ReactElement, ReactNode } from 'react';
+import type { ReactElement, ReactNode } from 'react';
+import { Button } from '../button';
+import ModifiableDialogTrigger from './modifiable-dialog-trigger';
 
 interface FormProps<T> {
   data?: T;
@@ -87,7 +87,7 @@ export default function FeatureSummary<T>({
   return (
     <div className="flex flex-col justify-between gap-4 rounded-lg border border-border bg-foreground/5 p-4 md:flex-row md:items-start">
       <div className="w-full">
-        {title || <h1 className="w-full text-2xl font-bold">{pluralTitle}</h1>}
+        {title || <h1 className="w-full font-bold text-2xl">{pluralTitle}</h1>}
         {description && (
           <div className="whitespace-pre-wrap text-foreground/80">
             {description}

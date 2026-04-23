@@ -1,6 +1,5 @@
-import { PROD_MODE, ROOT_WORKSPACE_ID } from '@/constants/common';
 import type { SupabaseUser } from '@ncthub/supabase/next/user';
-import { PermissionId } from '@ncthub/types/db';
+import type { PermissionId } from '@ncthub/types/db';
 import {
   Archive,
   Banknote,
@@ -31,7 +30,8 @@ import {
   UserCog,
   Users,
 } from '@ncthub/ui/icons';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import { PROD_MODE, ROOT_WORKSPACE_ID } from '@/constants/common';
 
 export type RolePermission = {
   id: PermissionId;

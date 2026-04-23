@@ -1,12 +1,12 @@
-import { getChats } from '../../chat/helper';
-import TasksSidebarContent from './tasks-sidebar-content';
-import { getPermissions, verifyHasSecrets } from '@/lib/workspace-helper';
 import { createClient } from '@ncthub/supabase/next/server';
 import type {
   WorkspaceTask,
   WorkspaceTaskBoard,
   WorkspaceTaskList,
 } from '@ncthub/types/db';
+import { getPermissions, verifyHasSecrets } from '@/lib/workspace-helper';
+import { getChats } from '../../chat/helper';
+import TasksSidebarContent from './tasks-sidebar-content';
 
 interface TasksSidebarProps {
   wsId: string;
@@ -44,7 +44,7 @@ async function getTaskBoardsWithDetails(
       .eq('board_id', board.id)
       .order('created_at', { ascending: true });
 
-    let currentBoardLists: Partial<WorkspaceTaskList>[] = [];
+    const currentBoardLists: Partial<WorkspaceTaskList>[] = [];
     if (listsError) {
       console.error(`Error fetching lists for board ${board.id}:`, listsError);
       // Board will have an empty lists array by default if not assigned

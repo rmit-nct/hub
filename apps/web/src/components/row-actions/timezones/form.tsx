@@ -1,4 +1,4 @@
-import { Timezone } from '@ncthub/types/primitives/Timezone';
+import type { Timezone } from '@ncthub/types/primitives/Timezone';
 import { Button } from '@ncthub/ui/button';
 import { Checkbox } from '@ncthub/ui/checkbox';
 import {

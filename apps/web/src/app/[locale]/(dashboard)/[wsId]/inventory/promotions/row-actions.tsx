@@ -1,7 +1,6 @@
 'use client';
 
-import { PromotionForm } from './form';
-import { ProductPromotion } from '@ncthub/types/primitives/ProductPromotion';
+import type { ProductPromotion } from '@ncthub/types/primitives/ProductPromotion';
 import { Button } from '@ncthub/ui/button';
 import {
   Dialog,
@@ -18,10 +17,11 @@ import {
 } from '@ncthub/ui/dropdown-menu';
 import { toast } from '@ncthub/ui/hooks/use-toast';
 import { Ellipsis } from '@ncthub/ui/icons';
-import { Row } from '@tanstack/react-table';
-import { useTranslations } from 'next-intl';
+import type { Row } from '@tanstack/react-table';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import { PromotionForm } from './form';
 
 interface PromotionRowActionsProps {
   row: Row<ProductPromotion>;

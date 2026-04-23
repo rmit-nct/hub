@@ -2,7 +2,7 @@
 
 import { cn } from '@ncthub/utils/format';
 import * as AvatarPrimitive from '@radix-ui/react-avatar';
-import * as React from 'react';
+import type * as React from 'react';
 
 function Avatar({
   className,

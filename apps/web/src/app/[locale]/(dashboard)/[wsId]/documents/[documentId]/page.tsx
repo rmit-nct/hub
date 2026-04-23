@@ -1,8 +1,7 @@
 'use client';
 
-import DocumentShareDialog from '../document-share-dialog';
 import { createClient } from '@ncthub/supabase/next/client';
-import { WorkspaceDocument } from '@ncthub/types/db';
+import type { WorkspaceDocument } from '@ncthub/types/db';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,9 +27,10 @@ import { Input } from '@ncthub/ui/input';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@ncthub/ui/tooltip';
 import { cn } from '@ncthub/utils/format';
 import debounce from 'lodash/debounce';
-import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import DocumentShareDialog from '../document-share-dialog';
 
 interface Props {
   params: Promise<{
@@ -288,7 +288,7 @@ export default function DocumentDetailsPage({ params }: Props) {
                 ref={nameInputRef}
                 type="text"
                 defaultValue={document.name || ''}
-                className="h-9 w-fit border bg-transparent px-2 text-lg font-medium focus-visible:ring-0"
+                className="h-9 w-fit border bg-transparent px-2 font-medium text-lg focus-visible:ring-0"
                 onChange={handleNameInputChange}
                 onBlur={handleNameChange}
                 onKeyDown={(e) => e.key === 'Enter' && handleNameChange()}
@@ -425,7 +425,7 @@ export default function DocumentDetailsPage({ params }: Props) {
           isOpen={isShareDialogOpen}
           onClose={() => setIsShareDialogOpen(false)}
           documentId={document.id}
-          isPublic={document.is_public!!}
+          isPublic={document.is_public!}
           onUpdateVisibility={handleUpdateVisibility}
         />
       )}

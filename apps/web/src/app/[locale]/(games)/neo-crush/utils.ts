@@ -1,11 +1,17 @@
 // utils.ts
-import { BOARD_SIZE, Fruit, FruitType, Fruits, PTS_PER_FRUIT } from './types';
+import {
+  BOARD_SIZE,
+  Fruit,
+  type Fruits,
+  type FruitType,
+  PTS_PER_FRUIT,
+} from './types';
 
 export const findMatch = (startIndex: number, fruits: Fruits): number[] => {
   const decidedColor = fruits[startIndex]?.color;
 
-  let horizontalMatch: number[] = [startIndex];
-  let verticalMatch: number[] = [startIndex];
+  const horizontalMatch: number[] = [startIndex];
+  const verticalMatch: number[] = [startIndex];
 
   // Check horizontal match
   for (let i = 1; (startIndex % BOARD_SIZE) + i < BOARD_SIZE; i++) {

@@ -1,6 +1,6 @@
 'use client';
 
-import { Workspace } from '@ncthub/types/db';
+import type { Workspace } from '@ncthub/types/db';
 import { Avatar, AvatarFallback, AvatarImage } from '@ncthub/ui/avatar';
 import { Button } from '@ncthub/ui/button';
 import {
@@ -13,8 +13,8 @@ import {
 } from '@ncthub/ui/card';
 import { LoadingIndicator } from '@ncthub/ui/custom/loading-indicator';
 import { toast } from '@ncthub/ui/hooks/use-toast';
-import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 interface WorkspaceInvitationProps {
@@ -117,7 +117,7 @@ export default function InvitationCard({
         </div>
       </CardHeader>
       <CardContent>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           {t('invite.you-been-invited-to-join-the')}{' '}
           <span className="text-foreground underline">{workspace.name}</span>
           {t('invite.accept-to-start-collaborating')}

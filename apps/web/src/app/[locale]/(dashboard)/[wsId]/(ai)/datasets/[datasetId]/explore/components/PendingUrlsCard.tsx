@@ -1,7 +1,7 @@
-import type { UrlWithProgress } from '../types';
 import { Badge } from '@ncthub/ui/badge';
 import { Card, CardContent } from '@ncthub/ui/card';
 import { Clock } from '@ncthub/ui/icons';
+import type { UrlWithProgress } from '../types';
 
 interface Props {
   pendingUrls: UrlWithProgress[];
@@ -22,7 +22,7 @@ export function PendingUrlsCard({ pendingUrls }: Props) {
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <Clock className="h-4 w-4 text-muted-foreground" />
-                    <code className="flex-1 truncate text-xs text-muted-foreground">
+                    <code className="flex-1 truncate text-muted-foreground text-xs">
                       {item.url}
                     </code>
                   </div>
@@ -30,7 +30,7 @@ export function PendingUrlsCard({ pendingUrls }: Props) {
               </div>
             ))}
             {pendingUrls.length > 5 && (
-              <div className="text-center text-sm text-muted-foreground">
+              <div className="text-center text-muted-foreground text-sm">
                 +{pendingUrls.length - 5} more URLs
               </div>
             )}

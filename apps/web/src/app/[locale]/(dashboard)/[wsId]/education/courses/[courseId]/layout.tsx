@@ -1,12 +1,12 @@
 import { createClient } from '@ncthub/supabase/next/server';
-import { UserGroup } from '@ncthub/types/primitives/UserGroup';
+import type { UserGroup } from '@ncthub/types/primitives/UserGroup';
 import FeatureSummary from '@ncthub/ui/custom/feature-summary';
 import { GraduationCap } from '@ncthub/ui/icons';
 import { Separator } from '@ncthub/ui/separator';
-import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ReactNode } from 'react';
+import { getTranslations } from 'next-intl/server';
+import type { ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;
@@ -26,14 +26,14 @@ export default async function CourseDetailsLayout({ children, params }: Props) {
     <>
       <FeatureSummary
         title={
-          <h1 className="flex w-full items-center gap-2 text-2xl font-bold">
-            <div className="flex items-center gap-2 rounded-lg border border-dynamic-blue/20 bg-dynamic-blue/10 px-2 text-lg text-dynamic-blue max-md:hidden">
+          <h1 className="flex w-full items-center gap-2 font-bold text-2xl">
+            <div className="flex items-center gap-2 rounded-lg border border-dynamic-blue/20 bg-dynamic-blue/10 px-2 text-dynamic-blue text-lg max-md:hidden">
               <GraduationCap className="h-6 w-6" />
               {t('ws-courses.singular')}
             </div>
             <Link
               href={`/${wsId}/courses/${courseId}`}
-              className="line-clamp-1 text-lg font-bold hover:underline md:text-2xl"
+              className="line-clamp-1 font-bold text-lg hover:underline md:text-2xl"
             >
               {data.name || t('common.unknown')}
             </Link>

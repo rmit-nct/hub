@@ -1,13 +1,13 @@
 'use client';
 
+import { createClient } from '@ncthub/supabase/next/client';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { getTasks } from '@/lib/task-helper';
 import { KanbanBoard } from '../kanban';
 import { BoardHeader } from './board-header';
 import { CalendarView } from './calendar-view';
 import { ListView } from './list-view';
-import { getTasks } from '@/lib/task-helper';
-import { createClient } from '@ncthub/supabase/next/client';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
 
 interface Props {
   boardId: string;

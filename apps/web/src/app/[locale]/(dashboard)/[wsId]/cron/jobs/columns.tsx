@@ -1,14 +1,14 @@
 'use client';
 
-import { RowActions } from './row-actions';
 import type { WorkspaceCronJob } from '@ncthub/types/db';
 import { DataTableColumnHeader } from '@ncthub/ui/custom/tables/data-table-column-header';
 import { CheckCircle, Clock, PowerOff, XCircle } from '@ncthub/ui/icons';
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import parser from 'cron-parser';
 import cronstrue from 'cronstrue';
 import moment from 'moment';
 import Link from 'next/link';
+import { RowActions } from './row-actions';
 
 function getNextRunTime(schedule: string, lastRun?: string | null) {
   try {
@@ -17,10 +17,7 @@ function getNextRunTime(schedule: string, lastRun?: string | null) {
     // If there's a last run, get next occurrence after that
     if (lastRun) {
       const lastRunDate = new Date(lastRun);
-      while (interval.next().getTime() <= lastRunDate.getTime()) {
-        // Keep moving forward until we find the next occurrence after last run
-        continue;
-      }
+      while (interval.next().getTime() <= lastRunDate.getTime()) {}
       return interval.prev().toISOString();
     }
 
@@ -127,7 +124,7 @@ export const getColumns = (
         <div className="flex min-w-32 flex-col">
           <span>{schedule || '-'}</span>
           {schedule && (
-            <span className="text-xs text-muted-foreground">
+            <span className="text-muted-foreground text-xs">
               {cronstrue.toString(schedule)}
             </span>
           )}

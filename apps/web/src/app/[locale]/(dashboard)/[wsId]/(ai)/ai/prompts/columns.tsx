@@ -1,10 +1,10 @@
 'use client';
 
-import { AIPromptRowActions } from './row-actions';
-import { AIPrompt } from '@ncthub/types/db';
+import type { AIPrompt } from '@ncthub/types/db';
 import { DataTableColumnHeader } from '@ncthub/ui/custom/tables/data-table-column-header';
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import moment from 'moment';
+import { AIPromptRowActions } from './row-actions';
 
 export const aiPromptsColumns = (
   t: any,

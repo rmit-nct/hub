@@ -1,6 +1,5 @@
 'use client';
 
-import { getTasks } from '@/lib/task-helper';
 import { createClient } from '@ncthub/supabase/next/client';
 import {
   AlertCircle,
@@ -15,6 +14,7 @@ import { cn } from '@ncthub/utils/format';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { useEffect } from 'react';
+import { getTasks } from '@/lib/task-helper';
 
 interface Props {
   boardId: string;
@@ -116,11 +116,11 @@ export function BoardSummary({ boardId }: Props) {
           <div className="flex-1">
             <Progress value={completionRate} className="h-2" />
           </div>
-          <span className="text-sm text-muted-foreground">
+          <span className="text-muted-foreground text-sm">
             {Math.round(completionRate)}%
           </span>
         </div>
-        <div className="flex items-center gap-1 text-sm text-muted-foreground">
+        <div className="flex items-center gap-1 text-muted-foreground text-sm">
           <CheckCircle2 className="h-4 w-4" />
           {completedTasks} of {totalTasks} tasks completed
         </div>
@@ -129,15 +129,15 @@ export function BoardSummary({ boardId }: Props) {
       <div className="space-y-2 rounded-lg border p-4">
         <h3 className="font-medium">Task Status</h3>
         <div className="space-y-1">
-          <div className="flex items-center gap-1 text-sm text-destructive">
+          <div className="flex items-center gap-1 text-destructive text-sm">
             <AlertCircle className="h-4 w-4" />
             {overdueTasks} overdue tasks
           </div>
-          <div className="flex items-center gap-1 text-sm text-muted-foreground">
+          <div className="flex items-center gap-1 text-muted-foreground text-sm">
             <Calendar className="h-4 w-4" />
             {upcomingTasks} upcoming tasks
           </div>
-          <div className="flex items-center gap-1 text-sm text-muted-foreground">
+          <div className="flex items-center gap-1 text-muted-foreground text-sm">
             <Users className="h-4 w-4" />
             {unassignedTasks} unassigned tasks
           </div>
@@ -173,13 +173,13 @@ export function BoardSummary({ boardId }: Props) {
             >
               {nextDueTask.name}
             </p>
-            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+            <div className="flex items-center gap-1 text-muted-foreground text-sm">
               <Clock className="h-4 w-4" />
               {format(new Date(nextDueTask.end_date!), 'PPP')}
             </div>
           </div>
         ) : (
-          <p className="text-sm text-muted-foreground">No upcoming tasks</p>
+          <p className="text-muted-foreground text-sm">No upcoming tasks</p>
         )}
       </div>
     </div>

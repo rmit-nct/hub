@@ -1,5 +1,4 @@
-import { useCalendar } from '../../../../hooks/use-calendar';
-import { CalendarEvent } from '@ncthub/types/primitives/calendar-event';
+import type { CalendarEvent } from '@ncthub/types/primitives/calendar-event';
 import { getEventStyles } from '@ncthub/utils/color-helper';
 import { cn } from '@ncthub/utils/format';
 import dayjs from 'dayjs';
@@ -7,6 +6,7 @@ import isBetween from 'dayjs/plugin/isBetween';
 import timezone from 'dayjs/plugin/timezone';
 import { Calendar, ChevronDown, ChevronUp } from 'lucide-react';
 import { useState } from 'react';
+import { useCalendar } from '../../../../hooks/use-calendar';
 
 dayjs.extend(isBetween);
 dayjs.extend(timezone);
@@ -128,7 +128,7 @@ export const AllDayEventBar = ({ dates }: { dates: Date[] }) => {
                   <div
                     key={`all-day-event-${event.id}-${dateKey}`}
                     className={cn(
-                      'cursor-pointer truncate rounded-sm border-l-2 px-2 py-1 text-xs font-semibold',
+                      'cursor-pointer truncate rounded-sm border-l-2 px-2 py-1 font-semibold text-xs',
                       bg,
                       border,
                       text
@@ -152,7 +152,7 @@ export const AllDayEventBar = ({ dates }: { dates: Date[] }) => {
 
               {hiddenCount > 0 && (
                 <div
-                  className="flex cursor-pointer items-center justify-center rounded-sm px-2 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted/40"
+                  className="flex cursor-pointer items-center justify-center rounded-sm px-2 py-1 font-medium text-muted-foreground text-xs transition-colors hover:bg-muted/40"
                   onClick={() => toggleDateExpansion(dateKey)}
                 >
                   <ChevronDown className="mr-1 h-3 w-3" />
@@ -164,7 +164,7 @@ export const AllDayEventBar = ({ dates }: { dates: Date[] }) => {
                 !shouldShowAll &&
                 dateEvents.length > MAX_EVENTS_DISPLAY && (
                   <div
-                    className="flex cursor-pointer items-center justify-center rounded-sm px-2 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted/40"
+                    className="flex cursor-pointer items-center justify-center rounded-sm px-2 py-1 font-medium text-muted-foreground text-xs transition-colors hover:bg-muted/40"
                     onClick={() => toggleDateExpansion(dateKey)}
                   >
                     <ChevronUp className="mr-1 h-3 w-3" />

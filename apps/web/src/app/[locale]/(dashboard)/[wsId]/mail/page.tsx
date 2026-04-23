@@ -1,11 +1,11 @@
-import { Mail } from './_components/mail';
-import { mails } from './data';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import {
   ROOT_WORKSPACE_ID,
   SIDEBAR_COLLAPSED_COOKIE_NAME,
 } from '@/constants/common';
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
+import { Mail } from './_components/mail';
+import { mails } from './data';
 
 interface Props {
   params: Promise<{

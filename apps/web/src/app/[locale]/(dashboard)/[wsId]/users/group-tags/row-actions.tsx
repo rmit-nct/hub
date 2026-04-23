@@ -1,7 +1,6 @@
 'use client';
 
-import GroupTagForm from './form';
-import { UserGroupTag } from '@ncthub/types/primitives/UserGroupTag';
+import type { UserGroupTag } from '@ncthub/types/primitives/UserGroupTag';
 import { Button } from '@ncthub/ui/button';
 import ModifiableDialogTrigger from '@ncthub/ui/custom/modifiable-dialog-trigger';
 import {
@@ -13,10 +12,11 @@ import {
 } from '@ncthub/ui/dropdown-menu';
 import { toast } from '@ncthub/ui/hooks/use-toast';
 import { Ellipsis } from '@ncthub/ui/icons';
-import { Row } from '@tanstack/react-table';
-import { useTranslations } from 'next-intl';
+import type { Row } from '@tanstack/react-table';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import GroupTagForm from './form';
 
 interface GroupTagRowActionsProps {
   row: Row<UserGroupTag>;

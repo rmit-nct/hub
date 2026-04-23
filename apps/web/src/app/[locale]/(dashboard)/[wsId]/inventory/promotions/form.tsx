@@ -1,6 +1,6 @@
 'use client';
 
-import { ProductPromotion } from '@ncthub/types/primitives/ProductPromotion';
+import type { ProductPromotion } from '@ncthub/types/primitives/ProductPromotion';
 import { Button } from '@ncthub/ui/button';
 import {
   Form,
@@ -23,8 +23,8 @@ import {
 } from '@ncthub/ui/select';
 import { Separator } from '@ncthub/ui/separator';
 import { Textarea } from '@ncthub/ui/textarea';
-import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { z } from 'zod';
 

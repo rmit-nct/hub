@@ -1,7 +1,6 @@
 'use client';
 
-import ApiKeyForm, { ApiConfigFormSchema } from './form';
-import { WorkspaceApiKey } from '@ncthub/types/primitives/WorkspaceApiKey';
+import type { WorkspaceApiKey } from '@ncthub/types/primitives/WorkspaceApiKey';
 import {
   Dialog,
   DialogContent,
@@ -12,10 +11,12 @@ import {
 } from '@ncthub/ui/dialog';
 import { toast } from '@ncthub/ui/hooks/use-toast';
 import { generateRandomUUID } from '@ncthub/utils/uuid-helper';
-import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
-import * as z from 'zod';
+import { useTranslations } from 'next-intl';
+import type React from 'react';
+import { useState } from 'react';
+import type * as z from 'zod';
+import ApiKeyForm, { type ApiConfigFormSchema } from './form';
 
 interface Props {
   data: WorkspaceApiKey;

@@ -1,5 +1,3 @@
-import { AssigneeSelect } from './_components/assignee-select';
-import { deleteTask, updateTask } from '@/lib/task-helper';
 import { createClient } from '@ncthub/supabase/next/client';
 import { Button } from '@ncthub/ui/button';
 import { Calendar } from '@ncthub/ui/calendar';
@@ -46,6 +44,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@ncthub/ui/tooltip';
 import { cn } from '@ncthub/utils/format';
 import { addDays, format, isBefore, isToday, startOfToday } from 'date-fns';
 import { useEffect, useState } from 'react';
+import { deleteTask, updateTask } from '@/lib/task-helper';
+import { AssigneeSelect } from './_components/assignee-select';
 
 interface Props {
   taskId: string;
@@ -207,7 +207,7 @@ export function TaskActions({
             type="button"
             variant="ghost"
             size="icon"
-            className="absolute top-2 right-2 h-6 w-6 p-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 hover:bg-muted/50"
+            className="absolute top-2 right-2 h-6 w-6 p-0 text-muted-foreground opacity-0 transition-opacity hover:bg-muted/50 group-hover:opacity-100"
           >
             <MoreHorizontal className="h-4 w-4" />
             <span className="sr-only">Open task menu</span>
@@ -224,7 +224,7 @@ export function TaskActions({
           <DropdownMenuSeparator />
           <DropdownMenuItem
             onClick={() => setIsDeleteDialogOpen(true)}
-            className="gap-2 text-sm text-red-600 focus:text-red-600"
+            className="gap-2 text-red-600 text-sm focus:text-red-600"
           >
             <Trash2 className="h-4 w-4" />
             Delete task
@@ -296,7 +296,7 @@ export function TaskActions({
                 })}
               />
               {!newName.trim() && (
-                <p className="text-xs text-destructive">
+                <p className="text-destructive text-xs">
                   Task name is required
                 </p>
               )}
@@ -426,7 +426,7 @@ export function TaskActions({
                 </PopoverContent>
               </Popover>
               {isStartDateAfterEndDate && (
-                <p className="text-xs text-destructive">
+                <p className="text-destructive text-xs">
                   Start date cannot be after end date
                 </p>
               )}
@@ -488,13 +488,13 @@ export function TaskActions({
                 </PopoverContent>
               </Popover>
               {isOverdue && (
-                <div className="flex items-center gap-1 text-xs text-destructive">
+                <div className="flex items-center gap-1 text-destructive text-xs">
                   <AlertCircle className="h-3 w-3" />
                   Due date is in the past
                 </div>
               )}
               {isStartDateAfterEndDate && (
-                <p className="text-xs text-destructive">
+                <p className="text-destructive text-xs">
                   Due date cannot be before start date
                 </p>
               )}
@@ -529,7 +529,7 @@ export function TaskActions({
                 </Tooltip>
               )}
               {newStartDate && (
-                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <div className="flex items-center gap-1 text-muted-foreground text-xs">
                   <Clock className="h-3 w-3" />
                   {isToday(newStartDate)
                     ? 'Starts today'

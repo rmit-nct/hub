@@ -1,8 +1,7 @@
 'use client';
 
-import { downloadPrivateObject, uploadObject } from '@/lib/storage-helper';
 import { createClient } from '@ncthub/supabase/next/client';
-import { Workspace } from '@ncthub/types/db';
+import type { Workspace } from '@ncthub/types/db';
 import { Button } from '@ncthub/ui/button';
 import { toast } from '@ncthub/ui/hooks/use-toast';
 import { Check, Loader2 } from '@ncthub/ui/icons';
@@ -11,6 +10,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { v4 as UUIDv4 } from 'uuid';
+import { downloadPrivateObject, uploadObject } from '@/lib/storage-helper';
 
 interface Props {
   workspace: Workspace;

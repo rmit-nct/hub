@@ -1,5 +1,13 @@
 'use client';
 
+import { cn } from '@ncthub/utils/format';
+import type { Table } from '@tanstack/react-table';
+import {
+  ArrowLeftToLine,
+  ArrowRightToLine,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react';
 import { Button } from '../../button';
 import {
   Select,
@@ -9,14 +17,6 @@ import {
   SelectValue,
 } from '../../select';
 import { Separator } from '../../separator';
-import { cn } from '@ncthub/utils/format';
-import { Table } from '@tanstack/react-table';
-import {
-  ArrowLeftToLine,
-  ArrowRightToLine,
-  ChevronLeft,
-  ChevronRight,
-} from 'lucide-react';
 
 interface DataTablePaginationProps<TData> {
   table?: Table<TData>;
@@ -72,7 +72,7 @@ export function DataTablePagination<TData>({
       )}
     >
       {count != undefined && count > 0 ? (
-        <div className="flex-none text-sm text-muted-foreground">
+        <div className="flex-none text-muted-foreground text-sm">
           {/* {locale === 'vi' || locale === 'vi-VN' ? t('common.selected') : null}{' '} */}
           {/* <span className="text-primary font-semibold">
             {table ? table.getFilteredSelectedRowModel().rows.length : 0}
@@ -94,7 +94,7 @@ export function DataTablePagination<TData>({
 
       <div className="flex flex-wrap items-center justify-center gap-2 text-center md:gap-4 lg:gap-8">
         <div className="hidden items-center space-x-2 md:flex">
-          <p className="text-sm font-medium">
+          <p className="font-medium text-sm">
             {t?.('common.rows-per-page') ?? 'Rows per page'}
           </p>
           <Select
@@ -124,7 +124,7 @@ export function DataTablePagination<TData>({
             </SelectContent>
           </Select>
         </div>
-        <div className="w-fit text-sm text-muted-foreground">
+        <div className="w-fit text-muted-foreground text-sm">
           {t?.('common.page') ?? 'Page'}{' '}
           <span className="font-semibold text-primary">
             {isPageOutOfRange

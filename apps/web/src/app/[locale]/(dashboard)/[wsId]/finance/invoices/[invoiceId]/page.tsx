@@ -1,7 +1,5 @@
-import InvoiceCard from './invoice-card';
-import { availableConfigs } from '@/constants/configs/reports';
 import { createClient } from '@ncthub/supabase/next/server';
-import { WorkspaceConfig } from '@ncthub/types/primitives/WorkspaceConfig';
+import type { WorkspaceConfig } from '@ncthub/types/primitives/WorkspaceConfig';
 import FeatureSummary from '@ncthub/ui/custom/feature-summary';
 import {
   Box,
@@ -12,10 +10,12 @@ import {
   ShoppingCart,
 } from '@ncthub/ui/icons';
 import { Separator } from '@ncthub/ui/separator';
+import { availableConfigs } from '@/constants/configs/reports';
+import InvoiceCard from './invoice-card';
 import 'dayjs/locale/vi';
 import moment from 'moment';
-import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 
 interface Props {
   params: Promise<{
@@ -49,7 +49,7 @@ export default async function InvoiceDetailsPage({ params }: Props) {
       <div className="grid h-fit gap-4 md:grid-cols-2">
         <div className="flex h-full flex-col gap-4">
           <div className="grid h-fit gap-2 rounded-lg border p-4">
-            <div className="text-lg font-semibold">
+            <div className="font-semibold text-lg">
               {t('invoices.basic-info')}
             </div>
             <Separator />
@@ -99,7 +99,7 @@ export default async function InvoiceDetailsPage({ params }: Props) {
 
         <div className="flex h-full flex-col gap-4">
           <div className="grid h-fit gap-2 rounded-lg border p-4">
-            <div className="text-lg font-semibold">
+            <div className="font-semibold text-lg">
               {t('invoices.products')}
             </div>
             <Separator />
@@ -124,7 +124,7 @@ export default async function InvoiceDetailsPage({ params }: Props) {
           </div>
           <div className="h-fit rounded-lg border p-4">
             <div className="grid h-full content-start gap-2">
-              <div className="text-lg font-semibold">
+              <div className="font-semibold text-lg">
                 {t('workspace-inventory-tabs.promotions')}
               </div>
               <Separator />
@@ -151,7 +151,7 @@ export default async function InvoiceDetailsPage({ params }: Props) {
           </div>
           <div className="h-fit rounded-lg border p-4">
             <div className="grid h-fit content-start gap-2">
-              <div className="text-lg font-semibold">{t('invoices.note')}</div>
+              <div className="font-semibold text-lg">{t('invoices.note')}</div>
               <Separator />
               <p>{invoice.note || t('common.empty')}</p>
             </div>
@@ -242,7 +242,7 @@ async function getConfigs(wsId: string) {
   if (error) throw error;
 
   // Create a copy of availableConfigs to include in the response
-  let configs = [
+  const configs = [
     ...availableConfigs.map(({ defaultValue, ...rest }) => ({
       ...rest,
       value: defaultValue,

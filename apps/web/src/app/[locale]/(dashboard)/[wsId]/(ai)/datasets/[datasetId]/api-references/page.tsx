@@ -1,4 +1,3 @@
-import EnvironmentSetup from './environment-setup';
 import { createClient } from '@ncthub/supabase/next/server';
 import {
   Card,
@@ -10,6 +9,7 @@ import {
 import { CodeBlock } from '@ncthub/ui/codeblock';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ncthub/ui/tabs';
 import { headers } from 'next/headers';
+import EnvironmentSetup from './environment-setup';
 
 interface Props {
   params: Promise<{
@@ -142,7 +142,7 @@ const processedData = flattenedData.map(row =>
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">API References</h1>
+        <h1 className="font-bold text-3xl">API References</h1>
         <p className="mt-2 text-muted-foreground">
           Access and process your dataset programmatically using our REST API.
         </p>

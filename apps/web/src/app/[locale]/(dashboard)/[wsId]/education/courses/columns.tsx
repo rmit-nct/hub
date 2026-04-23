@@ -1,11 +1,11 @@
 'use client';
 
-import { WorkspaceCourseRowActions } from './row-actions';
-import { WorkspaceCourse } from '@ncthub/types/db';
+import type { WorkspaceCourse } from '@ncthub/types/db';
 import { DataTableColumnHeader } from '@ncthub/ui/custom/tables/data-table-column-header';
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import moment from 'moment';
 import Link from 'next/link';
+import { WorkspaceCourseRowActions } from './row-actions';
 
 export const getWorkspaceCourseColumns = (
   t: any,

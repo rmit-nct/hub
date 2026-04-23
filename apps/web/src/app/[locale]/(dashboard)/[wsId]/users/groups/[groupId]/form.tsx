@@ -1,8 +1,7 @@
 'use client';
 
-import { Filter } from '../../../users/filters';
 import { createClient } from '@ncthub/supabase/next/client';
-import { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
+import type { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
 import { Avatar, AvatarFallback, AvatarImage } from '@ncthub/ui/avatar';
 import { Button } from '@ncthub/ui/button';
 import SearchBar from '@ncthub/ui/custom/search-bar';
@@ -11,9 +10,10 @@ import { ScrollArea } from '@ncthub/ui/scroll-area';
 import { cn } from '@ncthub/utils/format';
 import { getInitials } from '@ncthub/utils/name-helper';
 import { useQuery } from '@tanstack/react-query';
-import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import { Filter } from '../../../users/filters';
 
 export interface GroupMemberFormProps {
   wsId: string;

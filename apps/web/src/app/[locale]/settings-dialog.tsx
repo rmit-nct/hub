@@ -1,15 +1,15 @@
-import UserAvatar from './settings-avatar';
-import DisplayNameInput from './settings-display-name-input';
-import EmailInput from './settings-email-input';
-import { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
+import type { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
 import { Button } from '@ncthub/ui/button';
 import { SettingItemTab } from '@ncthub/ui/custom/settings-item-tab';
 import { DialogContent, DialogHeader, DialogTitle } from '@ncthub/ui/dialog';
 import { ArrowRight } from '@ncthub/ui/icons';
 import { Separator } from '@ncthub/ui/separator';
-import { useTranslations } from 'next-intl';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { Suspense } from 'react';
+import UserAvatar from './settings-avatar';
+import DisplayNameInput from './settings-display-name-input';
+import EmailInput from './settings-email-input';
 
 interface UserSettingsDialogProps {
   user: WorkspaceUser;
@@ -23,7 +23,7 @@ export default function UserSettingsDialog({ user }: UserSettingsDialogProps) {
       <DialogHeader>
         <DialogTitle>{t('settings-account.account')}</DialogTitle>
       </DialogHeader>
-      <div className="grid gap-1 md:max-w-lg md:min-w-max">
+      <div className="grid gap-1 md:min-w-max md:max-w-lg">
         <SettingItemTab
           title={t('settings-account.avatar')}
           description={t('settings-account.avatar-description')}

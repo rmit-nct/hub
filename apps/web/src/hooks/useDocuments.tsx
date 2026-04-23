@@ -1,5 +1,5 @@
-import { WorkspaceDocument } from '@ncthub/types/db';
-import { ReactNode, createContext, useContext } from 'react';
+import type { WorkspaceDocument } from '@ncthub/types/db';
+import { createContext, type ReactNode, useContext } from 'react';
 import { mutate } from 'swr';
 
 const DocumentContext = createContext({

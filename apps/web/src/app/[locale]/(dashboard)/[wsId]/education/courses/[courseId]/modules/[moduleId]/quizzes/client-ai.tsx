@@ -1,14 +1,14 @@
 'use client';
 
-import ClientQuizzes from './client-quizzes';
-import { GenerateDialog } from '@/components/generate-dialog';
 import { useObject } from '@ncthub/ai/object/core';
 import { quizSchema } from '@ncthub/ai/object/types';
 import { Button } from '@ncthub/ui/button';
 import { toast } from '@ncthub/ui/hooks/use-toast';
-import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import { GenerateDialog } from '@/components/generate-dialog';
+import ClientQuizzes from './client-quizzes';
 
 export default function AIQuizzes({
   wsId,

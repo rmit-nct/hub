@@ -1,10 +1,10 @@
 'use client';
 
-import { WorkspaceQuizRowActions } from './row-actions';
-import { WorkspaceQuiz } from '@ncthub/types/db';
+import type { WorkspaceQuiz } from '@ncthub/types/db';
 import { DataTableColumnHeader } from '@ncthub/ui/custom/tables/data-table-column-header';
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import moment from 'moment';
+import { WorkspaceQuizRowActions } from './row-actions';
 
 export const getWorkspaceQuizColumns = (
   t: any,

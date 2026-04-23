@@ -1,9 +1,7 @@
 'use client';
 
-import { AuthButton } from './auth-button';
-import { NavItem, useNavigation } from './shared/navigation-config';
-import { SupabaseUser } from '@ncthub/supabase/next/user';
-import { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
+import type { SupabaseUser } from '@ncthub/supabase/next/user';
+import type { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
 import {
   Accordion,
   AccordionContent,
@@ -19,10 +17,12 @@ import {
   SheetTrigger,
 } from '@ncthub/ui/sheet';
 import { cn } from '@ncthub/utils/format';
-import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import { AuthButton } from './auth-button';
+import { type NavItem, useNavigation } from './shared/navigation-config';
 
 interface MenuProps {
   sbUser: SupabaseUser | null;
@@ -57,7 +57,7 @@ const NavLink: React.FC<NavLinkProps> = ({ item, onClick, className }) => {
         {item.icon}
         {item.label}
         {item.badge && (
-          <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">
+          <span className="rounded-full bg-primary/10 px-2 py-0.5 text-primary text-xs">
             {item.badge}
           </span>
         )}
@@ -126,7 +126,7 @@ const MobileMenu: React.FC<MenuProps> = ({ sbUser, user, t }) => {
                 {/* Resources Section */}
                 <AccordionItem value="resources" className="border-none px-4">
                   <AccordionTrigger className="rounded-lg px-4 py-3 transition-all hover:bg-accent active:bg-accent/80 data-[state=open]:bg-accent/50">
-                    <span className="text-sm font-semibold">
+                    <span className="font-semibold text-sm">
                       {t('common.resources')}
                     </span>
                   </AccordionTrigger>
@@ -147,7 +147,7 @@ const MobileMenu: React.FC<MenuProps> = ({ sbUser, user, t }) => {
                 {/* Utilities Section */}
                 <AccordionItem value="utilities" className="border-none px-4">
                   <AccordionTrigger className="rounded-lg px-4 py-3 transition-all hover:bg-accent active:bg-accent/80 data-[state=open]:bg-accent/50">
-                    <span className="text-sm font-semibold">
+                    <span className="font-semibold text-sm">
                       {t('common.utilities')}
                     </span>
                   </AccordionTrigger>
@@ -168,7 +168,7 @@ const MobileMenu: React.FC<MenuProps> = ({ sbUser, user, t }) => {
                 {/* Games Section */}
                 <AccordionItem value="games" className="border-none px-4">
                   <AccordionTrigger className="rounded-lg px-4 py-3 transition-all hover:bg-accent active:bg-accent/80 data-[state=open]:bg-accent/50">
-                    <span className="text-sm font-semibold">
+                    <span className="font-semibold text-sm">
                       {t('common.games')}
                     </span>
                   </AccordionTrigger>

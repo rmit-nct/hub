@@ -1,10 +1,10 @@
 'use client';
 
-import { ProjectRowActions } from './row-action';
-import { TaskBoard } from '@ncthub/types/primitives/TaskBoard';
+import type { TaskBoard } from '@ncthub/types/primitives/TaskBoard';
 import { DataTableColumnHeader } from '@ncthub/ui/custom/tables/data-table-column-header';
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import moment from 'moment';
+import { ProjectRowActions } from './row-action';
 
 export const projectColumns = (
   t: any,

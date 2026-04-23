@@ -1,10 +1,10 @@
 'use client';
 
-import { ProductSupplierRowActions } from './row-actions';
-import { ProductSupplier } from '@ncthub/types/primitives/ProductSupplier';
+import type { ProductSupplier } from '@ncthub/types/primitives/ProductSupplier';
 import { DataTableColumnHeader } from '@ncthub/ui/custom/tables/data-table-column-header';
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import moment from 'moment';
+import { ProductSupplierRowActions } from './row-actions';
 
 export const productSupplierColumns = (
   t: any,

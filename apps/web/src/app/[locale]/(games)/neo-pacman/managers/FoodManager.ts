@@ -1,9 +1,9 @@
+import type * as Phaser from 'phaser';
 import { GAME_CONFIG } from '../config';
 import { Food } from '../entities/Food';
 import type { TilePosition } from '../types';
 import { FoodType } from '../types';
 import type { MapManager } from './MapManager';
-import * as Phaser from 'phaser';
 
 export class FoodManager {
   private scene: Phaser.Scene;

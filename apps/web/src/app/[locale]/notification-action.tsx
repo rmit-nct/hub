@@ -1,9 +1,9 @@
 'use client';
 
-import { NotificationAction as Action } from './notification-action-list';
 import { Button } from '@ncthub/ui/button';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
+import type { NotificationAction as Action } from './notification-action-list';
 
 interface Props {
   action: Action;

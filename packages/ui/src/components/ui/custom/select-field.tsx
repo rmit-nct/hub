@@ -1,3 +1,7 @@
+import { cn } from '@ncthub/utils/format';
+import type { Root } from '@radix-ui/react-select';
+import type React from 'react';
+import { forwardRef } from 'react';
 import { Label } from '../label';
 import {
   Select,
@@ -6,9 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../select';
-import { cn } from '@ncthub/utils/format';
-import { Root } from '@radix-ui/react-select';
-import React, { forwardRef } from 'react';
 
 type SelectOption = {
   value: string;
@@ -75,4 +76,5 @@ const SelectField = forwardRef<React.ComponentRef<typeof Root>, Props>(
 );
 
 SelectField.displayName = 'SelectField';
+
 export { SelectField };

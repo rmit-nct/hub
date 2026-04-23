@@ -1,12 +1,12 @@
 'use client';
 
-import { aiPromptsColumns } from './columns';
-import { AIPromptForm } from './form';
-import { CustomDataTable } from '@/components/custom-data-table';
-import { AIPrompt } from '@ncthub/types/db';
+import type { AIPrompt } from '@ncthub/types/db';
 import { Dialog } from '@ncthub/ui/dialog';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import { CustomDataTable } from '@/components/custom-data-table';
+import { aiPromptsColumns } from './columns';
+import { AIPromptForm } from './form';
 
 interface Props {
   wsId: string;

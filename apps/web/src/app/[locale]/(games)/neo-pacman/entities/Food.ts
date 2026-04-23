@@ -1,8 +1,8 @@
+import type * as Phaser from 'phaser';
 import { GAME_CONFIG } from '../config';
-import { MapManager } from '../managers/MapManager';
+import type { MapManager } from '../managers/MapManager';
 import { FoodType, type TilePosition } from '../types';
 import { tileToPixelCentered } from '../utils/helpers';
-import * as Phaser from 'phaser';
 
 export class Food {
   private scene: Phaser.Scene;

@@ -1,9 +1,9 @@
 'use client';
 
-import { Button } from '../../button';
 import { cn } from '@ncthub/utils/format';
 import { RefreshCcw } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { Button } from '../../button';
 
 export function DataTableRefreshButton({
   onRefresh,

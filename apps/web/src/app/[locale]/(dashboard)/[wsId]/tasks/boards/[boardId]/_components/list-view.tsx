@@ -1,7 +1,5 @@
-import { TaskActions } from '../task-actions';
-import { getTasks } from '@/lib/task-helper';
 import { createClient } from '@ncthub/supabase/next/client';
-import { Task } from '@ncthub/types/primitives/TaskBoard';
+import type { Task } from '@ncthub/types/primitives/TaskBoard';
 import { Button } from '@ncthub/ui/button';
 import {
   DropdownMenu,
@@ -30,6 +28,8 @@ import {
 import { cn } from '@ncthub/utils/format';
 import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
+import { getTasks } from '@/lib/task-helper';
+import { TaskActions } from '../task-actions';
 
 interface Props {
   boardId: string;
@@ -274,7 +274,7 @@ export function ListView({
                       {task.name}
                     </span>
                     {task.description && (
-                      <span className="line-clamp-1 text-xs text-muted-foreground">
+                      <span className="line-clamp-1 text-muted-foreground text-xs">
                         {task.description}
                       </span>
                     )}

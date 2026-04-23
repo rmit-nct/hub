@@ -1,13 +1,13 @@
-import { ProductForm } from './form';
 import { createClient } from '@ncthub/supabase/next/server';
-import { Product2 } from '@ncthub/types/primitives/Product';
-import { ProductCategory } from '@ncthub/types/primitives/ProductCategory';
-import { ProductInventory } from '@ncthub/types/primitives/ProductInventory';
-import { ProductUnit } from '@ncthub/types/primitives/ProductUnit';
-import { ProductWarehouse } from '@ncthub/types/primitives/ProductWarehouse';
+import type { Product2 } from '@ncthub/types/primitives/Product';
+import type { ProductCategory } from '@ncthub/types/primitives/ProductCategory';
+import type { ProductInventory } from '@ncthub/types/primitives/ProductInventory';
+import type { ProductUnit } from '@ncthub/types/primitives/ProductUnit';
+import type { ProductWarehouse } from '@ncthub/types/primitives/ProductWarehouse';
 import FeatureSummary from '@ncthub/ui/custom/feature-summary';
 import { Separator } from '@ncthub/ui/separator';
 import { getTranslations } from 'next-intl/server';
+import { ProductForm } from './form';
 
 interface Props {
   params: Promise<{

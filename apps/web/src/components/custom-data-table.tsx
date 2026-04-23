@@ -1,10 +1,13 @@
 'use client';
 
-import useSearchParams from '@/hooks/useSearchParams';
-import { DataTable, DataTableProps } from '@ncthub/ui/custom/tables/data-table';
-import { useTranslations } from 'next-intl';
+import {
+  DataTable,
+  type DataTableProps,
+} from '@ncthub/ui/custom/tables/data-table';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Suspense } from 'react';
+import useSearchParams from '@/hooks/useSearchParams';
 
 export function CustomDataTable<TData, TValue>({
   namespace,

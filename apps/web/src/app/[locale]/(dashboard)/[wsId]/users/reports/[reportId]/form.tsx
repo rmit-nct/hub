@@ -1,4 +1,3 @@
-import { UserReportFormSchema } from './editable-report-preview';
 import { Button } from '@ncthub/ui/button';
 import { AutosizeTextarea } from '@ncthub/ui/custom/autosize-textarea';
 import {
@@ -9,10 +8,11 @@ import {
   FormLabel,
   FormMessage,
 } from '@ncthub/ui/form';
-import { UseFormReturn } from '@ncthub/ui/hooks/use-form';
+import type { UseFormReturn } from '@ncthub/ui/hooks/use-form';
 import { Input } from '@ncthub/ui/input';
 import { Separator } from '@ncthub/ui/separator';
-import * as z from 'zod';
+import type * as z from 'zod';
+import type { UserReportFormSchema } from './editable-report-preview';
 
 export default function UserReportForm({
   isNew,
@@ -28,7 +28,7 @@ export default function UserReportForm({
 }) {
   return (
     <div className="grid h-fit gap-2 rounded-lg border p-4">
-      <div className="text-lg font-semibold">Thông tin cơ bản</div>
+      <div className="font-semibold text-lg">Thông tin cơ bản</div>
       <Separator />
       <Form {...form}>
         <form

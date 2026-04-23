@@ -1,19 +1,3 @@
-import NavbarActions from '../../navbar-actions';
-import { UserNav } from '../../user-nav';
-import InvitationCard from './invitation-card';
-import { Structure } from './structure';
-import type { NavLink } from '@/components/navigation';
-import {
-  MAIN_CONTENT_SIZE_COOKIE_NAME,
-  ROOT_WORKSPACE_ID,
-  SIDEBAR_COLLAPSED_COOKIE_NAME,
-  SIDEBAR_SIZE_COOKIE_NAME,
-} from '@/constants/common';
-import {
-  getPermissions,
-  getWorkspace,
-  verifySecret,
-} from '@/lib/workspace-helper';
 import {
   Archive,
   Banknote,
@@ -39,10 +23,26 @@ import {
   Users,
 } from '@ncthub/ui/icons';
 import { getCurrentUser } from '@ncthub/utils/user-helper';
-import { getTranslations } from 'next-intl/server';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { ReactNode, Suspense } from 'react';
+import { getTranslations } from 'next-intl/server';
+import { type ReactNode, Suspense } from 'react';
+import type { NavLink } from '@/components/navigation';
+import {
+  MAIN_CONTENT_SIZE_COOKIE_NAME,
+  ROOT_WORKSPACE_ID,
+  SIDEBAR_COLLAPSED_COOKIE_NAME,
+  SIDEBAR_SIZE_COOKIE_NAME,
+} from '@/constants/common';
+import {
+  getPermissions,
+  getWorkspace,
+  verifySecret,
+} from '@/lib/workspace-helper';
+import NavbarActions from '../../navbar-actions';
+import { UserNav } from '../../user-nav';
+import InvitationCard from './invitation-card';
+import { Structure } from './structure';
 
 interface LayoutProps {
   params: Promise<{

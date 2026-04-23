@@ -1,9 +1,9 @@
-import { createTaskList } from '@/lib/task-helper';
 import { createClient } from '@ncthub/supabase/next/client';
 import { Button } from '@ncthub/ui/button';
 import { Plus } from '@ncthub/ui/icons';
 import { Input } from '@ncthub/ui/input';
 import { useState } from 'react';
+import { createTaskList } from '@/lib/task-helper';
 
 interface Props {
   boardId: string;

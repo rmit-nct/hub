@@ -1,12 +1,12 @@
-import { ListActions } from './list-actions';
-import { Task, TaskCard } from './task';
-import { TaskForm } from './task-form';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Badge } from '@ncthub/ui/badge';
 import { Card } from '@ncthub/ui/card';
 import { GripVertical } from '@ncthub/ui/icons';
 import { cn } from '@ncthub/utils/format';
+import { ListActions } from './list-actions';
+import { type Task, TaskCard } from './task';
+import { TaskForm } from './task-form';
 
 export interface Column {
   id: string;
@@ -69,7 +69,7 @@ export function BoardColumn({
       className={cn(
         'group flex h-full w-[350px] flex-col rounded-lg transition-colors',
         'touch-none select-none',
-        isDragging && 'scale-[1.02] rotate-2 opacity-90 shadow-lg',
+        isDragging && 'rotate-2 scale-[1.02] opacity-90 shadow-lg',
         isOverlay && 'shadow-lg'
       )}
     >
@@ -88,8 +88,8 @@ export function BoardColumn({
           <GripVertical className="h-4 w-4" />
         </div>
         <div className="flex flex-1 items-center gap-2">
-          <h3 className="text-sm font-medium">{column.title}</h3>
-          <Badge variant="secondary" className="text-xs font-normal">
+          <h3 className="font-medium text-sm">{column.title}</h3>
+          <Badge variant="secondary" className="font-normal text-xs">
             {tasks.length}
           </Badge>
         </div>

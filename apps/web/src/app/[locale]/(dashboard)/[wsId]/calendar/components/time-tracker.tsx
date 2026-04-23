@@ -572,17 +572,17 @@ export default function TimeTracker({ wsId, tasks = [] }: TimeTrackerProps) {
               {isRunning ? (
                 <>
                   <Square className="h-3 w-3 animate-pulse" />
-                  <span className="hidden font-mono @[100px]:inline">
+                  <span className="@[100px]:inline hidden font-mono">
                     {formatTime(elapsedTime)}
                   </span>
-                  <span className="font-mono @[100px]:hidden">
+                  <span className="@[100px]:hidden font-mono">
                     {Math.floor(elapsedTime / 60)}m
                   </span>
                 </>
               ) : (
                 <>
                   <Timer className="h-3 w-3" />
-                  <span className="hidden @[100px]:inline">Time Tracker</span>
+                  <span className="@[100px]:inline hidden">Time Tracker</span>
                   <span className="@[100px]:hidden">Timer</span>
                 </>
               )}
@@ -601,7 +601,7 @@ export default function TimeTracker({ wsId, tasks = [] }: TimeTrackerProps) {
                 Track your time across tasks and projects with detailed
                 analytics
               </span>
-              <span className="mt-2 text-xs text-muted-foreground">
+              <span className="mt-2 text-muted-foreground text-xs">
                 <br />•{' '}
                 <span className="rounded bg-muted px-1 py-0.5 text-xs">
                   ⌘/Ctrl + Enter
@@ -637,26 +637,26 @@ export default function TimeTracker({ wsId, tasks = [] }: TimeTrackerProps) {
               </TabsTrigger>
             </TabsList>
 
-            <div className="grid grid-cols-1 gap-6 @5xl:grid-cols-2">
+            <div className="grid @5xl:grid-cols-2 grid-cols-1 gap-6">
               {/* Current Session Tab */}
               <TabsContent value="current" className="@container space-y-4">
                 <Card className="transition-all hover:shadow-md">
                   <CardHeader className="pb-3">
-                    <CardTitle className="flex items-center gap-2 text-base @lg:text-lg">
-                      <Clock className="h-4 w-4 @lg:h-5 @lg:w-5" />
+                    <CardTitle className="flex items-center gap-2 @lg:text-lg text-base">
+                      <Clock className="@lg:h-5 h-4 @lg:w-5 w-4" />
                       Current Session
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {currentSession ? (
                       <div className="space-y-4 text-center">
-                        <div className="relative overflow-hidden rounded-lg bg-gradient-to-br from-red-50 to-red-100 p-4 @lg:p-6 dark:from-red-950/20 dark:to-red-900/20">
+                        <div className="relative overflow-hidden rounded-lg bg-gradient-to-br from-red-50 to-red-100 @lg:p-6 p-4 dark:from-red-950/20 dark:to-red-900/20">
                           <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-red-500/10 to-transparent opacity-30"></div>
                           <div className="relative">
-                            <div className="font-mono text-3xl font-bold text-red-600 transition-all duration-300 @lg:text-4xl dark:text-red-400">
+                            <div className="font-bold font-mono @lg:text-4xl text-3xl text-red-600 transition-all duration-300 dark:text-red-400">
                               {formatTime(elapsedTime)}
                             </div>
-                            <div className="mt-2 flex items-center gap-2 text-xs text-red-600/70 @lg:text-sm dark:text-red-400/70">
+                            <div className="mt-2 flex items-center gap-2 @lg:text-sm text-red-600/70 text-xs dark:text-red-400/70">
                               <div className="h-2 w-2 animate-pulse rounded-full bg-red-500"></div>
                               Started at{' '}
                               {new Date(
@@ -667,19 +667,19 @@ export default function TimeTracker({ wsId, tasks = [] }: TimeTrackerProps) {
                         </div>
 
                         <div className="text-left">
-                          <h3 className="text-sm font-medium @lg:text-base">
+                          <h3 className="font-medium @lg:text-base text-sm">
                             {currentSession.title}
                           </h3>
                           {currentSession.description && (
-                            <p className="mt-1 text-xs text-muted-foreground @lg:text-sm">
+                            <p className="mt-1 @lg:text-sm text-muted-foreground text-xs">
                               {currentSession.description}
                             </p>
                           )}
-                          <div className="mt-2 flex flex-wrap gap-1 @lg:gap-2">
+                          <div className="mt-2 flex flex-wrap @lg:gap-2 gap-1">
                             {currentSession.category && (
                               <Badge
                                 className={cn(
-                                  'text-xs @lg:text-sm',
+                                  '@lg:text-sm text-xs',
                                   getCategoryColor(
                                     currentSession.category.color || 'BLUE'
                                   )
@@ -691,7 +691,7 @@ export default function TimeTracker({ wsId, tasks = [] }: TimeTrackerProps) {
                             {currentSession.task && (
                               <Badge
                                 variant="outline"
-                                className="text-xs @lg:text-sm"
+                                className="@lg:text-sm text-xs"
                               >
                                 {currentSession.task.name}
                               </Badge>
@@ -722,9 +722,9 @@ export default function TimeTracker({ wsId, tasks = [] }: TimeTrackerProps) {
                       </div>
                     ) : (
                       <div className="space-y-4">
-                        <div className="rounded-lg border-2 border-dashed border-muted-foreground/25 p-4 text-center @lg:p-6">
-                          <Clock className="mx-auto mb-2 h-8 w-8 text-muted-foreground @lg:h-12 @lg:w-12" />
-                          <p className="text-sm text-muted-foreground @lg:text-base">
+                        <div className="rounded-lg border-2 border-muted-foreground/25 border-dashed @lg:p-6 p-4 text-center">
+                          <Clock className="mx-auto mb-2 @lg:h-12 h-8 @lg:w-12 w-8 text-muted-foreground" />
+                          <p className="@lg:text-base text-muted-foreground text-sm">
                             Ready to start tracking time
                           </p>
                         </div>
@@ -733,7 +733,7 @@ export default function TimeTracker({ wsId, tasks = [] }: TimeTrackerProps) {
                           placeholder="What are you working on?"
                           value={newSessionTitle}
                           onChange={(e) => setNewSessionTitle(e.target.value)}
-                          className="text-sm @lg:text-base"
+                          className="@lg:text-base text-sm"
                         />
 
                         <Textarea
@@ -743,15 +743,15 @@ export default function TimeTracker({ wsId, tasks = [] }: TimeTrackerProps) {
                             setNewSessionDescription(e.target.value)
                           }
                           rows={3}
-                          className="text-sm @lg:text-base"
+                          className="@lg:text-base text-sm"
                         />
 
-                        <div className="grid grid-cols-1 gap-2 @lg:grid-cols-2">
+                        <div className="grid @lg:grid-cols-2 grid-cols-1 gap-2">
                           <Select
                             value={selectedCategoryId}
                             onValueChange={setSelectedCategoryId}
                           >
-                            <SelectTrigger className="text-sm @lg:text-base">
+                            <SelectTrigger className="@lg:text-base text-sm">
                               <SelectValue placeholder="Category" />
                             </SelectTrigger>
                             <SelectContent>
@@ -780,7 +780,7 @@ export default function TimeTracker({ wsId, tasks = [] }: TimeTrackerProps) {
                             value={selectedTaskId}
                             onValueChange={setSelectedTaskId}
                           >
-                            <SelectTrigger className="text-sm @lg:text-base">
+                            <SelectTrigger className="@lg:text-base text-sm">
                               <SelectValue placeholder="Link to task (optional)" />
                             </SelectTrigger>
                             <SelectContent>
@@ -808,7 +808,7 @@ export default function TimeTracker({ wsId, tasks = [] }: TimeTrackerProps) {
                           templates.length > 0) && (
                           <div className="space-y-3">
                             <div className="flex items-center justify-between">
-                              <Label className="text-xs text-muted-foreground">
+                              <Label className="text-muted-foreground text-xs">
                                 Quick Start:
                               </Label>
                               <Button
@@ -869,17 +869,17 @@ export default function TimeTracker({ wsId, tasks = [] }: TimeTrackerProps) {
 
                 {/* Completion Celebration */}
                 {justCompleted && (
-                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm duration-300 animate-in fade-in">
-                    <div className="rounded-lg border bg-background p-6 shadow-xl duration-300 animate-in zoom-in">
+                  <div className="fade-in fixed inset-0 z-50 flex animate-in items-center justify-center bg-black/20 backdrop-blur-sm duration-300">
+                    <div className="zoom-in animate-in rounded-lg border bg-background p-6 shadow-xl duration-300">
                       <div className="text-center">
                         <CheckCircle className="mx-auto mb-4 h-12 w-12 animate-pulse text-green-500" />
-                        <h3 className="mb-2 text-lg font-semibold">
+                        <h3 className="mb-2 font-semibold text-lg">
                           Session Completed!
                         </h3>
                         <p className="mb-1 text-muted-foreground">
                           {justCompleted.title}
                         </p>
-                        <p className="text-sm font-medium text-green-600">
+                        <p className="font-medium text-green-600 text-sm">
                           {formatDuration(justCompleted.duration_seconds || 0)}{' '}
                           tracked
                         </p>
@@ -889,16 +889,16 @@ export default function TimeTracker({ wsId, tasks = [] }: TimeTrackerProps) {
                 )}
 
                 {/* Stats Cards */}
-                <div className="grid grid-cols-3 gap-2 @lg:gap-4">
+                <div className="grid grid-cols-3 @lg:gap-4 gap-2">
                   <Card className="group cursor-pointer transition-all hover:scale-105 hover:shadow-md">
-                    <CardContent className="p-3 @lg:p-4">
+                    <CardContent className="@lg:p-4 p-3">
                       <div className="flex items-center gap-2">
                         <Calendar className="h-4 w-4 text-blue-500 transition-transform group-hover:scale-110" />
                         <div className="min-w-0">
-                          <p className="text-xs text-muted-foreground @lg:text-sm">
+                          <p className="@lg:text-sm text-muted-foreground text-xs">
                             Today
                           </p>
-                          <p className="truncate text-sm font-medium transition-all @lg:text-base">
+                          <p className="truncate font-medium @lg:text-base text-sm transition-all">
                             {formatDuration(timerStats.todayTime)}
                           </p>
                         </div>
@@ -907,14 +907,14 @@ export default function TimeTracker({ wsId, tasks = [] }: TimeTrackerProps) {
                   </Card>
 
                   <Card className="group cursor-pointer transition-all hover:scale-105 hover:shadow-md">
-                    <CardContent className="p-3 @lg:p-4">
+                    <CardContent className="@lg:p-4 p-3">
                       <div className="flex items-center gap-2">
                         <TrendingUp className="h-4 w-4 text-green-500 transition-transform group-hover:scale-110" />
                         <div className="min-w-0">
-                          <p className="text-xs text-muted-foreground @lg:text-sm">
+                          <p className="@lg:text-sm text-muted-foreground text-xs">
                             Week
                           </p>
-                          <p className="truncate text-sm font-medium transition-all @lg:text-base">
+                          <p className="truncate font-medium @lg:text-base text-sm transition-all">
                             {formatDuration(timerStats.weekTime)}
                           </p>
                         </div>
@@ -923,14 +923,14 @@ export default function TimeTracker({ wsId, tasks = [] }: TimeTrackerProps) {
                   </Card>
 
                   <Card className="group cursor-pointer transition-all hover:scale-105 hover:shadow-md">
-                    <CardContent className="p-3 @lg:p-4">
+                    <CardContent className="@lg:p-4 p-3">
                       <div className="flex items-center gap-2">
                         <Zap className="h-4 w-4 text-purple-500 transition-transform group-hover:scale-110" />
                         <div className="min-w-0">
-                          <p className="text-xs text-muted-foreground @lg:text-sm">
+                          <p className="@lg:text-sm text-muted-foreground text-xs">
                             Month
                           </p>
-                          <p className="truncate text-sm font-medium transition-all @lg:text-base">
+                          <p className="truncate font-medium @lg:text-base text-sm transition-all">
                             {formatDuration(timerStats.monthTime)}
                           </p>
                         </div>
@@ -945,8 +945,8 @@ export default function TimeTracker({ wsId, tasks = [] }: TimeTrackerProps) {
                 <Card className="transition-all hover:shadow-md">
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
-                      <CardTitle className="flex items-center gap-2 text-base @lg:text-lg">
-                        <Zap className="h-4 w-4 @lg:h-5 @lg:w-5" />
+                      <CardTitle className="flex items-center gap-2 @lg:text-lg text-base">
+                        <Zap className="@lg:h-5 h-4 @lg:w-5 w-4" />
                         Recent Sessions
                       </CardTitle>
                       <Popover>
@@ -959,7 +959,7 @@ export default function TimeTracker({ wsId, tasks = [] }: TimeTrackerProps) {
                         <PopoverContent className="w-80" align="end">
                           <div className="space-y-4">
                             <div>
-                              <Label className="text-sm font-medium">
+                              <Label className="font-medium text-sm">
                                 Category
                               </Label>
                               <Select
@@ -995,7 +995,7 @@ export default function TimeTracker({ wsId, tasks = [] }: TimeTrackerProps) {
                               </Select>
                             </div>
                             <div>
-                              <Label className="text-sm font-medium">
+                              <Label className="font-medium text-sm">
                                 Task
                               </Label>
                               <Select
@@ -1029,12 +1029,12 @@ export default function TimeTracker({ wsId, tasks = [] }: TimeTrackerProps) {
                             <Sparkles className="absolute -top-1 -right-1 h-6 w-6 animate-pulse text-primary" />
                           )}
                         </div>
-                        <p className="text-sm text-muted-foreground @lg:text-base">
+                        <p className="@lg:text-base text-muted-foreground text-sm">
                           {recentSessions.length === 0
                             ? 'Ready to start tracking time?'
                             : 'No sessions match your filters'}
                         </p>
-                        <p className="mt-1 text-xs text-muted-foreground @lg:text-sm">
+                        <p className="mt-1 @lg:text-sm text-muted-foreground text-xs">
                           {recentSessions.length === 0
                             ? 'Start your first timer to see your productivity journey!'
                             : 'Try adjusting your filters above'}
@@ -1052,32 +1052,32 @@ export default function TimeTracker({ wsId, tasks = [] }: TimeTrackerProps) {
                         )}
                       </div>
                     ) : (
-                      <div className="max-h-96 space-y-3 overflow-y-auto @lg:max-h-[500px]">
+                      <div className="@lg:max-h-[500px] max-h-96 space-y-3 overflow-y-auto">
                         {filteredSessions.map((session) => (
                           <div
                             key={session.id}
                             className={cn(
-                              'group relative rounded-lg border p-3 transition-all hover:bg-accent/50 hover:shadow-sm @lg:p-4',
+                              'group relative rounded-lg border @lg:p-4 p-3 transition-all hover:bg-accent/50 hover:shadow-sm',
                               justCompleted?.id === session.id &&
-                                'bg-green-50 ring-2 ring-green-500 duration-500 animate-in slide-in-from-top dark:bg-green-950/20'
+                                'slide-in-from-top animate-in bg-green-50 ring-2 ring-green-500 duration-500 dark:bg-green-950/20'
                             )}
                           >
                             <div className="flex items-start justify-between gap-3">
                               <div className="min-w-0 flex-1">
-                                <h4 className="truncate text-sm font-medium @lg:text-base">
+                                <h4 className="truncate font-medium @lg:text-base text-sm">
                                   {session.title}
                                 </h4>
                                 {session.description && (
-                                  <p className="mt-1 line-clamp-2 text-xs text-muted-foreground @lg:text-sm">
+                                  <p className="mt-1 line-clamp-2 @lg:text-sm text-muted-foreground text-xs">
                                     {session.description}
                                   </p>
                                 )}
-                                <div className="mt-2 flex flex-wrap items-center gap-1 @lg:gap-2">
+                                <div className="mt-2 flex flex-wrap items-center @lg:gap-2 gap-1">
                                   {session.category && (
                                     <Badge
                                       variant="secondary"
                                       className={cn(
-                                        'text-xs @lg:text-sm',
+                                        '@lg:text-sm text-xs',
                                         getCategoryColor(
                                           session.category.color || 'BLUE'
                                         )
@@ -1089,7 +1089,7 @@ export default function TimeTracker({ wsId, tasks = [] }: TimeTrackerProps) {
                                   {session.task && (
                                     <Badge
                                       variant="outline"
-                                      className="text-xs @lg:text-sm"
+                                      className="@lg:text-sm text-xs"
                                     >
                                       {session.task.name}
                                     </Badge>
@@ -1099,12 +1099,12 @@ export default function TimeTracker({ wsId, tasks = [] }: TimeTrackerProps) {
 
                               <div className="flex items-start gap-2">
                                 <div className="text-right">
-                                  <p className="text-sm font-medium @lg:text-base">
+                                  <p className="font-medium @lg:text-base text-sm">
                                     {session.duration_seconds
                                       ? formatDuration(session.duration_seconds)
                                       : '-'}
                                   </p>
-                                  <p className="text-xs text-muted-foreground @lg:text-sm">
+                                  <p className="@lg:text-sm text-muted-foreground text-xs">
                                     {new Date(
                                       session.start_time
                                     ).toLocaleDateString()}
@@ -1173,18 +1173,18 @@ export default function TimeTracker({ wsId, tasks = [] }: TimeTrackerProps) {
               <TabsContent value="history" className="@container space-y-4">
                 <Card className="transition-all hover:shadow-md">
                   <CardHeader className="pb-3">
-                    <CardTitle className="flex items-center gap-2 text-base @lg:text-lg">
-                      <History className="h-4 w-4 @lg:h-5 @lg:w-5" />
+                    <CardTitle className="flex items-center gap-2 @lg:text-lg text-base">
+                      <History className="@lg:h-5 h-4 @lg:w-5 w-4" />
                       Session History
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="py-8 text-center">
-                      <History className="mx-auto mb-3 h-8 w-8 text-muted-foreground @lg:h-12 @lg:w-12" />
-                      <p className="text-sm text-muted-foreground @lg:text-base">
+                      <History className="mx-auto mb-3 @lg:h-12 h-8 @lg:w-12 w-8 text-muted-foreground" />
+                      <p className="@lg:text-base text-muted-foreground text-sm">
                         Full history view coming soon
                       </p>
-                      <p className="mt-1 text-xs text-muted-foreground @lg:text-sm">
+                      <p className="mt-1 @lg:text-sm text-muted-foreground text-xs">
                         Advanced filtering, date ranges, and export features
                       </p>
                     </div>

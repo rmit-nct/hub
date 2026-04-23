@@ -1,6 +1,3 @@
-import { SectionProps } from './index';
-import RolePermission from './role-permission';
-import { permissionGroups } from '@/lib/permissions';
 import {
   Accordion,
   AccordionContent,
@@ -12,6 +9,9 @@ import { ShieldCheck } from '@ncthub/ui/icons';
 import { Separator } from '@ncthub/ui/separator';
 import { useTranslations } from 'next-intl';
 import { Fragment } from 'react';
+import { permissionGroups } from '@/lib/permissions';
+import type { SectionProps } from './index';
+import RolePermission from './role-permission';
 
 export default function RoleFormPermissionsSection({
   wsId,
@@ -66,7 +66,7 @@ export default function RoleFormPermissionsSection({
                   {group.icon}
                   <div className="flex flex-wrap items-center gap-2">
                     {group.title}
-                    <span className="flex items-center gap-1 rounded border px-1 text-sm font-bold">
+                    <span className="flex items-center gap-1 rounded border px-1 font-bold text-sm">
                       <span className="text-dynamic-orange">
                         {enabledPermissionsCount.find((x) => x.id === group.id)
                           ?.count || 0}

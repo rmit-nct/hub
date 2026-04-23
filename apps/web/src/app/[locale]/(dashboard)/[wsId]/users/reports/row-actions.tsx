@@ -1,6 +1,6 @@
 'use client';
 
-import { WorkspaceUserReport } from '@ncthub/types/db';
+import type { WorkspaceUserReport } from '@ncthub/types/db';
 import { Button } from '@ncthub/ui/button';
 import {
   DropdownMenu,
@@ -9,9 +9,9 @@ import {
   DropdownMenuTrigger,
 } from '@ncthub/ui/dropdown-menu';
 import { Ellipsis, Eye } from '@ncthub/ui/icons';
-import { Row } from '@tanstack/react-table';
-import { useTranslations } from 'next-intl';
+import type { Row } from '@tanstack/react-table';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 interface UserReportRowActionsProps {
   row: Row<WorkspaceUserReport>;

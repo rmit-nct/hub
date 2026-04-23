@@ -1,11 +1,11 @@
-import { transactionCategoryColumns } from './columns';
-import { TransactionCategoryForm } from './form';
-import { CustomDataTable } from '@/components/custom-data-table';
 import { createClient } from '@ncthub/supabase/next/server';
-import { TransactionCategory } from '@ncthub/types/primitives/TransactionCategory';
+import type { TransactionCategory } from '@ncthub/types/primitives/TransactionCategory';
 import FeatureSummary from '@ncthub/ui/custom/feature-summary';
 import { Separator } from '@ncthub/ui/separator';
 import { getTranslations } from 'next-intl/server';
+import { CustomDataTable } from '@/components/custom-data-table';
+import { transactionCategoryColumns } from './columns';
+import { TransactionCategoryForm } from './form';
 
 interface Props {
   params: Promise<{

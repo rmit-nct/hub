@@ -2,8 +2,8 @@
 
 import { DropdownMenuItem } from '@ncthub/ui/dropdown-menu';
 import { LogOut } from '@ncthub/ui/icons';
-import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 export function LogoutDropdownItem() {
   const t = useTranslations('common');

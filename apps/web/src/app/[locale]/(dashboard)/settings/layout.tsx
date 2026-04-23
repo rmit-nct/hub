@@ -1,7 +1,7 @@
+import { Separator } from '@ncthub/ui/separator';
+import type React from 'react';
 import Navbar from '../../navbar';
 import NavbarPadding from '../../navbar-padding';
-import { Separator } from '@ncthub/ui/separator';
-import React from 'react';
 
 interface LayoutProps {
   children: React.ReactNode;

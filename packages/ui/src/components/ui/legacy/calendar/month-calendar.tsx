@@ -1,7 +1,6 @@
 'use client';
 
-import { useCalendar } from '../../../../hooks/use-calendar';
-import { Workspace } from '@ncthub/types/db';
+import type { Workspace } from '@ncthub/types/db';
 import { Button } from '@ncthub/ui/button';
 import {
   HoverCard,
@@ -23,6 +22,7 @@ import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import { Clock, Plus } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import { useCalendar } from '../../../../hooks/use-calendar';
 
 dayjs.extend(timezone);
 
@@ -195,7 +195,7 @@ export const MonthCalendar = ({ date }: MonthCalendarProps) => {
           <div
             key={day}
             className={cn(
-              'py-2 text-sm font-medium',
+              'py-2 font-medium text-sm',
               (day === 'Sun' || day === 'Sat') &&
                 !settings.appearance.showWeekends
                 ? 'text-muted-foreground/50'
@@ -251,7 +251,7 @@ export const MonthCalendar = ({ date }: MonthCalendarProps) => {
                       variant="ghost"
                       size="icon"
                       className={cn(
-                        'h-6 w-6 opacity-0 group-hover:opacity-100 hover:bg-primary/10 hover:opacity-100 focus:opacity-100',
+                        'h-6 w-6 opacity-0 hover:bg-primary/10 hover:opacity-100 focus:opacity-100 group-hover:opacity-100',
                         isHidden && 'opacity-0 group-hover:opacity-50'
                       )}
                       onClick={() => handleAddEvent(day)}
@@ -273,7 +273,7 @@ export const MonthCalendar = ({ date }: MonthCalendarProps) => {
                       <HoverCardTrigger asChild>
                         <div
                           className={cn(
-                            'cursor-pointer items-center gap-1 truncate rounded px-1.5 py-1 text-xs font-medium',
+                            'cursor-pointer items-center gap-1 truncate rounded px-1.5 py-1 font-medium text-xs',
                             bg,
                             text
                           )}
@@ -288,15 +288,15 @@ export const MonthCalendar = ({ date }: MonthCalendarProps) => {
                         className="w-80"
                       >
                         <div className="space-y-2">
-                          <h4 className="line-clamp-2 font-medium break-words">
+                          <h4 className="line-clamp-2 break-words font-medium">
                             {event.title || 'Untitled event'}
                           </h4>
                           {event.description && (
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-muted-foreground text-sm">
                               {event.description}
                             </p>
                           )}
-                          <div className="flex items-center text-xs text-muted-foreground">
+                          <div className="flex items-center text-muted-foreground text-xs">
                             <Clock className="mr-1 h-3 w-3" />
                             <span>{formatEventTime(event)}</span>
                           </div>
@@ -307,7 +307,7 @@ export const MonthCalendar = ({ date }: MonthCalendarProps) => {
                 })}
 
                 {events.length > 3 && (
-                  <button className="w-full rounded-sm bg-muted px-1 py-0.5 text-xs font-medium text-muted-foreground hover:bg-muted/80">
+                  <button className="w-full rounded-sm bg-muted px-1 py-0.5 font-medium text-muted-foreground text-xs hover:bg-muted/80">
                     +{events.length - 3} more
                   </button>
                 )}

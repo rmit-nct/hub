@@ -16,7 +16,7 @@ import {
   Strikethrough,
 } from '@ncthub/ui/icons';
 import { Toggle } from '@ncthub/ui/toggle';
-import { Editor } from '@tiptap/react';
+import type { Editor } from '@tiptap/react';
 
 interface ToolBarProps {
   editor: Editor | null;

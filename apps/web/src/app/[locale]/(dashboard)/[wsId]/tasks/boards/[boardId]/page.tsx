@@ -1,8 +1,8 @@
-import { BoardSummary } from './_components/board-summary';
-import { BoardViews } from './_components/board-views';
-import { getTaskBoard } from '@/lib/task-helper';
 import { createClient } from '@ncthub/supabase/next/server';
 import { notFound } from 'next/navigation';
+import { getTaskBoard } from '@/lib/task-helper';
+import { BoardSummary } from './_components/board-summary';
+import { BoardViews } from './_components/board-views';
 
 interface Props {
   params: Promise<{

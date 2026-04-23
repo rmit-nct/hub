@@ -1,5 +1,5 @@
 import { Switch } from '@ncthub/ui/switch';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 export default function RolePermission({
   icon,

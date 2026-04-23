@@ -1,4 +1,4 @@
-import { AuditLog, Operation } from '@ncthub/types/primitives/audit-log';
+import type { AuditLog, Operation } from '@ncthub/types/primitives/audit-log';
 
 const getLeadingLabel = (t: any, op: Operation, table: string) => {
   switch (op) {

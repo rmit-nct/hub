@@ -1,6 +1,6 @@
 'use client';
 
-import { TransactionCategory } from '@ncthub/types/primitives/TransactionCategory';
+import type { TransactionCategory } from '@ncthub/types/primitives/TransactionCategory';
 import { Button } from '@ncthub/ui/button';
 import { SelectField } from '@ncthub/ui/custom/select-field';
 import {
@@ -15,8 +15,8 @@ import { useForm } from '@ncthub/ui/hooks/use-form';
 import { toast } from '@ncthub/ui/hooks/use-toast';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
-import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import * as z from 'zod';
 

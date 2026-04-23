@@ -1,18 +1,19 @@
 'use client';
 
+import type React from 'react';
+import { useCallback, useState } from 'react';
 import CheckmateModal from './checkmate';
 import Tile from './piece';
 import {
-  Piece,
-  PieceType,
-  TeamType,
   horizontal,
   pieces as initialPieces,
+  type Piece,
+  type PieceType,
+  TeamType,
   vertical,
 } from './pieceSetup';
 import PromotionModal from './promotion';
 import { useDragAndDrop } from './use-dnd';
-import React, { useCallback, useState } from 'react';
 
 export default function ChessBoard() {
   const [pieces, setPieces] = useState<Piece[]>(initialPieces);
@@ -77,13 +78,13 @@ export default function ChessBoard() {
   };
 
   // Create the board
-  let board: React.ReactNode[] = [];
+  const board: React.ReactNode[] = [];
 
   for (let i = 0; i <= horizontal.length + 1; i++) {
     const row: React.ReactNode[] = [];
 
     for (let j = 0; j <= vertical.length + 1; j++) {
-      let piece = pieces.find((p) => p.x === j && p.y === i);
+      const piece = pieces.find((p) => p.x === j && p.y === i);
 
       if (i === 0 || i === horizontal.length + 1) {
         if (j === 0 || j === vertical.length + 1) {
@@ -148,7 +149,7 @@ export default function ChessBoard() {
   return (
     <div className="top-[50%] left-[50%] m-auto grid w-full max-w-sm p-6 sm:rounded-lg md:max-w-4xl lg:max-w-6xl">
       <div className="m-auto grid grid-cols-1 items-center justify-center">
-        <div className="flex items-center justify-center text-lg font-medium uppercase">
+        <div className="flex items-center justify-center font-medium text-lg uppercase">
           {turnAnnouncement}
         </div>
 
@@ -189,7 +190,7 @@ export default function ChessBoard() {
             className="my-2 h-[1px] w-full shrink-0 bg-border md:my-4"
           ></div>
           <button
-            className="inline-flex h-10 w-full items-center justify-center rounded-md bg-destructive px-4 py-2 text-sm font-semibold whitespace-nowrap text-destructive-foreground ring-offset-background transition-colors hover:bg-destructive/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+            className="inline-flex h-10 w-full items-center justify-center whitespace-nowrap rounded-md bg-destructive px-4 py-2 font-semibold text-destructive-foreground text-sm ring-offset-background transition-colors hover:bg-destructive/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
             onClick={handleRestart}
           >
             Restart

@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@ncthub/supabase/next/client';
-import {
+import type {
   Task,
   TaskAssignee,
   TaskBoard,

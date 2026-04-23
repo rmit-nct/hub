@@ -1,7 +1,6 @@
 'use client';
 
-import { WalletForm } from './form';
-import { Wallet } from '@ncthub/types/primitives/Wallet';
+import type { Wallet } from '@ncthub/types/primitives/Wallet';
 import { Button } from '@ncthub/ui/button';
 import ModifiableDialogTrigger from '@ncthub/ui/custom/modifiable-dialog-trigger';
 import {
@@ -13,11 +12,12 @@ import {
 } from '@ncthub/ui/dropdown-menu';
 import { toast } from '@ncthub/ui/hooks/use-toast';
 import { Ellipsis, Eye } from '@ncthub/ui/icons';
-import { Row } from '@tanstack/react-table';
-import { useTranslations } from 'next-intl';
+import type { Row } from '@tanstack/react-table';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import { WalletForm } from './form';
 
 interface WalletRowActionsProps {
   row: Row<Wallet>;

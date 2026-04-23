@@ -1,9 +1,9 @@
 'use client';
 
 // import { UserRowActions } from './row-actions';
-import { EmailHistoryEntry } from '@ncthub/types/db';
+import type { EmailHistoryEntry } from '@ncthub/types/db';
 import { DataTableColumnHeader } from '@ncthub/ui/custom/tables/data-table-column-header';
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import 'dayjs/locale/vi';
 import moment from 'moment';
 

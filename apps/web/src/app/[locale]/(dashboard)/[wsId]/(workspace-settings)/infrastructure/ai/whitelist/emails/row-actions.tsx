@@ -1,6 +1,6 @@
 'use client';
 
-import { AIWhitelistEmail } from '@ncthub/types/db';
+import type { AIWhitelistEmail } from '@ncthub/types/db';
 import { Button } from '@ncthub/ui/button';
 import {
   DropdownMenu,
@@ -9,9 +9,9 @@ import {
   DropdownMenuTrigger,
 } from '@ncthub/ui/dropdown-menu';
 import { Ellipsis } from '@ncthub/ui/icons';
-import { Row } from '@tanstack/react-table';
-import { useTranslations } from 'next-intl';
+import type { Row } from '@tanstack/react-table';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 interface AIWhitelistEmailRowActionsProps {
   row: Row<AIWhitelistEmail>;

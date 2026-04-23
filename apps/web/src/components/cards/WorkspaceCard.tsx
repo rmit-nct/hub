@@ -1,4 +1,4 @@
-import { Workspace } from '@ncthub/types/db';
+import type { Workspace } from '@ncthub/types/db';
 import { Separator } from '@ncthub/ui/separator';
 import moment from 'moment';
 

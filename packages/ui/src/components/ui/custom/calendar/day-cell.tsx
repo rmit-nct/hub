@@ -1,14 +1,14 @@
+import { cn } from '@ncthub/utils/format';
+import { isAfter } from 'date-fns';
+import { Fragment } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../tooltip';
 import {
-  WorkspaceUserAttendance,
   getAttendanceGroupNames,
   isCurrentMonth,
   isDateAbsent,
   isDateAttended,
+  type WorkspaceUserAttendance,
 } from './utils';
-import { cn } from '@ncthub/utils/format';
-import { isAfter } from 'date-fns';
-import { Fragment } from 'react';
 
 export const DayCell: React.FC<{
   day: Date;
@@ -63,7 +63,7 @@ export const DayCell: React.FC<{
           {getAttendanceGroupNames(day, attendanceData).map(
             (groupName, idx) => (
               <div key={groupName + idx} className="flex items-center gap-1">
-                <span className="text-xs font-semibold">{groupName}</span>
+                <span className="font-semibold text-xs">{groupName}</span>
               </div>
             )
           )}

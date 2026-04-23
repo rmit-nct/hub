@@ -1,10 +1,10 @@
 'use client';
 
-import { UserFieldRowActions } from './row-actions';
-import { WorkspaceUserField } from '@ncthub/types/primitives/WorkspaceUserField';
+import type { WorkspaceUserField } from '@ncthub/types/primitives/WorkspaceUserField';
 import { DataTableColumnHeader } from '@ncthub/ui/custom/tables/data-table-column-header';
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import moment from 'moment';
+import { UserFieldRowActions } from './row-actions';
 
 export const userFieldColumns = (
   t: any,
@@ -109,7 +109,7 @@ export const userFieldColumns = (
             {(row.getValue('possible_values') as string[]).map((value) => (
               <div
                 key={value}
-                className="line-clamp-1 max-w-32 rounded-lg border border-foreground/10 bg-foreground/5 p-1 break-all"
+                className="line-clamp-1 max-w-32 break-all rounded-lg border border-foreground/10 bg-foreground/5 p-1"
               >
                 {value}
               </div>

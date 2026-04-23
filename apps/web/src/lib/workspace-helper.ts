@@ -1,13 +1,13 @@
-import { permissions as rolePermissions } from './permissions';
-import { DEV_MODE, ROOT_WORKSPACE_ID } from '@/constants/common';
 import { createAdminClient, createClient } from '@ncthub/supabase/next/server';
-import {
+import type {
   PermissionId,
   Workspace,
-  type WorkspaceUserRole,
+  WorkspaceUserRole,
 } from '@ncthub/types/db';
-import { WorkspaceSecret } from '@ncthub/types/primitives/WorkspaceSecret';
+import type { WorkspaceSecret } from '@ncthub/types/primitives/WorkspaceSecret';
 import { notFound, redirect } from 'next/navigation';
+import { DEV_MODE, ROOT_WORKSPACE_ID } from '@/constants/common';
+import { permissions as rolePermissions } from './permissions';
 
 export async function getWorkspace(id: string, requireUserRole = false) {
   const supabase = await createClient();

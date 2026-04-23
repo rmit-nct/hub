@@ -1,5 +1,5 @@
 import { createClient } from '@ncthub/supabase/next/server';
-import { ProductCategory } from '@ncthub/types/primitives/ProductCategory';
+import type { ProductCategory } from '@ncthub/types/primitives/ProductCategory';
 import { NextResponse } from 'next/server';
 
 interface Params {

@@ -1,11 +1,11 @@
 'use client';
 
-import UserMonthAttendance from './user-month-attendance';
-import useSearchParams from '@/hooks/useSearchParams';
-import { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
+import type { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
 import { DataTablePagination } from '@ncthub/ui/custom/tables/data-table-pagination';
 import { useTranslations } from 'next-intl';
-import { FC } from 'react';
+import type { FC } from 'react';
+import useSearchParams from '@/hooks/useSearchParams';
+import UserMonthAttendance from './user-month-attendance';
 
 interface SearchParams {
   q?: string;

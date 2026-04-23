@@ -1,5 +1,5 @@
-import { User } from '@ncthub/types/primitives/User';
-import { AuditLog } from '@ncthub/types/primitives/audit-log';
+import type { AuditLog } from '@ncthub/types/primitives/audit-log';
+import type { User } from '@ncthub/types/primitives/User';
 import { useLocale, useTranslations } from 'next-intl';
 import useSWR from 'swr';
 

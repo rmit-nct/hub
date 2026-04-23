@@ -1,4 +1,4 @@
-import { Timezone } from '@ncthub/types/primitives/Timezone';
+import type { Timezone } from '@ncthub/types/primitives/Timezone';
 import { Separator } from '@ncthub/ui/separator';
 import moment from 'moment';
 

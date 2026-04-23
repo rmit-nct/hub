@@ -1,7 +1,7 @@
 'use client';
 
 import { createClient } from '@ncthub/supabase/next/client';
-import { Transaction } from '@ncthub/types/primitives/Transaction';
+import type { Transaction } from '@ncthub/types/primitives/Transaction';
 import { Button } from '@ncthub/ui/button';
 import {
   DialogClose,

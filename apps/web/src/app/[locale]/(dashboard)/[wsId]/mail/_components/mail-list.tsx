@@ -1,8 +1,8 @@
-import { Mail } from '../data';
-import { useMail } from '../use-mail';
 import { ScrollArea } from '@ncthub/ui/scroll-area';
 import { cn } from '@ncthub/utils/format';
 import { formatDistanceToNow } from 'date-fns';
+import type { Mail } from '../data';
+import { useMail } from '../use-mail';
 
 interface MailListProps {
   items: Mail[];
@@ -49,9 +49,9 @@ export function MailList({ items }: MailListProps) {
                   })}
                 </div>
               </div>
-              <div className="text-xs font-medium">{item.subject}</div>
+              <div className="font-medium text-xs">{item.subject}</div>
             </div>
-            <div className="line-clamp-2 text-xs text-muted-foreground">
+            <div className="line-clamp-2 text-muted-foreground text-xs">
               {item.text.substring(0, 300)}
             </div>
             {/*{item.labels.length ? (*/}

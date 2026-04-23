@@ -1,5 +1,5 @@
 import { createClient } from '@ncthub/supabase/next/server';
-import { UserGroup } from '@ncthub/types/primitives/UserGroup';
+import type { UserGroup } from '@ncthub/types/primitives/UserGroup';
 import { Button } from '@ncthub/ui/button';
 import { YearCalendar } from '@ncthub/ui/custom/calendar/year-calendar';
 import FeatureSummary from '@ncthub/ui/custom/feature-summary';
@@ -13,9 +13,9 @@ import { Separator } from '@ncthub/ui/separator';
 import { cn } from '@ncthub/utils/format';
 import dayjs from 'dayjs';
 import 'dayjs/locale/vi';
-import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 
 interface Props {
   params: Promise<{
@@ -36,7 +36,7 @@ export default async function UserGroupDetailsPage({ params }: Props) {
       <FeatureSummary
         title={
           <>
-            <h1 className="w-full text-2xl font-bold">
+            <h1 className="w-full font-bold text-2xl">
               {group.name || t('ws-user-groups.singular')}
             </h1>
             <Separator className="my-2" />

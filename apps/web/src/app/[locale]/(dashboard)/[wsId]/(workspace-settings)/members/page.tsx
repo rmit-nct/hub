@@ -1,17 +1,17 @@
-import InviteMemberButton from './_components/invite-member-button';
-import MemberList from './_components/member-list';
-import MemberTabs from './_components/member-tabs';
+import { createAdminClient, createClient } from '@ncthub/supabase/next/server';
+import type { User } from '@ncthub/types/primitives/User';
+import { Separator } from '@ncthub/ui/separator';
+import { getCurrentUser } from '@ncthub/utils/user-helper';
+import { redirect } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 import {
   getPermissions,
   getWorkspace,
   verifyHasSecrets,
 } from '@/lib/workspace-helper';
-import { createAdminClient, createClient } from '@ncthub/supabase/next/server';
-import { User } from '@ncthub/types/primitives/User';
-import { Separator } from '@ncthub/ui/separator';
-import { getCurrentUser } from '@ncthub/utils/user-helper';
-import { getTranslations } from 'next-intl/server';
-import { redirect } from 'next/navigation';
+import InviteMemberButton from './_components/invite-member-button';
+import MemberList from './_components/member-list';
+import MemberTabs from './_components/member-tabs';
 
 interface Props {
   params: Promise<{
@@ -47,7 +47,7 @@ export default async function WorkspaceMembersPage({
     <>
       <div className="flex flex-col justify-between gap-4 rounded-lg border border-border bg-foreground/5 p-4 md:flex-row md:items-start">
         <div>
-          <h1 className="text-2xl font-bold">
+          <h1 className="font-bold text-2xl">
             {t('workspace-settings-layout.members')}
           </h1>
           <p className="text-foreground/80">{t('ws-members.description')}</p>

@@ -1,18 +1,18 @@
-import { invoiceColumns } from '../../../finance/invoices/columns';
-import UserMonthAttendance from '../../attendance/user-month-attendance';
-import { CustomDataTable } from '@/components/custom-data-table';
 import { createClient } from '@ncthub/supabase/next/server';
-import { WorkspaceUserReport } from '@ncthub/types/db';
-import { Invoice } from '@ncthub/types/primitives/Invoice';
-import { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
+import type { WorkspaceUserReport } from '@ncthub/types/db';
+import type { Invoice } from '@ncthub/types/primitives/Invoice';
+import type { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
 import { Button } from '@ncthub/ui/button';
 import { TicketCheck, Users } from '@ncthub/ui/icons';
 import { Separator } from '@ncthub/ui/separator';
 import moment from 'moment';
-import { getTranslations } from 'next-intl/server';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
+import { CustomDataTable } from '@/components/custom-data-table';
+import { invoiceColumns } from '../../../finance/invoices/columns';
+import UserMonthAttendance from '../../attendance/user-month-attendance';
 
 interface Props {
   params: Promise<{
@@ -65,7 +65,7 @@ export default async function WorkspaceUserDetailsPage({
   return (
     <div className="flex min-h-full w-full flex-col">
       {data.avatar_url && (
-        <div className="mb-2 flex flex-col items-center justify-center gap-2 text-lg font-semibold">
+        <div className="mb-2 flex flex-col items-center justify-center gap-2 font-semibold text-lg">
           <Image
             width={128}
             height={128}
@@ -80,7 +80,7 @@ export default async function WorkspaceUserDetailsPage({
       <div className="grid h-fit gap-4 md:grid-cols-2">
         <div className="grid gap-4">
           <div className="grid h-fit gap-2 rounded-lg border p-4">
-            <div className="text-lg font-semibold">Thông tin cơ bản</div>
+            <div className="font-semibold text-lg">Thông tin cơ bản</div>
             <Separator />
             {data.display_name && (
               <div>
@@ -132,7 +132,7 @@ export default async function WorkspaceUserDetailsPage({
             <div
               className={`h-full gap-2 ${groups && groups.length ? 'grid content-start' : 'flex flex-col items-center justify-center'}`}
             >
-              <div className="text-lg font-semibold">
+              <div className="font-semibold text-lg">
                 {t('joined_groups')} ({groupCount})
               </div>
               <Separator />
@@ -165,7 +165,7 @@ export default async function WorkspaceUserDetailsPage({
             <div
               className={`h-full gap-2 ${reports && reports.length ? 'grid content-start' : 'flex flex-col items-center justify-center'}`}
             >
-              <div className="text-lg font-semibold">
+              <div className="font-semibold text-lg">
                 {t('reports')} ({reportCount})
               </div>
               <Separator />
@@ -198,7 +198,7 @@ export default async function WorkspaceUserDetailsPage({
             <div
               className={`h-full gap-2 ${groups && groups.length ? 'grid content-start' : 'flex flex-col items-center justify-center'}`}
             >
-              <div className="text-lg font-semibold">
+              <div className="font-semibold text-lg">
                 {t('coupons')} ({couponCount})
               </div>
               <Separator />
@@ -229,7 +229,7 @@ export default async function WorkspaceUserDetailsPage({
         </div>
       </div>
 
-      <div className="mt-4 mb-2 text-lg font-semibold">
+      <div className="mt-4 mb-2 font-semibold text-lg">
         Hoá đơn ({invoiceCount})
       </div>
       <CustomDataTable

@@ -1,9 +1,7 @@
 'use client';
 
-import { AttendanceDialog } from './attendance-dialogue';
-import useSearchParams from '@/hooks/useSearchParams';
 import { createClient } from '@ncthub/supabase/next/client';
-import {
+import type {
   WorkspaceUser,
   WorkspaceUserAttendance,
 } from '@ncthub/types/primitives/WorkspaceUser';
@@ -18,10 +16,12 @@ import {
 import { cn } from '@ncthub/utils/format';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { format, isAfter, parse, startOfDay } from 'date-fns';
-import { useLocale } from 'next-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useLocale } from 'next-intl';
 import { Fragment, useEffect, useMemo, useState } from 'react';
+import useSearchParams from '@/hooks/useSearchParams';
+import { AttendanceDialog } from './attendance-dialogue';
 
 export default function UserMonthAttendance({
   wsId,
@@ -92,16 +92,20 @@ export default function UserMonthAttendance({
 
   // includes all days of the week, starting from monday to sunday
   const days = Array.from({ length: 7 }, (_, i) => {
-    let newDay = new Date(currentDate);
+    const newDay = new Date(currentDate);
     newDay.setDate(currentDate.getDate() - currentDate.getDay() + i + 1);
     return newDay.toLocaleString(locale, { weekday: 'narrow' });
   });
 
   // includes all days of the month, starting from monday (which could be from the previous month) to sunday (which could be from the next month)
   const daysInMonth = Array.from({ length: 42 }, (_, i) => {
-    let newDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-    let dayOfWeek = newDay.getDay();
-    let adjustment = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // adjust for Monday start
+    const newDay = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      1
+    );
+    const dayOfWeek = newDay.getDay();
+    const adjustment = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // adjust for Monday start
     newDay.setDate(newDay.getDate() - adjustment + i);
     return newDay;
   });
@@ -236,7 +240,7 @@ export default function UserMonthAttendance({
               {differentGroups?.map((group, idx) => (
                 <div
                   key={group.id + idx}
-                  className="flex-none rounded border bg-foreground/5 px-2 py-0.5 text-xs font-semibold whitespace-nowrap dark:bg-foreground/10"
+                  className="flex-none whitespace-nowrap rounded border bg-foreground/5 px-2 py-0.5 font-semibold text-xs dark:bg-foreground/10"
                 >
                   {group.name}
                 </div>
@@ -252,11 +256,11 @@ export default function UserMonthAttendance({
       <div>
         <div className="grid h-full gap-8">
           <div key={2024} className="flex h-full flex-col">
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-xl font-bold md:text-2xl">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 font-bold text-xl md:text-2xl">
               <div className="flex items-center gap-1">
                 {thisYear}
                 <div className="mx-2 h-4 w-px rotate-30 bg-foreground/20" />
-                <span className="text-lg font-semibold md:text-xl">
+                <span className="font-semibold text-lg md:text-xl">
                   {thisMonth}
                 </span>
               </div>
@@ -382,7 +386,7 @@ export default function UserMonthAttendance({
                                 key={groupName + idx}
                                 className="flex items-center gap-1"
                               >
-                                <span className="text-xs font-semibold">
+                                <span className="font-semibold text-xs">
                                   {groupName}
                                 </span>
                               </div>

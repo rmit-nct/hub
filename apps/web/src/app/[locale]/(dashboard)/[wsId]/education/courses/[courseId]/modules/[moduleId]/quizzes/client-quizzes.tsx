@@ -1,6 +1,5 @@
 'use client';
 
-import QuizForm from '../../../../../quizzes/form';
 import { createClient } from '@ncthub/supabase/next/client';
 import {
   AlertDialog,
@@ -17,9 +16,10 @@ import { Button } from '@ncthub/ui/button';
 import { Pencil, Trash, X } from '@ncthub/ui/icons';
 import { Separator } from '@ncthub/ui/separator';
 import { cn } from '@ncthub/utils/format';
-import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import QuizForm from '../../../../../quizzes/form';
 
 export default function ClientQuizzes({
   wsId,
@@ -104,7 +104,7 @@ export default function ClientQuizzes({
           ) : (
             <>
               <div className="quiz-question">
-                <h3 className="text-lg font-semibold">
+                <h3 className="font-semibold text-lg">
                   {quiz?.question || '...'}
                 </h3>
                 <Separator className="my-2" />

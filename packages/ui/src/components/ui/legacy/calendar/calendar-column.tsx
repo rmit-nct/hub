@@ -1,6 +1,6 @@
+import { cn } from '@ncthub/utils/format';
 import { CalendarCell } from './calendar-cell';
 import { DAY_HEIGHT, HOUR_HEIGHT } from './config';
-import { cn } from '@ncthub/utils/format';
 
 interface CalendarColumnProps {
   date: string;
@@ -13,7 +13,7 @@ export const CalendarColumn = ({ date, last }: CalendarColumnProps) => {
   return (
     <div
       className={cn(
-        'relative grid border border-r border-border/30',
+        'relative grid border border-border/30 border-r',
         last && 'border-r-border'
       )}
       style={{

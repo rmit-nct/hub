@@ -1,20 +1,20 @@
-import UserAvatar from '../../../settings-avatar';
-import DisplayNameInput from '../../../settings-display-name-input';
-import EmailInput from '../../../settings-email-input';
-import DefaultWorkspaceSetting from './default-workspace-setting';
-import ResetPasswordForm from './reset-password-form';
 import { SettingItemTab } from '@ncthub/ui/custom/settings-item-tab';
 import { Separator } from '@ncthub/ui/separator';
 import { getCurrentUser } from '@ncthub/utils/user-helper';
 import { getTranslations } from 'next-intl/server';
 import { Suspense } from 'react';
+import UserAvatar from '../../../settings-avatar';
+import DisplayNameInput from '../../../settings-display-name-input';
+import EmailInput from '../../../settings-email-input';
+import DefaultWorkspaceSetting from './default-workspace-setting';
+import ResetPasswordForm from './reset-password-form';
 
 export default async function AccountSettingsPage() {
   const t = await getTranslations();
   const user = await getCurrentUser();
 
   return (
-    <div className="grid gap-1 md:max-w-lg md:min-w-max">
+    <div className="grid gap-1 md:min-w-max md:max-w-lg">
       <SettingItemTab
         title={t('settings-account.avatar')}
         description={t('settings-account.avatar-description')}
@@ -74,7 +74,7 @@ export default async function AccountSettingsPage() {
           title="Email"
           description={t('settings-account.email-description')}
         >
-          <EmailInput oldEmail={user!?.email} newEmail={user!?.new_email} />
+          <EmailInput oldEmail={user?.email} newEmail={user?.new_email} />
         </SettingItemTab>
       </Suspense>
 

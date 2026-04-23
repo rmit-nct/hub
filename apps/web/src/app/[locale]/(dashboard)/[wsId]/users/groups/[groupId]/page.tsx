@@ -1,14 +1,7 @@
-import { getUserColumns } from '../../database/columns';
-import { Filter } from '../../filters';
-import ExternalGroupMembers from './external-group-members';
-import GroupMemberForm from './form';
-import PostsClient from './posts-client';
-import GroupSchedule from './schedule';
-import { CustomDataTable } from '@/components/custom-data-table';
 import { createClient } from '@ncthub/supabase/next/server';
-import { UserGroup } from '@ncthub/types/primitives/UserGroup';
-import { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
-import { WorkspaceUserField } from '@ncthub/types/primitives/WorkspaceUserField';
+import type { UserGroup } from '@ncthub/types/primitives/UserGroup';
+import type { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
+import type { WorkspaceUserField } from '@ncthub/types/primitives/WorkspaceUserField';
 import { Button } from '@ncthub/ui/button';
 import FeatureSummary from '@ncthub/ui/custom/feature-summary';
 import {
@@ -21,9 +14,16 @@ import {
 } from '@ncthub/ui/icons';
 import { Separator } from '@ncthub/ui/separator';
 import { cn } from '@ncthub/utils/format';
-import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
+import { CustomDataTable } from '@/components/custom-data-table';
+import { getUserColumns } from '../../database/columns';
+import { Filter } from '../../filters';
+import ExternalGroupMembers from './external-group-members';
+import GroupMemberForm from './form';
+import PostsClient from './posts-client';
+import GroupSchedule from './schedule';
 
 interface SearchParams {
   q?: string;
@@ -76,7 +76,7 @@ export default async function UserGroupDetailsPage({
       <FeatureSummary
         title={
           <>
-            <h1 className="w-full text-2xl font-bold">
+            <h1 className="w-full font-bold text-2xl">
               {group.name || t('ws-user-groups.singular')}
             </h1>
             <Separator className="my-2" />
@@ -161,7 +161,7 @@ export default async function UserGroupDetailsPage({
         {/* <div className="border-border bg-foreground/5 flex flex-col justify-between gap-4 rounded-lg border p-4 opacity-50 md:flex-row md:items-start"> */}
         {excludedUserGroups.length ? (
           <div className="flex flex-col rounded-lg border border-border bg-foreground/5 p-4">
-            <div className="mb-2 text-xl font-semibold">
+            <div className="mb-2 font-semibold text-xl">
               {t('ws-roles.members')}
             </div>
 
@@ -174,7 +174,7 @@ export default async function UserGroupDetailsPage({
         ) : null}
 
         <div className="flex flex-col rounded-lg border border-border bg-foreground/5 p-4">
-          <div className="mb-2 text-xl font-semibold">
+          <div className="mb-2 font-semibold text-xl">
             {t('ws-user-group-details.schedule')}
           </div>
           <GroupSchedule wsId={wsId} groupId={groupId} />
@@ -191,7 +191,7 @@ export default async function UserGroupDetailsPage({
 
         {lpCount ? (
           <div className="flex flex-col rounded-lg border border-border bg-foreground/5 p-4">
-            <div className="mb-2 text-xl font-semibold">
+            <div className="mb-2 font-semibold text-xl">
               {t('user-data-table.linked_products')}
               {!!lpCount && ` (${lpCount})`}
             </div>
@@ -203,7 +203,7 @@ export default async function UserGroupDetailsPage({
                 >
                   <Box className="mr-2 h-8 w-8" />
                   <div>
-                    <div className="text-lg font-semibold">{product.name}</div>
+                    <div className="font-semibold text-lg">{product.name}</div>
                     {product.description && (
                       <div className="text-sm">{product.description}</div>
                     )}

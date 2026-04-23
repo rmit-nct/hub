@@ -1,3 +1,17 @@
+import { createClient } from '@ncthub/supabase/next/server';
+import type { AuroraForecast } from '@ncthub/types/db';
+import FeatureSummary from '@ncthub/ui/custom/feature-summary';
+import { Separator } from '@ncthub/ui/separator';
+import { getCurrentSupabaseUser } from '@ncthub/utils/user-helper';
+import { notFound } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
+import { Suspense } from 'react';
+import LoadingStatisticCard from '@/components/loading-statistic-card';
+import {
+  getPermissions,
+  getWorkspace,
+  verifySecret,
+} from '@/lib/workspace-helper';
 import type { FinanceDashboardSearchParams } from '../finance/(dashboard)/page';
 import AdvancedAnalytics from './advanced-analytics';
 import AuroraActions from './aurora-actions';
@@ -15,26 +29,12 @@ import {
   PromotionsStatistics,
   SuppliersStatistics,
   UnitsStatistics,
-  UserGroupTagsStatistics,
   UserGroupsStatistics,
+  UserGroupTagsStatistics,
   UserReportsStatistics,
   UsersStatistics,
   WarehousesStatistics,
 } from './statistics';
-import LoadingStatisticCard from '@/components/loading-statistic-card';
-import {
-  getPermissions,
-  getWorkspace,
-  verifySecret,
-} from '@/lib/workspace-helper';
-import { createClient } from '@ncthub/supabase/next/server';
-import type { AuroraForecast } from '@ncthub/types/db';
-import FeatureSummary from '@ncthub/ui/custom/feature-summary';
-import { Separator } from '@ncthub/ui/separator';
-import { getCurrentSupabaseUser } from '@ncthub/utils/user-helper';
-import { getTranslations } from 'next-intl/server';
-import { notFound } from 'next/navigation';
-import { Suspense } from 'react';
 
 interface Props {
   params: Promise<{

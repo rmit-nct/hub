@@ -1,12 +1,12 @@
 'use client';
 
-import { UserGroupRowActions } from './row-actions';
-import { UserGroup } from '@ncthub/types/primitives/UserGroup';
+import type { UserGroup } from '@ncthub/types/primitives/UserGroup';
 import { DataTableColumnHeader } from '@ncthub/ui/custom/tables/data-table-column-header';
 import { Check, X } from '@ncthub/ui/icons';
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import moment from 'moment';
 import Link from 'next/link';
+import { UserGroupRowActions } from './row-actions';
 
 export const getUserGroupColumns = (
   t: any,

@@ -1,8 +1,9 @@
-import WorkspaceAvatarSettings from './avatar';
-import BasicInfo from './basic-info';
-import FeatureToggles from './feature-toggles';
-import WorkspaceLogoSettings from './logo';
-import Security from './security';
+import { Button } from '@ncthub/ui/button';
+import FeatureSummary from '@ncthub/ui/custom/feature-summary';
+import { UserPlus } from '@ncthub/ui/icons';
+import { Separator } from '@ncthub/ui/separator';
+import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 import { DEV_MODE, ROOT_WORKSPACE_ID } from '@/constants/common';
 import {
   getPermissions,
@@ -10,12 +11,11 @@ import {
   getWorkspace,
   verifyHasSecrets,
 } from '@/lib/workspace-helper';
-import { Button } from '@ncthub/ui/button';
-import FeatureSummary from '@ncthub/ui/custom/feature-summary';
-import { UserPlus } from '@ncthub/ui/icons';
-import { Separator } from '@ncthub/ui/separator';
-import { getTranslations } from 'next-intl/server';
-import Link from 'next/link';
+import WorkspaceAvatarSettings from './avatar';
+import BasicInfo from './basic-info';
+import FeatureToggles from './feature-toggles';
+import WorkspaceLogoSettings from './logo';
+import Security from './security';
 
 interface Props {
   params: Promise<{
@@ -103,7 +103,7 @@ export default async function WorkspaceSettingsPage({ params }: Props) {
             <Separator className="col-span-full" />
 
             <div className="col-span-full flex flex-col rounded-lg border border-border bg-foreground/5 p-4">
-              <div className="mb-1 text-2xl font-bold">
+              <div className="mb-1 font-bold text-2xl">
                 {t('ws-settings.features')}
               </div>
               <div className="mb-4 font-semibold text-foreground/80">

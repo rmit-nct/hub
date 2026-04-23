@@ -1,11 +1,11 @@
-import { secretColumns } from './columns';
-import SecretForm from './form';
-import { CustomDataTable } from '@/components/custom-data-table';
 import { createClient } from '@ncthub/supabase/next/server';
-import { WorkspaceSecret } from '@ncthub/types/primitives/WorkspaceSecret';
+import type { WorkspaceSecret } from '@ncthub/types/primitives/WorkspaceSecret';
 import FeatureSummary from '@ncthub/ui/custom/feature-summary';
 import { Separator } from '@ncthub/ui/separator';
 import { getTranslations } from 'next-intl/server';
+import { CustomDataTable } from '@/components/custom-data-table';
+import { secretColumns } from './columns';
+import SecretForm from './form';
 
 interface Props {
   params: Promise<{

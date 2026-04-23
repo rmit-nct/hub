@@ -1,7 +1,6 @@
 'use client';
 
-import AIModelSelector from './model-selector';
-import { AIPrompt } from '@ncthub/types/db';
+import type { AIPrompt } from '@ncthub/types/db';
 import {
   Accordion,
   AccordionContent,
@@ -23,10 +22,11 @@ import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
 import { Separator } from '@ncthub/ui/separator';
 import { Textarea } from '@ncthub/ui/textarea';
-import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import * as z from 'zod';
+import AIModelSelector from './model-selector';
 
 interface Props {
   wsId: string;

@@ -1,10 +1,10 @@
 'use client';
 
-import { DEV_MODE, PROD_MODE, ROOT_WORKSPACE_ID } from '@/constants/common';
-import { User } from '@ncthub/types/primitives/User';
+import type { User } from '@ncthub/types/primitives/User';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ReactNode, useEffect, useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
+import { DEV_MODE, PROD_MODE, ROOT_WORKSPACE_ID } from '@/constants/common';
 
 export interface NavLink {
   title: string;
@@ -71,7 +71,7 @@ export function Navigation({
   }, [pathname]);
 
   return (
-    <div className="mb-4 scrollbar-none flex flex-none gap-1 overflow-x-auto font-semibold">
+    <div className="scrollbar-none mb-4 flex flex-none gap-1 overflow-x-auto font-semibold">
       {navLinks.map((link) => {
         // If the link is disabled, don't render it
         if (link?.disabled) return null;

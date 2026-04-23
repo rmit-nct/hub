@@ -1,9 +1,9 @@
-import { FinanceDashboardSearchParams } from '../../finance/(dashboard)/page';
+import { createClient } from '@ncthub/supabase/next/server';
+import dayjs, { type OpUnitType } from 'dayjs';
+import { getTranslations } from 'next-intl/server';
 import StatisticCard from '@/components/cards/StatisticCard';
 import { getPermissions } from '@/lib/workspace-helper';
-import { createClient } from '@ncthub/supabase/next/server';
-import dayjs, { OpUnitType } from 'dayjs';
-import { getTranslations } from 'next-intl/server';
+import type { FinanceDashboardSearchParams } from '../../finance/(dashboard)/page';
 
 const enabled = true;
 

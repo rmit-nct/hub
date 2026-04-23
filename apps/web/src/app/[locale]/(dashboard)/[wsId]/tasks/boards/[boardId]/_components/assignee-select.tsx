@@ -130,7 +130,7 @@ export function AssigneeSelect({ taskId, assignees = [], onUpdate }: Props) {
                 ))}
               </div>
               {assignees.length > 3 && (
-                <span className="text-xs text-muted-foreground">
+                <span className="text-muted-foreground text-xs">
                   +{assignees.length - 3}
                 </span>
               )}

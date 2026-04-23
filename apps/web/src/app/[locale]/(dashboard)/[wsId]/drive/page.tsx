@@ -1,20 +1,20 @@
-import NewActions from './new-actions';
-import StorageObjectsTable from './table';
-import { getPermissions, verifyHasSecrets } from '@/lib/workspace-helper';
-import { formatBytes } from '@/utils/file-helper';
-import { joinPath } from '@/utils/path-helper';
 import {
   createClient,
   createDynamicClient,
 } from '@ncthub/supabase/next/server';
 import {
   EMPTY_FOLDER_PLACEHOLDER_NAME,
-  StorageObject,
+  type StorageObject,
 } from '@ncthub/types/primitives/StorageObject';
 import FeatureSummary from '@ncthub/ui/custom/feature-summary';
 import { Separator } from '@ncthub/ui/separator';
-import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
+import { getPermissions, verifyHasSecrets } from '@/lib/workspace-helper';
+import { formatBytes } from '@/utils/file-helper';
+import { joinPath } from '@/utils/path-helper';
+import NewActions from './new-actions';
+import StorageObjectsTable from './table';
 
 interface Props {
   params: Promise<{
@@ -64,37 +64,37 @@ export default async function WorkspaceStorageObjectsPage({
 
       <div className="mb-4 grid gap-4 text-center md:grid-cols-2 xl:grid-cols-4">
         <div className="rounded-lg border border-border bg-foreground/5 p-4">
-          <h2 className="text-lg font-semibold">
+          <h2 className="font-semibold text-lg">
             {t('ws-storage-objects.total_files')}
           </h2>
           <Separator className="my-2" />
-          <div className="text-3xl font-bold">{count}</div>
+          <div className="font-bold text-3xl">{count}</div>
         </div>
 
         <div className="rounded-lg border border-border bg-foreground/5 p-4">
-          <h2 className="text-lg font-semibold">
+          <h2 className="font-semibold text-lg">
             {t('ws-storage-objects.total_size')}
           </h2>
           <Separator className="my-2" />
-          <div className="text-3xl font-bold">{formatBytes(totalSize)}</div>
+          <div className="font-bold text-3xl">{formatBytes(totalSize)}</div>
         </div>
 
         <div className="rounded-lg border border-border bg-foreground/5 p-4">
-          <h2 className="text-lg font-semibold">
+          <h2 className="font-semibold text-lg">
             {t('ws-storage-objects.largest_file')}
           </h2>
           <Separator className="my-2" />
-          <div className="text-3xl font-bold">
+          <div className="font-bold text-3xl">
             {data.length > 0 ? formatBytes(largestFile?.size as number) : '-'}
           </div>
         </div>
 
         <div className="rounded-lg border border-border bg-foreground/5 p-4">
-          <h2 className="text-lg font-semibold">
+          <h2 className="font-semibold text-lg">
             {t('ws-storage-objects.smallest_file')}
           </h2>
           <Separator className="my-2" />
-          <div className="text-3xl font-bold">
+          <div className="font-bold text-3xl">
             {data.length > 0 ? formatBytes(smallestFile?.size as number) : '-'}
           </div>
         </div>

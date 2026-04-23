@@ -1,5 +1,5 @@
-import { MAPS_DATA } from '../maps';
 import * as Phaser from 'phaser';
+import { MAPS_DATA } from '../maps';
 
 export class MenuScene extends Phaser.Scene {
   constructor() {

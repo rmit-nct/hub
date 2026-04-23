@@ -1,6 +1,6 @@
 import { createClient } from '@ncthub/supabase/next/server';
-import { Product2 } from '@ncthub/types/primitives/Product';
-import { ProductInventory } from '@ncthub/types/primitives/ProductInventory';
+import type { Product2 } from '@ncthub/types/primitives/Product';
+import type { ProductInventory } from '@ncthub/types/primitives/ProductInventory';
 import { NextResponse } from 'next/server';
 
 interface Params {
@@ -16,7 +16,7 @@ export async function POST(req: Request, { params }: Params) {
   };
   const { wsId } = await params;
 
-  let product = await supabase
+  const product = await supabase
     .from('workspace_products')
     .insert({
       ...data,

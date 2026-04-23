@@ -1,8 +1,8 @@
-import { checkEnvVariables } from './common';
-import type { SupabaseUser } from './user';
 import type { Database } from '@ncthub/types/supabase';
 import { createServerClient } from '@supabase/ssr';
 import { type NextRequest, NextResponse } from 'next/server';
+import { checkEnvVariables } from './common';
+import type { SupabaseUser } from './user';
 
 export async function updateSession(request: NextRequest): Promise<{
   res: NextResponse;
