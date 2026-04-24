@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import type { QueueMessage, QueueTodo } from "@/components/ai-elements/queue";
+import type { QueueMessage, QueueTodo } from '@/components/ai-elements/queue';
 import {
   Queue,
   QueueItem,
@@ -17,78 +17,78 @@ import {
   QueueSectionContent,
   QueueSectionLabel,
   QueueSectionTrigger,
-} from "@/components/ai-elements/queue";
-import { ArrowUp, Trash2 } from "lucide-react";
-import { memo, useCallback, useState } from "react";
+} from '@/components/ai-elements/queue';
+import { ArrowUp, Trash2 } from 'lucide-react';
+import { memo, useCallback, useState } from 'react';
 
 const sampleMessages: QueueMessage[] = [
   {
-    id: "msg-1",
-    parts: [{ text: "How do I set up the project?", type: "text" }],
+    id: 'msg-1',
+    parts: [{ text: 'How do I set up the project?', type: 'text' }],
   },
   {
-    id: "msg-2",
-    parts: [{ text: "What is the roadmap for Q4?", type: "text" }],
+    id: 'msg-2',
+    parts: [{ text: 'What is the roadmap for Q4?', type: 'text' }],
   },
   {
-    id: "msg-3",
+    id: 'msg-3',
     parts: [
-      { text: "Update the default logo to this png.", type: "text" },
+      { text: 'Update the default logo to this png.', type: 'text' },
       {
-        filename: "setup-guide.png",
-        mediaType: "image/png",
-        type: "file",
-        url: "https://github.com/haydenbleasel.png",
+        filename: 'setup-guide.png',
+        mediaType: 'image/png',
+        type: 'file',
+        url: 'https://github.com/haydenbleasel.png',
       },
     ],
   },
   {
-    id: "msg-4",
-    parts: [{ text: "Please generate a changelog.", type: "text" }],
+    id: 'msg-4',
+    parts: [{ text: 'Please generate a changelog.', type: 'text' }],
   },
   {
-    id: "msg-5",
-    parts: [{ text: "Add dark mode support.", type: "text" }],
+    id: 'msg-5',
+    parts: [{ text: 'Add dark mode support.', type: 'text' }],
   },
   {
-    id: "msg-6",
-    parts: [{ text: "Optimize database queries.", type: "text" }],
+    id: 'msg-6',
+    parts: [{ text: 'Optimize database queries.', type: 'text' }],
   },
   {
-    id: "msg-7",
-    parts: [{ text: "Set up CI/CD pipeline.", type: "text" }],
+    id: 'msg-7',
+    parts: [{ text: 'Set up CI/CD pipeline.', type: 'text' }],
   },
 ];
 
 const sampleTodos: QueueTodo[] = [
   {
-    description: "Complete the README and API docs",
-    id: "todo-1",
-    status: "completed",
-    title: "Write project documentation",
+    description: 'Complete the README and API docs',
+    id: 'todo-1',
+    status: 'completed',
+    title: 'Write project documentation',
   },
   {
-    id: "todo-2",
-    status: "pending",
-    title: "Implement authentication",
+    id: 'todo-2',
+    status: 'pending',
+    title: 'Implement authentication',
   },
   {
-    description: "Resolve crash on settings page",
-    id: "todo-3",
-    status: "pending",
-    title: "Fix bug #42",
+    description: 'Resolve crash on settings page',
+    id: 'todo-3',
+    status: 'pending',
+    title: 'Fix bug #42',
   },
   {
-    description: "Unify queue and todo state management",
-    id: "todo-4",
-    status: "pending",
-    title: "Refactor queue logic",
+    description: 'Unify queue and todo state management',
+    id: 'todo-4',
+    status: 'pending',
+    title: 'Refactor queue logic',
   },
   {
-    description: "Increase test coverage for hooks",
-    id: "todo-5",
-    status: "pending",
-    title: "Add unit tests",
+    description: 'Increase test coverage for hooks',
+    id: 'todo-5',
+    status: 'pending',
+    title: 'Add unit tests',
   },
 ];
 
@@ -125,7 +125,7 @@ const MessageActions = memo(
   }
 );
 
-MessageActions.displayName = "MessageActions";
+MessageActions.displayName = 'MessageActions';
 
 interface TodoItemProps {
   todo: QueueTodo;
@@ -133,7 +133,7 @@ interface TodoItemProps {
 }
 
 const TodoItem = memo(({ todo, onRemove }: TodoItemProps) => {
-  const isCompleted = todo.status === "completed";
+  const isCompleted = todo.status === 'completed';
   const handleRemove = useCallback(
     () => onRemove(todo.id),
     [onRemove, todo.id]
@@ -161,7 +161,7 @@ const TodoItem = memo(({ todo, onRemove }: TodoItemProps) => {
   );
 });
 
-TodoItem.displayName = "TodoItem";
+TodoItem.displayName = 'TodoItem';
 
 const Example = () => {
   const [messages, setMessages] = useState(sampleMessages);
@@ -176,7 +176,7 @@ const Example = () => {
   }, []);
 
   const handleSendNow = useCallback((id: string) => {
-    console.log("Send now:", id);
+    console.log('Send now:', id);
     setMessages((prev) => prev.filter((msg) => msg.id !== id));
   }, []);
 
@@ -214,17 +214,17 @@ const Example = () => {
               {messages.map((message) => {
                 const summary = (() => {
                   const textParts = message.parts.filter(
-                    (p) => p.type === "text"
+                    (p) => p.type === 'text'
                   );
                   const text = textParts
                     .map((p) => p.text)
-                    .join(" ")
+                    .join(' ')
                     .trim();
-                  return text || "(queued message)";
+                  return text || '(queued message)';
                 })();
 
                 const hasFiles = message.parts.some(
-                  (p) => p.type === "file" && p.url
+                  (p) => p.type === 'file' && p.url
                 );
 
                 return (
@@ -241,15 +241,15 @@ const Example = () => {
                     {hasFiles && (
                       <QueueItemAttachment>
                         {message.parts
-                          .filter((p) => p.type === "file" && p.url)
+                          .filter((p) => p.type === 'file' && p.url)
                           .map((file) => {
                             if (
-                              file.mediaType?.startsWith("image/") &&
+                              file.mediaType?.startsWith('image/') &&
                               file.url
                             ) {
                               return (
                                 <QueueItemImage
-                                  alt={file.filename || "attachment"}
+                                  alt={file.filename || 'attachment'}
                                   key={file.url}
                                   src={file.url}
                                 />
@@ -257,7 +257,7 @@ const Example = () => {
                             }
                             return (
                               <QueueItemFile key={file.url}>
-                                {file.filename || "file"}
+                                {file.filename || 'file'}
                               </QueueItemFile>
                             );
                           })}

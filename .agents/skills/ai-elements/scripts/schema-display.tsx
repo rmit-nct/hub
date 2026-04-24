@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   SchemaDisplay,
@@ -10,7 +10,7 @@ import {
   SchemaDisplayPath,
   SchemaDisplayRequest,
   SchemaDisplayResponse,
-} from "@/components/ai-elements/schema-display";
+} from '@/components/ai-elements/schema-display';
 
 const Example = () => (
   <SchemaDisplay
@@ -18,77 +18,77 @@ const Example = () => (
     method="POST"
     parameters={[
       {
-        description: "The unique identifier of the user",
-        location: "path",
-        name: "userId",
+        description: 'The unique identifier of the user',
+        location: 'path',
+        name: 'userId',
         required: true,
-        type: "string",
+        type: 'string',
       },
       {
-        description: "Save as draft instead of publishing",
-        location: "query",
-        name: "draft",
+        description: 'Save as draft instead of publishing',
+        location: 'query',
+        name: 'draft',
         required: false,
-        type: "boolean",
+        type: 'boolean',
       },
     ]}
     path="/api/users/{userId}/posts"
     requestBody={[
       {
-        description: "The post title",
-        name: "title",
+        description: 'The post title',
+        name: 'title',
         required: true,
-        type: "string",
+        type: 'string',
       },
       {
-        description: "The post content in markdown format",
-        name: "content",
+        description: 'The post content in markdown format',
+        name: 'content',
         required: true,
-        type: "string",
+        type: 'string',
       },
       {
-        description: "Tags for categorization",
-        items: { name: "tag", type: "string" },
-        name: "tags",
-        type: "array",
+        description: 'Tags for categorization',
+        items: { name: 'tag', type: 'string' },
+        name: 'tags',
+        type: 'array',
       },
       {
-        description: "Additional metadata",
-        name: "metadata",
+        description: 'Additional metadata',
+        name: 'metadata',
         properties: [
           {
-            description: "SEO optimized title",
-            name: "seoTitle",
-            type: "string",
+            description: 'SEO optimized title',
+            name: 'seoTitle',
+            type: 'string',
           },
           {
-            description: "Meta description",
-            name: "seoDescription",
-            type: "string",
+            description: 'Meta description',
+            name: 'seoDescription',
+            type: 'string',
           },
         ],
-        type: "object",
+        type: 'object',
       },
     ]}
     responseBody={[
-      { description: "Post ID", name: "id", required: true, type: "string" },
-      { name: "title", required: true, type: "string" },
-      { name: "content", required: true, type: "string" },
+      { description: 'Post ID', name: 'id', required: true, type: 'string' },
+      { name: 'title', required: true, type: 'string' },
+      { name: 'content', required: true, type: 'string' },
       {
-        description: "ISO 8601 timestamp",
-        name: "createdAt",
+        description: 'ISO 8601 timestamp',
+        name: 'createdAt',
         required: true,
-        type: "string",
+        type: 'string',
       },
       {
-        name: "author",
+        name: 'author',
         properties: [
-          { name: "id", required: true, type: "string" },
-          { name: "name", required: true, type: "string" },
-          { name: "avatar", type: "string" },
+          { name: 'id', required: true, type: 'string' },
+          { name: 'name', required: true, type: 'string' },
+          { name: 'avatar', type: 'string' },
         ],
         required: true,
-        type: "object",
+        type: 'object',
       },
     ]}
   >

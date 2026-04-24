@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Confirmation,
@@ -8,9 +8,9 @@ import {
   ConfirmationRejected,
   ConfirmationRequest,
   ConfirmationTitle,
-} from "@/components/ai-elements/confirmation";
-import { CheckIcon, XIcon } from "lucide-react";
-import { nanoid } from "nanoid";
+} from '@/components/ai-elements/confirmation';
+import { CheckIcon, XIcon } from 'lucide-react';
+import { nanoid } from 'nanoid';
 
 const handleReject = () => {
   // In production, call respondToConfirmationRequest with approved: false
@@ -25,7 +25,7 @@ const Example = () => (
     <Confirmation approval={{ id: nanoid() }} state="approval-requested">
       <ConfirmationTitle>
         <ConfirmationRequest>
-          This tool wants to delete the file{" "}
+          This tool wants to delete the file{' '}
           <code className="inline rounded bg-muted px-1.5 py-0.5 text-sm">
             /tmp/example.txt
           </code>

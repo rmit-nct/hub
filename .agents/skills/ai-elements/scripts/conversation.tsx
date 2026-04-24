@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Conversation,
@@ -6,117 +6,117 @@ import {
   ConversationDownload,
   ConversationEmptyState,
   ConversationScrollButton,
-} from "@/components/ai-elements/conversation";
-import { Message, MessageContent } from "@/components/ai-elements/message";
-import { MessageSquareIcon } from "lucide-react";
-import { nanoid } from "nanoid";
-import { useEffect, useState } from "react";
+} from '@/components/ai-elements/conversation';
+import { Message, MessageContent } from '@/components/ai-elements/message';
+import { MessageSquareIcon } from 'lucide-react';
+import { nanoid } from 'nanoid';
+import { useEffect, useState } from 'react';
 
 const messages: {
   key: string;
   content: string;
-  role: "user" | "assistant";
+  role: 'user' | 'assistant';
 }[] = [
   {
-    content: "Hello, how are you?",
+    content: 'Hello, how are you?',
     key: nanoid(),
-    role: "user",
+    role: 'user',
   },
   {
     content: "I'm good, thank you! How can I assist you today?",
     key: nanoid(),
-    role: "assistant",
+    role: 'assistant',
   },
   {
     content: "I'm looking for information about your services.",
     key: nanoid(),
-    role: "user",
+    role: 'user',
   },
   {
     content:
-      "Sure! We offer a variety of AI solutions. What are you interested in?",
+      'Sure! We offer a variety of AI solutions. What are you interested in?',
     key: nanoid(),
-    role: "assistant",
+    role: 'assistant',
   },
   {
     content: "I'm interested in natural language processing tools.",
     key: nanoid(),
-    role: "user",
+    role: 'user',
   },
   {
-    content: "Great choice! We have several NLP APIs. Would you like a demo?",
+    content: 'Great choice! We have several NLP APIs. Would you like a demo?',
     key: nanoid(),
-    role: "assistant",
+    role: 'assistant',
   },
   {
-    content: "Yes, a demo would be helpful.",
+    content: 'Yes, a demo would be helpful.',
     key: nanoid(),
-    role: "user",
+    role: 'user',
   },
   {
-    content: "Alright, I can show you a sentiment analysis example. Ready?",
+    content: 'Alright, I can show you a sentiment analysis example. Ready?',
     key: nanoid(),
-    role: "assistant",
+    role: 'assistant',
   },
   {
-    content: "Yes, please proceed.",
+    content: 'Yes, please proceed.',
     key: nanoid(),
-    role: "user",
+    role: 'user',
   },
   {
     content: "Here is a sample: 'I love this product!' → Positive sentiment.",
     key: nanoid(),
-    role: "assistant",
+    role: 'assistant',
   },
   {
-    content: "Impressive! Can it handle multiple languages?",
+    content: 'Impressive! Can it handle multiple languages?',
     key: nanoid(),
-    role: "user",
+    role: 'user',
   },
   {
-    content: "Absolutely, our models support over 20 languages.",
+    content: 'Absolutely, our models support over 20 languages.',
     key: nanoid(),
-    role: "assistant",
+    role: 'assistant',
   },
   {
-    content: "How do I get started with the API?",
+    content: 'How do I get started with the API?',
     key: nanoid(),
-    role: "user",
+    role: 'user',
   },
   {
-    content: "You can sign up on our website and get an API key instantly.",
+    content: 'You can sign up on our website and get an API key instantly.',
     key: nanoid(),
-    role: "assistant",
+    role: 'assistant',
   },
   {
-    content: "Is there a free trial available?",
+    content: 'Is there a free trial available?',
     key: nanoid(),
-    role: "user",
+    role: 'user',
   },
   {
-    content: "Yes, we offer a 14-day free trial with full access.",
+    content: 'Yes, we offer a 14-day free trial with full access.',
     key: nanoid(),
-    role: "assistant",
+    role: 'assistant',
   },
   {
-    content: "What kind of support do you provide?",
+    content: 'What kind of support do you provide?',
     key: nanoid(),
-    role: "user",
+    role: 'user',
   },
   {
-    content: "We provide 24/7 chat and email support for all users.",
+    content: 'We provide 24/7 chat and email support for all users.',
     key: nanoid(),
-    role: "assistant",
+    role: 'assistant',
   },
   {
-    content: "Thank you for the information!",
+    content: 'Thank you for the information!',
     key: nanoid(),
-    role: "user",
+    role: 'user',
   },
   {
     content: "You're welcome! Let me know if you have any more questions.",
     key: nanoid(),
-    role: "assistant",
+    role: 'assistant',
   },
 ];
 
@@ -125,7 +125,7 @@ const Example = () => {
     {
       key: string;
       content: string;
-      role: "user" | "assistant";
+      role: 'user' | 'assistant';
     }[]
   >([]);
 

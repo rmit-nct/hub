@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Attachment,
@@ -6,46 +6,46 @@ import {
   AttachmentPreview,
   AttachmentRemove,
   Attachments,
-} from "@/components/ai-elements/attachments";
-import { nanoid } from "nanoid";
-import { memo, useCallback, useState } from "react";
+} from '@/components/ai-elements/attachments';
+import { nanoid } from 'nanoid';
+import { memo, useCallback, useState } from 'react';
 
 const initialAttachments = [
   {
-    filename: "mountain-landscape.jpg",
+    filename: 'mountain-landscape.jpg',
     id: nanoid(),
-    mediaType: "image/jpeg",
-    type: "file" as const,
-    url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop",
+    mediaType: 'image/jpeg',
+    type: 'file' as const,
+    url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop',
   },
   {
-    filename: "quarterly-report-2024.pdf",
+    filename: 'quarterly-report-2024.pdf',
     id: nanoid(),
-    mediaType: "application/pdf",
-    type: "file" as const,
-    url: "",
+    mediaType: 'application/pdf',
+    type: 'file' as const,
+    url: '',
   },
   {
-    filename: "product-demo.mp4",
+    filename: 'product-demo.mp4',
     id: nanoid(),
-    mediaType: "video/mp4",
-    type: "file" as const,
-    url: "",
+    mediaType: 'video/mp4',
+    type: 'file' as const,
+    url: '',
   },
   {
-    filename: "api-reference",
+    filename: 'api-reference',
     id: nanoid(),
-    mediaType: "text/html",
-    title: "API Documentation",
-    type: "source-document" as const,
-    url: "https://docs.example.com/api",
+    mediaType: 'text/html',
+    title: 'API Documentation',
+    type: 'source-document' as const,
+    url: 'https://docs.example.com/api',
   },
   {
-    filename: "meeting-recording.mp3",
+    filename: 'meeting-recording.mp3',
     id: nanoid(),
-    mediaType: "audio/mpeg",
-    type: "file" as const,
-    url: "",
+    mediaType: 'audio/mpeg',
+    type: 'file' as const,
+    url: '',
   },
 ];
 
@@ -68,7 +68,7 @@ const AttachmentItem = memo(({ attachment, onRemove }: AttachmentItemProps) => {
   );
 });
 
-AttachmentItem.displayName = "AttachmentItem";
+AttachmentItem.displayName = 'AttachmentItem';
 
 const Example = () => {
   const [attachments, setAttachments] = useState(initialAttachments);

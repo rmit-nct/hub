@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
 import {
   Attachment,
   AttachmentPreview,
   AttachmentRemove,
   Attachments,
-} from "@/components/ai-elements/attachments";
+} from '@/components/ai-elements/attachments';
 import {
   ModelSelector,
   ModelSelectorContent,
@@ -18,8 +18,8 @@ import {
   ModelSelectorLogoGroup,
   ModelSelectorName,
   ModelSelectorTrigger,
-} from "@/components/ai-elements/model-selector";
-import type { PromptInputMessage } from "@/components/ai-elements/prompt-input";
+} from '@/components/ai-elements/model-selector';
+import type { PromptInputMessage } from '@/components/ai-elements/prompt-input';
 import {
   PromptInput,
   PromptInputActionAddAttachments,
@@ -34,8 +34,8 @@ import {
   PromptInputTextarea,
   PromptInputTools,
   usePromptInputAttachments,
-} from "@/components/ai-elements/prompt-input";
-import type { QueueTodo } from "@/components/ai-elements/queue";
+} from '@/components/ai-elements/prompt-input';
+import type { QueueTodo } from '@/components/ai-elements/queue';
 import {
   Queue,
   QueueItem,
@@ -46,45 +46,45 @@ import {
   QueueItemIndicator,
   QueueSection,
   QueueSectionContent,
-} from "@/components/ai-elements/queue";
-import { CheckIcon, GlobeIcon, Trash2 } from "lucide-react";
-import { memo, useCallback, useRef, useState } from "react";
+} from '@/components/ai-elements/queue';
+import { CheckIcon, GlobeIcon, Trash2 } from 'lucide-react';
+import { memo, useCallback, useRef, useState } from 'react';
 
 const models = [
   {
-    chef: "OpenAI",
-    chefSlug: "openai",
-    id: "gpt-4o",
-    name: "GPT-4o",
-    providers: ["openai", "azure"],
+    chef: 'OpenAI',
+    chefSlug: 'openai',
+    id: 'gpt-4o',
+    name: 'GPT-4o',
+    providers: ['openai', 'azure'],
   },
   {
-    chef: "OpenAI",
-    chefSlug: "openai",
-    id: "gpt-4o-mini",
-    name: "GPT-4o Mini",
-    providers: ["openai", "azure"],
+    chef: 'OpenAI',
+    chefSlug: 'openai',
+    id: 'gpt-4o-mini',
+    name: 'GPT-4o Mini',
+    providers: ['openai', 'azure'],
   },
   {
-    chef: "Anthropic",
-    chefSlug: "anthropic",
-    id: "claude-opus-4-20250514",
-    name: "Claude 4 Opus",
-    providers: ["anthropic", "azure", "google", "amazon-bedrock"],
+    chef: 'Anthropic',
+    chefSlug: 'anthropic',
+    id: 'claude-opus-4-20250514',
+    name: 'Claude 4 Opus',
+    providers: ['anthropic', 'azure', 'google', 'amazon-bedrock'],
   },
   {
-    chef: "Anthropic",
-    chefSlug: "anthropic",
-    id: "claude-sonnet-4-20250514",
-    name: "Claude 4 Sonnet",
-    providers: ["anthropic", "azure", "google", "amazon-bedrock"],
+    chef: 'Anthropic',
+    chefSlug: 'anthropic',
+    id: 'claude-sonnet-4-20250514',
+    name: 'Claude 4 Sonnet',
+    providers: ['anthropic', 'azure', 'google', 'amazon-bedrock'],
   },
   {
-    chef: "Google",
-    chefSlug: "google",
-    id: "gemini-2.0-flash-exp",
-    name: "Gemini 2.0 Flash",
-    providers: ["google"],
+    chef: 'Google',
+    chefSlug: 'google',
+    id: 'gemini-2.0-flash-exp',
+    name: 'Gemini 2.0 Flash',
+    providers: ['google'],
   },
 ];
 
@@ -94,7 +94,7 @@ const STREAMING_TIMEOUT = 2000;
 interface AttachmentItemProps {
   attachment: {
     id: string;
-    type: "file";
+    type: 'file';
     filename?: string;
     mediaType?: string;
     url: string;
@@ -115,7 +115,7 @@ const AttachmentItem = memo(({ attachment, onRemove }: AttachmentItemProps) => {
   );
 });
 
-AttachmentItem.displayName = "AttachmentItem";
+AttachmentItem.displayName = 'AttachmentItem';
 
 interface TodoItemProps {
   todo: QueueTodo;
@@ -123,7 +123,7 @@ interface TodoItemProps {
 }
 
 const TodoItem = memo(({ todo, onRemove }: TodoItemProps) => {
-  const isCompleted = todo.status === "completed";
+  const isCompleted = todo.status === 'completed';
   const handleRemove = useCallback(
     () => onRemove(todo.id),
     [onRemove, todo.id]
@@ -151,7 +151,7 @@ const TodoItem = memo(({ todo, onRemove }: TodoItemProps) => {
   );
 });
 
-TodoItem.displayName = "TodoItem";
+TodoItem.displayName = 'TodoItem';
 
 interface ModelItemProps {
   m: (typeof models)[0];
@@ -179,37 +179,37 @@ const ModelItem = memo(({ m, selectedModel, onSelect }: ModelItemProps) => {
   );
 });
 
-ModelItem.displayName = "ModelItem";
+ModelItem.displayName = 'ModelItem';
 
 const sampleTodos: QueueTodo[] = [
   {
-    description: "Complete the README and API docs",
-    id: "todo-1",
-    status: "completed",
-    title: "Write project documentation",
+    description: 'Complete the README and API docs',
+    id: 'todo-1',
+    status: 'completed',
+    title: 'Write project documentation',
   },
   {
-    id: "todo-2",
-    status: "pending",
-    title: "Implement authentication",
+    id: 'todo-2',
+    status: 'pending',
+    title: 'Implement authentication',
   },
   {
-    description: "Resolve crash on settings page",
-    id: "todo-3",
-    status: "pending",
-    title: "Fix bug #42",
+    description: 'Resolve crash on settings page',
+    id: 'todo-3',
+    status: 'pending',
+    title: 'Fix bug #42',
   },
   {
-    description: "Unify queue and todo state management",
-    id: "todo-4",
-    status: "pending",
-    title: "Refactor queue logic",
+    description: 'Unify queue and todo state management',
+    id: 'todo-4',
+    status: 'pending',
+    title: 'Refactor queue logic',
   },
   {
-    description: "Increase test coverage for hooks",
-    id: "todo-5",
-    status: "pending",
-    title: "Add unit tests",
+    description: 'Increase test coverage for hooks',
+    id: 'todo-5',
+    status: 'pending',
+    title: 'Add unit tests',
   },
 ];
 
@@ -245,12 +245,12 @@ const Example = () => {
     setTodos((prev) => prev.filter((todo) => todo.id !== id));
   }, []);
 
-  const [text, setText] = useState<string>("");
+  const [text, setText] = useState<string>('');
   const [model, setModel] = useState<string>(models[0].id);
   const [modelSelectorOpen, setModelSelectorOpen] = useState(false);
   const [status, setStatus] = useState<
-    "submitted" | "streaming" | "ready" | "error"
-  >("ready");
+    'submitted' | 'streaming' | 'ready' | 'error'
+  >('ready');
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleTextChange = useCallback(
@@ -266,7 +266,7 @@ const Example = () => {
   const selectedModelData = models.find((m) => m.id === model);
 
   const stop = () => {
-    console.log("Stopping request...");
+    console.log('Stopping request...');
 
     // Clear any pending timeouts
     if (timeoutRef.current) {
@@ -274,13 +274,13 @@ const Example = () => {
       timeoutRef.current = null;
     }
 
-    setStatus("ready");
+    setStatus('ready');
   };
 
   const handleSubmit = useCallback(
     (message: PromptInputMessage) => {
       // If currently streaming or submitted, stop instead of submitting
-      if (status === "streaming" || status === "submitted") {
+      if (status === 'streaming' || status === 'submitted') {
         stop();
         return;
       }
@@ -292,16 +292,16 @@ const Example = () => {
         return;
       }
 
-      setStatus("submitted");
+      setStatus('submitted');
 
-      console.log("Submitting message:", message);
+      console.log('Submitting message:', message);
 
       setTimeout(() => {
-        setStatus("streaming");
+        setStatus('streaming');
       }, SUBMITTING_TIMEOUT);
 
       timeoutRef.current = setTimeout(() => {
-        setStatus("ready");
+        setStatus('ready');
         timeoutRef.current = null;
       }, STREAMING_TIMEOUT);
     },
@@ -366,7 +366,7 @@ const Example = () => {
                 <ModelSelectorInput placeholder="Search models..." />
                 <ModelSelectorList>
                   <ModelSelectorEmpty>No models found.</ModelSelectorEmpty>
-                  {["OpenAI", "Anthropic", "Google"].map((chef) => (
+                  {['OpenAI', 'Anthropic', 'Google'].map((chef) => (
                     <ModelSelectorGroup heading={chef} key={chef}>
                       {models
                         .filter((m) => m.chef === chef)

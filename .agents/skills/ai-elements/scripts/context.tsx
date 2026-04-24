@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Context,
@@ -11,7 +11,7 @@ import {
   ContextOutputUsage,
   ContextReasoningUsage,
   ContextTrigger,
-} from "@/components/ai-elements/context";
+} from '@/components/ai-elements/context';
 
 const Example = () => (
   <div className="flex items-center justify-center p-8">

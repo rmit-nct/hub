@@ -1,247 +1,247 @@
-"use client";
+'use client';
 
 import {
   Transcription,
   TranscriptionSegment,
-} from "@/components/ai-elements/transcription";
-import type { Experimental_TranscriptionResult as TranscriptionResult } from "ai";
-import { useCallback, useRef, useState } from "react";
+} from '@/components/ai-elements/transcription';
+import type { Experimental_TranscriptionResult as TranscriptionResult } from 'ai';
+import { useCallback, useRef, useState } from 'react';
 
-const segments: TranscriptionResult["segments"] = [
+const segments: TranscriptionResult['segments'] = [
   {
     endSecond: 0.219,
     startSecond: 0.119,
-    text: "You",
+    text: 'You',
   },
   {
     endSecond: 0.259,
     startSecond: 0.219,
-    text: " ",
+    text: ' ',
   },
   {
     endSecond: 0.439,
     startSecond: 0.259,
-    text: "can",
+    text: 'can',
   },
   {
     endSecond: 0.459,
     startSecond: 0.439,
-    text: " ",
+    text: ' ',
   },
   {
     endSecond: 0.699,
     startSecond: 0.459,
-    text: "build",
+    text: 'build',
   },
   {
     endSecond: 0.72,
     startSecond: 0.699,
-    text: " ",
+    text: ' ',
   },
   {
     endSecond: 0.799,
     startSecond: 0.72,
-    text: "and",
+    text: 'and',
   },
   {
     endSecond: 0.879,
     startSecond: 0.799,
-    text: " ",
+    text: ' ',
   },
   {
     endSecond: 1.339,
     startSecond: 0.879,
-    text: "host",
+    text: 'host',
   },
   {
     endSecond: 1.359,
     startSecond: 1.339,
-    text: " ",
+    text: ' ',
   },
   {
     endSecond: 1.539,
     startSecond: 1.36,
-    text: "many",
+    text: 'many',
   },
   {
     endSecond: 1.6,
     startSecond: 1.539,
-    text: " ",
+    text: ' ',
   },
   {
     endSecond: 1.86,
     startSecond: 1.6,
-    text: "different",
+    text: 'different',
   },
   {
     endSecond: 1.899,
     startSecond: 1.86,
-    text: " ",
+    text: ' ',
   },
   {
     endSecond: 2.099,
     startSecond: 1.899,
-    text: "types",
+    text: 'types',
   },
   {
     endSecond: 2.119,
     startSecond: 2.099,
-    text: " ",
+    text: ' ',
   },
   {
     endSecond: 2.2,
     startSecond: 2.119,
-    text: "of",
+    text: 'of',
   },
   {
     endSecond: 2.259,
     startSecond: 2.2,
-    text: " ",
+    text: ' ',
   },
   {
     endSecond: 2.96,
     startSecond: 2.259,
-    text: "applications",
+    text: 'applications',
   },
   {
     endSecond: 3.479,
     startSecond: 2.96,
-    text: " ",
+    text: ' ',
   },
   {
     endSecond: 3.699,
     startSecond: 3.48,
-    text: "from",
+    text: 'from',
   },
   {
     endSecond: 3.779,
     startSecond: 3.699,
-    text: " ",
+    text: ' ',
   },
   {
     endSecond: 4.099,
     startSecond: 3.779,
-    text: "static",
+    text: 'static',
   },
   {
     endSecond: 4.179,
     startSecond: 4.099,
-    text: " ",
+    text: ' ',
   },
   {
     endSecond: 4.519,
     startSecond: 4.179,
-    text: "sites",
+    text: 'sites',
   },
   {
     endSecond: 4.539,
     startSecond: 4.519,
-    text: " ",
+    text: ' ',
   },
   {
     endSecond: 4.759,
     startSecond: 4.539,
-    text: "with",
+    text: 'with',
   },
   {
     endSecond: 4.799,
     startSecond: 4.759,
-    text: " ",
+    text: ' ',
   },
   {
     endSecond: 4.939,
     startSecond: 4.799,
-    text: "your",
+    text: 'your',
   },
   {
     endSecond: 4.96,
     startSecond: 4.939,
-    text: " ",
+    text: ' ',
   },
   {
     endSecond: 5.219,
     startSecond: 4.96,
-    text: "favorite",
+    text: 'favorite',
   },
   {
     endSecond: 5.319,
     startSecond: 5.219,
-    text: " ",
+    text: ' ',
   },
   {
     endSecond: 5.939,
     startSecond: 5.319,
-    text: "framework,",
+    text: 'framework,',
   },
   {
     endSecond: 5.96,
     startSecond: 5.939,
-    text: " ",
+    text: ' ',
   },
   {
     endSecond: 6.519,
     startSecond: 5.96,
-    text: "multi-tenant",
+    text: 'multi-tenant',
   },
   {
     endSecond: 6.559,
     startSecond: 6.519,
-    text: " ",
+    text: ' ',
   },
   {
     endSecond: 7.259,
     startSecond: 6.559,
-    text: "applications",
+    text: 'applications',
   },
   {
     endSecond: 7.699,
     startSecond: 7.259,
-    text: " ",
+    text: ' ',
   },
   {
     endSecond: 7.759,
     startSecond: 7.699,
-    text: "or",
+    text: 'or',
   },
   {
     endSecond: 7.859,
     startSecond: 7.759,
-    text: " ",
+    text: ' ',
   },
   {
     endSecond: 8.739,
     startSecond: 7.859,
-    text: "micro-frontends",
+    text: 'micro-frontends',
   },
   {
     endSecond: 8.78,
     startSecond: 8.739,
-    text: " ",
+    text: ' ',
   },
   {
     endSecond: 8.96,
     startSecond: 8.78,
-    text: "to",
+    text: 'to',
   },
   {
     endSecond: 9.099,
     startSecond: 8.96,
-    text: " ",
+    text: ' ',
   },
   {
     endSecond: 9.779,
     startSecond: 9.099,
-    text: "AI-powered",
+    text: 'AI-powered',
   },
   {
     endSecond: 9.82,
     startSecond: 9.779,
-    text: " ",
+    text: ' ',
   },
   {
     endSecond: 10.439,
     startSecond: 9.82,
-    text: "agents.",
+    text: 'agents.',
   },
 ];
 

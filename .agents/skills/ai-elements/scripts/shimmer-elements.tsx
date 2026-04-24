@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Shimmer } from "@/components/ai-elements/shimmer";
+import { Shimmer } from '@/components/ai-elements/shimmer';
 
 const Example = () => (
   <div className="flex flex-col gap-6 p-8">
@@ -21,7 +21,7 @@ const Example = () => (
     <div className="text-center">
       <p className="mb-3 text-muted-foreground text-sm">As span (inline)</p>
       <div>
-        Processing your request{" "}
+        Processing your request{' '}
         <Shimmer as="span" className="inline">
           with AI magic
         </Shimmer>
