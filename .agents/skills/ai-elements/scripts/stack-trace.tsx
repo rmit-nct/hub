@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   StackTrace,
@@ -11,14 +11,14 @@ import {
   StackTraceExpandButton,
   StackTraceFrames,
   StackTraceHeader,
-} from "@/components/ai-elements/stack-trace";
+} from '@/components/ai-elements/stack-trace';
 
 const handleFilePathClick = (path: string, line: number, col: number) => {
   console.log(`Open file: ${path}:${line}:${col}`);
 };
 
 const handleCopy = () => {
-  console.log("Stack trace copied");
+  console.log('Stack trace copied');
 };
 
 const sampleStackTrace = `TypeError: Cannot read properties of undefined (reading 'map')

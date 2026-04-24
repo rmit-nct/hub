@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Test,
@@ -9,7 +9,7 @@ import {
   TestSuite,
   TestSuiteContent,
   TestSuiteName,
-} from "@/components/ai-elements/test-results";
+} from '@/components/ai-elements/test-results';
 
 const Example = () => (
   <TestResults

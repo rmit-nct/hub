@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   PackageInfo,
@@ -10,7 +10,7 @@ import {
   PackageInfoHeader,
   PackageInfoName,
   PackageInfoVersion,
-} from "@/components/ai-elements/package-info";
+} from '@/components/ai-elements/package-info';
 
 const Example = () => (
   <div className="flex flex-col gap-4">

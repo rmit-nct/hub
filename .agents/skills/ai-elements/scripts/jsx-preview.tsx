@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
 import {
   JSXPreview,
   JSXPreviewContent,
   JSXPreviewError,
-} from "@/components/ai-elements/jsx-preview";
-import { Button } from "@/components/ui/button";
-import { useCallback, useEffect, useRef, useState } from "react";
+} from '@/components/ai-elements/jsx-preview';
+import { Button } from '@/components/ui/button';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 const handleError = (error: Error) => {
-  console.log("JSX Parse Error:", error);
+  console.log('JSX Parse Error:', error);
 };
 
 const fullJsx = `<div className="rounded-lg border bg-card p-6 shadow-sm">
@@ -47,7 +47,7 @@ const Example = () => {
 
   const simulateStreaming = useCallback(() => {
     setIsStreaming(true);
-    setStreamedJsx("");
+    setStreamedJsx('');
     let index = 0;
 
     if (intervalRef.current) {
@@ -85,7 +85,7 @@ const Example = () => {
         size="sm"
         variant="outline"
       >
-        {isStreaming ? "Streaming..." : "Simulate Streaming"}
+        {isStreaming ? 'Streaming...' : 'Simulate Streaming'}
       </Button>
 
       <JSXPreview

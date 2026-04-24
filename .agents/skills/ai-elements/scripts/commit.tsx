@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Commit,
@@ -23,33 +23,33 @@ import {
   CommitMetadata,
   CommitSeparator,
   CommitTimestamp,
-} from "@/components/ai-elements/commit";
+} from '@/components/ai-elements/commit';
 
 const handleCopy = () => {
-  console.log("Copied hash!");
+  console.log('Copied hash!');
 };
 
-const hash = "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0";
+const hash = 'a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0';
 const timestamp = new Date(Date.now() - 1000 * 60 * 60 * 2);
 
 const files = [
   {
     additions: 150,
     deletions: 0,
-    path: "src/auth/login.tsx",
-    status: "added" as const,
+    path: 'src/auth/login.tsx',
+    status: 'added' as const,
   },
   {
     additions: 45,
     deletions: 0,
-    path: "src/auth/logout.tsx",
-    status: "added" as const,
+    path: 'src/auth/logout.tsx',
+    status: 'added' as const,
   },
   {
     additions: 23,
     deletions: 8,
-    path: "src/lib/session.ts",
-    status: "modified" as const,
+    path: 'src/lib/session.ts',
+    status: 'modified' as const,
   },
 ];
 

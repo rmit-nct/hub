@@ -1,23 +1,23 @@
-"use client";
+'use client';
 
-import type { PersonaState } from "@/components/ai-elements/persona";
-import { Persona } from "@/components/ai-elements/persona";
-import { Button } from "@/components/ui/button";
-import { ButtonGroup } from "@/components/ui/button-group";
+import type { PersonaState } from '@/components/ai-elements/persona';
+import { Persona } from '@/components/ai-elements/persona';
+import { Button } from '@/components/ui/button';
+import { ButtonGroup } from '@/components/ui/button-group';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import type { LucideIcon } from "lucide-react";
+} from '@/components/ui/tooltip';
+import type { LucideIcon } from 'lucide-react';
 import {
   BrainIcon,
   CircleIcon,
   EyeClosedIcon,
   MegaphoneIcon,
   MicIcon,
-} from "lucide-react";
-import { memo, useCallback, useState } from "react";
+} from 'lucide-react';
+import { memo, useCallback, useState } from 'react';
 
 const states: {
   state: PersonaState;
@@ -26,28 +26,28 @@ const states: {
 }[] = [
   {
     icon: CircleIcon,
-    label: "Idle",
-    state: "idle",
+    label: 'Idle',
+    state: 'idle',
   },
   {
     icon: MicIcon,
-    label: "Listening",
-    state: "listening",
+    label: 'Listening',
+    state: 'listening',
   },
   {
     icon: BrainIcon,
-    label: "Thinking",
-    state: "thinking",
+    label: 'Thinking',
+    state: 'thinking',
   },
   {
     icon: MegaphoneIcon,
-    label: "Speaking",
-    state: "speaking",
+    label: 'Speaking',
+    state: 'speaking',
   },
   {
     icon: EyeClosedIcon,
-    label: "Asleep",
-    state: "asleep",
+    label: 'Asleep',
+    state: 'asleep',
   },
 ];
 
@@ -69,7 +69,7 @@ const StateButton = memo(
           <Button
             onClick={handleClick}
             size="icon-sm"
-            variant={currentState === state.state ? "default" : "outline"}
+            variant={currentState === state.state ? 'default' : 'outline'}
           >
             <state.icon className="size-4" />
           </Button>
@@ -80,10 +80,10 @@ const StateButton = memo(
   }
 );
 
-StateButton.displayName = "StateButton";
+StateButton.displayName = 'StateButton';
 
 const Example = () => {
-  const [currentState, setCurrentState] = useState<PersonaState>("idle");
+  const [currentState, setCurrentState] = useState<PersonaState>('idle');
 
   const handleStateChange = useCallback((state: PersonaState) => {
     setCurrentState(state);

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   MicSelector,
@@ -10,14 +10,14 @@ import {
   MicSelectorList,
   MicSelectorTrigger,
   MicSelectorValue,
-} from "@/components/ai-elements/mic-selector";
+} from '@/components/ai-elements/mic-selector';
 
 const handleOpenChange = (open: boolean) => {
-  console.log("MicSelector is open?", open);
+  console.log('MicSelector is open?', open);
 };
 
 const handleValueChange = (newValue: string) => {
-  console.log("MicSelector value:", newValue);
+  console.log('MicSelector value:', newValue);
 };
 
 const Example = () => (

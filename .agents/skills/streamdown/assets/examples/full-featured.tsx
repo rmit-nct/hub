@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useChat } from "@ai-sdk/react";
-import { code } from "@streamdown/code";
-import { math } from "@streamdown/math";
-import { mermaid } from "@streamdown/mermaid";
-import { Streamdown } from "streamdown";
-import "katex/dist/katex.min.css";
+import { useChat } from '@ai-sdk/react';
+import { code } from '@streamdown/code';
+import { math } from '@streamdown/math';
+import { mermaid } from '@streamdown/mermaid';
+import { Streamdown } from 'streamdown';
+import 'katex/dist/katex.min.css';
 
 export default function FullFeaturedChat() {
   const { messages, input, handleInputChange, handleSubmit, isLoading } =
@@ -31,12 +31,12 @@ export default function FullFeaturedChat() {
               isAnimating={
                 isLoading &&
                 index === messages.length - 1 &&
-                message.role === "assistant"
+                message.role === 'assistant'
               }
               linkSafety={{
                 enabled: true,
                 onLinkCheck: (url) => {
-                  const trusted = ["github.com", "npmjs.com"];
+                  const trusted = ['github.com', 'npmjs.com'];
                   const hostname = new URL(url).hostname;
                   return trusted.some((d) => hostname.endsWith(d));
                 },

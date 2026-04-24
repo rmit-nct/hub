@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { SchemaDisplay } from "@/components/ai-elements/schema-display";
+import { SchemaDisplay } from '@/components/ai-elements/schema-display';
 
 const Example = () => (
   <SchemaDisplay
@@ -8,14 +8,14 @@ const Example = () => (
     path="/api/posts"
     requestBody={[
       {
-        name: "author",
+        name: 'author',
         properties: [
-          { name: "id", type: "string" },
-          { name: "name", type: "string" },
+          { name: 'id', type: 'string' },
+          { name: 'name', type: 'string' },
         ],
-        type: "object",
+        type: 'object',
       },
-      { name: "title", required: true, type: "string" },
+      { name: 'title', required: true, type: 'string' },
     ]}
   />
 );

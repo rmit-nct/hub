@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Terminal,
@@ -9,11 +9,11 @@ import {
   TerminalHeader,
   TerminalStatus,
   TerminalTitle,
-} from "@/components/ai-elements/terminal";
-import { useCallback, useEffect, useState } from "react";
+} from '@/components/ai-elements/terminal';
+import { useCallback, useEffect, useState } from 'react';
 
 const handleTerminalCopy = () => {
-  console.log("Copied!");
+  console.log('Copied!');
 };
 
 const ansiOutput = `\u001B[32m✓\u001B[0m Compiled successfully in 1.2s
@@ -34,7 +34,7 @@ const ansiOutput = `\u001B[32m✓\u001B[0m Compiled successfully in 1.2s
 `;
 
 const Example = () => {
-  const [output, setOutput] = useState("");
+  const [output, setOutput] = useState('');
   const [isStreaming, setIsStreaming] = useState(true);
 
   useEffect(() => {
@@ -53,7 +53,7 @@ const Example = () => {
   }, []);
 
   const handleClear = useCallback(() => {
-    setOutput("");
+    setOutput('');
     setIsStreaming(false);
   }, []);
 

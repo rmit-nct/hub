@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useChat } from "@ai-sdk/react";
-import { code } from "@streamdown/code";
-import { Streamdown } from "streamdown";
+import { useChat } from '@ai-sdk/react';
+import { code } from '@streamdown/code';
+import { Streamdown } from 'streamdown';
 
 export default function ChatWithCaret() {
   const { messages, input, handleInputChange, handleSubmit, isLoading } =
@@ -18,7 +18,7 @@ export default function ChatWithCaret() {
               isAnimating={
                 isLoading &&
                 index === messages.length - 1 &&
-                message.role === "assistant"
+                message.role === 'assistant'
               }
               plugins={{ code }}
             >

@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
 import {
   TestResults,
   TestResultsDuration,
   TestResultsHeader,
   TestResultsSummary,
-} from "@/components/ai-elements/test-results";
+} from '@/components/ai-elements/test-results';
 
 const Example = () => (
   <TestResults

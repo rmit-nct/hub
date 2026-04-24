@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
 import {
   Attachment,
   AttachmentPreview,
   AttachmentRemove,
   Attachments,
-} from "@/components/ai-elements/attachments";
+} from '@/components/ai-elements/attachments';
 import {
   ModelSelector,
   ModelSelectorContent,
@@ -18,8 +18,8 @@ import {
   ModelSelectorLogoGroup,
   ModelSelectorName,
   ModelSelectorTrigger,
-} from "@/components/ai-elements/model-selector";
-import type { PromptInputMessage } from "@/components/ai-elements/prompt-input";
+} from '@/components/ai-elements/model-selector';
+import type { PromptInputMessage } from '@/components/ai-elements/prompt-input';
 import {
   PromptInput,
   PromptInputActionAddAttachments,
@@ -35,45 +35,45 @@ import {
   PromptInputTextarea,
   PromptInputTools,
   usePromptInputAttachments,
-} from "@/components/ai-elements/prompt-input";
-import { CheckIcon, GlobeIcon } from "lucide-react";
-import { memo, useCallback, useState } from "react";
+} from '@/components/ai-elements/prompt-input';
+import { CheckIcon, GlobeIcon } from 'lucide-react';
+import { memo, useCallback, useState } from 'react';
 
 const models = [
   {
-    chef: "OpenAI",
-    chefSlug: "openai",
-    id: "gpt-4o",
-    name: "GPT-4o",
-    providers: ["openai", "azure"],
+    chef: 'OpenAI',
+    chefSlug: 'openai',
+    id: 'gpt-4o',
+    name: 'GPT-4o',
+    providers: ['openai', 'azure'],
   },
   {
-    chef: "OpenAI",
-    chefSlug: "openai",
-    id: "gpt-4o-mini",
-    name: "GPT-4o Mini",
-    providers: ["openai", "azure"],
+    chef: 'OpenAI',
+    chefSlug: 'openai',
+    id: 'gpt-4o-mini',
+    name: 'GPT-4o Mini',
+    providers: ['openai', 'azure'],
   },
   {
-    chef: "Anthropic",
-    chefSlug: "anthropic",
-    id: "claude-opus-4-20250514",
-    name: "Claude 4 Opus",
-    providers: ["anthropic", "azure", "google", "amazon-bedrock"],
+    chef: 'Anthropic',
+    chefSlug: 'anthropic',
+    id: 'claude-opus-4-20250514',
+    name: 'Claude 4 Opus',
+    providers: ['anthropic', 'azure', 'google', 'amazon-bedrock'],
   },
   {
-    chef: "Anthropic",
-    chefSlug: "anthropic",
-    id: "claude-sonnet-4-20250514",
-    name: "Claude 4 Sonnet",
-    providers: ["anthropic", "azure", "google", "amazon-bedrock"],
+    chef: 'Anthropic',
+    chefSlug: 'anthropic',
+    id: 'claude-sonnet-4-20250514',
+    name: 'Claude 4 Sonnet',
+    providers: ['anthropic', 'azure', 'google', 'amazon-bedrock'],
   },
   {
-    chef: "Google",
-    chefSlug: "google",
-    id: "gemini-2.0-flash-exp",
-    name: "Gemini 2.0 Flash",
-    providers: ["google"],
+    chef: 'Google',
+    chefSlug: 'google',
+    id: 'gemini-2.0-flash-exp',
+    name: 'Gemini 2.0 Flash',
+    providers: ['google'],
   },
 ];
 
@@ -83,7 +83,7 @@ const STREAMING_TIMEOUT = 2000;
 interface AttachmentItemProps {
   attachment: {
     id: string;
-    type: "file";
+    type: 'file';
     filename?: string;
     mediaType?: string;
     url: string;
@@ -104,7 +104,7 @@ const AttachmentItem = memo(({ attachment, onRemove }: AttachmentItemProps) => {
   );
 });
 
-AttachmentItem.displayName = "AttachmentItem";
+AttachmentItem.displayName = 'AttachmentItem';
 
 interface ModelItemProps {
   m: (typeof models)[0];
@@ -132,7 +132,7 @@ const ModelItem = memo(({ m, selectedModel, onSelect }: ModelItemProps) => {
   );
 });
 
-ModelItem.displayName = "ModelItem";
+ModelItem.displayName = 'ModelItem';
 
 const PromptInputAttachmentsDisplay = () => {
   const attachments = usePromptInputAttachments();
@@ -163,8 +163,8 @@ const Example = () => {
   const [model, setModel] = useState<string>(models[0].id);
   const [modelSelectorOpen, setModelSelectorOpen] = useState(false);
   const [status, setStatus] = useState<
-    "submitted" | "streaming" | "ready" | "error"
-  >("ready");
+    'submitted' | 'streaming' | 'ready' | 'error'
+  >('ready');
 
   const selectedModelData = models.find((m) => m.id === model);
 
@@ -181,17 +181,17 @@ const Example = () => {
       return;
     }
 
-    setStatus("submitted");
+    setStatus('submitted');
 
     // eslint-disable-next-line no-console
-    console.log("Submitting message:", message);
+    console.log('Submitting message:', message);
 
     setTimeout(() => {
-      setStatus("streaming");
+      setStatus('streaming');
     }, SUBMITTING_TIMEOUT);
 
     setTimeout(() => {
-      setStatus("ready");
+      setStatus('ready');
     }, STREAMING_TIMEOUT);
   }, []);
 
@@ -238,7 +238,7 @@ const Example = () => {
                   <ModelSelectorInput placeholder="Search models..." />
                   <ModelSelectorList>
                     <ModelSelectorEmpty>No models found.</ModelSelectorEmpty>
-                    {["OpenAI", "Anthropic", "Google"].map((chef) => (
+                    {['OpenAI', 'Anthropic', 'Google'].map((chef) => (
                       <ModelSelectorGroup heading={chef} key={chef}>
                         {models
                           .filter((m) => m.chef === chef)

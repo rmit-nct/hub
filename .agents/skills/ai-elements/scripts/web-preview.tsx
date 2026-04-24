@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   WebPreview,
@@ -7,7 +7,7 @@ import {
   WebPreviewNavigation,
   WebPreviewNavigationButton,
   WebPreviewUrl,
-} from "@/components/ai-elements/web-preview";
+} from '@/components/ai-elements/web-preview';
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
@@ -15,47 +15,47 @@ import {
   Maximize2Icon,
   MousePointerClickIcon,
   RefreshCcwIcon,
-} from "lucide-react";
-import { useCallback, useState } from "react";
+} from 'lucide-react';
+import { useCallback, useState } from 'react';
 
 const handleUrlChange = (url: string) => {
-  console.log("URL changed to:", url);
+  console.log('URL changed to:', url);
 };
 
 const handleGoBack = () => {
-  console.log("Go back");
+  console.log('Go back');
 };
 
 const handleGoForward = () => {
-  console.log("Go forward");
+  console.log('Go forward');
 };
 
 const handleReload = () => {
-  console.log("Reload");
+  console.log('Reload');
 };
 
 const handleSelect = () => {
-  console.log("Select");
+  console.log('Select');
 };
 
 const handleOpenInNewTab = () => {
-  console.log("Open in new tab");
+  console.log('Open in new tab');
 };
 
 const exampleLogs = [
   {
-    level: "log" as const,
-    message: "Page loaded successfully",
+    level: 'log' as const,
+    message: 'Page loaded successfully',
     timestamp: new Date(Date.now() - 10_000),
   },
   {
-    level: "warn" as const,
-    message: "Deprecated API usage detected",
+    level: 'warn' as const,
+    message: 'Deprecated API usage detected',
     timestamp: new Date(Date.now() - 5000),
   },
   {
-    level: "error" as const,
-    message: "Failed to load resource",
+    level: 'error' as const,
+    message: 'Failed to load resource',
     timestamp: new Date(),
   },
 ];
@@ -72,7 +72,7 @@ const Example = () => {
     <WebPreview
       defaultUrl="/"
       onUrlChange={handleUrlChange}
-      style={{ height: "400px" }}
+      style={{ height: '400px' }}
     >
       <WebPreviewNavigation>
         <WebPreviewNavigationButton onClick={handleGoBack} tooltip="Go back">

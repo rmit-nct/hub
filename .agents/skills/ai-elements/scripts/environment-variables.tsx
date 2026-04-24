@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   EnvironmentVariable,
@@ -12,21 +12,21 @@ import {
   EnvironmentVariablesTitle,
   EnvironmentVariablesToggle,
   EnvironmentVariableValue,
-} from "@/components/ai-elements/environment-variables";
+} from '@/components/ai-elements/environment-variables';
 
 const variables = [
   {
-    name: "DATABASE_URL",
+    name: 'DATABASE_URL',
     required: true,
-    value: "postgresql://localhost:5432/mydb",
+    value: 'postgresql://localhost:5432/mydb',
   },
-  { name: "API_KEY", required: true, value: "sk-1234567890abcdef" },
-  { name: "NODE_ENV", required: false, value: "production" },
-  { name: "PORT", required: false, value: "3000" },
+  { name: 'API_KEY', required: true, value: 'sk-1234567890abcdef' },
+  { name: 'NODE_ENV', required: false, value: 'production' },
+  { name: 'PORT', required: false, value: '3000' },
 ];
 
 const handleCopy = () => {
-  console.log("Copied!");
+  console.log('Copied!');
 };
 
 const Example = () => (

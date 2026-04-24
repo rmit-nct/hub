@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   CodeBlock,
@@ -12,10 +12,10 @@ import {
   CodeBlockLanguageSelectorTrigger,
   CodeBlockLanguageSelectorValue,
   CodeBlockTitle,
-} from "@/components/ai-elements/code-block";
-import { FileIcon } from "lucide-react";
-import { useCallback, useState } from "react";
-import type { BundledLanguage } from "shiki";
+} from '@/components/ai-elements/code-block';
+import { FileIcon } from 'lucide-react';
+import { useCallback, useState } from 'react';
+import type { BundledLanguage } from 'shiki';
 
 const codeExamples = {
   go: {
@@ -30,14 +30,14 @@ func greet(name string) string {
 func main() {
     fmt.Println(greet("World"))
 }`,
-    filename: "greet.go",
+    filename: 'greet.go',
   },
   python: {
     code: `def greet(name: str) -> str:
     return f"Hello, {name}!"
 
 print(greet("World"))`,
-    filename: "greet.py",
+    filename: 'greet.py',
   },
   rust: {
     code: `fn greet(name: &str) -> String {
@@ -47,7 +47,7 @@ print(greet("World"))`,
 fn main() {
     println!("{}", greet("World"));
 }`,
-    filename: "greet.rs",
+    filename: 'greet.rs',
   },
   typescript: {
     code: `function greet(name: string): string {
@@ -55,29 +55,29 @@ fn main() {
 }
 
 console.log(greet("World"));`,
-    filename: "greet.ts",
+    filename: 'greet.ts',
   },
 } as const;
 
 type Language = keyof typeof codeExamples;
 
 const languages: { value: Language; label: string }[] = [
-  { label: "TypeScript", value: "typescript" },
-  { label: "Python", value: "python" },
-  { label: "Rust", value: "rust" },
-  { label: "Go", value: "go" },
+  { label: 'TypeScript', value: 'typescript' },
+  { label: 'Python', value: 'python' },
+  { label: 'Rust', value: 'rust' },
+  { label: 'Go', value: 'go' },
 ];
 
 const handleCopy = () => {
-  console.log("Copied code to clipboard");
+  console.log('Copied code to clipboard');
 };
 
 const handleCopyError = () => {
-  console.error("Failed to copy code to clipboard");
+  console.error('Failed to copy code to clipboard');
 };
 
 const Example = () => {
-  const [language, setLanguage] = useState<Language>("typescript");
+  const [language, setLanguage] = useState<Language>('typescript');
   const { code, filename } = codeExamples[language];
 
   const handleLanguageChange = useCallback((value: string) => {

@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useChat } from "@ai-sdk/react";
-import { Streamdown } from "streamdown";
+import { useChat } from '@ai-sdk/react';
+import { Streamdown } from 'streamdown';
 
 export default function ChatPage() {
   const { messages, input, handleInputChange, handleSubmit, isLoading } =
@@ -12,12 +12,12 @@ export default function ChatPage() {
       <div className="flex-1 space-y-4 overflow-y-auto p-4">
         {messages.map((message) => (
           <div
-            className={message.role === "user" ? "text-right" : "text-left"}
+            className={message.role === 'user' ? 'text-right' : 'text-left'}
             key={message.id}
           >
             <div className="inline-block max-w-2xl">
               <Streamdown
-                isAnimating={isLoading && message.role === "assistant"}
+                isAnimating={isLoading && message.role === 'assistant'}
               >
                 {message.content}
               </Streamdown>

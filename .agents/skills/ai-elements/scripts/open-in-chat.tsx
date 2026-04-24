@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   OpenIn,
@@ -10,10 +10,10 @@ import {
   OpenInT3,
   OpenInTrigger,
   OpenInv0,
-} from "@/components/ai-elements/open-in-chat";
+} from '@/components/ai-elements/open-in-chat';
 
 const Example = () => {
-  const sampleQuery = "How can I implement authentication in Next.js?";
+  const sampleQuery = 'How can I implement authentication in Next.js?';
 
   return (
     <OpenIn>

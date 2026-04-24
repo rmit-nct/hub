@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Agent,
@@ -8,28 +8,28 @@ import {
   AgentOutput,
   AgentTool,
   AgentTools,
-} from "@/components/ai-elements/agent";
-import { z } from "zod";
+} from '@/components/ai-elements/agent';
+import { z } from 'zod';
 
 const webSearchTool = {
-  description: "Search the web for information",
+  description: 'Search the web for information',
   inputSchema: z.object({
-    query: z.string().describe("The search query"),
+    query: z.string().describe('The search query'),
   }),
 };
 
 const readUrlTool = {
-  description: "Read and parse a URL",
+  description: 'Read and parse a URL',
   inputSchema: z.object({
-    url: z.string().url().describe("The URL to read"),
+    url: z.string().url().describe('The URL to read'),
   }),
 };
 
 const summarizeTool = {
-  description: "Summarize text into key points",
+  description: 'Summarize text into key points',
   inputSchema: z.object({
-    maxPoints: z.number().optional().describe("Maximum number of key points"),
-    text: z.string().describe("The text to summarize"),
+    maxPoints: z.number().optional().describe('Maximum number of key points'),
+    text: z.string().describe('The text to summarize'),
   }),
 };
 
