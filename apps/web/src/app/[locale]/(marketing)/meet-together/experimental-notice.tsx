@@ -16,13 +16,11 @@ export default function ExperimentalNotice() {
       <FlaskConical className="mx-auto h-16 w-16" />
       <Separator className="my-4 bg-dynamic-light-orange/20" />
 
-      <p className="mb-2 text-center text-xl font-bold md:text-3xl">
+      <p className="mb-2 text-center font-bold text-xl md:text-3xl">
         {t('experimental_feature')}
       </p>
       <p
-        className={`text-center text-xs font-semibold md:text-sm ${
-          isDark ? 'opacity-70' : 'opacity-80'
-        }`}
+        className={`text-center font-semibold text-xs md:text-sm ${isDark ? 'opacity-70' : 'opacity-80'}`}
       >
         {t('experimental_notice')}
       </p>

@@ -1,10 +1,10 @@
 'use client';
 
+import type { MeetTogetherPlan } from '@ncthub/types/primitives/MeetTogetherPlan';
+import type { Timeblock } from '@ncthub/types/primitives/Timeblock';
+import { useTranslations } from 'next-intl';
 import DatePlanner from './date-planner';
 import { useTimeBlocking } from './time-blocking-provider';
-import { MeetTogetherPlan } from '@ncthub/types/primitives/MeetTogetherPlan';
-import { Timeblock } from '@ncthub/types/primitives/Timeblock';
-import { useTranslations } from 'next-intl';
 
 export default function AllAvailabilities({
   plan,
@@ -46,7 +46,7 @@ export default function AllAvailabilities({
                 width: `calc(100% / ${totalUserCount})`,
               }}
               className={`h-full ${
-                i < totalUserCount ? 'border-r border-foreground/50' : ''
+                i < totalUserCount ? 'border-foreground/50 border-r' : ''
               }`}
             >
               <div
