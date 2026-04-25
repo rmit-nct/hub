@@ -48,10 +48,10 @@ import {
 } from '@ncthub/ui/form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
 import { useToast } from '@ncthub/ui/hooks/use-toast';
-import { zodResolver } from '@ncthub/ui/resolvers';
 import { ScrollArea } from '@ncthub/ui/scroll-area';
 import { Separator } from '@ncthub/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ncthub/ui/tabs';
+import { zodResolver } from '@ncthub/ui/resolvers';
 import { getEventStyles } from '@ncthub/utils/color-helper';
 import { format } from 'date-fns';
 import dayjs from 'dayjs';
