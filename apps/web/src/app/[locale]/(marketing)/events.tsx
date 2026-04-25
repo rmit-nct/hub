@@ -27,12 +27,14 @@ type EventType = {
 
 const eventImages: EventType[] = [
   {
-    src: '/club-day/sem-c-2025.png',
-    title: 'Club Day Semester C 2025',
-    description: 'Join us for an exciting club day experience',
-    date: 'November 2025',
-    attendees: '100+',
+    src: '/media/marketing/neo-league/neo-league-2026.png',
+    title: 'Neo League Season 2 - Innovation Humanity Challenge',
+    description:
+      'Innovation competition where innovators utilize hardware & IOT solutions to address UN Sustainable Development Goals (SDG)',
+    date: 'March - May 2026',
+    attendees: '70+',
     location: 'RMIT Campus',
+    link: 'https://rmitneoleague.com',
   },
   {
     src: '/media/marketing/workshops/cv-workshop.jpg',
@@ -65,7 +67,7 @@ const eventImages: EventType[] = [
     src: '/media/marketing/neo-league/neo-league-2025.png',
     title: 'Neo League - Prompt The Future 2025',
     description: 'AI prompt engineering competition',
-    date: 'June 2025',
+    date: 'March - May 2025',
     attendees: '170+',
     location: 'RMIT Campus',
     link: 'https://nova.ai.vn',
@@ -185,7 +187,7 @@ const PrimaryEventCard = ({ event }: { event: EventType }) => {
       target={event.link ? '_blank' : undefined}
       rel={event.link ? 'noopener noreferrer' : undefined}
     >
-      <Card className="group relative h-full min-h-100 overflow-hidden border-2 transition-all duration-500 hover:border-primary/50 hover:shadow-2xl">
+      <Card className="group relative h-full min-h-100 overflow-hidden border-2 py-0 transition-all duration-500 hover:border-primary/50 hover:shadow-2xl">
         <div className="relative h-full">
           <Image
             src={event.src}
@@ -234,12 +236,12 @@ const SecondaryEventCard = ({ event }: { event: EventType }) => {
       target={event.link ? '_blank' : undefined}
       rel={event.link ? 'noopener noreferrer' : undefined}
     >
-      <Card className="group relative h-48 overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-xl">
+      <Card className="group relative h-48 overflow-hidden py-0 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl">
         <div className="relative h-full">
           <Image
             src={event.src}
             alt={event.title}
-            className="object-cover transition-transform duration-300 group-hover:scale-110"
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
             fill
           />
 
