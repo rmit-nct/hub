@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@ncthub/utils/format';
-import type * as React from 'react';
+import * as React from 'react';
 import { Drawer as DrawerPrimitive } from 'vaul';
 
 function Drawer({
@@ -114,7 +114,7 @@ function DrawerDescription({
   return (
     <DrawerPrimitive.Description
       data-slot="drawer-description"
-      className={cn('text-muted-foreground text-sm', className)}
+      className={cn('text-sm text-muted-foreground', className)}
       {...props}
     />
   );

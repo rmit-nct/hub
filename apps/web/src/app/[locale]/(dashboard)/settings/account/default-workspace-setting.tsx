@@ -119,7 +119,7 @@ export default function DefaultWorkspaceSetting({
 
   if (!workspaces || workspaces.length === 0) {
     return (
-      <div className="text-muted-foreground text-sm">
+      <div className="text-sm text-muted-foreground">
         No workspaces available
       </div>
     );
@@ -147,7 +147,7 @@ export default function DefaultWorkspaceSetting({
             <SelectItem key={workspace.id} value={workspace.id}>
               <div className="flex items-center">
                 <span>{workspace.name}</span>
-                <span className="ml-2 text-muted-foreground text-xs">
+                <span className="ml-2 text-xs text-muted-foreground">
                   ({workspace.role})
                 </span>
               </div>
@@ -178,7 +178,7 @@ export default function DefaultWorkspaceSetting({
       )}
 
       {!hasChanged && selectedWorkspace !== 'none' && (
-        <div className="py-2 text-center text-muted-foreground text-xs">
+        <div className="py-2 text-center text-xs text-muted-foreground">
           This workspace is already set as your default
         </div>
       )}

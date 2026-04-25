@@ -1,5 +1,5 @@
 import { cn } from '@ncthub/utils/format';
-import type { ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 interface Props {
   onlyOnMobile?: boolean;

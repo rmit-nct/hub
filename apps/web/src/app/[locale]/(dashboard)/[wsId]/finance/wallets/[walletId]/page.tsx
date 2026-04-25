@@ -1,14 +1,14 @@
+import { transactionColumns } from '../../transactions/columns';
+import { CustomDataTable } from '@/components/custom-data-table';
 import { createClient } from '@ncthub/supabase/next/server';
-import type { Transaction } from '@ncthub/types/primitives/Transaction';
+import { Transaction } from '@ncthub/types/primitives/Transaction';
 import FeatureSummary from '@ncthub/ui/custom/feature-summary';
 import { Calendar, CreditCard, DollarSign, Wallet } from '@ncthub/ui/icons';
 import { Separator } from '@ncthub/ui/separator';
-import { CustomDataTable } from '@/components/custom-data-table';
-import { transactionColumns } from '../../transactions/columns';
 import 'dayjs/locale/vi';
 import moment from 'moment';
-import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
+import { notFound } from 'next/navigation';
 
 interface Props {
   params: Promise<{
@@ -56,7 +56,7 @@ export default async function WalletDetailsPage({
       <div className="grid h-fit gap-4 md:grid-cols-2">
         <div className="grid gap-4">
           <div className="grid h-fit gap-2 rounded-lg border p-4">
-            <div className="font-semibold text-lg">
+            <div className="text-lg font-semibold">
               {t('invoices.basic-info')}
             </div>
             <Separator />
@@ -95,7 +95,7 @@ export default async function WalletDetailsPage({
         <div className="grid gap-4">
           <div className="h-full rounded-lg border p-4">
             <div className="grid h-full content-start gap-2">
-              <div className="font-semibold text-lg">
+              <div className="text-lg font-semibold">
                 {t('wallet-data-table.description')}
               </div>
               <Separator />

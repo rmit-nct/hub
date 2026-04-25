@@ -1,11 +1,11 @@
+import DeleteResourceButton from './delete-resource';
+import FileDisplay from './file-display';
+import { StorageObjectForm } from '@/app/[locale]/(dashboard)/[wsId]/drive/form';
 import { createDynamicClient } from '@ncthub/supabase/next/server';
 import FeatureSummary from '@ncthub/ui/custom/feature-summary';
 import { Paperclip } from '@ncthub/ui/icons';
 import { Separator } from '@ncthub/ui/separator';
 import { getTranslations } from 'next-intl/server';
-import { StorageObjectForm } from '@/app/[locale]/(dashboard)/[wsId]/drive/form';
-import DeleteResourceButton from './delete-resource';
-import FileDisplay from './file-display';
 
 interface Props {
   params: Promise<{
@@ -27,7 +27,7 @@ export default async function ModuleResourcesPage({ params }: Props) {
       <FeatureSummary
         title={
           <div className="flex items-center justify-between gap-4">
-            <h1 className="flex w-full items-center gap-2 font-bold text-lg md:text-2xl">
+            <h1 className="flex w-full items-center gap-2 text-lg font-bold md:text-2xl">
               <Paperclip className="h-5 w-5" />
               {t('course-details-tabs.resources')}
             </h1>

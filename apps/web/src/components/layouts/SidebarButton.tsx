@@ -1,6 +1,6 @@
-import { Tooltip, TooltipContent, TooltipTrigger } from '@ncthub/ui/tooltip';
-import type React from 'react';
 import { DEV_MODE } from '@/constants/common';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@ncthub/ui/tooltip';
+import React from 'react';
 
 interface SidebarButtonProps {
   onClick?: () => void;
@@ -35,7 +35,7 @@ export default function SidebarButton({
   const buttonContent = (
     <div
       onClick={disabled ? undefined : onClick}
-      className={`flex select-none items-center gap-2 rounded p-2 ${
+      className={`flex items-center gap-2 rounded p-2 select-none ${
         left ? 'justify-start' : 'justify-center'
       } ${
         disabled
@@ -47,7 +47,7 @@ export default function SidebarButton({
     >
       {showIcon && <div className="flex-none">{activeIcon}</div>}
       {showLabel && (
-        <div className="line-clamp-1 font-semibold text-sm">{label}</div>
+        <div className="line-clamp-1 text-sm font-semibold">{label}</div>
       )}
     </div>
   );

@@ -1,8 +1,8 @@
-import { createClient } from '@ncthub/supabase/next/server';
-import { redirect } from 'next/navigation';
-import { getPermissions, getWorkspace } from '@/lib/workspace-helper';
 import CalendarClientPage from './client';
 import TasksSidebar from './components/tasks-sidebar';
+import { getPermissions, getWorkspace } from '@/lib/workspace-helper';
+import { createClient } from '@ncthub/supabase/next/server';
+import { redirect } from 'next/navigation';
 
 interface PageProps {
   params: Promise<{

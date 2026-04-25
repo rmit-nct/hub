@@ -1,5 +1,7 @@
 'use client';
 
+import { Priority, Task } from '../../types';
+import { TaskCard } from './TaskCard';
 import {
   AccordionContent,
   AccordionItem,
@@ -7,8 +9,6 @@ import {
 } from '@ncthub/ui/accordion';
 import { Badge } from '@ncthub/ui/badge';
 import { cn } from '@ncthub/utils/format';
-import type { Priority, Task } from '../../types';
-import { TaskCard } from './TaskCard';
 
 interface PriorityGroupProps {
   priority: Priority;

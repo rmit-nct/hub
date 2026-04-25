@@ -1,6 +1,7 @@
 'use client';
 
-import type { WorkspaceConfig } from '@ncthub/types/primitives/WorkspaceConfig';
+import ConfigForm, { ConfigFormSchema } from './form';
+import { WorkspaceConfig } from '@ncthub/types/primitives/WorkspaceConfig';
 import {
   Dialog,
   DialogContent,
@@ -10,10 +11,8 @@ import {
 } from '@ncthub/ui/dialog';
 import { toast } from '@ncthub/ui/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import type React from 'react';
-import { useState } from 'react';
-import type * as z from 'zod';
-import ConfigForm, { type ConfigFormSchema } from './form';
+import React, { useState } from 'react';
+import * as z from 'zod';
 
 interface Props {
   data: WorkspaceConfig;

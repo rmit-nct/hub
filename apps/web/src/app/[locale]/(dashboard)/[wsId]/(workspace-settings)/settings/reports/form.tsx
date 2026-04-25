@@ -1,4 +1,5 @@
-import type { WorkspaceConfig } from '@ncthub/types/primitives/WorkspaceConfig';
+import { isValidURL } from '@/utils/url-helper';
+import { WorkspaceConfig } from '@ncthub/types/primitives/WorkspaceConfig';
 import { Button } from '@ncthub/ui/button';
 import { AutosizeTextarea } from '@ncthub/ui/custom/autosize-textarea';
 import {
@@ -13,7 +14,6 @@ import { useForm } from '@ncthub/ui/hooks/use-form';
 import { zodResolver } from '@ncthub/ui/resolvers';
 import { useTranslations } from 'next-intl';
 import * as z from 'zod';
-import { isValidURL } from '@/utils/url-helper';
 
 interface Props {
   data: WorkspaceConfig;

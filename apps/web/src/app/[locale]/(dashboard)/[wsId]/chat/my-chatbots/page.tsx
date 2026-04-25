@@ -1,13 +1,13 @@
+import { groupTagColumns } from './columns';
+import { CustomDataTable } from '@/components/custom-data-table';
 import { createClient } from '@ncthub/supabase/next/server';
-import type { UserGroupTag } from '@ncthub/types/primitives/UserGroupTag';
+import { UserGroupTag } from '@ncthub/types/primitives/UserGroupTag';
 import { Button } from '@ncthub/ui/button';
 import FeatureSummary from '@ncthub/ui/custom/feature-summary';
 import { Bot } from '@ncthub/ui/icons';
 import { Separator } from '@ncthub/ui/separator';
-import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
-import { CustomDataTable } from '@/components/custom-data-table';
-import { groupTagColumns } from './columns';
+import Link from 'next/link';
 
 interface Props {
   params: Promise<{

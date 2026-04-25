@@ -1,6 +1,7 @@
 'use client';
 
-import type { Timezone } from '@ncthub/types/primitives/Timezone';
+import TimezoneEditDialog from './edit-dialog';
+import { Timezone } from '@ncthub/types/primitives/Timezone';
 import { Button } from '@ncthub/ui/button';
 import {
   DropdownMenu,
@@ -11,11 +12,10 @@ import {
 } from '@ncthub/ui/dropdown-menu';
 import { toast } from '@ncthub/ui/hooks/use-toast';
 import { Ellipsis } from '@ncthub/ui/icons';
-import type { Row } from '@tanstack/react-table';
-import { useRouter } from 'next/navigation';
+import { Row } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import TimezoneEditDialog from './edit-dialog';
 
 interface TimezoneRowActionsProps {
   row: Row<Timezone>;

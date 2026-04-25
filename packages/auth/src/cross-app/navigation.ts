@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@ncthub/supabase/next/client';
-import type { Database } from '@ncthub/types/supabase';
+import { Database } from '@ncthub/types/supabase';
 
 /**
  * Navigate to another app using cross-app authentication

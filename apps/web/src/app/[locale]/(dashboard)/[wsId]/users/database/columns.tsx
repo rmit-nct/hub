@@ -1,7 +1,8 @@
 'use client';
 
-import type { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
-import type { WorkspaceUserField } from '@ncthub/types/primitives/WorkspaceUserField';
+import { UserRowActions } from './row-actions';
+import { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
+import { WorkspaceUserField } from '@ncthub/types/primitives/WorkspaceUserField';
 import { DataTableColumnHeader } from '@ncthub/ui/custom/tables/data-table-column-header';
 import {
   Tooltip,
@@ -9,9 +10,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@ncthub/ui/tooltip';
-import type { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef } from '@tanstack/react-table';
 import dayjs from 'dayjs';
-import { UserRowActions } from './row-actions';
 import 'dayjs/locale/vi';
 import moment from 'moment';
 import Image from 'next/image';
@@ -250,7 +250,7 @@ export const getUserColumns = (
               : '-'}
           </div>
           {!!row.getValue('birthday') && (
-            <div className="w-fit rounded border bg-foreground/5 px-2 py-0.5 font-semibold text-sm">
+            <div className="w-fit rounded border bg-foreground/5 px-2 py-0.5 text-sm font-semibold">
               {row.getValue('birthday')
                 ? `${age} ${age > 1 ? t('common.years_old') : t('common.year_old')}`
                 : '-'}

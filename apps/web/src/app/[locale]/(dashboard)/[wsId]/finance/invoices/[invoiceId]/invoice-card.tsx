@@ -1,11 +1,7 @@
 'use client';
 
-import type {
-  Invoice,
-  InvoiceProduct,
-  InvoicePromotion,
-} from '@ncthub/types/db';
-import type { WorkspaceConfig } from '@ncthub/types/primitives/WorkspaceConfig';
+import { Invoice, InvoiceProduct, InvoicePromotion } from '@ncthub/types/db';
+import { WorkspaceConfig } from '@ncthub/types/primitives/WorkspaceConfig';
 import { Button } from '@ncthub/ui/button';
 import { ImageIcon, PrinterIcon } from '@ncthub/ui/icons';
 import { Separator } from '@ncthub/ui/separator';
@@ -161,10 +157,10 @@ export default function InvoiceCard({
               )}
             </div>
             <div className="flex-1 text-right">
-              <h1 className="mb-2 font-bold text-3xl">
+              <h1 className="mb-2 text-3xl font-bold">
                 {t('invoices.invoice')}
               </h1>
-              <p className="text-foreground/70 text-xs print:text-black">
+              <p className="text-xs text-foreground/70 print:text-black">
                 #{invoice.id}
               </p>
             </div>
@@ -173,7 +169,7 @@ export default function InvoiceCard({
           {/* Company Info */}
           <div className="mb-8 text-center">
             {getConfig('BRAND_NAME') && (
-              <h2 className="font-bold text-xl">{getConfig('BRAND_NAME')}</h2>
+              <h2 className="text-xl font-bold">{getConfig('BRAND_NAME')}</h2>
             )}
             {getConfig('BRAND_LOCATION') && (
               <p className="text-foreground/70 print:text-black">

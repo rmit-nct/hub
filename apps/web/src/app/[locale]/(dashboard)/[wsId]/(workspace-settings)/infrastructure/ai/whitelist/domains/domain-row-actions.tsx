@@ -7,9 +7,9 @@ import {
   DropdownMenuTrigger,
 } from '@ncthub/ui/dropdown-menu';
 import { Ellipsis } from '@ncthub/ui/icons';
-import type { Row } from '@tanstack/react-table';
-import { useRouter } from 'next/navigation';
+import { Row } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 
 interface AIWhitelistDomainRowActionsProps {
   row: Row<AIWhitelistDomain>;

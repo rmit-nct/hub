@@ -135,7 +135,7 @@ export function findPath(
     // Check if we reached the target
     if (positionsEqual(current.position, target)) {
       // Reconstruct path and return the first step
-      const path: TilePosition[] = [];
+      let path: TilePosition[] = [];
       let temp: PathNode | null = current;
 
       while (temp !== null) {

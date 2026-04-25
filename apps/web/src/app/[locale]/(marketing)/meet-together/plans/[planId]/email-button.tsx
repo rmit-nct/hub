@@ -1,8 +1,8 @@
-import type { MeetTogetherPlan } from '@ncthub/types/primitives/MeetTogetherPlan';
+import { MeetTogetherPlan } from '@ncthub/types/primitives/MeetTogetherPlan';
 import { Button } from '@ncthub/ui/button';
 import { Mail } from '@ncthub/ui/icons';
-import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 
 export default function EmailButton({
   url,

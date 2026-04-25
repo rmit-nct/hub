@@ -1,7 +1,6 @@
-import type React from 'react';
-import { useEffect, useRef, useState } from 'react';
-import { pieces as initialPieces, PieceType, TeamType } from './pieceSetup';
+import { PieceType, TeamType, pieces as initialPieces } from './pieceSetup';
 import Referee from './referee';
+import React, { useEffect, useRef, useState } from 'react';
 
 export function useDragAndDrop(
   removePieceById: (id: string) => void,
@@ -11,7 +10,7 @@ export function useDragAndDrop(
 ) {
   const chessboardRef = useRef<HTMLDivElement>(null);
   let activePiece: HTMLElement | null = null;
-  const hasMoved = useRef(false);
+  let hasMoved = useRef(false);
   const referee = new Referee();
 
   // Board state management
@@ -121,8 +120,8 @@ export function useDragAndDrop(
       const chessboardRect = chessboard.getBoundingClientRect();
       const cellSize = chessboardRect.width / 10;
 
-      const currentLeftPosition = activePiece.getBoundingClientRect().left;
-      const currentTopPosition = activePiece.getBoundingClientRect().top;
+      let currentLeftPosition = activePiece.getBoundingClientRect().left;
+      let currentTopPosition = activePiece.getBoundingClientRect().top;
 
       const diffX = e.clientX - touchStartPosition.current.x;
       const diffY = e.clientY - touchStartPosition.current.y;

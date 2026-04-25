@@ -1,5 +1,7 @@
 'use client';
 
+import { Button } from '../button';
+import { Popover, PopoverContent, PopoverTrigger } from '../popover';
 import {
   add,
   eachMonthOfInterval,
@@ -10,8 +12,6 @@ import {
 } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
-import { Button } from '../button';
-import { Popover, PopoverContent, PopoverTrigger } from '../popover';
 
 interface MonthPickerProps {
   lang: string;
@@ -63,12 +63,12 @@ export default function MonthPicker({
   });
 
   function previousYear() {
-    const firstDayLastYear = add(firstDayCurrentYear, { years: -1 });
+    let firstDayLastYear = add(firstDayCurrentYear, { years: -1 });
     setPreviewDate(firstDayLastYear);
   }
 
   function nextYear() {
-    const firstDayNextYear = add(firstDayCurrentYear, { years: 1 });
+    let firstDayNextYear = add(firstDayCurrentYear, { years: 1 });
     setPreviewDate(firstDayNextYear);
   }
 
@@ -100,7 +100,7 @@ export default function MonthPicker({
           </Button>
 
           <div
-            className="font-medium text-sm"
+            className="text-sm font-medium"
             aria-live="polite"
             role="presentation"
             id="month-picker"

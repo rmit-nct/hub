@@ -1,4 +1,4 @@
-import { type Piece, PieceType, pieces, TeamType } from './pieceSetup';
+import { Piece, PieceType, TeamType, pieces } from './pieceSetup';
 
 export default class Referee {
   private lastPositions: Map<

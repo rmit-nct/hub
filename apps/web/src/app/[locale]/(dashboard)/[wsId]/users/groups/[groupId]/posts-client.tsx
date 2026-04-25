@@ -1,6 +1,6 @@
 'use client';
 
-import UserGroupPosts, { type UserGroupPost } from './posts';
+import UserGroupPosts, { UserGroupPost } from './posts';
 
 export default function PostsClient({
   wsId,

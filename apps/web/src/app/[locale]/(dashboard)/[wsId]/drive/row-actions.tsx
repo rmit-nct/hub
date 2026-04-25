@@ -1,7 +1,8 @@
 'use client';
 
+import { joinPath } from '@/utils/path-helper';
 import { createDynamicClient } from '@ncthub/supabase/next/client';
-import type { StorageObject } from '@ncthub/types/primitives/StorageObject';
+import { StorageObject } from '@ncthub/types/primitives/StorageObject';
 import { Button } from '@ncthub/ui/button';
 import {
   DropdownMenu,
@@ -12,10 +13,9 @@ import {
 } from '@ncthub/ui/dropdown-menu';
 import { toast } from '@ncthub/ui/hooks/use-toast';
 import { Ellipsis } from '@ncthub/ui/icons';
-import type { Row } from '@tanstack/react-table';
-import { useRouter } from 'next/navigation';
+import { Row } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
-import { joinPath } from '@/utils/path-helper';
+import { useRouter } from 'next/navigation';
 
 interface Props {
   wsId: string;

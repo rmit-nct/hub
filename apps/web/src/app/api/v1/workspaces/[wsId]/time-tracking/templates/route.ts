@@ -1,5 +1,5 @@
 import { createClient } from '@ncthub/supabase/next/server';
-import { type NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
   _: NextRequest,

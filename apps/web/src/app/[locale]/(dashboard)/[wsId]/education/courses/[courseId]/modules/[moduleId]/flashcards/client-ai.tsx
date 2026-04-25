@@ -1,14 +1,14 @@
 'use client';
 
+import ClientFlashcards from './client-flashcards';
+import { GenerateDialog } from '@/components/generate-dialog';
 import { useObject } from '@ncthub/ai/object/core';
 import { flashcardSchema } from '@ncthub/ai/object/types';
 import { Button } from '@ncthub/ui/button';
 import { toast } from '@ncthub/ui/hooks/use-toast';
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { GenerateDialog } from '@/components/generate-dialog';
-import ClientFlashcards from './client-flashcards';
 
 export function AIFlashcards({
   wsId,

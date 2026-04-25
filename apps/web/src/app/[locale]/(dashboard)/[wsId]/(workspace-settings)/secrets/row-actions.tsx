@@ -1,6 +1,7 @@
 'use client';
 
-import type { WorkspaceSecret } from '@ncthub/types/primitives/WorkspaceSecret';
+import SecretForm from './form';
+import { WorkspaceSecret } from '@ncthub/types/primitives/WorkspaceSecret';
 import { Button } from '@ncthub/ui/button';
 import ModifiableDialogTrigger from '@ncthub/ui/custom/modifiable-dialog-trigger';
 import {
@@ -12,11 +13,10 @@ import {
 } from '@ncthub/ui/dropdown-menu';
 import { toast } from '@ncthub/ui/hooks/use-toast';
 import { Ellipsis } from '@ncthub/ui/icons';
-import type { Row } from '@tanstack/react-table';
-import { useRouter } from 'next/navigation';
+import { Row } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import SecretForm from './form';
 
 interface SecretRowActionsProps {
   row: Row<WorkspaceSecret>;

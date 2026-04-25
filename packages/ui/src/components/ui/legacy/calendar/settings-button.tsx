@@ -1,11 +1,11 @@
-import type { WorkspaceCalendarGoogleToken } from '@ncthub/types/db';
-import { useCalendar } from '@ncthub/ui/hooks/use-calendar';
-import { Settings } from 'lucide-react';
-import { useState } from 'react';
 import { Button } from '../../button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../tooltip';
 import { CalendarSettingsDialog } from './calendar-settings-dialog';
 import type { CalendarSettings } from './settings/settings-context';
+import type { WorkspaceCalendarGoogleToken } from '@ncthub/types/db';
+import { useCalendar } from '@ncthub/ui/hooks/use-calendar';
+import { Settings } from 'lucide-react';
+import { useState } from 'react';
 
 export const SettingsButton = ({
   wsId,

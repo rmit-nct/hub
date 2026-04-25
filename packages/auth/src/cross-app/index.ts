@@ -1,6 +1,6 @@
 import {
-  createClient,
   type TypedSupabaseClient,
+  createClient,
 } from '@ncthub/supabase/next/client';
 import { APP_DOMAIN_MAP } from '@ncthub/utils/internal-domains';
 

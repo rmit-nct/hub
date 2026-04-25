@@ -14,8 +14,8 @@ import { useForm } from '@ncthub/ui/hooks/use-form';
 import { toast } from '@ncthub/ui/hooks/use-toast';
 import { Check, Loader2 } from '@ncthub/ui/icons';
 import { zodResolver } from '@ncthub/ui/resolvers';
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import * as z from 'zod';
 

@@ -1,6 +1,6 @@
 'use client';
 
-import type { WorkspaceCourse } from '@ncthub/types/db';
+import { WorkspaceCourse } from '@ncthub/types/db';
 import { Button } from '@ncthub/ui/button';
 import {
   Form,
@@ -14,8 +14,8 @@ import { useForm } from '@ncthub/ui/hooks/use-form';
 import { toast } from '@ncthub/ui/hooks/use-toast';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import * as z from 'zod';
 
 interface Props {

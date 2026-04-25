@@ -1,6 +1,6 @@
 'use client';
 
-import type { WorkspaceQuiz } from '@ncthub/types/db';
+import { WorkspaceQuiz } from '@ncthub/types/db';
 import { Button } from '@ncthub/ui/button';
 import { Checkbox } from '@ncthub/ui/checkbox';
 import { AutosizeTextarea } from '@ncthub/ui/custom/autosize-textarea';
@@ -19,8 +19,8 @@ import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
 import { ScrollArea } from '@ncthub/ui/scroll-area';
 import { Separator } from '@ncthub/ui/separator';
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import { Fragment, useState } from 'react';
 import * as z from 'zod';
 
@@ -188,7 +188,7 @@ export default function QuizForm({ wsId, moduleId, data, onFinish }: Props) {
                           control={form.control}
                           name={`quiz_options.${index}.is_correct`}
                           render={({ field }) => (
-                            <FormItem className="flex items-center space-x-1 space-y-0">
+                            <FormItem className="flex items-center space-y-0 space-x-1">
                               <Checkbox
                                 id={`quiz_options.${index}.is_correct`}
                                 checked={field.value}

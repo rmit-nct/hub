@@ -1,5 +1,7 @@
 'use client';
 
+import useEmail from '@/hooks/useEmail';
+import { isEmail } from '@/utils/email-helper';
 import { createClient } from '@ncthub/supabase/next/client';
 import type { GroupPostCheck } from '@ncthub/types/db';
 import type { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
@@ -22,8 +24,6 @@ import { cn } from '@ncthub/utils/format';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import useEmail from '@/hooks/useEmail';
-import { isEmail } from '@/utils/email-helper';
 
 interface Props {
   user: WorkspaceUser;
@@ -207,11 +207,11 @@ function UserCard({
           </Avatar>
         )}
         <div className="ml-4 w-full">
-          <h3 className="font-semibold text-foreground text-lg">
+          <h3 className="text-lg font-semibold text-foreground">
             {user.full_name}
           </h3>
           {(user.email || user.phone) && (
-            <p className="text-foreground text-sm">
+            <p className="text-sm text-foreground">
               {user.email || user.phone}
             </p>
           )}

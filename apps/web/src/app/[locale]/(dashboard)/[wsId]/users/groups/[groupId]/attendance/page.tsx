@@ -1,5 +1,9 @@
+import UserAttendances from '../../../attendance/user-attendances';
+import UserAttendancesSkeleton from '../../../attendance/user-attendances-skeleton';
+import { Filter } from '../../../filters';
+import { CustomMonthPicker } from '@/components/custom-month-picker';
 import { createClient } from '@ncthub/supabase/next/server';
-import type { UserGroup } from '@ncthub/types/primitives/UserGroup';
+import { UserGroup } from '@ncthub/types/primitives/UserGroup';
 import { Button } from '@ncthub/ui/button';
 import FeatureSummary from '@ncthub/ui/custom/feature-summary';
 import {
@@ -11,14 +15,10 @@ import {
 } from '@ncthub/ui/icons';
 import { Separator } from '@ncthub/ui/separator';
 import { cn } from '@ncthub/utils/format';
-import { CustomMonthPicker } from '@/components/custom-month-picker';
-import UserAttendances from '../../../attendance/user-attendances';
-import UserAttendancesSkeleton from '../../../attendance/user-attendances-skeleton';
-import { Filter } from '../../../filters';
 import 'dayjs/locale/vi';
+import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getTranslations } from 'next-intl/server';
 import { Suspense } from 'react';
 
 interface SearchParams {
@@ -58,7 +58,7 @@ export default async function UserGroupAttendancePage({
       <FeatureSummary
         title={
           <>
-            <h1 className="w-full font-bold text-2xl">
+            <h1 className="w-full text-2xl font-bold">
               {group.name || t('ws-user-groups.singular')}
             </h1>
             <Separator className="my-2" />

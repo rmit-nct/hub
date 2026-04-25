@@ -1,5 +1,6 @@
 'use client';
 
+import { MigrationModule, ModulePackage, generateModules } from './modules';
 import { useLocalStorage } from '@mantine/hooks';
 import { Button } from '@ncthub/ui/button';
 import { Card } from '@ncthub/ui/card';
@@ -9,11 +10,6 @@ import { Label } from '@ncthub/ui/label';
 import { Progress } from '@ncthub/ui/progress';
 import { Separator } from '@ncthub/ui/separator';
 import { useState } from 'react';
-import {
-  generateModules,
-  type MigrationModule,
-  type ModulePackage,
-} from './modules';
 
 export default function MigrationDashboard() {
   const [apiEndpoint, setApiEndpoint] = useLocalStorage({
@@ -187,7 +183,7 @@ export default function MigrationDashboard() {
     }
 
     // Initialize internal variables
-    const internalData: any[] = [];
+    let internalData: any[] = [];
     let internalError: any = null;
 
     // Fetch internal data
@@ -266,7 +262,7 @@ export default function MigrationDashboard() {
 
           <div className="flex gap-1">
             {getData('external', module) !== null ? (
-              <div className="flex items-center justify-center rounded border px-2 py-0.5 font-semibold text-sm">
+              <div className="flex items-center justify-center rounded border px-2 py-0.5 text-sm font-semibold">
                 {getCount('external', module)}
               </div>
             ) : null}
@@ -414,13 +410,13 @@ export default function MigrationDashboard() {
           </div>
         </div>
 
-        <h2 className="mt-4 flex items-center gap-1 font-semibold text-2xl">
+        <h2 className="mt-4 flex items-center gap-1 text-2xl font-semibold">
           <div className="mr-1">Migrate data</div>
           {Object.values(migrationData ?? {}).reduce(
             (acc, v) => acc + (v?.externalTotal ?? 0),
             0
           ) !== 0 && (
-            <div className="rounded border px-2 py-0.5 font-semibold text-sm">
+            <div className="rounded border px-2 py-0.5 text-sm font-semibold">
               {Object.values(migrationData ?? {}).reduce(
                 (acc, v) => acc + (v?.externalData?.length ?? 0),
                 0

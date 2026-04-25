@@ -1,6 +1,6 @@
 'use client';
 
-import type { ProductSupplier } from '@ncthub/types/primitives/ProductSupplier';
+import { ProductSupplier } from '@ncthub/types/primitives/ProductSupplier';
 import { Button } from '@ncthub/ui/button';
 import {
   Form,
@@ -14,8 +14,8 @@ import { useForm } from '@ncthub/ui/hooks/use-form';
 import { toast } from '@ncthub/ui/hooks/use-toast';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import * as z from 'zod';
 
@@ -95,7 +95,7 @@ export function ProductSupplierForm({ wsId, data, onFinish }: Props) {
         <Button type="submit" className="w-full" disabled={loading}>
           {loading
             ? t('common.processing')
-            : data?.id
+            : !!data?.id
               ? t('common.edit')
               : t('common.create')}
         </Button>

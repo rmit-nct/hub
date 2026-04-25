@@ -1,7 +1,7 @@
-import { createClient } from '@ncthub/supabase/next/server';
-import { getTranslations } from 'next-intl/server';
 import StatisticCard from '@/components/cards/StatisticCard';
 import { getPermissions } from '@/lib/workspace-helper';
+import { createClient } from '@ncthub/supabase/next/server';
+import { getTranslations } from 'next-intl/server';
 
 export default async function UnitsStatistics({ wsId }: { wsId: string }) {
   const supabase = await createClient();

@@ -1,4 +1,4 @@
-import type { Entity } from './Entity';
+import { Entity } from './Entity';
 
 export interface ProductPromotion extends Entity {
   description?: string;

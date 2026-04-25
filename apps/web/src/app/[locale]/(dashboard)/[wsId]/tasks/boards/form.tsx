@@ -1,6 +1,6 @@
 'use client';
 
-import type { TaskBoard } from '@ncthub/types/primitives/TaskBoard';
+import { TaskBoard } from '@ncthub/types/primitives/TaskBoard';
 import { Button } from '@ncthub/ui/button';
 import {
   Form,
@@ -14,8 +14,8 @@ import { useForm } from '@ncthub/ui/hooks/use-form';
 import { toast } from '@ncthub/ui/hooks/use-toast';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import * as z from 'zod';
 
 interface Props {
@@ -99,7 +99,7 @@ export function TaskBoardForm({ wsId, data, onFinish }: Props) {
         />
 
         <Button type="submit" className="w-full" disabled={disabled}>
-          {data?.id ? t('common.edit') : t('common.create')}
+          {!!data?.id ? t('common.edit') : t('common.create')}
         </Button>
       </form>
     </Form>

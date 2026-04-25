@@ -1,5 +1,6 @@
 'use client';
 
+import useSearchParams from '@/hooks/useSearchParams';
 import { Badge } from '@ncthub/ui/badge';
 import { Button } from '@ncthub/ui/button';
 import {
@@ -16,10 +17,9 @@ import { Popover, PopoverContent, PopoverTrigger } from '@ncthub/ui/popover';
 import { ScrollArea } from '@ncthub/ui/scroll-area';
 import { Separator } from '@ncthub/ui/separator';
 import { cn } from '@ncthub/utils/format';
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { type ReactNode, useEffect, useMemo, useState } from 'react';
-import useSearchParams from '@/hooks/useSearchParams';
+import { useRouter } from 'next/navigation';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 
 interface FilterProps {
   tag?: string;

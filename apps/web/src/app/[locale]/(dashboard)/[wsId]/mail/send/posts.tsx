@@ -1,12 +1,12 @@
 'use client';
 
+import UserGroupPosts, {
+  UserGroupPost,
+} from '../../users/groups/[groupId]/posts';
 import { createClient } from '@ncthub/supabase/next/client';
 import { Separator } from '@ncthub/ui/separator';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import UserGroupPosts, {
-  type UserGroupPost,
-} from '../../users/groups/[groupId]/posts';
 
 export default function MailPosts({
   wsId,
@@ -45,7 +45,7 @@ export default function MailPosts({
 
       <Separator className="my-4" />
       <div>
-        <div className="font-semibold text-xl">Destination Emails</div>
+        <div className="text-xl font-semibold">Destination Emails</div>
         <div>
           {emails.map((email, idx) => (
             <div key={email} className="font-semibold">
@@ -60,7 +60,7 @@ export default function MailPosts({
           <Separator className="my-4" />
           <div className="mb-4 grid rounded-lg border border-border bg-foreground/5 p-4">
             <div>
-              <div className="font-semibold text-xl">Selected Post</div>
+              <div className="text-xl font-semibold">Selected Post</div>
               <div>
                 <span className="font-semibold">Group Name:</span>{' '}
                 {selectedPost.group_name}

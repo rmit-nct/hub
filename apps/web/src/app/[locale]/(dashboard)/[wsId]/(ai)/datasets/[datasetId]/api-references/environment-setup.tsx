@@ -1,10 +1,10 @@
 'use client';
 
+import ApiKeySelector from './api-key-selector';
 import { Alert, AlertDescription } from '@ncthub/ui/alert';
 import { CodeBlock } from '@ncthub/ui/codeblock';
 import { Info } from '@ncthub/ui/icons';
 import { useEffect, useState } from 'react';
-import ApiKeySelector from './api-key-selector';
 
 interface Props {
   wsId: string;
@@ -45,7 +45,7 @@ API_KEY=${selectedApiKey}`;
   return (
     <div className="space-y-6">
       <div className="space-y-4">
-        <h3 className="font-medium text-sm">API Key</h3>
+        <h3 className="text-sm font-medium">API Key</h3>
         <ApiKeySelector
           wsId={wsId}
           apiKeys={apiKeys}
@@ -56,7 +56,7 @@ API_KEY=${selectedApiKey}`;
 
       <div className="space-y-4">
         <div className="flex flex-col items-start justify-between gap-2">
-          <h3 className="font-medium text-sm">Environment Variables</h3>
+          <h3 className="text-sm font-medium">Environment Variables</h3>
           <Alert>
             <Info className="h-4 w-4" />
             <AlertDescription>

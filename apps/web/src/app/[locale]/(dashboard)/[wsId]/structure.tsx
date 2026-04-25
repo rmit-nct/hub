@@ -1,7 +1,10 @@
 'use client';
 
-import type { Workspace } from '@ncthub/types/db';
-import type { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
+import { Nav } from './nav';
+import { NavLink } from '@/components/navigation';
+import { PROD_MODE, ROOT_WORKSPACE_ID } from '@/constants/common';
+import { Workspace } from '@ncthub/types/db';
+import { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
 import {
   Breadcrumb,
   BreadcrumbEllipsis,
@@ -22,20 +25,11 @@ import {
 import { cn } from '@ncthub/utils/format';
 import { useQuery } from '@tanstack/react-query';
 import { debounce } from 'lodash';
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useTranslations } from 'next-intl';
-import {
-  type ReactNode,
-  Suspense,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
-import type { NavLink } from '@/components/navigation';
-import { PROD_MODE, ROOT_WORKSPACE_ID } from '@/constants/common';
-import { Nav } from './nav';
+import { ReactNode, Suspense, useCallback, useEffect, useState } from 'react';
 
 interface MailProps {
   wsId: string;
@@ -244,7 +238,7 @@ export function Structure({
         </Link>
       </div>
       <div className="mx-2 h-4 w-px flex-none rotate-30 bg-foreground/20" />
-      <div className="flex items-center gap-2 break-all font-semibold text-lg">
+      <div className="flex items-center gap-2 text-lg font-semibold break-all">
         {currentLink?.icon && (
           <div className="flex-none">{currentLink.icon}</div>
         )}

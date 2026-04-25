@@ -1,6 +1,7 @@
 'use client';
 
-import type { WorkspaceUserField } from '@ncthub/types/primitives/WorkspaceUserField';
+import UserFieldForm, { ApiConfigFormSchema } from './form';
+import { WorkspaceUserField } from '@ncthub/types/primitives/WorkspaceUserField';
 import {
   Dialog,
   DialogContent,
@@ -10,12 +11,10 @@ import {
   DialogTrigger,
 } from '@ncthub/ui/dialog';
 import { toast } from '@ncthub/ui/hooks/use-toast';
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import type React from 'react';
-import { useState } from 'react';
-import type * as z from 'zod';
-import UserFieldForm, { type ApiConfigFormSchema } from './form';
+import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
+import * as z from 'zod';
 
 interface Props {
   data: WorkspaceUserField;

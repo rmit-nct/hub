@@ -1,12 +1,12 @@
-import { createClient } from '@ncthub/supabase/next/server';
-import type { UserGroup } from '@ncthub/types/primitives/UserGroup';
-import FeatureSummary from '@ncthub/ui/custom/feature-summary';
-import { Separator } from '@ncthub/ui/separator';
-import { getTranslations } from 'next-intl/server';
-import { CustomDataTable } from '@/components/custom-data-table';
 import { getUserGroupColumns } from './columns';
 import Filters from './filters';
 import UserGroupForm from './form';
+import { CustomDataTable } from '@/components/custom-data-table';
+import { createClient } from '@ncthub/supabase/next/server';
+import { UserGroup } from '@ncthub/types/primitives/UserGroup';
+import FeatureSummary from '@ncthub/ui/custom/feature-summary';
+import { Separator } from '@ncthub/ui/separator';
+import { getTranslations } from 'next-intl/server';
 
 interface SearchParams {
   q?: string;

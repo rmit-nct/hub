@@ -1,5 +1,17 @@
-import type { CalendarEvent } from '@ncthub/types/primitives/calendar-event';
-import type { SupportedColor } from '@ncthub/types/primitives/SupportedColors';
+import { useCalendar } from '../../../../hooks/use-calendar';
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
+  ContextMenuTrigger,
+} from '../../context-menu';
+import { GRID_SNAP, HOUR_HEIGHT, MAX_HOURS, MIN_EVENT_HEIGHT } from './config';
+import { SupportedColor } from '@ncthub/types/primitives/SupportedColors';
+import { CalendarEvent } from '@ncthub/types/primitives/calendar-event';
 import { getEventStyles } from '@ncthub/utils/color-helper';
 import { cn } from '@ncthub/utils/format';
 import dayjs from 'dayjs';
@@ -18,18 +30,6 @@ import {
   Unlock,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { useCalendar } from '../../../../hooks/use-calendar';
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuSeparator,
-  ContextMenuSub,
-  ContextMenuSubContent,
-  ContextMenuSubTrigger,
-  ContextMenuTrigger,
-} from '../../context-menu';
-import { GRID_SNAP, HOUR_HEIGHT, MAX_HOURS, MIN_EVENT_HEIGHT } from './config';
 
 dayjs.extend(timezone);
 
@@ -910,7 +910,7 @@ export function EventCard({ dates, event, level = 0 }: EventCardProps) {
           ref={cardRef}
           id={`event-${id}`}
           className={cn(
-            'pointer-events-auto absolute max-w-none select-none overflow-hidden rounded-r-md rounded-l border-l-2 transition-colors duration-300',
+            'pointer-events-auto absolute max-w-none overflow-hidden rounded-l rounded-r-md border-l-2 transition-colors duration-300 select-none',
             'group transition-all hover:ring-1 focus:outline-none',
             {
               'transform shadow-md': isDragging || isResizing, // Subtle transform during interaction
@@ -1010,7 +1010,7 @@ export function EventCard({ dates, event, level = 0 }: EventCardProps) {
           <div
             ref={contentRef}
             className={cn(
-              'flex h-full select-none flex-col text-left',
+              'flex h-full flex-col text-left select-none',
               duration <= 0.25 ? 'px-1 py-0' : 'p-1',
               duration <= 0.5 ? 'text-xs' : 'text-sm',
               _isMultiDay && 'items-start'
@@ -1024,7 +1024,7 @@ export function EventCard({ dates, event, level = 0 }: EventCardProps) {
             >
               <div
                 className={cn(
-                  'space-x-1 font-semibold text-xs',
+                  'space-x-1 text-xs font-semibold',
                   duration <= 0.5 ? 'line-clamp-1' : 'line-clamp-2'
                 )}
               >

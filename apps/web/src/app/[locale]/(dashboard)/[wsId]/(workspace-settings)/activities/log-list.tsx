@@ -1,9 +1,9 @@
 'use client';
 
-import type { AuditLog } from '@ncthub/types/primitives/audit-log';
+import AuditLogCard from '@/components/cards/AuditLogCard';
+import { AuditLog } from '@ncthub/types/primitives/audit-log';
 import { Accordion } from '@ncthub/ui/accordion';
 import { useState } from 'react';
-import AuditLogCard from '@/components/cards/AuditLogCard';
 
 interface Props {
   logs: AuditLog[];

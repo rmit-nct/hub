@@ -1,5 +1,7 @@
+import { Filter } from '../../../users/filters';
+import { SectionProps } from './index';
 import { createClient } from '@ncthub/supabase/next/client';
-import type { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
+import { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
 import { Avatar, AvatarFallback, AvatarImage } from '@ncthub/ui/avatar';
 import { Button } from '@ncthub/ui/button';
 import SearchBar from '@ncthub/ui/custom/search-bar';
@@ -9,8 +11,6 @@ import { getInitials } from '@ncthub/utils/name-helper';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
-import { Filter } from '../../../users/filters';
-import type { SectionProps } from './index';
 
 export default function RoleFormMembersSection({
   wsId,

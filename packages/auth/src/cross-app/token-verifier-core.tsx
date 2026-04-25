@@ -1,9 +1,9 @@
 'use client';
 
+import { verifyRouteToken } from '.';
 import { LoadingIndicator } from '@ncthub/ui/custom/loading-indicator';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
-import { verifyRouteToken } from '.';
 
 export function TokenVerifierCore() {
   const searchParams = useSearchParams();

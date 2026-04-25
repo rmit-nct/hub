@@ -1,13 +1,13 @@
+import { getPromotionColumns } from './columns';
+import { PromotionForm } from './form';
+import { CustomDataTable } from '@/components/custom-data-table';
+import { getWorkspaceUser } from '@/lib/workspace-helper';
 import { createClient } from '@ncthub/supabase/next/server';
-import type { ProductPromotion } from '@ncthub/types/primitives/ProductPromotion';
+import { ProductPromotion } from '@ncthub/types/primitives/ProductPromotion';
 import FeatureSummary from '@ncthub/ui/custom/feature-summary';
 import { Separator } from '@ncthub/ui/separator';
 import { getCurrentUser } from '@ncthub/utils/user-helper';
 import { getTranslations } from 'next-intl/server';
-import { CustomDataTable } from '@/components/custom-data-table';
-import { getWorkspaceUser } from '@/lib/workspace-helper';
-import { getPromotionColumns } from './columns';
-import { PromotionForm } from './form';
 
 interface Props {
   params: Promise<{

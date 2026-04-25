@@ -1,10 +1,10 @@
+import { CustomDataTable } from '@/components/custom-data-table';
+import { batchColumns } from '@/data/columns/batches';
 import { createClient } from '@ncthub/supabase/next/server';
-import type { ProductBatch } from '@ncthub/types/primitives/ProductBatch';
+import { ProductBatch } from '@ncthub/types/primitives/ProductBatch';
 import FeatureSummary from '@ncthub/ui/custom/feature-summary';
 import { Separator } from '@ncthub/ui/separator';
 import { getTranslations } from 'next-intl/server';
-import { CustomDataTable } from '@/components/custom-data-table';
-import { batchColumns } from '@/data/columns/batches';
 
 interface Props {
   params: Promise<{

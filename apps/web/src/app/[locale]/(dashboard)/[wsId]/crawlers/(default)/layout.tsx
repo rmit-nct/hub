@@ -1,10 +1,10 @@
+import { NavLink, Navigation } from '@/components/navigation';
+import { getPermissions, getWorkspace } from '@/lib/workspace-helper';
 import { BugPlay, Gauge, Globe, Link2 } from '@ncthub/ui/icons';
 import { getCurrentUser } from '@ncthub/utils/user-helper';
-import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
-import type React from 'react';
-import { Navigation, type NavLink } from '@/components/navigation';
-import { getPermissions, getWorkspace } from '@/lib/workspace-helper';
+import { redirect } from 'next/navigation';
+import React from 'react';
 
 interface LayoutProps {
   params: Promise<{

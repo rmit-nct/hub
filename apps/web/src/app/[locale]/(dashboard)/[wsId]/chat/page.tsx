@@ -1,11 +1,11 @@
-import { notFound } from 'next/navigation';
+import Chat from './chat';
+import { getChats } from './helper';
 import {
   getPermissions,
   getWorkspace,
   verifyHasSecrets,
 } from '@/lib/workspace-helper';
-import Chat from './chat';
-import { getChats } from './helper';
+import { notFound } from 'next/navigation';
 
 interface Props {
   params: Promise<{

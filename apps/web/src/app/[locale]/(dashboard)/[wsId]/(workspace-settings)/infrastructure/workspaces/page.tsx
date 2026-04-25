@@ -1,7 +1,7 @@
+import WorkspaceCard from '../../../../../../../components/cards/WorkspaceCard';
+import { enforceRootWorkspaceAdmin } from '@/lib/workspace-helper';
 import { createAdminClient } from '@ncthub/supabase/next/server';
 import { Separator } from '@ncthub/ui/separator';
-import { enforceRootWorkspaceAdmin } from '@/lib/workspace-helper';
-import WorkspaceCard from '../../../../../../../components/cards/WorkspaceCard';
 
 interface Props {
   params: Promise<{

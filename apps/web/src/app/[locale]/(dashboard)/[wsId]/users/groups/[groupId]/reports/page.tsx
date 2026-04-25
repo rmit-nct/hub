@@ -1,8 +1,11 @@
+import { Filter } from '../../../filters';
+import EditableReportPreview from '../../../reports/[reportId]/editable-report-preview';
+import { availableConfigs } from '@/constants/configs/reports';
 import { createClient } from '@ncthub/supabase/next/server';
-import type { WorkspaceUserReport } from '@ncthub/types/db';
-import type { UserGroup } from '@ncthub/types/primitives/UserGroup';
-import type { WorkspaceConfig } from '@ncthub/types/primitives/WorkspaceConfig';
-import type { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
+import { WorkspaceUserReport } from '@ncthub/types/db';
+import { UserGroup } from '@ncthub/types/primitives/UserGroup';
+import { WorkspaceConfig } from '@ncthub/types/primitives/WorkspaceConfig';
+import { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
 import { Button } from '@ncthub/ui/button';
 import FeatureSummary from '@ncthub/ui/custom/feature-summary';
 import {
@@ -14,12 +17,9 @@ import {
 } from '@ncthub/ui/icons';
 import { Separator } from '@ncthub/ui/separator';
 import { cn } from '@ncthub/utils/format';
+import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getTranslations } from 'next-intl/server';
-import { availableConfigs } from '@/constants/configs/reports';
-import { Filter } from '../../../filters';
-import EditableReportPreview from '../../../reports/[reportId]/editable-report-preview';
 
 interface Props {
   params: Promise<{
@@ -75,7 +75,7 @@ export default async function UserGroupDetailsPage({
       <FeatureSummary
         title={
           <>
-            <h1 className="w-full font-bold text-2xl">
+            <h1 className="w-full text-2xl font-bold">
               {group.name || t('ws-user-groups.singular')}
             </h1>
             <Separator className="my-2" />
@@ -358,7 +358,7 @@ async function getConfigs(wsId: string) {
   if (error) throw error;
 
   // Create a copy of availableConfigs to include in the response
-  const configs = [
+  let configs = [
     ...availableConfigs.map(({ defaultValue, ...rest }) => ({
       ...rest,
       value: defaultValue,

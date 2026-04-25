@@ -260,7 +260,7 @@ export function TimeRangePicker({
     const newTimeRanges = { ...safeTimeRanges };
     const blocks = newTimeRanges[day]?.timeBlocks || [];
     const lastBlock = blocks[blocks.length - 1];
-    const newStartMin = lastBlock ? timeToMinutes(lastBlock.endTime) : 540; // 09:00
+    let newStartMin = lastBlock ? timeToMinutes(lastBlock.endTime) : 540; // 09:00
     let newEndMin = newStartMin + 30;
     if (newEndMin > 1439) newEndMin = 1439; // Clamp to 11:59 PM
     if (newEndMin - newStartMin < 30) {
@@ -306,7 +306,7 @@ export function TimeRangePicker({
     const prevEnd = prevBlock?.endTime;
     const nextStart = nextBlock?.startTime;
 
-    const updatedBlock = {
+    let updatedBlock = {
       ...block,
       [field]: newValue,
     };
@@ -556,7 +556,7 @@ export function TimeRangePicker({
                       <div className="space-y-1">
                         <Label
                           htmlFor={`${key}-start-${blockIndex}`}
-                          className="text-muted-foreground text-xs"
+                          className="text-xs text-muted-foreground"
                         >
                           Start
                         </Label>
@@ -587,7 +587,7 @@ export function TimeRangePicker({
                             'bg-background text-foreground',
                             'appearance-none',
                             'border border-muted',
-                            'focus:outline-none focus:ring-2 focus:ring-primary'
+                            'focus:ring-2 focus:ring-primary focus:outline-none'
                           )}
                           autoComplete="off"
                           spellCheck={false}
@@ -597,7 +597,7 @@ export function TimeRangePicker({
                       <div className="space-y-1">
                         <Label
                           htmlFor={`${key}-end-${blockIndex}`}
-                          className="text-muted-foreground text-xs"
+                          className="text-xs text-muted-foreground"
                         >
                           End
                         </Label>
@@ -629,7 +629,7 @@ export function TimeRangePicker({
                             'bg-background text-foreground',
                             'appearance-none',
                             'border border-muted',
-                            'focus:outline-none focus:ring-2 focus:ring-primary'
+                            'focus:ring-2 focus:ring-primary focus:outline-none'
                           )}
                           autoComplete="off"
                           spellCheck={false}

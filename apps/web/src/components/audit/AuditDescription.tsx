@@ -1,6 +1,6 @@
-import type { AuditLog } from '@ncthub/types/primitives/audit-log';
-import { DEV_MODE } from '@/constants/common';
 import AuditSmartContent from './AuditSmartContent';
+import { DEV_MODE } from '@/constants/common';
+import { AuditLog } from '@ncthub/types/primitives/audit-log';
 
 interface Props {
   data: AuditLog;

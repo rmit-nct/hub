@@ -1,11 +1,11 @@
 'use client';
 
-import type { WorkspaceRole } from '@ncthub/types/db';
+import { RoleRowActions } from './row-actions';
+import { WorkspaceRole } from '@ncthub/types/db';
 import { DataTableColumnHeader } from '@ncthub/ui/custom/tables/data-table-column-header';
 import { UserCircle } from '@ncthub/ui/icons';
-import type { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef } from '@tanstack/react-table';
 import moment from 'moment';
-import { RoleRowActions } from './row-actions';
 
 export const roleColumns = (
   t: any,
@@ -75,7 +75,7 @@ export const roleColumns = (
     ),
     cell: ({ row }) => (
       <div className="flex items-center gap-1 font-semibold">
-        <span className="flex items-center gap-1 rounded border px-1 font-bold text-sm">
+        <span className="flex items-center gap-1 rounded border px-1 text-sm font-bold">
           <span className="text-dynamic-orange">
             {(row.getValue('permissions') as any[]).filter((x) => x.enabled)
               .length ?? '-'}

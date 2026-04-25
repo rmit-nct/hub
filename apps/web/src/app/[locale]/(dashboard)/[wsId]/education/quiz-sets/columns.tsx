@@ -1,11 +1,11 @@
 'use client';
 
-import type { WorkspaceQuizSet } from '@ncthub/types/db';
+import { QuizSetRowActions } from './row-actions';
+import { WorkspaceQuizSet } from '@ncthub/types/db';
 import { DataTableColumnHeader } from '@ncthub/ui/custom/tables/data-table-column-header';
-import type { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef } from '@tanstack/react-table';
 import moment from 'moment';
 import Link from 'next/link';
-import { QuizSetRowActions } from './row-actions';
 
 export const getQuizSetColumns = (
   t: any,

@@ -1,8 +1,8 @@
-import { createClient } from '@ncthub/supabase/next/server';
-import { getTranslations } from 'next-intl/server';
+import type { FinanceDashboardSearchParams } from '../../finance/(dashboard)/page';
 import StatisticCard from '@/components/cards/StatisticCard';
 import { getPermissions } from '@/lib/workspace-helper';
-import type { FinanceDashboardSearchParams } from '../../finance/(dashboard)/page';
+import { createClient } from '@ncthub/supabase/next/server';
+import { getTranslations } from 'next-intl/server';
 
 const enabled = true;
 

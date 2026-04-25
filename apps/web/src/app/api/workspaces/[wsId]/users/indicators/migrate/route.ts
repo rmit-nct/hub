@@ -1,5 +1,5 @@
 import { createClient } from '@ncthub/supabase/next/server';
-import type { Vital } from '@ncthub/types/primitives/Vital';
+import { Vital } from '@ncthub/types/primitives/Vital';
 import { NextResponse } from 'next/server';
 
 interface Params {

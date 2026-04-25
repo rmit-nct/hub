@@ -1,5 +1,6 @@
 'use client';
 
+import useSearchParams from '@/hooks/useSearchParams';
 import { createClient } from '@ncthub/supabase/next/client';
 import { Button } from '@ncthub/ui/button';
 import { ChevronLeft, ChevronRight } from '@ncthub/ui/icons';
@@ -8,7 +9,6 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { format, parse } from 'date-fns';
 import { useLocale } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
-import useSearchParams from '@/hooks/useSearchParams';
 
 export default function GroupSchedule({
   wsId,
@@ -65,20 +65,16 @@ export default function GroupSchedule({
 
   // includes all days of the week, starting from monday to sunday
   const days = Array.from({ length: 7 }, (_, i) => {
-    const newDay = new Date(currentDate);
+    let newDay = new Date(currentDate);
     newDay.setDate(currentDate.getDate() - currentDate.getDay() + i + 1);
     return newDay.toLocaleString(locale, { weekday: 'narrow' });
   });
 
   // includes all days of the month, starting from monday (which could be from the previous month) to sunday (which could be from the next month)
   const daysInMonth = Array.from({ length: 42 }, (_, i) => {
-    const newDay = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
-      1
-    );
-    const dayOfWeek = newDay.getDay();
-    const adjustment = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // adjust for Monday start
+    let newDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    let dayOfWeek = newDay.getDay();
+    let adjustment = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // adjust for Monday start
     newDay.setDate(newDay.getDate() - adjustment + i);
     return newDay;
   });
@@ -102,11 +98,11 @@ export default function GroupSchedule({
       <div>
         <div className="grid h-full gap-8">
           <div key={2024} className="flex h-full flex-col">
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 font-bold text-xl md:text-2xl">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-xl font-bold md:text-2xl">
               <div className="flex items-center gap-1">
                 {thisYear}
                 <div className="mx-2 h-4 w-px rotate-30 bg-foreground/20" />
-                <span className="font-semibold text-lg md:text-xl">
+                <span className="text-lg font-semibold md:text-xl">
                   {thisMonth}
                 </span>
               </div>

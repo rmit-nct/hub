@@ -2,7 +2,7 @@
 
 import { createDynamicClient } from '@ncthub/supabase/next/client';
 import { Button } from '@ncthub/ui/button';
-import { FileUploader, type StatedFile } from '@ncthub/ui/custom/file-uploader';
+import { FileUploader, StatedFile } from '@ncthub/ui/custom/file-uploader';
 import { File, FileText, ImageIcon, X } from '@ncthub/ui/icons';
 import {
   Tooltip,

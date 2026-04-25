@@ -1,16 +1,16 @@
 'use client';
 
+import { Filter } from '../../../users/filters';
 import { createClient } from '@ncthub/supabase/next/client';
-import type { UserGroup } from '@ncthub/types/primitives/UserGroup';
+import { UserGroup } from '@ncthub/types/primitives/UserGroup';
 import { Button } from '@ncthub/ui/button';
 import SearchBar from '@ncthub/ui/custom/search-bar';
 import { Users, X } from '@ncthub/ui/icons';
 import { cn } from '@ncthub/utils/format';
 import { useQuery } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { Filter } from '../../../users/filters';
 
 export interface UserGroupFormProps {
   wsId: string;

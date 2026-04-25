@@ -1,9 +1,9 @@
-import { createAdminClient } from '@ncthub/supabase/next/server';
-import type { Timezone } from '@ncthub/types/primitives/Timezone';
-import { notFound } from 'next/navigation';
 import { CustomDataTable } from '@/components/custom-data-table';
 import { timezoneColumns } from '@/data/columns/timezones';
 import timezones from '@/data/timezones.json';
+import { createAdminClient } from '@ncthub/supabase/next/server';
+import { Timezone } from '@ncthub/types/primitives/Timezone';
+import { notFound } from 'next/navigation';
 
 interface Props {
   searchParams: Promise<{

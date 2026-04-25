@@ -1,17 +1,16 @@
 import {
   Controller,
-  type ControllerProps,
-  type FieldPath,
-  type FieldValues,
+  ControllerProps,
+  FieldPath,
+  FieldValues,
   FormProvider,
-  type UseFormReturn,
+  UseFormReturn,
   useFieldArray,
   useForm,
   useFormContext,
   useFormState,
 } from 'react-hook-form';
 
-export type { ControllerProps, FieldPath, FieldValues, UseFormReturn };
 export {
   Controller,
   FormProvider,
@@ -20,3 +19,5 @@ export {
   useFormContext,
   useFormState,
 };
+
+export type { ControllerProps, FieldPath, FieldValues, UseFormReturn };

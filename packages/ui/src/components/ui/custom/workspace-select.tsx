@@ -1,7 +1,7 @@
 'use client';
 
 import { createClient } from '@ncthub/supabase/next/client';
-import type { Workspace } from '@ncthub/types/db';
+import { Workspace } from '@ncthub/types/db';
 import { Avatar, AvatarFallback, AvatarImage } from '@ncthub/ui/avatar';
 import { Button } from '@ncthub/ui/button';
 import {
@@ -201,7 +201,7 @@ export function WorkspaceSelect({
               aria-label="Select a workspace"
               className={cn(
                 hideLeading ? 'justify-center p-0' : 'justify-start',
-                'w-full whitespace-normal text-start'
+                'w-full text-start whitespace-normal'
               )}
               disabled={!workspaces || workspaces.length === 0}
             >
@@ -490,7 +490,7 @@ async function fetchWorkspaces() {
 
   if (!user) return [];
 
-  const { data: workspaces, error } = await supabase
+  const { data: workspaces, error: error } = await supabase
     .from('workspaces')
     .select(
       'id, name, avatar_url, logo_url, created_at, workspace_members!inner(role)'

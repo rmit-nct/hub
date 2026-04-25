@@ -269,7 +269,7 @@ export function SessionHistory({
                 <PopoverContent className="w-80" align="end">
                   <div className="space-y-4">
                     <div>
-                      <Label className="font-medium text-sm">Category</Label>
+                      <Label className="text-sm font-medium">Category</Label>
                       <Select
                         value={filterCategoryId}
                         onValueChange={setFilterCategoryId}
@@ -296,7 +296,7 @@ export function SessionHistory({
                       </Select>
                     </div>
                     <div>
-                      <Label className="font-medium text-sm">Task</Label>
+                      <Label className="text-sm font-medium">Task</Label>
                       <Select
                         value={filterTaskId}
                         onValueChange={setFilterTaskId}
@@ -329,7 +329,7 @@ export function SessionHistory({
                   ? 'No time sessions yet'
                   : 'No sessions match your filters'}
               </p>
-              <p className="mt-1 text-muted-foreground text-sm">
+              <p className="mt-1 text-sm text-muted-foreground">
                 {sessions.length === 0
                   ? 'Start tracking time to see your sessions here'
                   : 'Try adjusting your search or filters'}
@@ -344,11 +344,11 @@ export function SessionHistory({
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="min-w-0 flex-1">
-                      <h4 className="truncate font-medium text-base">
+                      <h4 className="truncate text-base font-medium">
                         {session.title}
                       </h4>
                       {session.description && (
-                        <p className="mt-1 line-clamp-2 text-muted-foreground text-sm">
+                        <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
                           {session.description}
                         </p>
                       )}
@@ -368,7 +368,7 @@ export function SessionHistory({
                             {session.task.name}
                           </Badge>
                         )}
-                        <div className="flex items-center gap-1 text-muted-foreground text-xs">
+                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
                           <Clock className="h-3 w-3" />
                           <span>
                             {new Date(session.start_time).toLocaleDateString()}{' '}
@@ -381,13 +381,13 @@ export function SessionHistory({
 
                     <div className="flex items-start gap-3">
                       <div className="text-right">
-                        <p className="font-medium text-lg">
+                        <p className="text-lg font-medium">
                           {session.duration_seconds
                             ? formatDuration(session.duration_seconds)
                             : '-'}
                         </p>
                         {session.end_time && (
-                          <p className="text-muted-foreground text-xs">
+                          <p className="text-xs text-muted-foreground">
                             Ended at{' '}
                             {new Date(session.end_time).toLocaleTimeString()}
                           </p>

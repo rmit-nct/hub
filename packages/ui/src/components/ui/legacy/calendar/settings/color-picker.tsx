@@ -1,6 +1,6 @@
 'use client';
 
-import type { SupportedColor } from '@ncthub/types/primitives/SupportedColors';
+import { SupportedColor } from '@ncthub/types/primitives/SupportedColors';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@ncthub/ui/tooltip';
 import { cn } from '@ncthub/utils/format';
 

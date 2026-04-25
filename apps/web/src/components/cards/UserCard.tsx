@@ -1,4 +1,4 @@
-import type { User } from '@ncthub/types/primitives/User';
+import { User } from '@ncthub/types/primitives/User';
 import { Separator } from '@ncthub/ui/separator';
 import moment from 'moment';
 import Link from 'next/link';

@@ -1,8 +1,8 @@
-import type * as Phaser from 'phaser';
 import { GAME_CONFIG } from '../config';
 import type { MapManager } from '../managers/MapManager';
 import { Direction, type TilePosition } from '../types';
 import { pixelToTile, tileToPixelCentered } from '../utils/helpers';
+import * as Phaser from 'phaser';
 
 export class Pacman {
   private scene: Phaser.Scene;

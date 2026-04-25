@@ -1,7 +1,7 @@
 'use client';
 
-import type { Workspace } from '@ncthub/types/db';
-import type { User } from '@ncthub/types/primitives/User';
+import { Workspace } from '@ncthub/types/db';
+import { User } from '@ncthub/types/primitives/User';
 import { Avatar, AvatarFallback, AvatarImage } from '@ncthub/ui/avatar';
 import { Button } from '@ncthub/ui/button';
 import {
@@ -27,8 +27,8 @@ import { Settings, User as UserIcon } from '@ncthub/ui/icons';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
 import { getInitials } from '@ncthub/utils/name-helper';
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import * as z from 'zod';
 
@@ -174,7 +174,7 @@ export function MemberSettingsButton({
           </Avatar>
 
           <div className="flex-1 space-y-1">
-            <p className="line-clamp-1 font-medium text-sm leading-none">
+            <p className="line-clamp-1 text-sm leading-none font-medium">
               {user?.display_name ? (
                 user.display_name
               ) : (
@@ -183,7 +183,7 @@ export function MemberSettingsButton({
               {role ? <span className="text-orange-300">({role})</span> : null}
             </p>
 
-            <p className="line-clamp-1 text-foreground/60 text-sm">
+            <p className="line-clamp-1 text-sm text-foreground/60">
               {user?.email ||
                 (user?.handle
                   ? `@${user.handle}`

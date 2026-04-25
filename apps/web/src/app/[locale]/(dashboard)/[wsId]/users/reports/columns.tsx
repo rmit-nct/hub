@@ -1,11 +1,11 @@
 'use client';
 
-import type { WorkspaceUserReport } from '@ncthub/types/db';
+import { UserReportRowActions } from './row-actions';
+import { WorkspaceUserReport } from '@ncthub/types/db';
 import { DataTableColumnHeader } from '@ncthub/ui/custom/tables/data-table-column-header';
-import type { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef } from '@tanstack/react-table';
 import moment from 'moment';
 import Link from 'next/link';
-import { UserReportRowActions } from './row-actions';
 
 export const getUserReportColumns = (
   t: any,
@@ -66,7 +66,7 @@ export const getUserReportColumns = (
       />
     ),
     cell: ({ row }) => (
-      <div className="line-clamp-2 min-w-32 max-w-[24rem]">
+      <div className="line-clamp-2 max-w-[24rem] min-w-32">
         {row.getValue('user_name') || '-'}
       </div>
     ),
@@ -83,7 +83,7 @@ export const getUserReportColumns = (
     cell: ({ row }) => (
       <Link
         href={row.original.href || '#'}
-        className="line-clamp-2 min-w-32 max-w-[24rem] hover:underline"
+        className="line-clamp-2 max-w-[24rem] min-w-32 hover:underline"
       >
         {row.getValue('title') || '-'}
       </Link>

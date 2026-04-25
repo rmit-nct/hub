@@ -1,4 +1,3 @@
-import * as Phaser from 'phaser';
 import { GAME_CONFIG } from '../config';
 import { Ghost } from '../entities/Ghost';
 import { Pacman } from '../entities/Pacman';
@@ -6,6 +5,7 @@ import { CollisionManager } from '../managers/CollisionManager';
 import { FoodManager } from '../managers/FoodManager';
 import { MapManager } from '../managers/MapManager';
 import { FoodType, GhostState, GhostType } from '../types';
+import * as Phaser from 'phaser';
 
 interface GameData {
   mapId: string;

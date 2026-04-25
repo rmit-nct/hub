@@ -1,12 +1,12 @@
 'use client';
 
+import { GameOverScene } from './scenes/GameOverScene';
+import { GameScene } from './scenes/GameScene';
+import { MenuScene } from './scenes/MenuScene';
 import { Button } from '@ncthub/ui/button';
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp } from '@ncthub/ui/icons';
 import * as Phaser from 'phaser';
 import { useEffect, useRef } from 'react';
-import { GameOverScene } from './scenes/GameOverScene';
-import { GameScene } from './scenes/GameScene';
-import { MenuScene } from './scenes/MenuScene';
 
 export function PacmanGame() {
   const gameRef = useRef<Phaser.Game | null>(null);
@@ -73,7 +73,7 @@ export function PacmanGame() {
     <div className="flex w-full flex-col items-center justify-center gap-8 px-4 md:px-0">
       <div className="relative w-full max-w-[512px]">
         {/* Glow effect behind the game */}
-        <div className="absolute -inset-4 rounded-2xl bg-linear-to-r from-yellow-400/20 via-blue-500/20 to-purple-500/20 opacity-75 blur-2xl" />
+        <div className="bg-linear-to-r absolute -inset-4 rounded-2xl from-yellow-400/20 via-blue-500/20 to-purple-500/20 opacity-75 blur-2xl" />
 
         {/* Game container */}
         <div
@@ -84,7 +84,7 @@ export function PacmanGame() {
 
       {/* Control Buttons */}
       <div className="flex flex-col items-center gap-6">
-        <p className="font-semibold text-md text-muted-foreground">
+        <p className="text-muted-foreground text-md font-semibold">
           Touch Controls
         </p>
         <div className="grid grid-cols-3 grid-rows-3 gap-1.5">
@@ -93,7 +93,7 @@ export function PacmanGame() {
             <Button
               variant="outline"
               size="icon"
-              className="size-12 border-dynamic-light-blue/50 bg-dynamic-blue/10 transition-all hover:border-dynamic-light-blue hover:bg-dynamic-blue/20 active:scale-95"
+              className="border-dynamic-light-blue/50 bg-dynamic-blue/10 hover:bg-dynamic-blue/20 hover:border-dynamic-light-blue size-12 transition-all active:scale-95"
               onMouseDown={() => dispatchKeyEvent('ArrowUp', 'keydown')}
               onMouseUp={() => dispatchKeyEvent('ArrowUp', 'keyup')}
               onTouchStart={() => dispatchKeyEvent('ArrowUp', 'keydown')}
@@ -108,7 +108,7 @@ export function PacmanGame() {
             <Button
               variant="outline"
               size="icon"
-              className="size-12 border-dynamic-light-blue/50 bg-dynamic-blue/10 transition-all hover:border-dynamic-light-blue hover:bg-dynamic-blue/20 active:scale-95"
+              className="border-dynamic-light-blue/50 bg-dynamic-blue/10 hover:bg-dynamic-blue/20 hover:border-dynamic-light-blue size-12 transition-all active:scale-95"
               onMouseDown={() => dispatchKeyEvent('ArrowLeft', 'keydown')}
               onMouseUp={() => dispatchKeyEvent('ArrowLeft', 'keyup')}
               onTouchStart={() => dispatchKeyEvent('ArrowLeft', 'keydown')}
@@ -121,7 +121,7 @@ export function PacmanGame() {
             <Button
               variant="outline"
               size="icon"
-              className="size-12 border-dynamic-light-blue/50 bg-dynamic-blue/10 transition-all hover:border-dynamic-light-blue hover:bg-dynamic-blue/20 active:scale-95"
+              className="border-dynamic-light-blue/50 bg-dynamic-blue/10 hover:bg-dynamic-blue/20 hover:border-dynamic-light-blue size-12 transition-all active:scale-95"
               onMouseDown={() => dispatchKeyEvent('ArrowRight', 'keydown')}
               onMouseUp={() => dispatchKeyEvent('ArrowRight', 'keyup')}
               onTouchStart={() => dispatchKeyEvent('ArrowRight', 'keydown')}
@@ -136,7 +136,7 @@ export function PacmanGame() {
             <Button
               variant="outline"
               size="icon"
-              className="size-12 border-dynamic-light-blue/50 bg-dynamic-blue/10 transition-all hover:border-dynamic-light-blue hover:bg-dynamic-blue/20 active:scale-95"
+              className="border-dynamic-light-blue/50 bg-dynamic-blue/10 hover:bg-dynamic-blue/20 hover:border-dynamic-light-blue size-12 transition-all active:scale-95"
               onMouseDown={() => dispatchKeyEvent('ArrowDown', 'keydown')}
               onMouseUp={() => dispatchKeyEvent('ArrowDown', 'keyup')}
               onTouchStart={() => dispatchKeyEvent('ArrowDown', 'keydown')}

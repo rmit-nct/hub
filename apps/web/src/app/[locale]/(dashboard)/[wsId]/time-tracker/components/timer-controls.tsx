@@ -268,7 +268,7 @@ export function TimerControls({
           <Timer className="h-5 w-5" />
           Time Tracker
         </CardTitle>
-        <div className="space-y-1 text-muted-foreground text-sm">
+        <div className="space-y-1 text-sm text-muted-foreground">
           <span>Track your time with detailed analytics</span>
           <div className="flex flex-wrap gap-2 text-xs">
             <span className="rounded bg-muted px-1.5 py-0.5">
@@ -286,10 +286,10 @@ export function TimerControls({
             <div className="relative overflow-hidden rounded-lg bg-gradient-to-br from-red-50 to-red-100 p-6 dark:from-red-950/20 dark:to-red-900/20">
               <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-red-500/10 to-transparent opacity-30"></div>
               <div className="relative">
-                <div className="font-bold font-mono text-4xl text-red-600 transition-all duration-300 dark:text-red-400">
+                <div className="font-mono text-4xl font-bold text-red-600 transition-all duration-300 dark:text-red-400">
                   {formatTime(elapsedTime)}
                 </div>
-                <div className="mt-2 flex items-center justify-center gap-2 text-red-600/70 text-sm dark:text-red-400/70">
+                <div className="mt-2 flex items-center justify-center gap-2 text-sm text-red-600/70 dark:text-red-400/70">
                   <div className="h-2 w-2 animate-pulse rounded-full bg-red-500"></div>
                   Started at{' '}
                   {new Date(currentSession.start_time).toLocaleTimeString()}
@@ -298,9 +298,9 @@ export function TimerControls({
             </div>
 
             <div className="text-left">
-              <h3 className="font-medium text-lg">{currentSession.title}</h3>
+              <h3 className="text-lg font-medium">{currentSession.title}</h3>
               {currentSession.description && (
-                <p className="mt-1 text-muted-foreground text-sm">
+                <p className="mt-1 text-sm text-muted-foreground">
                   {currentSession.description}
                 </p>
               )}
@@ -346,7 +346,7 @@ export function TimerControls({
           </div>
         ) : (
           <div className="space-y-6">
-            <div className="rounded-lg border-2 border-muted-foreground/25 border-dashed p-6 text-center">
+            <div className="rounded-lg border-2 border-dashed border-muted-foreground/25 p-6 text-center">
               <Clock className="mx-auto mb-3 h-12 w-12 text-muted-foreground" />
               <p className="text-base text-muted-foreground">
                 Ready to start tracking time
@@ -442,7 +442,7 @@ export function TimerControls({
               {/* Quick Start Templates */}
               {templates.length > 0 && (
                 <div className="space-y-3">
-                  <Label className="text-muted-foreground text-sm">
+                  <Label className="text-sm text-muted-foreground">
                     Quick Start:
                   </Label>
                   <div className="space-y-2">
@@ -471,15 +471,15 @@ export function TimerControls({
 
       {/* Completion Celebration */}
       {justCompleted && (
-        <div className="fade-in absolute inset-0 z-50 flex animate-in items-center justify-center rounded-lg bg-black/20 backdrop-blur-sm duration-300">
-          <div className="zoom-in animate-in rounded-lg border bg-background p-6 shadow-xl duration-300">
+        <div className="absolute inset-0 z-50 flex items-center justify-center rounded-lg bg-black/20 backdrop-blur-sm duration-300 animate-in fade-in">
+          <div className="rounded-lg border bg-background p-6 shadow-xl duration-300 animate-in zoom-in">
             <div className="text-center">
               <CheckCircle className="mx-auto mb-4 h-12 w-12 animate-pulse text-green-500" />
-              <h3 className="mb-2 font-semibold text-lg">Session Completed!</h3>
+              <h3 className="mb-2 text-lg font-semibold">Session Completed!</h3>
               <p className="mb-1 text-muted-foreground">
                 {justCompleted.title}
               </p>
-              <p className="font-medium text-green-600 text-sm">
+              <p className="text-sm font-medium text-green-600">
                 {formatDuration(justCompleted.duration_seconds || 0)} tracked
               </p>
             </div>

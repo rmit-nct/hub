@@ -19,7 +19,7 @@ export default function NeoMeetHeader() {
         <Sparkles className="h-5 w-5 text-brand-light-yellow" />
       </div>
 
-      <h1 className="mb-6 text-balance font-bold text-3xl text-foreground md:text-5xl lg:text-6xl">
+      <h1 className="mb-6 text-3xl font-bold text-balance text-foreground md:text-5xl lg:text-6xl">
         <span>Welcome to</span>{' '}
         <span className="whitespace-nowrap border-brand-light-yellow border-b-4 text-brand-light-blue">
           Neo Meet{' '}
@@ -39,7 +39,7 @@ export default function NeoMeetHeader() {
           </motion.div>
         </span>
       </h1>
-      <p className="mx-auto max-w-2xl text-balance text-foreground/80 text-lg md:text-xl">
+      <p className="mx-auto max-w-2xl text-lg text-balance text-foreground/80 md:text-xl">
         Find the best time slot for everyone, hassle-free.
       </p>
     </div>

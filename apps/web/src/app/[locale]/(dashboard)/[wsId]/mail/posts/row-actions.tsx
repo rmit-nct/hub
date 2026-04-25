@@ -1,10 +1,10 @@
-import type { PostEmail } from '@ncthub/types/primitives/post-email';
+import useEmail from '@/hooks/useEmail';
+import { PostEmail } from '@ncthub/types/primitives/post-email';
 import { Button } from '@ncthub/ui/button';
 import { LoadingIndicator } from '@ncthub/ui/custom/loading-indicator';
 import { CircleAlert, CircleSlash, MailCheck, Send } from '@ncthub/ui/icons';
 import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
-import useEmail from '@/hooks/useEmail';
 
 export default function RowActions({ data }: { data: PostEmail }) {
   const t = useTranslations();

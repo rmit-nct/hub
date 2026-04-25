@@ -53,7 +53,7 @@ export function BoardHeader({
   return (
     <div className="flex items-center justify-between gap-4 border-b px-4 py-2">
       <div className="flex items-center gap-2">
-        <h1 className="font-semibold text-xl">{boardName}</h1>
+        <h1 className="text-xl font-semibold">{boardName}</h1>
         <Button
           variant="ghost"
           size="icon"

@@ -1,10 +1,10 @@
 'use client';
 
-import { useObject } from '@ncthub/ai/object/core';
-import { yearPlanSchema } from '@ncthub/ai/object/types';
 import { GoalsInput } from './components/form/GoalsInput';
 import { PlanView } from './components/plan/PlanView';
-import type { AdvancedSettings, YearPlan } from './types';
+import { AdvancedSettings, YearPlan } from './types';
+import { useObject } from '@ncthub/ai/object/core';
+import { yearPlanSchema } from '@ncthub/ai/object/types';
 
 export default function SparkClientPage({ wsId }: { wsId: string }) {
   const {

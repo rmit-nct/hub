@@ -1,8 +1,8 @@
-import { getCurrentUser } from '@ncthub/utils/user-helper';
-import { notFound } from 'next/navigation';
-import { getTranslations } from 'next-intl/server';
-import { getWorkspace, verifySecret } from '@/lib/workspace-helper';
 import TimeTrackerContent from './time-tracker-content';
+import { getWorkspace, verifySecret } from '@/lib/workspace-helper';
+import { getCurrentUser } from '@ncthub/utils/user-helper';
+import { getTranslations } from 'next-intl/server';
+import { notFound } from 'next/navigation';
 
 interface Props {
   params: Promise<{
@@ -34,7 +34,7 @@ export default async function TimeTrackerPage({ params }: Props) {
     <div className="flex flex-col gap-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-bold text-3xl">
+          <h1 className="text-3xl font-bold">
             {t('sidebar_tabs.time_tracker')}
           </h1>
           <p className="text-muted-foreground">

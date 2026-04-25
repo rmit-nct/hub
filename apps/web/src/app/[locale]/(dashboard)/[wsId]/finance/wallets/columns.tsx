@@ -1,11 +1,11 @@
 'use client';
 
-import type { Wallet } from '@ncthub/types/primitives/Wallet';
+import { WalletRowActions } from './row-actions';
+import { Wallet } from '@ncthub/types/primitives/Wallet';
 import { DataTableColumnHeader } from '@ncthub/ui/custom/tables/data-table-column-header';
 import { Check, X } from '@ncthub/ui/icons';
-import type { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef } from '@tanstack/react-table';
 import moment from 'moment';
-import { WalletRowActions } from './row-actions';
 
 export const walletColumns = (
   t: any,

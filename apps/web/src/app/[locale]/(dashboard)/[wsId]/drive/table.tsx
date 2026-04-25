@@ -1,10 +1,10 @@
 'use client';
 
-import type { StorageObject } from '@ncthub/types/primitives/StorageObject';
+import { storageObjectsColumns } from './columns';
+import { CustomDataTable } from '@/components/custom-data-table';
+import { StorageObject } from '@ncthub/types/primitives/StorageObject';
 import { Dialog } from '@ncthub/ui/dialog';
 import { useState } from 'react';
-import { CustomDataTable } from '@/components/custom-data-table';
-import { storageObjectsColumns } from './columns';
 
 interface Props {
   wsId: string;

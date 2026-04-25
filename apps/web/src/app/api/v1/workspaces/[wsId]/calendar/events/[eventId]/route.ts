@@ -1,5 +1,5 @@
 import { createClient } from '@ncthub/supabase/next/server';
-import type { CalendarEvent } from '@ncthub/types/primitives/calendar-event';
+import { CalendarEvent } from '@ncthub/types/primitives/calendar-event';
 import { NextResponse } from 'next/server';
 
 interface Params {

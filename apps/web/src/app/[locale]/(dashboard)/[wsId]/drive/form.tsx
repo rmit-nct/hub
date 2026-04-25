@@ -1,5 +1,6 @@
 'use client';
 
+import { joinPath } from '@/utils/path-helper';
 import { createClient } from '@ncthub/supabase/next/client';
 import { EMPTY_FOLDER_PLACEHOLDER_NAME } from '@ncthub/types/primitives/StorageObject';
 import { Button } from '@ncthub/ui/button';
@@ -18,11 +19,10 @@ import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
 import { ScrollArea } from '@ncthub/ui/scroll-area';
 import { generateRandomUUID } from '@ncthub/utils/uuid-helper';
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import { Fragment, useState } from 'react';
 import * as z from 'zod';
-import { joinPath } from '@/utils/path-helper';
 
 interface FolderProps {
   wsId: string;
@@ -315,7 +315,7 @@ export function StorageObjectForm({
                               </div>
                             )}
 
-                            <div className="font-semibold text-xs">
+                            <div className="text-xs font-semibold">
                               {fileStatuses[file.name] === 'uploading' ? (
                                 <span className="opacity-70">
                                   {t('common.uploading')}...

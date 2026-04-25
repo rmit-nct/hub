@@ -1,7 +1,13 @@
 'use client';
 
+import { coordinateGetter } from './keyboard-preset';
+import { TaskCard } from './task';
+import type { Column } from './task-list';
+import { BoardColumn, BoardContainer } from './task-list';
+import { TaskListForm } from './task-list-form';
+import { hasDraggableData } from './utils';
+import { getTaskLists, moveTask } from '@/lib/task-helper';
 import {
-  closestCenter,
   DndContext,
   type DragEndEvent,
   type DragOverEvent,
@@ -10,21 +16,15 @@ import {
   KeyboardSensor,
   MouseSensor,
   TouchSensor,
+  closestCenter,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
 import { SortableContext } from '@dnd-kit/sortable';
 import { createClient } from '@ncthub/supabase/next/client';
-import type { Task as TaskType } from '@ncthub/types/primitives/TaskBoard';
+import { type Task as TaskType } from '@ncthub/types/primitives/TaskBoard';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { getTaskLists, moveTask } from '@/lib/task-helper';
-import { coordinateGetter } from './keyboard-preset';
-import { TaskCard } from './task';
-import type { Column } from './task-list';
-import { BoardColumn, BoardContainer } from './task-list';
-import { TaskListForm } from './task-list-form';
-import { hasDraggableData } from './utils';
 
 interface Props {
   boardId: string;

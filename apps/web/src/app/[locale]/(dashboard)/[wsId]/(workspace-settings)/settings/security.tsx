@@ -1,10 +1,10 @@
 'use client';
 
-import type { Workspace } from '@ncthub/types/db';
+import { Workspace } from '@ncthub/types/db';
 import { Button } from '@ncthub/ui/button';
 import { toast } from '@ncthub/ui/hooks/use-toast';
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 interface Props {
@@ -34,7 +34,7 @@ export default function Security({ workspace }: Props) {
 
   return (
     <div className="flex flex-col rounded-lg border border-border bg-foreground/5 p-4">
-      <div className="mb-1 font-bold text-2xl">{t('security')}</div>
+      <div className="mb-1 text-2xl font-bold">{t('security')}</div>
       <div className="mb-4 font-semibold text-foreground/80">
         {t('security_description')}
       </div>

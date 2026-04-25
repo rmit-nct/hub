@@ -1,3 +1,4 @@
+import { DEV_MODE } from '@/constants/common';
 import { createClient } from '@ncthub/supabase/next/client';
 import {
   DropdownMenuGroup,
@@ -6,9 +7,8 @@ import {
 } from '@ncthub/ui/dropdown-menu';
 import { ActivitySquare, Database } from '@ncthub/ui/icons';
 import { useQuery } from '@tanstack/react-query';
-import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { DEV_MODE } from '@/constants/common';
+import Link from 'next/link';
 
 export default function DashboardMenuItem() {
   const t = useTranslations('common');
@@ -55,7 +55,7 @@ async function fetchWorkspaces() {
 
   if (!user) return [];
 
-  const { data: workspaces, error } = await supabase
+  const { data: workspaces, error: error } = await supabase
     .from('workspaces')
     .select(
       'id, name, avatar_url, logo_url, created_at, workspace_members!inner(role)'

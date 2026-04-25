@@ -1,6 +1,7 @@
 'use client';
 
-import type { WorkspaceSecret } from '@ncthub/types/primitives/WorkspaceSecret';
+import { SecretRowActions } from './row-actions';
+import { WorkspaceSecret } from '@ncthub/types/primitives/WorkspaceSecret';
 import { DataTableColumnHeader } from '@ncthub/ui/custom/tables/data-table-column-header';
 import { Loader2 } from '@ncthub/ui/icons';
 import { Switch } from '@ncthub/ui/switch';
@@ -9,10 +10,9 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
-import type { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef } from '@tanstack/react-table';
 import moment from 'moment';
 import { useParams, useRouter } from 'next/navigation';
-import { SecretRowActions } from './row-actions';
 
 export const secretColumns = (
   t: any,
@@ -123,7 +123,7 @@ export const secretColumns = (
         />
       ),
       cell: ({ row }) => (
-        <div className="line-clamp-1 break-all font-semibold">
+        <div className="line-clamp-1 font-semibold break-all">
           {row.getValue('name') || '-'}
         </div>
       ),

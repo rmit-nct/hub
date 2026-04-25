@@ -1,6 +1,6 @@
 'use client';
 
-import type { PieceType, TeamType } from './pieceSetup';
+import { PieceType, TeamType } from './pieceSetup';
 
 interface Piece {
   id: string;

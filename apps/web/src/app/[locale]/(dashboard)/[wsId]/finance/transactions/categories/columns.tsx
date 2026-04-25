@@ -1,10 +1,10 @@
 'use client';
 
-import type { TransactionCategory } from '@ncthub/types/primitives/TransactionCategory';
-import { DataTableColumnHeader } from '@ncthub/ui/custom/tables/data-table-column-header';
-import type { ColumnDef } from '@tanstack/react-table';
-import moment from 'moment';
 import { TransactionCategoryRowActions } from './row-actions';
+import { TransactionCategory } from '@ncthub/types/primitives/TransactionCategory';
+import { DataTableColumnHeader } from '@ncthub/ui/custom/tables/data-table-column-header';
+import { ColumnDef } from '@tanstack/react-table';
+import moment from 'moment';
 
 export const transactionCategoryColumns = (
   t: any,

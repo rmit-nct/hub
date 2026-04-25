@@ -1,14 +1,14 @@
-import { createClient } from '@ncthub/supabase/next/server';
-import type { WorkspaceRole } from '@ncthub/types/db';
-import FeatureSummary from '@ncthub/ui/custom/feature-summary';
-import { Separator } from '@ncthub/ui/separator';
-import { redirect } from 'next/navigation';
-import { getTranslations } from 'next-intl/server';
+import { roleColumns } from './columns';
+import { RoleForm } from './form';
 import { CustomDataTable } from '@/components/custom-data-table';
 import { permissions, totalPermissions } from '@/lib/permissions';
 import { getPermissions } from '@/lib/workspace-helper';
-import { roleColumns } from './columns';
-import { RoleForm } from './form';
+import { createClient } from '@ncthub/supabase/next/server';
+import { WorkspaceRole } from '@ncthub/types/db';
+import FeatureSummary from '@ncthub/ui/custom/feature-summary';
+import { Separator } from '@ncthub/ui/separator';
+import { getTranslations } from 'next-intl/server';
+import { redirect } from 'next/navigation';
 
 interface Props {
   params: Promise<{

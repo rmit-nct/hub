@@ -1,13 +1,13 @@
+import { productColumns } from './columns';
+import { CustomDataTable } from '@/components/custom-data-table';
 import { createClient } from '@ncthub/supabase/next/server';
-import type { Product } from '@ncthub/types/primitives/Product';
+import { Product } from '@ncthub/types/primitives/Product';
 import { Button } from '@ncthub/ui/button';
 import FeatureSummary from '@ncthub/ui/custom/feature-summary';
 import { Plus } from '@ncthub/ui/icons';
 import { Separator } from '@ncthub/ui/separator';
-import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
-import { CustomDataTable } from '@/components/custom-data-table';
-import { productColumns } from './columns';
+import Link from 'next/link';
 
 interface Props {
   params: Promise<{

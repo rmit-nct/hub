@@ -1,10 +1,10 @@
 'use client';
 
-import type { Product } from '@ncthub/types/primitives/Product';
-import { DataTableColumnHeader } from '@ncthub/ui/custom/tables/data-table-column-header';
-import type { ColumnDef } from '@tanstack/react-table';
-import moment from 'moment';
 import { ProductRowActions } from './row-actions';
+import { Product } from '@ncthub/types/primitives/Product';
+import { DataTableColumnHeader } from '@ncthub/ui/custom/tables/data-table-column-header';
+import { ColumnDef } from '@tanstack/react-table';
+import moment from 'moment';
 
 export const productColumns = (
   t: any,

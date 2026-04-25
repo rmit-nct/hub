@@ -1,6 +1,6 @@
 'use client';
 
-import type { User } from '@ncthub/types/primitives/User';
+import { User } from '@ncthub/types/primitives/User';
 import { Button } from '@ncthub/ui/button';
 import {
   Dialog,

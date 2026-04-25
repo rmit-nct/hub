@@ -1,6 +1,6 @@
 import { createAdminClient, createClient } from '@ncthub/supabase/next/server';
 import { headers } from 'next/headers';
-import { type NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 interface Params {
   params: Promise<{

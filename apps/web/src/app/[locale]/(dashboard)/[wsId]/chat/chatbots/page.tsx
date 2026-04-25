@@ -2,8 +2,8 @@ import { Button } from '@ncthub/ui/button';
 import FeatureSummary from '@ncthub/ui/custom/feature-summary';
 import { Bot } from '@ncthub/ui/icons';
 import { Separator } from '@ncthub/ui/separator';
-import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
+import Link from 'next/link';
 
 interface Props {
   params: Promise<{

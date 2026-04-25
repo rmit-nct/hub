@@ -1,9 +1,10 @@
 'use client';
 
-import type { Workspace, WorkspaceCalendarGoogleToken } from '@ncthub/types/db';
 import { CalendarProvider } from '../../../../hooks/use-calendar';
 import { CalendarContent } from './calendar-content';
-import type { CalendarSettings } from './settings/settings-context';
+import { CalendarSettings } from './settings/settings-context';
+import type { WorkspaceCalendarGoogleToken } from '@ncthub/types/db';
+import { Workspace } from '@ncthub/types/db';
 
 export const SmartCalendar = ({
   t,

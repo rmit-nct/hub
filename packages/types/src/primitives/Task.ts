@@ -1,4 +1,4 @@
-import type { Priority } from './Priority';
+import { Priority } from './Priority';
 
 export interface Task {
   id: string;

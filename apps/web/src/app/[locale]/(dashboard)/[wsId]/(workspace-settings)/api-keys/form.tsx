@@ -1,4 +1,4 @@
-import type { WorkspaceApiKey } from '@ncthub/types/primitives/WorkspaceApiKey';
+import { WorkspaceApiKey } from '@ncthub/types/primitives/WorkspaceApiKey';
 import { Button } from '@ncthub/ui/button';
 import {
   Form,

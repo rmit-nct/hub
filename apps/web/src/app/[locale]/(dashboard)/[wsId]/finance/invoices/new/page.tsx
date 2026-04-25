@@ -1,5 +1,6 @@
+import { Filter } from '../../../users/filters';
 import { createClient } from '@ncthub/supabase/next/server';
-import type { Invoice } from '@ncthub/types/primitives/Invoice';
+import { Invoice } from '@ncthub/types/primitives/Invoice';
 import type { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
 import {
   Card,
@@ -13,7 +14,6 @@ import { Package, TicketPercent, User } from '@ncthub/ui/icons';
 import { Separator } from '@ncthub/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ncthub/ui/tabs';
 import { getTranslations } from 'next-intl/server';
-import { Filter } from '../../../users/filters';
 
 interface Props {
   params: Promise<{

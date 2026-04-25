@@ -1,5 +1,5 @@
 import { cn } from '@ncthub/utils/format';
-import type * as React from 'react';
+import * as React from 'react';
 
 function Input({ className, type, ...props }: React.ComponentProps<'input'>) {
   return (

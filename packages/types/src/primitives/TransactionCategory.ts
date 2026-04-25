@@ -1,4 +1,4 @@
-import type { Entity } from './Entity';
+import { Entity } from './Entity';
 
 export interface TransactionCategory extends Entity {
   is_expense?: boolean;

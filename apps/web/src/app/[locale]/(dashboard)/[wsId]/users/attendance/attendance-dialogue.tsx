@@ -1,5 +1,5 @@
 import { createClient } from '@ncthub/supabase/next/client';
-import type { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
+import { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
 import { Button } from '@ncthub/ui/button';
 import {
   Dialog,

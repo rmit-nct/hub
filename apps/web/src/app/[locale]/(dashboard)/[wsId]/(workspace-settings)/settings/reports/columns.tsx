@@ -1,10 +1,10 @@
 'use client';
 
-import type { WorkspaceConfig } from '@ncthub/types/primitives/WorkspaceConfig';
-import { DataTableColumnHeader } from '@ncthub/ui/custom/tables/data-table-column-header';
-import type { ColumnDef } from '@tanstack/react-table';
-import moment from 'moment';
 import { ConfigRowActions } from './row-actions';
+import { WorkspaceConfig } from '@ncthub/types/primitives/WorkspaceConfig';
+import { DataTableColumnHeader } from '@ncthub/ui/custom/tables/data-table-column-header';
+import { ColumnDef } from '@tanstack/react-table';
+import moment from 'moment';
 
 export const configColumns = (
   t: any,

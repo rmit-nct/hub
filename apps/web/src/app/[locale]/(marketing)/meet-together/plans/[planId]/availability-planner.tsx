@@ -1,7 +1,7 @@
-import type { MeetTogetherPlan } from '@ncthub/types/primitives/MeetTogetherPlan';
-import type { Timeblock } from '@ncthub/types/primitives/Timeblock';
-import { useTranslations } from 'next-intl';
 import DatePlanner from './date-planner';
+import { MeetTogetherPlan } from '@ncthub/types/primitives/MeetTogetherPlan';
+import { Timeblock } from '@ncthub/types/primitives/Timeblock';
+import { useTranslations } from 'next-intl';
 
 export default function AvailabilityPlanner({
   plan,

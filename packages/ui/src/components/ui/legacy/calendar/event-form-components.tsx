@@ -1,7 +1,8 @@
 'use client';
 
-import type { EventPriority } from '@ncthub/types/primitives/calendar-event';
-import type { SupportedColor } from '@ncthub/types/primitives/SupportedColors';
+import { ColorPicker, colorMap } from './settings/color-picker';
+import { SupportedColor } from '@ncthub/types/primitives/SupportedColors';
+import { EventPriority } from '@ncthub/types/primitives/calendar-event';
 import { Alert, AlertDescription, AlertTitle } from '@ncthub/ui/alert';
 import { Button } from '@ncthub/ui/button';
 import { DateTimePicker } from '@ncthub/ui/date-time-picker';
@@ -13,8 +14,7 @@ import { Textarea } from '@ncthub/ui/textarea';
 import { getEventStyles } from '@ncthub/utils/color-helper';
 import { cn } from '@ncthub/utils/format';
 import { AlertCircle, Clock, MapPin, MessageSquare } from 'lucide-react';
-import React, { type ReactNode } from 'react';
-import { ColorPicker, colorMap } from './settings/color-picker';
+import React, { ReactNode } from 'react';
 
 // Color options aligned with SupportedColor type
 export const COLOR_OPTIONS: {
@@ -69,7 +69,7 @@ export const FormSection = ({
   className?: string;
 }) => (
   <div className={cn('space-y-3', className)}>
-    <h3 className="font-medium text-muted-foreground text-sm">{title}</h3>
+    <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
     <div className="space-y-4">{children}</div>
   </div>
 );
@@ -87,7 +87,7 @@ export const EventTitleInput = ({
   disabled?: boolean;
 }) => (
   <div className="space-y-2">
-    <Label htmlFor="title" className="font-medium text-sm">
+    <Label htmlFor="title" className="text-sm font-medium">
       Event Title
     </Label>
     <Input
@@ -276,7 +276,7 @@ export const EventDescriptionInput = ({
 
   return (
     <div className="space-y-2" ref={containerRef}>
-      <Label className="flex items-center gap-2 font-medium text-sm">
+      <Label className="flex items-center gap-2 text-sm font-medium">
         <MessageSquare className="h-3.5 w-3.5 text-muted-foreground" />
         Description
       </Label>
@@ -287,7 +287,7 @@ export const EventDescriptionInput = ({
           onChange={(e) => onChange(e.target.value)}
           placeholder="Add event details..."
           className={cn(
-            'overflow-wrap-anywhere resize-none whitespace-pre-wrap break-words transition-all duration-200',
+            'overflow-wrap-anywhere resize-none break-words whitespace-pre-wrap transition-all duration-200',
             isExpanded ? 'h-auto' : 'overflow-y-auto',
             'scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent'
           )}
@@ -326,7 +326,7 @@ export const EventDescriptionInput = ({
       </div>
       <div className="mt-1 flex min-h-[20px] items-center justify-between">
         {wordCount > 0 && (
-          <span className="text-muted-foreground text-xs">
+          <span className="text-xs text-muted-foreground">
             {wordCount} {wordCount === 1 ? 'word' : 'words'}
           </span>
         )}
@@ -335,7 +335,7 @@ export const EventDescriptionInput = ({
             type="button"
             data-show-toggle
             onClick={handleToggleExpand}
-            className="font-medium text-muted-foreground text-xs transition-colors hover:text-foreground"
+            className="text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
             disabled={disabled}
           >
             {isExpanded ? 'Show less' : 'Show more'}
@@ -373,7 +373,7 @@ export const EventLocationInput = ({
     <div className="space-y-2">
       <Label
         htmlFor="location"
-        className="flex items-center gap-2 font-medium text-sm"
+        className="flex items-center gap-2 text-sm font-medium"
       >
         <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
         Location
@@ -399,7 +399,7 @@ export const EventLocationInput = ({
         )}
       </div>
       {value && (
-        <div className="flex items-center text-muted-foreground text-xs">
+        <div className="flex items-center text-xs text-muted-foreground">
           <span>Click the map icon to view in Google Maps</span>
         </div>
       )}
@@ -432,7 +432,7 @@ export const EventDateTimePicker = ({
   pickerButtonRef?: React.RefObject<HTMLButtonElement | null>;
 }) => (
   <div className="space-y-2">
-    <Label className="flex items-center gap-2 font-medium text-sm">
+    <Label className="flex items-center gap-2 text-sm font-medium">
       {icon || <Clock className="h-3.5 w-3.5 text-muted-foreground" />}
       {label}
     </Label>
@@ -464,7 +464,7 @@ export const EventColorPicker = ({
 
   return (
     <div className="space-y-3">
-      <Label className="font-medium text-sm">Color</Label>
+      <Label className="text-sm font-medium">Color</Label>
       <div className={cn(disabled ? 'pointer-events-none opacity-50' : '')}>
         <div className="flex flex-col space-y-3">
           <ColorPicker
@@ -473,7 +473,7 @@ export const EventColorPicker = ({
             size="md"
             showTooltips={true}
           />
-          <div className="flex items-center gap-2 text-muted-foreground text-xs">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <div className={cn('h-3 w-3 rounded-full', text)} />
             <span>
               {COLOR_OPTIONS.find((c) => c.value === value)?.name || 'Blue'}
@@ -515,7 +515,7 @@ export const EventPriorityPicker = ({
 
   return (
     <div className="space-y-4">
-      <Label htmlFor="priority" className="font-medium text-sm">
+      <Label htmlFor="priority" className="text-sm font-medium">
         Priority
       </Label>
       <div className={cn('space-y-3', disabled ? 'opacity-50' : '')}>
@@ -529,7 +529,7 @@ export const EventPriorityPicker = ({
           disabled={disabled}
           className="w-full"
         />
-        <div className="flex justify-between text-muted-foreground text-xs">
+        <div className="flex justify-between text-xs text-muted-foreground">
           {priorityOptions.map((option) => (
             <div
               key={option.value}
@@ -566,11 +566,11 @@ export const EventToggleSwitch = ({
 }) => (
   <div className="flex items-center justify-between space-x-2">
     <div className="space-y-0.5">
-      <Label htmlFor={id} className="font-medium text-sm">
+      <Label htmlFor={id} className="text-sm font-medium">
         {label}
       </Label>
       {description && (
-        <p className="text-muted-foreground text-xs">{description}</p>
+        <p className="text-xs text-muted-foreground">{description}</p>
       )}
     </div>
     <Switch

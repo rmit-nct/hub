@@ -1,8 +1,10 @@
 'use client';
 
-import type { ProductCategory } from '@ncthub/types/primitives/ProductCategory';
-import type { ProductUnit } from '@ncthub/types/primitives/ProductUnit';
-import type { ProductWarehouse } from '@ncthub/types/primitives/ProductWarehouse';
+import { ProductCategoryForm } from '../../categories/form';
+import { ProductWarehouseForm } from '../../warehouses/form';
+import { ProductCategory } from '@ncthub/types/primitives/ProductCategory';
+import { ProductUnit } from '@ncthub/types/primitives/ProductUnit';
+import { ProductWarehouse } from '@ncthub/types/primitives/ProductWarehouse';
 import { Button } from '@ncthub/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@ncthub/ui/card';
 import {
@@ -39,12 +41,10 @@ import {
 import { Separator } from '@ncthub/ui/separator';
 import { Textarea } from '@ncthub/ui/textarea';
 import { cn } from '@ncthub/utils/format';
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import * as z from 'zod';
-import { ProductCategoryForm } from '../../categories/form';
-import { ProductWarehouseForm } from '../../warehouses/form';
 
 const InventorySchema = z.object({
   unit_id: z.string(),

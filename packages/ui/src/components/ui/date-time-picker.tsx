@@ -136,7 +136,7 @@ export function DateTimePicker({
 
     if (isNaN(hours) || isNaN(minutes)) return;
 
-    const newDate = new Date(selectedDate);
+    let newDate = new Date(selectedDate);
     newDate.setHours(hours);
     newDate.setMinutes(minutes);
 
@@ -198,7 +198,7 @@ export function DateTimePicker({
   };
 
   // Generate time options in 15-minute increments
-  const timeOptions = Array.from({ length: 24 * 4 }, (_, i) => {
+  let timeOptions = Array.from({ length: 24 * 4 }, (_, i) => {
     const hour = Math.floor(i / 4);
     const minute = (i % 4) * 15;
     const formattedHour = hour.toString().padStart(2, '0');
@@ -338,7 +338,7 @@ export function DateTimePicker({
                   </SelectContent>
                 </Select>
                 {noValidTimes && (
-                  <div className="mt-1 text-destructive text-xs">
+                  <div className="mt-1 text-xs text-destructive">
                     No valid end times available. Please select an earlier start
                     time or check your time selection.
                   </div>

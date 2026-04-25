@@ -28,7 +28,7 @@ enum PieceType {
   KING = 'KING',
 }
 
-const pieces: Piece[] = [];
+let pieces: Piece[] = [];
 
 const initialPositions: Record<
   string,
@@ -94,13 +94,13 @@ function removePieceById(id: string, teamType: TeamType) {
   console.log('Updated pieces:', pieces);
 }
 
-export type { Piece };
 export {
+  PieceType,
+  TeamType,
   horizontal,
   initialPositions,
-  PieceType,
   pieces,
   removePieceById,
-  TeamType,
   vertical,
 };
+export type { Piece };

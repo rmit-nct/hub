@@ -1,4 +1,4 @@
-import type { Entity } from './Entity';
+import { Entity } from './Entity';
 
 export interface UserGroup extends Entity {
   id: string;

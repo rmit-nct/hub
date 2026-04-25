@@ -1,3 +1,4 @@
+import { BASE_URL } from '@/constants/common';
 import { Button } from '@ncthub/ui/button';
 import {
   Dialog,
@@ -16,9 +17,7 @@ import {
 } from '@ncthub/ui/icons';
 import { Separator } from '@ncthub/ui/separator';
 import { QRCodeCanvas } from 'qrcode.react';
-import type React from 'react';
-import { useState } from 'react';
-import { BASE_URL } from '@/constants/common';
+import React, { useState } from 'react';
 
 interface DocumentShareDialogProps {
   isOpen: boolean;

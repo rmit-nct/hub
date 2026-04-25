@@ -1,8 +1,8 @@
-import { redirect } from 'next/navigation';
-import { getTranslations } from 'next-intl/server';
-import type React from 'react';
-import { Navigation, type NavLink } from '@/components/navigation';
+import { type NavLink, Navigation } from '@/components/navigation';
 import { getPermissions, getSecrets } from '@/lib/workspace-helper';
+import { getTranslations } from 'next-intl/server';
+import { redirect } from 'next/navigation';
+import type React from 'react';
 
 interface LayoutProps {
   params: Promise<{

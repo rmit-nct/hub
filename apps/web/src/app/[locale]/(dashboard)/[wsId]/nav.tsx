@@ -1,21 +1,21 @@
 'use client';
 
-import type { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
-import { buttonVariants } from '@ncthub/ui/button';
-import { DraftingCompass, FlaskConical } from '@ncthub/ui/icons';
-import { Separator } from '@ncthub/ui/separator';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@ncthub/ui/tooltip';
-import { cn } from '@ncthub/utils/format';
-import Link from 'next/link';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
-import type { NavLink } from '@/components/navigation';
+import { NavLink } from '@/components/navigation';
 import {
   ENABLE_KEYBOARD_SHORTCUTS,
   PROD_MODE,
   ROOT_WORKSPACE_ID,
 } from '@/constants/common';
+import { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
+import { buttonVariants } from '@ncthub/ui/button';
+import { DraftingCompass, FlaskConical } from '@ncthub/ui/icons';
+import { Separator } from '@ncthub/ui/separator';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@ncthub/ui/tooltip';
+import { cn } from '@ncthub/utils/format';
+import { useTranslations } from 'next-intl';
+import Link from 'next/link';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 interface NavProps {
   wsId: string;
@@ -47,9 +47,9 @@ export function Nav({
   }, [pathname, searchParams]);
 
   function hasFocus(selector: string) {
-    return Array.from(document.querySelectorAll(selector)).some(
-      (el) => el === document.activeElement
-    );
+    return Array.from(document.querySelectorAll(selector)).some(function (el) {
+      return el === document.activeElement;
+    });
   }
 
   function parseShortcut(shortcut: string) {
@@ -187,7 +187,7 @@ export function Nav({
                             ) : (
                               <FlaskConical className="h-2 w-2 flex-none" />
                             )}
-                            <span className="line-clamp-1 break-all font-semibold text-xs">
+                            <span className="line-clamp-1 text-xs font-semibold break-all">
                               {t(`common.${link.experimental}`)}
                             </span>
                           </div>
@@ -252,7 +252,7 @@ export function Nav({
                           ) : (
                             <FlaskConical className="h-2 w-2 flex-none" />
                           )}
-                          <span className="line-clamp-1 break-all font-semibold text-xs">
+                          <span className="line-clamp-1 text-xs font-semibold break-all">
                             {t(`common.${link.experimental}`)}
                           </span>
                         </div>

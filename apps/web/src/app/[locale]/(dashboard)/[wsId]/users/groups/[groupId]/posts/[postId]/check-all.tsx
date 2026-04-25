@@ -1,10 +1,10 @@
 'use client';
 
-import type { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
+import { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
 import { Button } from '@ncthub/ui/button';
 import { CheckCheck } from '@ncthub/ui/icons';
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export function CheckAll({

@@ -1,6 +1,6 @@
 'use client';
 
-import type { Workspace, WorkspaceCalendarGoogleToken } from '@ncthub/types/db';
+import { Workspace, WorkspaceCalendarGoogleToken } from '@ncthub/types/db';
 import { SmartCalendar } from '@ncthub/ui/legacy/calendar/smart-calendar';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocale, useTranslations } from 'next-intl';

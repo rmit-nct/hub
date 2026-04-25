@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@ncthub/utils/format';
-import type * as React from 'react';
+import * as React from 'react';
 
 function Table({ className, ...props }: React.ComponentProps<'table'>) {
   return (
@@ -97,7 +97,7 @@ function TableCaption({
   return (
     <caption
       data-slot="table-caption"
-      className={cn('mt-4 text-muted-foreground text-sm', className)}
+      className={cn('mt-4 text-sm text-muted-foreground', className)}
       {...props}
     />
   );

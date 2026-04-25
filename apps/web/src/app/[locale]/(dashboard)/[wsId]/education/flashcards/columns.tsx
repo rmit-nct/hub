@@ -1,10 +1,10 @@
 'use client';
 
-import type { WorkspaceFlashcard } from '@ncthub/types/db';
-import { DataTableColumnHeader } from '@ncthub/ui/custom/tables/data-table-column-header';
-import type { ColumnDef } from '@tanstack/react-table';
-import moment from 'moment';
 import { WorkspaceFlashcardRowActions } from './row-actions';
+import { WorkspaceFlashcard } from '@ncthub/types/db';
+import { DataTableColumnHeader } from '@ncthub/ui/custom/tables/data-table-column-header';
+import { ColumnDef } from '@tanstack/react-table';
+import moment from 'moment';
 
 export const getWorkspaceFlashcardColumns = (
   t: any,

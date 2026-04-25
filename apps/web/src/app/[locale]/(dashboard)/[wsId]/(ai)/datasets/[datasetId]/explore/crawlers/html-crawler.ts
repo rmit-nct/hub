@@ -113,7 +113,7 @@ export class HtmlCrawler extends BaseCrawler {
 
       const delay = Math.min(
         this.retryConfig.initialDelay *
-          this.retryConfig.backoffFactor ** (attempt - 1),
+          Math.pow(this.retryConfig.backoffFactor, attempt - 1),
         this.retryConfig.maxDelay
       );
 
@@ -197,7 +197,7 @@ export class HtmlCrawler extends BaseCrawler {
     const [, columnName, selector, subSelector, attribute] = match;
 
     // Split subSelector if it contains an ID selector
-    const finalSubSelector = subSelector;
+    let finalSubSelector = subSelector;
     let pageId = '';
 
     if (subSelector?.includes('->#')) {
@@ -551,7 +551,7 @@ export class HtmlCrawler extends BaseCrawler {
 
       // First pass: Count total articles across all pages
       let totalArticlesAcrossPages = 0;
-      const totalArticlesNeeded = maxArticles || Infinity;
+      let totalArticlesNeeded = maxArticles || Infinity;
 
       for (let pageIndex = 0; pageIndex < paginatedUrls.length; pageIndex++) {
         const pageUrl = paginatedUrls[pageIndex];

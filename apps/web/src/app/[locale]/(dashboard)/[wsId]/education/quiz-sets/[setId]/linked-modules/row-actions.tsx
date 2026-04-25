@@ -1,7 +1,8 @@
 'use client';
 
+import WorkspaceCourseModuleForm from './form';
 import { createClient } from '@ncthub/supabase/next/client';
-import type { WorkspaceCourseModule } from '@ncthub/types/db';
+import { WorkspaceCourseModule } from '@ncthub/types/db';
 import { Button } from '@ncthub/ui/button';
 import ModifiableDialogTrigger from '@ncthub/ui/custom/modifiable-dialog-trigger';
 import {
@@ -13,11 +14,10 @@ import {
 } from '@ncthub/ui/dropdown-menu';
 import { toast } from '@ncthub/ui/hooks/use-toast';
 import { Ellipsis } from '@ncthub/ui/icons';
-import type { Row } from '@tanstack/react-table';
-import { useRouter } from 'next/navigation';
+import { Row } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import WorkspaceCourseModuleForm from './form';
 
 interface WorkspaceCourseModuleRowActionsProps {
   wsId: string;

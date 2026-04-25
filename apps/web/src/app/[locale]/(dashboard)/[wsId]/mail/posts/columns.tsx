@@ -1,10 +1,10 @@
 'use client';
 
-import type { PostEmail } from '@ncthub/types/primitives/post-email';
+import RowActions from './row-actions';
+import { PostEmail } from '@ncthub/types/primitives/post-email';
 import { DataTableColumnHeader } from '@ncthub/ui/custom/tables/data-table-column-header';
 import { Check, X } from '@ncthub/ui/icons';
-import type { ColumnDef } from '@tanstack/react-table';
-import RowActions from './row-actions';
+import { ColumnDef } from '@tanstack/react-table';
 import 'dayjs/locale/vi';
 import moment from 'moment';
 import Link from 'next/link';

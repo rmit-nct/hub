@@ -1,5 +1,7 @@
+import { TaskActions } from '../task-actions';
+import { getTasks } from '@/lib/task-helper';
 import { createClient } from '@ncthub/supabase/next/client';
-import type { Task } from '@ncthub/types/primitives/TaskBoard';
+import { Task } from '@ncthub/types/primitives/TaskBoard';
 import { Button } from '@ncthub/ui/button';
 import {
   HoverCard,
@@ -20,8 +22,6 @@ import {
   startOfMonth,
 } from 'date-fns';
 import { useEffect, useState } from 'react';
-import { getTasks } from '@/lib/task-helper';
-import { TaskActions } from '../task-actions';
 
 interface Props {
   boardId: string;
@@ -116,7 +116,7 @@ export function CalendarView({
     <div className="flex h-full flex-col gap-4 p-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <h2 className="font-semibold text-xl">
+          <h2 className="text-xl font-semibold">
             {format(selectedDate, 'MMMM yyyy')}
           </h2>
           <div className="flex items-center gap-2">
@@ -147,7 +147,7 @@ export function CalendarView({
           {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
             <div
               key={day}
-              className="bg-background p-2 text-center font-medium text-sm"
+              className="bg-background p-2 text-center text-sm font-medium"
             >
               {day}
             </div>
@@ -213,11 +213,11 @@ export function CalendarView({
                         <div className="space-y-2">
                           <h4 className="font-medium">{task.name}</h4>
                           {task.description && (
-                            <p className="text-muted-foreground text-sm">
+                            <p className="text-sm text-muted-foreground">
                               {task.description}
                             </p>
                           )}
-                          <div className="flex flex-wrap gap-2 text-muted-foreground text-xs">
+                          <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
                             {task.start_date && (
                               <span>
                                 Starts:{' '}

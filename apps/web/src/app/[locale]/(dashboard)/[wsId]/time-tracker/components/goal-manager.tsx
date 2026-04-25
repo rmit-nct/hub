@@ -295,7 +295,7 @@ export function GoalManager({
                     <Calendar className="h-4 w-4 text-blue-500" />
                     <span className="font-medium">Today's Progress</span>
                   </div>
-                  <span className="text-muted-foreground text-sm">
+                  <span className="text-sm text-muted-foreground">
                     {formatDuration(timerStats.todayTime)}
                   </span>
                 </div>
@@ -328,7 +328,7 @@ export function GoalManager({
                             </span>
                           </div>
                           <Progress value={progress} className="h-2" />
-                          <div className="flex justify-between text-muted-foreground text-xs">
+                          <div className="flex justify-between text-xs text-muted-foreground">
                             <span>{formatDuration(goalTodayTime)}</span>
                             <span>
                               {formatMinutes(goal.daily_goal_minutes)}
@@ -353,7 +353,7 @@ export function GoalManager({
                     <TrendingUp className="h-4 w-4 text-green-500" />
                     <span className="font-medium">This Week's Progress</span>
                   </div>
-                  <span className="text-muted-foreground text-sm">
+                  <span className="text-sm text-muted-foreground">
                     {formatDuration(timerStats.weekTime)}
                   </span>
                 </div>
@@ -388,7 +388,7 @@ export function GoalManager({
                               </span>
                             </div>
                             <Progress value={progress} className="h-2" />
-                            <div className="flex justify-between text-muted-foreground text-xs">
+                            <div className="flex justify-between text-xs text-muted-foreground">
                               <span>{formatDuration(goalWeekTime)}</span>
                               <span>
                                 {formatMinutes(goal.weekly_goal_minutes!)}
@@ -439,10 +439,10 @@ export function GoalManager({
                   <Goal className="h-16 w-16 text-muted-foreground/50" />
                   <Target className="absolute -top-1 -right-1 h-6 w-6 animate-pulse text-primary" />
                 </div>
-                <p className="font-medium text-lg text-muted-foreground">
+                <p className="text-lg font-medium text-muted-foreground">
                   Ready to set your time goals?
                 </p>
-                <p className="mt-2 text-muted-foreground text-sm">
+                <p className="mt-2 text-sm text-muted-foreground">
                   Create daily and weekly time goals to track your productivity.
                   <br />
                   Set goals for specific categories or general time tracking.
@@ -563,7 +563,7 @@ export function GoalManager({
                                   value={dailyProgress}
                                   className="h-2"
                                 />
-                                <div className="flex justify-between text-muted-foreground text-xs">
+                                <div className="flex justify-between text-xs text-muted-foreground">
                                   <span>{formatDuration(goalTodayTime)}</span>
                                   <span>
                                     {formatMinutes(goal.daily_goal_minutes)}
@@ -587,7 +587,7 @@ export function GoalManager({
                                     value={weeklyProgress || 0}
                                     className="h-2"
                                   />
-                                  <div className="flex justify-between text-muted-foreground text-xs">
+                                  <div className="flex justify-between text-xs text-muted-foreground">
                                     <span>{formatDuration(goalWeekTime)}</span>
                                     <span>
                                       {formatMinutes(goal.weekly_goal_minutes)}
@@ -649,7 +649,7 @@ export function GoalManager({
           </DialogHeader>
           <div className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="goal-category" className="font-medium text-sm">
+              <Label htmlFor="goal-category" className="text-sm font-medium">
                 Goal Type
               </Label>
               <Select value={categoryId} onValueChange={setCategoryId}>
@@ -662,7 +662,7 @@ export function GoalManager({
                       <div className="h-3 w-3 rounded-full bg-gradient-to-br from-blue-500 to-purple-500" />
                       <div className="flex flex-col items-start justify-start">
                         <div className="font-medium">General Goal</div>
-                        <div className="text-muted-foreground text-xs">
+                        <div className="text-xs text-muted-foreground">
                           Tracks time across all categories
                         </div>
                       </div>
@@ -679,7 +679,7 @@ export function GoalManager({
                         />
                         <div className="flex flex-col items-start justify-start">
                           <div className="font-medium">{category.name}</div>
-                          <div className="text-muted-foreground text-xs">
+                          <div className="text-xs text-muted-foreground">
                             Category-specific goal
                           </div>
                         </div>
@@ -688,7 +688,7 @@ export function GoalManager({
                   ))}
                 </SelectContent>
               </Select>
-              <p className="text-muted-foreground text-xs">
+              <p className="text-xs text-muted-foreground">
                 {categoryId === 'general'
                   ? 'This goal will track time from all your sessions, regardless of category.'
                   : categories.find((c) => c.id === categoryId)
@@ -699,7 +699,7 @@ export function GoalManager({
             <div className="space-y-2">
               <Label
                 htmlFor="daily-goal"
-                className="flex items-center gap-2 font-medium text-sm"
+                className="flex items-center gap-2 text-sm font-medium"
               >
                 <Clock className="h-4 w-4" />
                 Daily Goal (minutes)
@@ -713,7 +713,7 @@ export function GoalManager({
                 min="15"
                 max="1440"
               />
-              <p className="text-muted-foreground text-xs">
+              <p className="text-xs text-muted-foreground">
                 Target:{' '}
                 <span className="font-medium">
                   {formatMinutes(dailyGoalMinutes)}
@@ -729,7 +729,7 @@ export function GoalManager({
             <div className="space-y-2">
               <Label
                 htmlFor="weekly-goal"
-                className="flex items-center gap-2 font-medium text-sm"
+                className="flex items-center gap-2 text-sm font-medium"
               >
                 <Calendar className="h-4 w-4" />
                 Weekly Goal (minutes, optional)
@@ -743,7 +743,7 @@ export function GoalManager({
                 min="15"
                 max="10080"
               />
-              <p className="text-muted-foreground text-xs">
+              <p className="text-xs text-muted-foreground">
                 Target:{' '}
                 <span className="font-medium">
                   {formatMinutes(weeklyGoalMinutes)}
@@ -797,7 +797,7 @@ export function GoalManager({
             <div className="space-y-2">
               <Label
                 htmlFor="edit-goal-category"
-                className="font-medium text-sm"
+                className="text-sm font-medium"
               >
                 Goal Type
               </Label>
@@ -811,7 +811,7 @@ export function GoalManager({
                       <div className="h-3 w-3 rounded-full bg-gradient-to-br from-blue-500 to-purple-500" />
                       <div className="flex flex-col items-start justify-start">
                         <div className="font-medium">General Goal</div>
-                        <div className="text-muted-foreground text-xs">
+                        <div className="text-xs text-muted-foreground">
                           Tracks time across all categories
                         </div>
                       </div>
@@ -828,7 +828,7 @@ export function GoalManager({
                         />
                         <div className="flex flex-col items-start justify-start">
                           <div className="font-medium">{category.name}</div>
-                          <div className="text-muted-foreground text-xs">
+                          <div className="text-xs text-muted-foreground">
                             Category-specific goal
                           </div>
                         </div>
@@ -837,7 +837,7 @@ export function GoalManager({
                   ))}
                 </SelectContent>
               </Select>
-              <p className="text-muted-foreground text-xs">
+              <p className="text-xs text-muted-foreground">
                 {categoryId === 'general'
                   ? 'This goal will track time from all your sessions, regardless of category.'
                   : categories.find((c) => c.id === categoryId)
@@ -848,7 +848,7 @@ export function GoalManager({
             <div className="space-y-2">
               <Label
                 htmlFor="edit-daily-goal"
-                className="flex items-center gap-2 font-medium text-sm"
+                className="flex items-center gap-2 text-sm font-medium"
               >
                 <Clock className="h-4 w-4" />
                 Daily Goal (minutes)
@@ -862,7 +862,7 @@ export function GoalManager({
                 min="15"
                 max="1440"
               />
-              <p className="text-muted-foreground text-xs">
+              <p className="text-xs text-muted-foreground">
                 Target:{' '}
                 <span className="font-medium">
                   {formatMinutes(dailyGoalMinutes)}
@@ -878,7 +878,7 @@ export function GoalManager({
             <div className="space-y-2">
               <Label
                 htmlFor="edit-weekly-goal"
-                className="flex items-center gap-2 font-medium text-sm"
+                className="flex items-center gap-2 text-sm font-medium"
               >
                 <Calendar className="h-4 w-4" />
                 Weekly Goal (minutes, optional)
@@ -892,7 +892,7 @@ export function GoalManager({
                 min="15"
                 max="10080"
               />
-              <p className="text-muted-foreground text-xs">
+              <p className="text-xs text-muted-foreground">
                 Target:{' '}
                 <span className="font-medium">
                   {formatMinutes(weeklyGoalMinutes)}

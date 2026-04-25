@@ -1,16 +1,16 @@
+import { Filter } from '../filters';
+import { getUserReportColumns } from './columns';
+import { CustomDataTable } from '@/components/custom-data-table';
 import { createClient } from '@ncthub/supabase/next/server';
-import type { WorkspaceUserReport } from '@ncthub/types/db';
-import type { UserGroup } from '@ncthub/types/primitives/UserGroup';
-import type { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
+import { WorkspaceUserReport } from '@ncthub/types/db';
+import { UserGroup } from '@ncthub/types/primitives/UserGroup';
+import { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
 import { Button } from '@ncthub/ui/button';
 import FeatureSummary from '@ncthub/ui/custom/feature-summary';
 import { Plus, PlusCircle, User } from '@ncthub/ui/icons';
 import { Separator } from '@ncthub/ui/separator';
-import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
-import { CustomDataTable } from '@/components/custom-data-table';
-import { Filter } from '../filters';
-import { getUserReportColumns } from './columns';
+import Link from 'next/link';
 
 interface SearchParams {
   page?: string;

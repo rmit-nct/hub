@@ -1,10 +1,10 @@
 'use client';
 
-import type { WorkspaceApiKey } from '@ncthub/types/primitives/WorkspaceApiKey';
-import { DataTableColumnHeader } from '@ncthub/ui/custom/tables/data-table-column-header';
-import type { ColumnDef } from '@tanstack/react-table';
-import moment from 'moment';
 import { ApiKeyRowActions } from './row-actions';
+import { WorkspaceApiKey } from '@ncthub/types/primitives/WorkspaceApiKey';
+import { DataTableColumnHeader } from '@ncthub/ui/custom/tables/data-table-column-header';
+import { ColumnDef } from '@tanstack/react-table';
+import moment from 'moment';
 
 export const apiKeyColumns = (
   t: any,

@@ -1,3 +1,4 @@
+import { Mail } from '../data';
 import { Avatar, AvatarFallback, AvatarImage } from '@ncthub/ui/avatar';
 import { Button } from '@ncthub/ui/button';
 import {
@@ -20,7 +21,6 @@ import { Switch } from '@ncthub/ui/switch';
 import { Textarea } from '@ncthub/ui/textarea';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@ncthub/ui/tooltip';
 import { format } from 'date-fns';
-import type { Mail } from '../data';
 
 interface MailDisplayProps {
   mail: Mail | null;
@@ -187,13 +187,13 @@ export function MailDisplay({ mail }: MailDisplayProps) {
               </div>
             </div>
             {mail.date && (
-              <div className="ml-auto text-muted-foreground text-xs">
+              <div className="ml-auto text-xs text-muted-foreground">
                 {format(new Date(mail.date), 'PPpp')}
               </div>
             )}
           </div>
           <Separator />
-          <div className="flex-1 whitespace-pre-wrap p-4 text-sm">
+          <div className="flex-1 p-4 text-sm whitespace-pre-wrap">
             {mail.text}
           </div>
           <Separator className="mt-auto" />
@@ -208,7 +208,7 @@ export function MailDisplay({ mail }: MailDisplayProps) {
                 <div className="flex items-center">
                   <Label
                     htmlFor="mute"
-                    className="flex items-center gap-2 font-normal text-muted-foreground text-xs"
+                    className="flex items-center gap-2 text-xs font-normal text-muted-foreground"
                   >
                     <Switch id="mute" aria-label="Mute thread" disabled /> Mute
                     this thread

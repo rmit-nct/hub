@@ -1,7 +1,7 @@
 import { Card, CardDescription, CardTitle } from '@ncthub/ui/card';
 import { cn } from '@ncthub/utils/format';
 import { Image } from 'lucide-react';
-import type React from 'react';
+import React from 'react';
 
 interface EmptyCardProps extends React.ComponentPropsWithoutRef<typeof Card> {
   title: string;

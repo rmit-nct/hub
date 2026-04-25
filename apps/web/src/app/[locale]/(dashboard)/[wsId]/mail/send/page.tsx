@@ -1,13 +1,13 @@
+import { getUserColumns } from '../../users/database/columns';
+import Filters from '../../users/database/filters';
+import MailPosts from './posts';
+import { CustomDataTable } from '@/components/custom-data-table';
 import { createClient } from '@ncthub/supabase/next/server';
 import type { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
 import type { WorkspaceUserField } from '@ncthub/types/primitives/WorkspaceUserField';
 import FeatureSummary from '@ncthub/ui/custom/feature-summary';
 import { Separator } from '@ncthub/ui/separator';
 import { getTranslations } from 'next-intl/server';
-import { CustomDataTable } from '@/components/custom-data-table';
-import { getUserColumns } from '../../users/database/columns';
-import Filters from '../../users/database/filters';
-import MailPosts from './posts';
 
 interface SearchParams {
   q?: string;
