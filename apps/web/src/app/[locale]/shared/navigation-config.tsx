@@ -107,13 +107,6 @@ export const useNavigation = (t: any): { categories: NavCategory[] } => {
         'Effortlessly capture and manage student information with AI-powered scanning technology.',
       icon: <ScanLine />,
     },
-    {
-      href: '/neo-shortener',
-      label: 'Neo Shortener',
-      description:
-        'Transform your long url into a shorter version. Perfect for sharing on social media and other platforms where space is limited.',
-      icon: <ScanLine />,
-    },
   ] as NavItem[];
 
   const games = [

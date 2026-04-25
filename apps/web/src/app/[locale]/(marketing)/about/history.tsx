@@ -1,11 +1,9 @@
 'use client';
 
-import { timelineData } from './data';
-import { TimelineCard } from './timeline-card';
 import { Badge } from '@ncthub/ui/badge';
 import {
   Carousel,
-  CarouselApi,
+  type CarouselApi,
   CarouselContent,
   CarouselItem,
   CarouselNext,
@@ -14,6 +12,8 @@ import {
 import { Award, Sparkles } from '@ncthub/ui/icons';
 import { motion } from 'framer-motion';
 import { useEffect, useMemo, useState } from 'react';
+import { timelineData } from './data';
+import { TimelineCard } from './timeline-card';
 
 export default function History() {
   const [emblaApi, setEmblaApi] = useState<CarouselApi | null>(null);
@@ -122,7 +122,7 @@ export default function History() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
           viewport={{ once: true }}
-          className="text-4xl font-extrabold leading-tight md:text-5xl lg:text-6xl"
+          className="font-extrabold text-4xl leading-tight md:text-5xl lg:text-6xl"
         >
           NEO Culture Tech{' '}
           <span className="relative">
@@ -130,7 +130,7 @@ export default function History() {
               History
             </span>
             <motion.div
-              className="absolute -right-2 -top-2"
+              className="absolute -top-2 -right-2"
               animate={{
                 rotate: [0, 10, -10, 0],
                 scale: [1, 1.1, 1],
@@ -152,7 +152,7 @@ export default function History() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
           viewport={{ once: true }}
-          className="text-muted-foreground mx-auto max-w-3xl text-lg font-medium md:text-xl"
+          className="mx-auto max-w-3xl font-medium text-lg text-muted-foreground md:text-xl"
         >
           A journey of innovation, community, and passion for technology.{' '}
           <span className="relative font-semibold text-brand-light-blue">

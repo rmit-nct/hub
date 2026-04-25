@@ -1,7 +1,5 @@
 'use client';
 
-import { DepartmentName, members } from './data';
-import MemberCard from './member-card';
 import { Badge } from '@ncthub/ui/badge';
 import { Crown } from '@ncthub/ui/icons';
 import {
@@ -13,6 +11,8 @@ import {
 } from '@ncthub/ui/select';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
+import { type DepartmentName, members } from './data';
+import MemberCard from './member-card';
 
 const cardVariants = {
   hidden: { y: 20, opacity: 0 },
@@ -60,7 +60,7 @@ export default function Members() {
   return (
     <div className="flex flex-col items-center px-2 py-4">
       <motion.h1
-        className="mb-8 mt-4 text-center text-6xl font-extrabold"
+        className="mt-4 mb-8 text-center font-extrabold text-6xl"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
@@ -78,7 +78,7 @@ export default function Members() {
         </motion.div>
       </motion.h1>
 
-      <div className="border-border bg-card text-foreground/80 relative mx-auto mb-8 mt-4 max-w-4xl rounded-lg border p-4 text-center text-base tracking-wide md:p-6 md:text-lg">
+      <div className="relative mx-auto mt-4 mb-8 max-w-4xl rounded-lg border border-border bg-card p-4 text-center text-base text-foreground/80 tracking-wide md:p-6 md:text-lg">
         {selectedGeneration === 7 ? (
           <>
             RMIT Neo Culture Tech Club mostly operates technical events,
@@ -100,7 +100,7 @@ export default function Members() {
       </div>
 
       <div className="my-4">
-        <div className="text-muted-foreground w-full px-2 text-center text-base font-medium md:px-40 md:text-lg">
+        <div className="w-full px-2 text-center font-medium text-base text-muted-foreground md:px-40 md:text-lg">
           Our club has 4 core teams:{' '}
           {departments.map((department, index) => (
             <span key={department.name}>
@@ -121,7 +121,7 @@ export default function Members() {
           ))}
           , with a dedicated{' '}
           <span
-            className={`text-dynamic-pink cursor-pointer font-semibold transition-all duration-200 hover:underline ${
+            className={`cursor-pointer font-semibold text-dynamic-pink transition-all duration-200 hover:underline ${
               lockedDepartment === 'Executive Board'
                 ? 'rounded px-1 underline ring-2 ring-current'
                 : ''
@@ -275,10 +275,10 @@ export default function Members() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mb-4 mt-6 flex flex-col items-center gap-3"
+          className="mt-6 mb-4 flex flex-col items-center gap-3"
         >
           <div className="flex items-center gap-3">
-            <span className="text-muted-foreground text-sm font-medium">
+            <span className="font-medium text-muted-foreground text-sm">
               Generation:
             </span>
             <Select
@@ -287,7 +287,7 @@ export default function Members() {
                 setSelectedGeneration(Number(value) as 6 | 7)
               }
             >
-              <SelectTrigger className="border-border bg-card hover:bg-muted h-10 w-52 transition-colors">
+              <SelectTrigger className="h-10 w-52 border-border bg-card transition-colors hover:bg-muted">
                 <SelectValue placeholder="Select generation..." />
               </SelectTrigger>
               <SelectContent>
