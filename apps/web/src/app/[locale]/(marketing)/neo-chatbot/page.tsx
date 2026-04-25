@@ -33,7 +33,6 @@ export default function NeoChatbotPage() {
             suggestions={[
               'Project Management Workshop recap for Instagram',
               'Bilingual recap post for Facebook',
-        
             ]}
             historyTitle="Conversation History"
             historyIntro="Switch between saved social content sessions."
