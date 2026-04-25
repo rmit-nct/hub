@@ -1,5 +1,6 @@
-import { cn } from '@ncthub/utils/format';
 import * as React from 'react';
+
+import { cn } from '@ncthub/utils/format';
 
 function Card({ className, ...props }: React.ComponentProps<'div'>) {
   return (
@@ -31,7 +32,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot="card-title"
-      className={cn('font-semibold leading-none', className)}
+      className={cn('leading-none font-semibold', className)}
       {...props}
     />
   );
@@ -82,10 +83,10 @@ function CardFooter({ className, ...props }: React.ComponentProps<'div'>) {
 
 export {
   Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
+  CardFooter,
   CardTitle,
+  CardAction,
+  CardDescription,
+  CardContent,
 };

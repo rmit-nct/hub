@@ -1,8 +1,9 @@
 'use client';
 
-import { cn } from '@ncthub/utils/format';
+import * as React from 'react';
 import { Progress as ProgressPrimitive } from 'radix-ui';
-import type * as React from 'react';
+
+import { cn } from '@ncthub/utils/format';
 
 function Progress({
   className,

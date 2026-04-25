@@ -1,19 +1,20 @@
 'use client';
 
-import { Label } from '@ncthub/ui/label';
-import { cn } from '@ncthub/utils/format';
+import * as React from 'react';
 import type { Label as LabelPrimitive } from 'radix-ui';
 import { Slot } from 'radix-ui';
-import * as React from 'react';
 import {
   Controller,
-  ControllerProps,
-  FieldPath,
-  FieldValues,
   FormProvider,
   useFormContext,
   useFormState,
+  type ControllerProps,
+  type FieldPath,
+  type FieldValues,
 } from 'react-hook-form';
+
+import { cn } from '@ncthub/utils/format';
+import { Label } from '@ncthub/ui/label';
 
 const Form = FormProvider;
 
@@ -147,7 +148,7 @@ function FormMessage({ className, ...props }: React.ComponentProps<'p'>) {
     <p
       data-slot="form-message"
       id={formMessageId}
-      className={cn('text-destructive text-sm', className)}
+      className={cn('text-sm text-destructive', className)}
       {...props}
     >
       {body}
@@ -156,12 +157,12 @@ function FormMessage({ className, ...props }: React.ComponentProps<'p'>) {
 }
 
 export {
+  useFormField,
   Form,
-  FormControl,
-  FormDescription,
-  FormField,
   FormItem,
   FormLabel,
+  FormControl,
+  FormDescription,
   FormMessage,
-  useFormField,
+  FormField,
 };

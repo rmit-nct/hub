@@ -69,8 +69,5 @@
     "sharp",
     "supabase",
     "unrs-resolver"
-  ],
-  "dependencies": {
-    "supabase": "^2.87.1"
-  }
+  ]
 }
