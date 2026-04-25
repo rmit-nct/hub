@@ -1,6 +1,5 @@
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
 import { calendarEventsSchema } from '@ncthub/ai/calendar/events';
 import { useObject } from '@ncthub/ai/object/core';
 import type {
@@ -34,6 +33,7 @@ import {
 } from '@ncthub/ui/form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
 import { useToast } from '@ncthub/ui/hooks/use-toast';
+import { zodResolver } from '@ncthub/ui/resolvers';
 import { ScrollArea } from '@ncthub/ui/scroll-area';
 import { Separator } from '@ncthub/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ncthub/ui/tabs';

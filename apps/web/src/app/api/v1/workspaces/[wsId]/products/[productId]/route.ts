@@ -17,12 +17,11 @@ export async function PUT(req: Request, { params }: Params) {
   };
   const { productId } = await params;
 
+  const { inventory, ...coreData } = data;
+
   const product = await supabase
     .from('workspace_products')
-    .update({
-      ...data,
-      inventory: undefined,
-    })
+    .update(coreData)
     .eq('id', productId);
 
   if (product.error) {
@@ -34,15 +33,15 @@ export async function PUT(req: Request, { params }: Params) {
     );
   }
 
-  const inventory = await supabase.from('inventory_products').upsert(
-    data.inventory.map((inventory) => ({
+  const { error } = await supabase.from('inventory_products').upsert(
+    inventory.map((inventory) => ({
       ...inventory,
       product_id: productId,
     }))
   );
 
-  if (inventory.error) {
-    console.log(inventory.error);
+  if (error) {
+    console.log(error);
     return NextResponse.json(
       { message: 'Error creating inventory' },
       { status: 500 }

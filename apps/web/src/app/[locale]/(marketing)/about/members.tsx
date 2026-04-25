@@ -65,14 +65,16 @@ export default function Members() {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <span className="border-[#5FC6E5] border-b-4 pb-2">Meet Our Team</span>
+        <span className="border-brand-light-blue border-b-4 pb-2">
+          Meet Our Team
+        </span>
         <motion.div
           className="ml-3 inline-block"
           initial={{ rotate: 0 }}
           whileInView={{ rotate: 360 }}
           transition={{ duration: 0.8, delay: 0.3 }}
         >
-          <Crown className="h-8 w-8 text-[#FBC721]" />
+          <Crown className="h-8 w-8 text-brand-light-yellow" />
         </motion.div>
       </motion.h1>
 
@@ -82,12 +84,14 @@ export default function Members() {
             RMIT Neo Culture Tech Club mostly operates technical events,
             workshops, trainings, etc… related to technology. Our target
             students are from the house of{' '}
-            <span className="font-bold text-[#5FC6E5]">SSET</span>.
+            <span className="font-bold text-brand-light-blue">SSET</span>.
           </>
         ) : (
           <>
             Meet the{' '}
-            <span className="font-bold text-[#FBC721]">Generation 6</span>{' '}
+            <span className="font-bold text-brand-light-yellow">
+              Generation 6
+            </span>{' '}
             leaders who built the foundation of NEO Culture Tech. These
             pioneering members established the traditions, values, and
             organizational structures that continue to guide our club today.
@@ -167,7 +171,7 @@ export default function Members() {
                   variants={cardVariants}
                 >
                   {isHidden(p.departments) && (
-                    <div className="absolute inset-0 z-10 rounded-lg bg-black/20 backdrop-blur-[1px]" />
+                    <div className="absolute inset-0 z-10 rounded-lg bg-foreground/20 backdrop-blur-[1px]" />
                   )}
                   <MemberCard
                     name={p.name}
@@ -208,7 +212,7 @@ export default function Members() {
                     variants={cardVariants}
                   >
                     {isHidden(p.departments) && (
-                      <div className="absolute inset-0 z-10 rounded-lg bg-black/20 backdrop-blur-[1px]" />
+                      <div className="absolute inset-0 z-10 rounded-lg bg-foreground/20 backdrop-blur-[1px]" />
                     )}
                     <MemberCard
                       name={p.name}
@@ -249,7 +253,7 @@ export default function Members() {
                       variants={cardVariants}
                     >
                       {isHidden(p.departments) && (
-                        <div className="absolute inset-0 z-10 rounded-lg bg-black/20 backdrop-blur-[1px]" />
+                        <div className="absolute inset-0 z-10 rounded-lg bg-foreground/20 backdrop-blur-[1px]" />
                       )}
                       <MemberCard
                         name={p.name}
@@ -287,23 +291,26 @@ export default function Members() {
                 <SelectValue placeholder="Select generation..." />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="7" className="focus:bg-[#5FC6E5]/10">
+                <SelectItem value="7" className="focus:bg-brand-light-blue/10">
                   <div className="flex w-full cursor-pointer items-center gap-2">
                     <span className="font-medium">Generation 7</span>
                     <Badge
                       variant="outline"
-                      className="ml-auto border-[#5FC6E5] text-[#5FC6E5] text-xs"
+                      className="ml-auto border-brand-light-blue text-brand-light-blue text-xs"
                     >
                       Current
                     </Badge>
                   </div>
                 </SelectItem>
-                <SelectItem value="6" className="focus:bg-[#FBC721]/10">
+                <SelectItem
+                  value="6"
+                  className="focus:bg-brand-light-yellow/10"
+                >
                   <div className="flex w-full cursor-pointer items-center gap-2">
                     <span className="font-medium">Generation 6</span>
                     <Badge
                       variant="outline"
-                      className="ml-auto border-[#FBC721] text-[#FBC721] text-xs"
+                      className="ml-auto border-brand-light-yellow text-brand-light-yellow text-xs"
                     >
                       Legacy
                     </Badge>

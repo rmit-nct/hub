@@ -178,14 +178,14 @@ export default function SelectableDayTime({
                 i + hourSplits < array.length
                   ? isSelected
                     ? isDraft
-                      ? 'bg-green-500/50'
+                      ? 'bg-dynamic-green/50'
                       : isSaved
-                        ? 'bg-green-500/70'
-                        : // : 'animate-pulse bg-green-500/70'
-                          'bg-green-500/70'
+                        ? 'bg-dynamic-green/70'
+                        : // : 'animate-pulse bg-dynamic-green/70'
+                          'bg-dynamic-green/70'
                     : isDraft
-                      ? 'bg-red-500/50'
-                      : 'bg-red-500/20'
+                      ? 'bg-destructive/50'
+                      : 'bg-destructive/20'
                   : ''
               } relative h-3 w-full ${
                 hideBorder

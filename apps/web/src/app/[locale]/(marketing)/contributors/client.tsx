@@ -9,12 +9,12 @@ import {
   FileText,
   GitCommit,
   GitFork,
-  GithubIcon,
   GitPullRequest,
   Heart,
   Mail,
   MessageSquare,
   Star,
+  TbBrandGithub,
   Users,
 } from '@ncthub/ui/icons';
 import { Separator } from '@ncthub/ui/separator';
@@ -163,7 +163,7 @@ export default function ContributorsClient({
   if (githubData.error) {
     return (
       <div className="flex min-h-[40vh] flex-col items-center justify-center">
-        <GithubIcon className="mb-4 h-16 w-16 text-muted-foreground" />
+        <TbBrandGithub className="mb-4 h-16 w-16 text-muted-foreground" />
         <h2 className="mb-2 font-bold text-2xl">Data Fetch Error</h2>
         <p className="mb-4 text-muted-foreground">{githubData.error}</p>
         <Button asChild>
@@ -172,7 +172,7 @@ export default function ContributorsClient({
             target="_blank"
             rel="noopener noreferrer"
           >
-            <GithubIcon className="mr-2 h-4 w-4" />
+            <TbBrandGithub className="mr-2 h-4 w-4" />
             Visit GitHub Repository
           </a>
         </Button>
@@ -214,7 +214,7 @@ export default function ContributorsClient({
 
         <h1 className="mb-6 text-balance font-bold text-4xl text-foreground md:text-5xl lg:text-6xl">
           <span>Our Amazing</span>{' '}
-          <span className="whitespace-nowrap border-[#FBC721] border-b-4 text-[#5FC6E5]">
+          <span className="whitespace-nowrap border-brand-light-yellow border-b-4 text-brand-light-blue">
             Contributors
           </span>
         </h1>
@@ -251,7 +251,7 @@ export default function ContributorsClient({
               rel="noopener noreferrer"
               className="flex items-center gap-2 rounded-full bg-foreground/10 px-4 py-2 text-sm hover:bg-foreground/20"
             >
-              <Star className="h-4 w-4 text-amber-500" />
+              <Star className="h-4 w-4 text-brand-light-yellow" />
               {githubData.stats.stars.toLocaleString()} Stars
             </a>
             <a
@@ -260,7 +260,7 @@ export default function ContributorsClient({
               rel="noopener noreferrer"
               className="flex items-center gap-2 rounded-full bg-foreground/10 px-4 py-2 text-sm hover:bg-foreground/20"
             >
-              <GitFork className="h-4 w-4 text-blue-500" />
+              <GitFork className="h-4 w-4 text-dynamic-blue" />
               {githubData.stats.forks.toLocaleString()} Forks
             </a>
             <a
@@ -269,7 +269,7 @@ export default function ContributorsClient({
               rel="noopener noreferrer"
               className="flex items-center gap-2 rounded-full bg-foreground/10 px-4 py-2 text-sm hover:bg-foreground/20"
             >
-              <MessageSquare className="h-4 w-4 text-red-500" />
+              <MessageSquare className="h-4 w-4 text-destructive" />
               {githubData.stats.issues.toLocaleString()} Issues
             </a>
           </motion.div>
@@ -292,7 +292,7 @@ export default function ContributorsClient({
                 <div className="space-y-2">
                   <div className="mb-3 flex items-center gap-3">
                     <div className="rounded-lg bg-foreground/10 p-2.5">
-                      <GithubIcon className="h-6 w-6" />
+                      <TbBrandGithub className="h-6 w-6" />
                     </div>
                     <h3 className="font-bold text-2xl">
                       {githubData.repo.full_name}
@@ -305,7 +305,7 @@ export default function ContributorsClient({
 
                   <div className="flex flex-wrap gap-4 pt-2">
                     <div className="flex items-center text-foreground/80 text-sm">
-                      <Star className="mr-1.5 h-4 w-4 text-amber-500" />
+                      <Star className="mr-1.5 h-4 w-4 text-brand-light-yellow" />
                       <span>
                         {githubData.repo.stargazers_count.toLocaleString()}{' '}
                         Stars
@@ -313,14 +313,14 @@ export default function ContributorsClient({
                     </div>
 
                     <div className="flex items-center text-foreground/80 text-sm">
-                      <GitFork className="mr-1.5 h-4 w-4 text-blue-500" />
+                      <GitFork className="mr-1.5 h-4 w-4 text-dynamic-blue" />
                       <span>
                         {githubData.repo.forks_count.toLocaleString()} Forks
                       </span>
                     </div>
 
                     <div className="flex items-center text-foreground/80 text-sm">
-                      <MessageSquare className="mr-1.5 h-4 w-4 text-red-500" />
+                      <MessageSquare className="mr-1.5 h-4 w-4 text-destructive" />
                       <span>
                         {githubData.repo.open_issues_count.toLocaleString()}{' '}
                         Issues
@@ -328,7 +328,7 @@ export default function ContributorsClient({
                     </div>
 
                     <div className="flex items-center text-foreground/80 text-sm">
-                      <GitCommit className="mr-1.5 h-4 w-4 text-orange-500" />
+                      <GitCommit className="mr-1.5 h-4 w-4 text-dynamic-orange" />
                       <span>
                         {githubData.contributors
                           ?.reduce((acc, curr) => acc + curr.contributions, 0)
@@ -338,7 +338,7 @@ export default function ContributorsClient({
                     </div>
 
                     <div className="flex items-center text-foreground/80 text-sm">
-                      <GitPullRequest className="mr-1.5 h-4 w-4 text-green-500" />
+                      <GitPullRequest className="mr-1.5 h-4 w-4 text-dynamic-green" />
                       <span>
                         {githubData.stats?.pullRequests.toLocaleString() || 0}{' '}
                         Pull Requests
@@ -346,7 +346,7 @@ export default function ContributorsClient({
                     </div>
 
                     <div className="flex items-center text-foreground/80 text-sm">
-                      <Users className="mr-1.5 h-4 w-4 text-purple-500" />
+                      <Users className="mr-1.5 h-4 w-4 text-dynamic-purple" />
                       <span>
                         {githubData.stats?.contributors.toLocaleString() || 0}{' '}
                         Contributors
@@ -367,7 +367,7 @@ export default function ContributorsClient({
                         rel="noopener noreferrer"
                         className="flex items-center gap-2"
                       >
-                        <GithubIcon className="h-4 w-4" />
+                        <TbBrandGithub className="h-4 w-4" />
                         View Repository
                       </a>
                     </Button>
@@ -436,7 +436,7 @@ export default function ContributorsClient({
                   >
                     <div className="mb-4 flex items-center justify-between">
                       <div className="relative">
-                        <div className="absolute -inset-0.5 rounded-full bg-linear-to-r from-primary to-purple-600 opacity-75 blur-sm group-hover:opacity-100" />
+                        <div className="absolute -inset-0.5 rounded-full bg-linear-to-r from-primary to-dynamic-purple opacity-75 blur-sm group-hover:opacity-100" />
                         <Image
                           src={contributor.avatar_url}
                           alt={contributor.login}
@@ -445,7 +445,7 @@ export default function ContributorsClient({
                           height={64}
                         />
                         {index < 3 && (
-                          <div className="absolute -top-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-amber-500 font-bold text-[10px] text-white">
+                          <div className="absolute -top-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-brand-light-yellow font-bold text-[10px] text-primary">
                             #{index + 1}
                           </div>
                         )}
@@ -786,7 +786,7 @@ export default function ContributorsClient({
           <div className="relative p-8 md:p-12">
             <div className="mx-auto max-w-3xl text-center">
               <Badge variant="outline" className="mb-4 backdrop-blur-[2px]">
-                <GithubIcon className="mr-2 h-4 w-4" />
+                <TbBrandGithub className="mr-2 h-4 w-4" />
                 Join Our Community
               </Badge>
               <h2 className="mb-4 font-bold text-3xl">Become a Contributor</h2>
@@ -804,7 +804,7 @@ export default function ContributorsClient({
                   whileTap={{ scale: 0.95 }}
                   className="inline-flex items-center gap-2 rounded-lg bg-foreground px-8 py-3 font-medium text-background hover:bg-foreground/90"
                 >
-                  <GithubIcon className="h-4 w-4" />
+                  <TbBrandGithub className="h-4 w-4" />
                   <span className="relative">View on GitHub</span>
                 </motion.a>
                 <motion.a

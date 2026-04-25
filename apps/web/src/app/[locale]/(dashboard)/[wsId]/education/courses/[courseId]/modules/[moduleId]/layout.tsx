@@ -13,7 +13,7 @@ import {
   Paperclip,
   SquareCheck,
   SwatchBook,
-  Youtube,
+  TbBrandYoutube,
 } from '@ncthub/ui/icons';
 import { Separator } from '@ncthub/ui/separator';
 import { notFound } from 'next/navigation';
@@ -93,7 +93,7 @@ export default async function CourseDetailsLayout({ children, params }: Props) {
               <LinkButton
                 href={`${commonHref}/youtube-links`}
                 title={`${t('course-details-tabs.youtube_links')} (${data.youtube_links?.length || 0})`}
-                icon={<Youtube className="h-5 w-5" />}
+                icon={<TbBrandYoutube className="h-5 w-5" />}
                 className="border-dynamic-red/20 bg-dynamic-red/10 text-dynamic-red hover:bg-dynamic-red/20"
               />
               <LinkButton

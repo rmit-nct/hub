@@ -9,19 +9,19 @@ export default function NeoMeetHeader() {
     <div className="flex flex-col items-center">
       {/* Hero Badge */}
       <div className="mb-6 inline-flex items-center gap-2">
-        <Sparkles className="h-5 w-5 text-[#FBC721]" />
+        <Sparkles className="h-5 w-5 text-brand-light-yellow" />
         <Badge
           variant="outline"
-          className="border-[#5FC6E5]/50 px-3 py-1 text-[#5FC6E5] text-sm"
+          className="border-brand-light-blue/50 px-3 py-1 text-brand-light-blue text-sm"
         >
           Meet Together
         </Badge>
-        <Sparkles className="h-5 w-5 text-[#FBC721]" />
+        <Sparkles className="h-5 w-5 text-brand-light-yellow" />
       </div>
 
       <h1 className="mb-6 text-balance font-bold text-3xl text-foreground md:text-5xl lg:text-6xl">
         <span>Welcome to</span>{' '}
-        <span className="whitespace-nowrap border-[#FBC721] border-b-4 text-[#5FC6E5]">
+        <span className="whitespace-nowrap border-brand-light-yellow border-b-4 text-brand-light-blue">
           Neo Meet{' '}
           <motion.div
             className="inline-block"
@@ -35,7 +35,7 @@ export default function NeoMeetHeader() {
               ease: 'easeInOut',
             }}
           >
-            <Calendar className="inline-block h-8 w-8 text-yellow-400 md:h-10 md:w-10 lg:h-12 lg:w-12" />
+            <Calendar className="inline-block h-8 w-8 text-brand-light-yellow md:h-10 md:w-10 lg:h-12 lg:w-12" />
           </motion.div>
         </span>
       </h1>

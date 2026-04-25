@@ -21,7 +21,7 @@ export async function PUT(req: Request, { params }: Params) {
       { status: 400 }
     );
 
-  const { permissions, ...coreData } = data;
+  const { permissions, user_count: _, ...coreData } = data;
 
   const roleQuery = supabase
     .from('workspace_roles')

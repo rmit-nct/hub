@@ -88,7 +88,7 @@ export function TextGeneratorClient() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <WandIcon className="h-5 w-5 text-[#5FC6E5]" />
+              <WandIcon className="h-5 w-5 text-brand-light-blue" />
               Input Text
             </CardTitle>
           </CardHeader>
@@ -144,7 +144,7 @@ export function TextGeneratorClient() {
                         disabled={isDemo}
                       >
                         {isCopied ? (
-                          <CheckIcon className="h-4 w-4 text-green-500" />
+                          <CheckIcon className="h-4 w-4 text-dynamic-green" />
                         ) : (
                           <CopyIcon className="h-4 w-4" />
                         )}

@@ -127,11 +127,11 @@ export default function PreviewDayTime({
                       i + hourSplits < array.length
                         ? isSelected
                           ? isDraft
-                            ? 'bg-green-500/50'
+                            ? 'bg-dynamic-green/50'
                             : isSaved
-                              ? 'bg-green-500/70'
-                              : // : 'animate-pulse bg-green-500/70'
-                                'bg-green-500/70'
+                              ? 'bg-dynamic-green/70'
+                              : // : 'animate-pulse bg-dynamic-green/70'
+                                'bg-dynamic-green/70'
                           : 'bg-foreground/10'
                         : ''
                     } relative h-3 w-full ${

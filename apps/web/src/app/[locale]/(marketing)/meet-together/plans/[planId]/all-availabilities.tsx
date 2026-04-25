@@ -51,7 +51,7 @@ export default function AllAvailabilities({
             >
               <div
                 className={`h-full w-full ${
-                  i === 0 ? 'bg-foreground/10' : 'bg-green-500/70'
+                  i === 0 ? 'bg-foreground/10' : 'bg-dynamic-green/70'
                 }`}
                 style={{
                   opacity: i === 0 ? 1 : i / totalUserCount,

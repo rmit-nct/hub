@@ -21,15 +21,15 @@ export default function AchievementsPage() {
           <div className="inline-flex items-center justify-center">
             <Badge
               variant="outline"
-              className="border-[#5FC6E5]/50 px-3 py-1 text-[#5FC6E5] text-base"
+              className="border-brand-light-blue/50 px-3 py-1 text-base text-brand-light-blue"
             >
-              <Award className="h-5 w-5 text-[#FBC721] md:h-6 md:w-6" />
+              <Award className="h-5 w-5 text-brand-light-yellow md:h-6 md:w-6" />
               Warriors of the Stage
             </Badge>
           </div>
           <h1 className="font-bold text-5xl tracking-tight md:text-6xl">
             Hall of{' '}
-            <span className="border-[#FBC721] border-b-4 text-[#5FC6E5]">
+            <span className="border-brand-light-yellow border-b-4 text-brand-light-blue">
               Fame
             </span>
           </h1>

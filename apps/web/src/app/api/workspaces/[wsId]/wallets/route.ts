@@ -36,8 +36,10 @@ export async function POST(req: Request, { params }: Params) {
   const { wsId } = await params;
   const data: Wallet = await req.json();
 
+  const { href, limit, payment_date, statement_date, ...coreData } = data;
+
   const { error } = await supabase.from('workspace_wallets').upsert({
-    ...data,
+    ...coreData,
     ws_id: wsId,
   });
 

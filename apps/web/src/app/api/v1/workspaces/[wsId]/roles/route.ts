@@ -41,7 +41,7 @@ export async function POST(req: Request, { params }: Params) {
       { status: 400 }
     );
 
-  const { permissions, ...coreData } = data;
+  const { permissions, user_count: _, ...coreData } = data;
 
   const { data: role, error: roleError } = await supabase
     .from('workspace_roles')

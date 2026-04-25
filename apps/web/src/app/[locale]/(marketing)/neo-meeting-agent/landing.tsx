@@ -56,7 +56,7 @@ export default function NeoMeetingAgentLanding() {
 
         <div className="grid w-full grid-cols-2 items-center gap-4">
           <LanguageSelect onValueChange={setLanguage} defaultValue={language} />
-          <Button className="bg-linear-to-r bg-size-[200%_auto] from-orange-500 to-yellow-400 font-bold text-base text-white transition-all duration-500 ease-in-out hover:bg-position-[100%_0%]">
+          <Button className="bg-linear-to-r bg-size-[200%_auto] from-dynamic-orange to-brand-light-yellow font-bold text-base text-primary transition-all duration-500 ease-in-out hover:bg-position-[100%_0%]">
             {t('actions.generate')}
           </Button>
         </div>
