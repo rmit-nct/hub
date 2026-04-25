@@ -22,7 +22,7 @@ const cardVariants = {
   },
 };
 
-const departments: { name: DepartmentName; color: string }[] = [
+const memberDepartments: { name: DepartmentName; color: string }[] = [
   { name: 'FinLog', color: 'text-dynamic-green' },
   { name: 'Technology', color: 'text-dynamic-blue' },
   { name: 'Human Resources', color: 'text-dynamic-purple' },
@@ -51,14 +51,17 @@ export default function Members() {
 
   const handleDepartmentClick = (departmentName: DepartmentName) => {
     if (lockedDepartment === departmentName) {
-      setLockedDepartment(null); // Unlock if clicking the same department
+      setLockedDepartment(null);
     } else {
       setLockedDepartment(departmentName);
     }
   };
 
   return (
-    <div className="flex flex-col items-center px-2 py-4">
+    <section
+      id="about-members"
+      className="flex flex-col items-center px-2 py-4"
+    >
       <motion.h1
         className="mt-4 mb-8 text-center font-extrabold text-6xl"
         initial={{ opacity: 0, y: 20 }}
@@ -102,7 +105,7 @@ export default function Members() {
       <div className="my-4">
         <div className="w-full px-2 text-center font-medium text-base text-muted-foreground md:px-40 md:text-lg">
           Our club has 4 core teams:{' '}
-          {departments.map((department, index) => (
+          {memberDepartments.map((department, index) => (
             <span key={department.name}>
               <span
                 className={`font-semibold ${department.color} cursor-pointer transition-all duration-200 hover:underline ${
@@ -116,7 +119,7 @@ export default function Members() {
               >
                 {department.name}
               </span>
-              {index < departments.length - 1 && ', '}
+              {index < memberDepartments.length - 1 && ', '}
             </span>
           ))}
           , with a dedicated{' '}
@@ -321,6 +324,6 @@ export default function Members() {
           </div>
         </motion.div>
       </AnimatePresence>
-    </div>
+    </section>
   );
 }
