@@ -7,6 +7,7 @@ import {
   Calendar,
   Gamepad2,
   GitBranch,
+  MessagesSquare,
   NotebookPen,
   Paintbrush,
   Puzzle,
@@ -99,6 +100,13 @@ export const useNavigation = (t: any): { categories: NavCategory[] } => {
       description:
         'Transform your text into various Unicode styles including bold, italic, script, and more.',
       icon: <Sparkles />,
+    },
+    {
+      href: '/neo-chatbot',
+      label: 'Neo Chatbot',
+      description:
+        'A social media copywriting assistant designed to generate NCT-style posts based on event recaps and key details.',
+      icon: <MessagesSquare />,
     },
     {
       href: '/scanner',
