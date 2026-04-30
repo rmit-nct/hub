@@ -110,8 +110,7 @@ export const useNavigation = (t: any): { categories: NavCategory[] } => {
     {
       href: '/neo-shortener',
       label: 'Shortener',
-      description:
-        'Shorten a long URL into a simpler version',
+      description: 'Shorten a long URL into a simpler version',
       icon: <ScanLine />,
     },
   ] as NavItem[];
