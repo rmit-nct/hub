@@ -9,14 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@ncthub/ui/card';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@ncthub/ui/dialog';
+import { toast } from '@ncthub/ui/hooks/use-toast';
 import {
   AlertCircle,
   Check,
@@ -32,9 +25,9 @@ import { Input } from '@ncthub/ui/input';
 import { Label } from '@ncthub/ui/label';
 import { Switch } from '@ncthub/ui/switch';
 import { Textarea } from '@ncthub/ui/textarea';
+import { ToastAction } from '@ncthub/ui/toast';
 import { cn } from '@ncthub/utils/format';
 import { motion } from 'framer-motion';
-import Link from 'next/link';
 import type React from 'react';
 import { useEffect, useMemo, useState, useTransition } from 'react';
 import {
@@ -158,7 +151,6 @@ export default function NeoShortenerPage() {
   const [copiedValue, setCopiedValue] = useState<string | null>(null);
   const [isLoadingLinks, setIsLoadingLinks] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-  const [showLoginDialog, setShowLoginDialog] = useState(false);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [slugAvailability, setSlugAvailability] =
     useState<SlugAvailabilityState | null>(null);
@@ -287,7 +279,19 @@ export default function NeoShortenerPage() {
     setResult(null);
 
     if (isAuthenticated === false) {
-      setShowLoginDialog(true);
+      toast({
+        title: 'Login required',
+        description:
+          'Please log in to create, save, and manage your short links.',
+        action: (
+          <ToastAction
+            altText="Login to continue"
+            onClick={() => window.location.assign(SHORTENER_LOGIN_URL)}
+          >
+            Login
+          </ToastAction>
+        ),
+      });
       return;
     }
 
@@ -373,30 +377,6 @@ export default function NeoShortenerPage() {
 
   return (
     <main className="bg-background px-4 py-14">
-      <Dialog open={showLoginDialog} onOpenChange={setShowLoginDialog}>
-        <DialogContent className="sm:max-w-106.25">
-          <DialogHeader>
-            <DialogTitle>Login required</DialogTitle>
-            <DialogDescription>
-              Sign in to NCT Hub to create, save, and manage your short links.
-            </DialogDescription>
-          </DialogHeader>
-
-          <DialogFooter className="gap-2 sm:gap-0">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setShowLoginDialog(false)}
-            >
-              Not now
-            </Button>
-            <Button asChild>
-              <Link href={SHORTENER_LOGIN_URL}>Login to continue</Link>
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
       <div className="container mx-auto">
         <div className="mx-auto max-w-5xl space-y-8">
           <NeoShortenerHero />
