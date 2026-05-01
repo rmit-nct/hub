@@ -18,7 +18,7 @@
     "next": "16.2.4",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
-    "zod": "^3.25.76"
+    "zod": "^4.4.1"
   },
   "devDependencies": {
     "@ncthub/typescript-config": "workspace:*",
