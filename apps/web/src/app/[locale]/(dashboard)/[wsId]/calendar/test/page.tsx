@@ -152,11 +152,12 @@ export default function Page() {
                   control={form.control}
                   name="prompt"
                   render={({ field, fieldState }) => (
-                    <Field data-invalid={!!fieldState.error}>
+                    <Field data-invalid={fieldState.invalid}>
                       <FieldLabel>Event Description</FieldLabel>{' '}
                       <Textarea
                         placeholder="e.g. Meet with James at Starbucks on 5th Avenue next Monday at 10am for coffee"
                         className="min-h-[120px]"
+                        aria-invalid={fieldState.invalid}
                         {...field}
                       />
                       <FieldDescription>
@@ -176,9 +177,13 @@ export default function Page() {
                   control={form.control}
                   name="timezone"
                   render={({ field, fieldState }) => (
-                    <Field data-invalid={!!fieldState.error}>
+                    <Field data-invalid={fieldState.invalid}>
                       <FieldLabel>Your Timezone</FieldLabel>{' '}
-                      <Input {...field} readOnly />
+                      <Input
+                        aria-invalid={fieldState.invalid}
+                        {...field}
+                        readOnly
+                      />
                       <FieldDescription>
                         We'll use this to create events in your local time
                       </FieldDescription>

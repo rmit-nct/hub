@@ -1242,12 +1242,13 @@ export function EventModal() {
                         control={aiForm.control}
                         name="prompt"
                         render={({ field, fieldState }) => (
-                          <Field data-invalid={!!fieldState.error}>
+                          <Field data-invalid={fieldState.invalid}>
                             <FieldLabel className="text-base font-medium">
                               Describe your event
                             </FieldLabel>{' '}
                             <div className="relative w-full">
                               <AutosizeTextarea
+                                aria-invalid={fieldState.invalid}
                                 {...field}
                                 autoFocus
                                 placeholder="E.g., Schedule a team meeting next Monday at 2pm for 1 hour..."

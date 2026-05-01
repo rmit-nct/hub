@@ -171,12 +171,13 @@ export function TransactionForm({ wsId, data, onFinish }: Props) {
             name="origin_wallet_id"
             render={({ field, fieldState }) => (
               <Field
-                data-invalid={!!fieldState.error}
+                data-invalid={fieldState.invalid}
                 className="flex flex-col"
               >
                 <FieldLabel>{t('transaction-data-table.wallet')}</FieldLabel>
                 <Combobox
                   t={t}
+                  aria-invalid={fieldState.invalid}
                   {...field}
                   mode="single"
                   options={
@@ -200,9 +201,9 @@ export function TransactionForm({ wsId, data, onFinish }: Props) {
                   disabled={loading || walletsLoading}
                   useFirstValueAsDefault
                 />
-                <FieldError
-                  errors={fieldState.error ? [fieldState.error] : undefined}
-                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
               </Field>
             )}
           />
@@ -212,12 +213,13 @@ export function TransactionForm({ wsId, data, onFinish }: Props) {
             name="category_id"
             render={({ field, fieldState }) => (
               <Field
-                data-invalid={!!fieldState.error}
+                data-invalid={fieldState.invalid}
                 className="flex flex-col"
               >
                 <FieldLabel>{t('transaction-data-table.category')}</FieldLabel>
                 <Combobox
                   t={t}
+                  aria-invalid={fieldState.invalid}
                   {...field}
                   mode="single"
                   options={
@@ -240,9 +242,9 @@ export function TransactionForm({ wsId, data, onFinish }: Props) {
                   }}
                   disabled={loading || categoriesLoading}
                 />
-                <FieldError
-                  errors={fieldState.error ? [fieldState.error] : undefined}
-                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
               </Field>
             )}
           />
@@ -256,9 +258,10 @@ export function TransactionForm({ wsId, data, onFinish }: Props) {
           name="amount"
           disabled={loading}
           render={({ field, fieldState }) => (
-            <Field data-invalid={!!fieldState.error}>
+            <Field data-invalid={fieldState.invalid}>
               <FieldLabel>{t('transaction-data-table.amount')}</FieldLabel>{' '}
               <Input
+                aria-invalid={fieldState.invalid}
                 {...field}
                 placeholder="0"
                 value={
@@ -281,9 +284,7 @@ export function TransactionForm({ wsId, data, onFinish }: Props) {
                   }
                 }}
               />
-              <FieldError
-                errors={fieldState.error ? [fieldState.error] : undefined}
-              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />
@@ -293,15 +294,14 @@ export function TransactionForm({ wsId, data, onFinish }: Props) {
           name="description"
           disabled={loading}
           render={({ field, fieldState }) => (
-            <Field data-invalid={!!fieldState.error}>
+            <Field data-invalid={fieldState.invalid}>
               <FieldLabel>{t('transaction-data-table.description')}</FieldLabel>{' '}
               <Textarea
                 placeholder={t('transaction-data-table.description')}
+                aria-invalid={fieldState.invalid}
                 {...field}
               />
-              <FieldError
-                errors={fieldState.error ? [fieldState.error] : undefined}
-              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />
@@ -314,7 +314,7 @@ export function TransactionForm({ wsId, data, onFinish }: Props) {
             name="taken_at"
             render={({ field, fieldState }) => (
               <Field
-                data-invalid={!!fieldState.error}
+                data-invalid={fieldState.invalid}
                 className="flex flex-col"
               >
                 <FieldLabel>{t('transaction-data-table.taken_at')}</FieldLabel>
@@ -352,9 +352,9 @@ export function TransactionForm({ wsId, data, onFinish }: Props) {
                     initialFocus
                   />
                 </PopoverContent>
-                <FieldError
-                  errors={fieldState.error ? [fieldState.error] : undefined}
-                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
               </Field>
             )}
           />

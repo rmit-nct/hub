@@ -41,17 +41,16 @@ export default function WhitelistEmailForm({ onSubmit }: Props) {
         control={form.control}
         name="email"
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>Email</FieldLabel>{' '}
             <Input
               type="email"
               placeholder="example@email.com"
               autoComplete="off"
+              aria-invalid={fieldState.invalid}
               {...field}
             />
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
-            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />

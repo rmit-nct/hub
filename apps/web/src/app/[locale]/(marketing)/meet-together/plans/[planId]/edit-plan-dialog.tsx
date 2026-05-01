@@ -148,12 +148,17 @@ export default function EditPlanDialog({ plan }: Props) {
             control={form.control}
             name="name"
             render={({ field, fieldState }) => (
-              <Field data-invalid={!!fieldState.error}>
+              <Field data-invalid={fieldState.invalid}>
                 <FieldLabel>{t('meet-together-plan-details.name')}</FieldLabel>{' '}
-                <Input placeholder="Name" autoComplete="off" {...field} />
-                <FieldError
-                  errors={fieldState.error ? [fieldState.error] : undefined}
+                <Input
+                  placeholder="Name"
+                  autoComplete="off"
+                  aria-invalid={fieldState.invalid}
+                  {...field}
                 />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
               </Field>
             )}
           />
@@ -162,7 +167,7 @@ export default function EditPlanDialog({ plan }: Props) {
             control={form.control}
             name="is_public"
             render={({ field, fieldState }) => (
-              <Field data-invalid={!!fieldState.error}>
+              <Field data-invalid={fieldState.invalid}>
                 <div className="flex items-start justify-between gap-4 rounded-lg border p-4">
                   <div className="space-y-1">
                     <FieldLabel>

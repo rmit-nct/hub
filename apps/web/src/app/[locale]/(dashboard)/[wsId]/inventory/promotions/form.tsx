@@ -103,15 +103,14 @@ export function PromotionForm({ wsId, wsUserId, data, onFinish }: Props) {
         control={form.control}
         name="name"
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>{t('ws-inventory-promotions.form.name')}</FieldLabel>{' '}
             <Input
+              aria-invalid={fieldState.invalid}
               {...field}
               placeholder={t('ws-inventory-promotions.form.name')}
             />
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
-            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />
@@ -119,17 +118,16 @@ export function PromotionForm({ wsId, wsUserId, data, onFinish }: Props) {
         control={form.control}
         name="description"
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>
               {t('ws-inventory-promotions.form.description')}
             </FieldLabel>{' '}
             <Textarea
+              aria-invalid={fieldState.invalid}
               {...field}
               placeholder={t('ws-inventory-promotions.form.description')}
             />
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
-            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />
@@ -138,15 +136,14 @@ export function PromotionForm({ wsId, wsUserId, data, onFinish }: Props) {
         control={form.control}
         name="code"
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error} className="flex-1">
+          <Field data-invalid={fieldState.invalid} className="flex-1">
             <FieldLabel>{t('ws-inventory-promotions.form.code')}</FieldLabel>{' '}
             <Input
+              aria-invalid={fieldState.invalid}
               {...field}
               placeholder={t('ws-inventory-promotions.form.code')}
             />
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
-            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />
@@ -155,16 +152,15 @@ export function PromotionForm({ wsId, wsUserId, data, onFinish }: Props) {
           control={form.control}
           name="value"
           render={({ field, fieldState }) => (
-            <Field data-invalid={!!fieldState.error} className="flex-1">
+            <Field data-invalid={fieldState.invalid} className="flex-1">
               <FieldLabel>{t('ws-inventory-promotions.form.value')}</FieldLabel>{' '}
               <Input
                 type="number"
+                aria-invalid={fieldState.invalid}
                 {...field}
                 placeholder={t('ws-inventory-promotions.form.value')}
               />
-              <FieldError
-                errors={fieldState.error ? [fieldState.error] : undefined}
-              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />
@@ -172,13 +168,14 @@ export function PromotionForm({ wsId, wsUserId, data, onFinish }: Props) {
           control={form.control}
           name="unit"
           render={({ field, fieldState }) => (
-            <Field data-invalid={!!fieldState.error}>
+            <Field data-invalid={fieldState.invalid}>
               <FieldLabel>
                 {t('ws-inventory-promotions.form.unit.placeholder')}
               </FieldLabel>{' '}
               <Select value={field.value} onValueChange={field.onChange}>
                 <SelectTrigger className="w-32">
                   <SelectValue
+                    aria-invalid={fieldState.invalid}
                     {...field}
                     placeholder={t(
                       'ws-inventory-promotions.form.unit.placeholder'
@@ -198,9 +195,7 @@ export function PromotionForm({ wsId, wsUserId, data, onFinish }: Props) {
                   </SelectItem>
                 </SelectContent>
               </Select>
-              <FieldError
-                errors={fieldState.error ? [fieldState.error] : undefined}
-              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />

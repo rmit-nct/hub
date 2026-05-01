@@ -298,12 +298,16 @@ export function WorkspaceSelect({
               name="name"
               disabled={loading}
               render={({ field, fieldState }) => (
-                <Field data-invalid={!!fieldState.error}>
+                <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>{t('common.workspace_name')}</FieldLabel>{' '}
-                  <Input placeholder="Acme Inc." {...field} />
-                  <FieldError
-                    errors={fieldState.error ? [fieldState.error] : undefined}
+                  <Input
+                    placeholder="Acme Inc."
+                    aria-invalid={fieldState.invalid}
+                    {...field}
                   />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
@@ -313,13 +317,13 @@ export function WorkspaceSelect({
               name="plan"
               disabled={loading}
               render={({ field, fieldState }) => (
-                <Field data-invalid={!!fieldState.error}>
+                <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>{t('common.subscription_plan')}</FieldLabel>{' '}
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger aria-invalid={fieldState.invalid}>
                       <SelectValue placeholder="Select a plan" />
                     </SelectTrigger>
                     <SelectContent>
@@ -347,9 +351,9 @@ export function WorkspaceSelect({
                       </SelectItem>
                     </SelectContent>
                   </Select>
-                  <FieldError
-                    errors={fieldState.error ? [fieldState.error] : undefined}
-                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />

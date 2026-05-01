@@ -75,17 +75,16 @@ export default function DisplayNameInput({
           control={form.control}
           name="name"
           render={({ field, fieldState }) => (
-            <Field data-invalid={!!fieldState.error} className="w-full">
+            <Field data-invalid={fieldState.invalid} className="w-full">
               {' '}
               <Input
                 id="display-name"
                 placeholder={t('display-name')}
                 disabled={disabled}
+                aria-invalid={fieldState.invalid}
                 {...field}
               />
-              <FieldError
-                errors={fieldState.error ? [fieldState.error] : undefined}
-              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />

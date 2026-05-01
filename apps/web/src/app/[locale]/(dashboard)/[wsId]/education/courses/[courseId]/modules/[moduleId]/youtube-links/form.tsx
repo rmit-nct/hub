@@ -89,16 +89,15 @@ export default function YouTubeLinkForm({
         control={form.control}
         name="link"
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>{t('youtube_link')}</FieldLabel>{' '}
             <Input
               placeholder={t('youtube_link')}
               autoComplete="off"
+              aria-invalid={fieldState.invalid}
               {...field}
             />
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
-            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />

@@ -59,17 +59,16 @@ export default function ApiKeyForm({
           control={form.control}
           name="value"
           render={({ field, fieldState }) => (
-            <Field data-invalid={!!fieldState.error}>
+            <Field data-invalid={fieldState.invalid}>
               <FieldLabel>{t('value')}</FieldLabel>{' '}
               <AutosizeTextarea
                 placeholder="Value"
                 autoComplete="off"
                 maxHeight={200}
+                aria-invalid={fieldState.invalid}
                 {...field}
               />
-              <FieldError
-                errors={fieldState.error ? [fieldState.error] : undefined}
-              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />

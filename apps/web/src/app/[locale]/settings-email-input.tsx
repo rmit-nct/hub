@@ -84,7 +84,7 @@ export default function EmailInput({ oldEmail, newEmail, disabled }: Props) {
           control={form.control}
           name="email"
           render={({ field, fieldState }) => (
-            <Field data-invalid={!!fieldState.error} className="w-full">
+            <Field data-invalid={fieldState.invalid} className="w-full">
               {' '}
               <InputField
                 id="email"
@@ -98,11 +98,10 @@ export default function EmailInput({ oldEmail, newEmail, disabled }: Props) {
                 }
                 className="w-full"
                 disabled={disabled}
+                aria-invalid={fieldState.invalid}
                 {...field}
               />
-              <FieldError
-                errors={fieldState.error ? [fieldState.error] : undefined}
-              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />

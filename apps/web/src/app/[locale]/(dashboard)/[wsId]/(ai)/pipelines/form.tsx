@@ -88,9 +88,13 @@ export default function DatasetForm({ wsId, data, onFinish }: Props) {
                   control={form.control}
                   name="id"
                   render={({ field, fieldState }) => (
-                    <Field data-invalid={!!fieldState.error}>
+                    <Field data-invalid={fieldState.invalid}>
                       <FieldLabel>Dataset ID</FieldLabel>{' '}
-                      <Input {...field} disabled />
+                      <Input
+                        aria-invalid={fieldState.invalid}
+                        {...field}
+                        disabled
+                      />
                       <FieldError
                         errors={
                           fieldState.error ? [fieldState.error] : undefined
@@ -112,12 +116,16 @@ export default function DatasetForm({ wsId, data, onFinish }: Props) {
               control={form.control}
               name="url"
               render={({ field, fieldState }) => (
-                <Field data-invalid={!!fieldState.error}>
+                <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>URL</FieldLabel>{' '}
-                  <Input placeholder="https://example.com" {...field} />
-                  <FieldError
-                    errors={fieldState.error ? [fieldState.error] : undefined}
+                  <Input
+                    placeholder="https://example.com"
+                    aria-invalid={fieldState.invalid}
+                    {...field}
                   />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />

@@ -75,11 +75,12 @@ export default function SecretForm({ wsId, data, onFinish }: Props) {
         control={form.control}
         name="name"
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>{t('ws-secrets.name')}</FieldLabel>{' '}
             <Input
               placeholder="Name"
               autoComplete="off"
+              aria-invalid={fieldState.invalid}
               {...field}
               onChange={(e) =>
                 field.onChange(
@@ -90,9 +91,7 @@ export default function SecretForm({ wsId, data, onFinish }: Props) {
                 )
               }
             />
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
-            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />
@@ -101,12 +100,15 @@ export default function SecretForm({ wsId, data, onFinish }: Props) {
         control={form.control}
         name="value"
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>{t('ws-secrets.value')}</FieldLabel>{' '}
-            <Input placeholder="Value" autoComplete="off" {...field} />
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
+            <Input
+              placeholder="Value"
+              autoComplete="off"
+              aria-invalid={fieldState.invalid}
+              {...field}
             />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />

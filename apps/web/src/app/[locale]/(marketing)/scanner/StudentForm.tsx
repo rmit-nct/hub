@@ -50,7 +50,7 @@ export default function StudentForm({ values, onSubmit }: StudentFormProps) {
           control={form.control}
           name="name"
           render={({ field, fieldState }) => (
-            <Field data-invalid={!!fieldState.error}>
+            <Field data-invalid={fieldState.invalid}>
               <FieldLabel className="flex items-center gap-2 font-medium text-base">
                 <User className="h-4 w-4 text-dynamic-blue" />
                 Full Name
@@ -63,11 +63,10 @@ export default function StudentForm({ values, onSubmit }: StudentFormProps) {
                   form.formState.errors.name &&
                     'border-destructive/40 focus:border-destructive focus:ring-destructive/20'
                 )}
+                aria-invalid={fieldState.invalid}
                 {...field}
               />
-              <FieldError
-                errors={fieldState.error ? [fieldState.error] : undefined}
-              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />
@@ -76,7 +75,7 @@ export default function StudentForm({ values, onSubmit }: StudentFormProps) {
           control={form.control}
           name="studentNumber"
           render={({ field, fieldState }) => (
-            <Field data-invalid={!!fieldState.error}>
+            <Field data-invalid={fieldState.invalid}>
               <FieldLabel className="flex items-center gap-2 font-medium text-base">
                 <Hash className="h-4 w-4 text-dynamic-purple" />
                 Student Number
@@ -89,11 +88,10 @@ export default function StudentForm({ values, onSubmit }: StudentFormProps) {
                   form.formState.errors.studentNumber &&
                     'border-destructive/40 focus:border-destructive focus:ring-destructive/20'
                 )}
+                aria-invalid={fieldState.invalid}
                 {...field}
               />
-              <FieldError
-                errors={fieldState.error ? [fieldState.error] : undefined}
-              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />
@@ -102,7 +100,7 @@ export default function StudentForm({ values, onSubmit }: StudentFormProps) {
           control={form.control}
           name="program"
           render={({ field, fieldState }) => (
-            <Field data-invalid={!!fieldState.error}>
+            <Field data-invalid={fieldState.invalid}>
               <FieldLabel className="flex items-center gap-2 font-medium text-base">
                 <GraduationCap className="h-4 w-4 text-dynamic-green" />
                 Program
@@ -116,11 +114,10 @@ export default function StudentForm({ values, onSubmit }: StudentFormProps) {
                   'h-12 text-base transition-all duration-200',
                   'border-2 focus:border-dynamic-green focus:ring-4 focus:ring-dynamic-green/20'
                 )}
+                aria-invalid={fieldState.invalid}
                 {...field}
               />
-              <FieldError
-                errors={fieldState.error ? [fieldState.error] : undefined}
-              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />

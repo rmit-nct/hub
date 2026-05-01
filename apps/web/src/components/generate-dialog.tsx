@@ -70,9 +70,13 @@ export function GenerateDialog({
             control={form.control}
             name="context"
             render={({ field, fieldState }) => (
-              <Field data-invalid={!!fieldState.error}>
+              <Field data-invalid={fieldState.invalid}>
                 <FieldLabel>{t('common.context')}</FieldLabel>{' '}
-                <Input placeholder={t('common.enter_context')} {...field} />
+                <Input
+                  placeholder={t('common.enter_context')}
+                  aria-invalid={fieldState.invalid}
+                  {...field}
+                />
               </Field>
             )}
           />

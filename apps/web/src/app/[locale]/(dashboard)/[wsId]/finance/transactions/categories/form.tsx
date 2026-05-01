@@ -82,17 +82,16 @@ export function TransactionCategoryForm({ wsId, data, onFinish }: Props) {
           name="name"
           disabled={loading}
           render={({ field, fieldState }) => (
-            <Field data-invalid={!!fieldState.error}>
+            <Field data-invalid={fieldState.invalid}>
               <FieldLabel>
                 {t('transaction-category-data-table.category_name')}
               </FieldLabel>{' '}
               <Input
                 placeholder={t('transaction-category-data-table.name_examples')}
+                aria-invalid={fieldState.invalid}
                 {...field}
               />
-              <FieldError
-                errors={fieldState.error ? [fieldState.error] : undefined}
-              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />
@@ -101,7 +100,7 @@ export function TransactionCategoryForm({ wsId, data, onFinish }: Props) {
           control={form.control}
           name="type"
           render={({ field, fieldState }) => (
-            <Field data-invalid={!!fieldState.error} className="w-full">
+            <Field data-invalid={fieldState.invalid} className="w-full">
               <FieldLabel>
                 {t('transaction-category-data-table.category_type')}
               </FieldLabel>{' '}
@@ -119,12 +118,11 @@ export function TransactionCategoryForm({ wsId, data, onFinish }: Props) {
                   },
                 ]}
                 classNames={{ root: 'w-full' }}
+                aria-invalid={fieldState.invalid}
                 {...field}
                 onValueChange={(value) => field.onChange(value)}
               />
-              <FieldError
-                errors={fieldState.error ? [fieldState.error] : undefined}
-              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />

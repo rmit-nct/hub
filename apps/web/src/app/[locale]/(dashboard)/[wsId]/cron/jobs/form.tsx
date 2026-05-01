@@ -122,12 +122,16 @@ export function CronJobForm({ wsId, data, onFinish }: Props) {
                 control={form.control}
                 name="id"
                 render={({ field, fieldState }) => (
-                  <Field data-invalid={!!fieldState.error}>
+                  <Field data-invalid={fieldState.invalid}>
                     <FieldLabel>Job ID</FieldLabel>{' '}
-                    <Input {...field} disabled />
-                    <FieldError
-                      errors={fieldState.error ? [fieldState.error] : undefined}
+                    <Input
+                      aria-invalid={fieldState.invalid}
+                      {...field}
+                      disabled
                     />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
                     <FieldDescription>
                       This ID is automatically assigned and cannot be changed.
                     </FieldDescription>
@@ -142,12 +146,16 @@ export function CronJobForm({ wsId, data, onFinish }: Props) {
             control={form.control}
             name="name"
             render={({ field, fieldState }) => (
-              <Field data-invalid={!!fieldState.error}>
+              <Field data-invalid={fieldState.invalid}>
                 <FieldLabel>Name</FieldLabel>{' '}
-                <Input placeholder="Daily Update Job" {...field} />
-                <FieldError
-                  errors={fieldState.error ? [fieldState.error] : undefined}
+                <Input
+                  placeholder="Daily Update Job"
+                  aria-invalid={fieldState.invalid}
+                  {...field}
                 />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
               </Field>
             )}
           />
@@ -156,9 +164,13 @@ export function CronJobForm({ wsId, data, onFinish }: Props) {
             control={form.control}
             name="schedule"
             render={({ field, fieldState }) => (
-              <Field data-invalid={!!fieldState.error}>
+              <Field data-invalid={fieldState.invalid}>
                 <FieldLabel>Schedule (Cron Expression)</FieldLabel>{' '}
-                <Input placeholder="0 0 * * *" {...field} />
+                <Input
+                  placeholder="0 0 * * *"
+                  aria-invalid={fieldState.invalid}
+                  {...field}
+                />
                 <FieldDescription className="flex flex-col gap-1">
                   <span>Common examples:</span>
                   <span className="text-xs text-muted-foreground">
@@ -172,9 +184,9 @@ export function CronJobForm({ wsId, data, onFinish }: Props) {
                     </span>
                   )}
                 </FieldDescription>
-                <FieldError
-                  errors={fieldState.error ? [fieldState.error] : undefined}
-                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
               </Field>
             )}
           />
@@ -183,7 +195,7 @@ export function CronJobForm({ wsId, data, onFinish }: Props) {
             control={form.control}
             name="dataset_id"
             render={({ field, fieldState }) => (
-              <Field data-invalid={!!fieldState.error}>
+              <Field data-invalid={fieldState.invalid}>
                 <FieldLabel>Dataset</FieldLabel>
                 <Select
                   onValueChange={field.onChange}
@@ -191,7 +203,7 @@ export function CronJobForm({ wsId, data, onFinish }: Props) {
                   disabled={!!datasetId}
                 >
                   {' '}
-                  <SelectTrigger>
+                  <SelectTrigger aria-invalid={fieldState.invalid}>
                     <SelectValue
                       placeholder={
                         loadingDatasets ? 'Loading...' : 'Select a dataset'
@@ -211,9 +223,9 @@ export function CronJobForm({ wsId, data, onFinish }: Props) {
                     ? 'Dataset is pre-selected based on the current context'
                     : 'Select the dataset this job will work with'}
                 </FieldDescription>
-                <FieldError
-                  errors={fieldState.error ? [fieldState.error] : undefined}
-                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
               </Field>
             )}
           />
@@ -225,7 +237,7 @@ export function CronJobForm({ wsId, data, onFinish }: Props) {
             name="active"
             render={({ field, fieldState }) => (
               <Field
-                data-invalid={!!fieldState.error}
+                data-invalid={fieldState.invalid}
                 className="flex items-center space-x-2"
               >
                 {' '}

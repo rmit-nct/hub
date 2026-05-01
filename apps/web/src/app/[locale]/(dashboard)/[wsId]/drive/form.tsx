@@ -96,17 +96,16 @@ export function StorageFolderForm({
         name="name"
         disabled={loading}
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>
               {t('storage-object-data-table.folder.name')}
             </FieldLabel>{' '}
             <Input
+              aria-invalid={fieldState.invalid}
               {...field}
               placeholder={t('storage-object-data-table.folder.name')}
             />
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
-            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />
@@ -215,13 +214,14 @@ export function StorageObjectForm({
         name="files"
         disabled={loading}
         render={({ field: { onChange, ...fieldProps }, fieldState }) => (
-          <Field data-invalid={!!fieldState.error}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>
               {t('storage-object-data-table.files')}
               {files.length > 0 ? ` (${files.length})` : ''}
             </FieldLabel>
             {files.length === 0 ? (
               <Input
+                aria-invalid={fieldState.invalid}
                 {...fieldProps}
                 value={undefined}
                 type="file"
@@ -350,9 +350,7 @@ export function StorageObjectForm({
                   ))}
               </ScrollArea>
             )}
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
-            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />

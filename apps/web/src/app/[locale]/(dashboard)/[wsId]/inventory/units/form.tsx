@@ -75,12 +75,14 @@ export function ProductUnitForm({ wsId, data, onFinish }: Props) {
         name="name"
         disabled={loading}
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>{t('basic-data-table.name')}</FieldLabel>{' '}
-            <Input placeholder={t('basic-data-table.name')} {...field} />
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
+            <Input
+              placeholder={t('basic-data-table.name')}
+              aria-invalid={fieldState.invalid}
+              {...field}
             />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />

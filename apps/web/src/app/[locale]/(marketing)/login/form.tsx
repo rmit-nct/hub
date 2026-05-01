@@ -182,19 +182,18 @@ export default function LoginForm() {
         control={form.control}
         name="email"
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>Email</FieldLabel>{' '}
             <Input
               placeholder={t('email_placeholder')}
+              aria-invalid={fieldState.invalid}
               {...field}
               disabled={otpSent || loading}
             />
             {otpSent || (
               <FieldDescription>{t('email_description')}</FieldDescription>
             )}
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
-            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />
@@ -204,13 +203,14 @@ export default function LoginForm() {
         name="otp"
         render={({ field, fieldState }) => (
           <Field
-            data-invalid={!!fieldState.error}
+            data-invalid={fieldState.invalid}
             className={otpSent ? '' : 'hidden'}
           >
             <FieldLabel>{t('otp_code')}</FieldLabel>{' '}
             <div className="flex flex-col gap-2 md:flex-row">
               <InputOTP
                 maxLength={maxOTPLength}
+                aria-invalid={fieldState.invalid}
                 {...field}
                 onChange={(value) => {
                   form.setValue('otp', value);
@@ -246,13 +246,7 @@ export default function LoginForm() {
                   : t('resend')}
               </Button>
             </div>
-            {form.formState.errors.otp && (
-              <FieldError
-                errors={fieldState.error ? [fieldState.error] : undefined}
-              >
-                {form.formState.errors.otp.message}
-              </FieldError>
-            )}
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             <FieldDescription>{t('otp_description')}</FieldDescription>
           </Field>
         )}

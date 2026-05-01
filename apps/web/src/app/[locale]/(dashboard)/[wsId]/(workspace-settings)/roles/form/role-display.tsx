@@ -16,12 +16,15 @@ export default function RoleFormDisplaySection({ form }: SectionProps) {
         control={form.control}
         name="name"
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>{t('ws-roles.name')}</FieldLabel>{' '}
-            <Input placeholder="Name" autoComplete="off" {...field} />
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
+            <Input
+              placeholder="Name"
+              autoComplete="off"
+              aria-invalid={fieldState.invalid}
+              {...field}
             />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />

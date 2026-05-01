@@ -345,11 +345,16 @@ export function UserRowActions({ row, href, extraData }: UserRowActionsProps) {
               control={form.control}
               name="id"
               render={({ field, fieldState }) => (
-                <Field data-invalid={!!fieldState.error}>
-                  <FieldLabel>User ID</FieldLabel> <Input {...field} disabled />
-                  <FieldError
-                    errors={fieldState.error ? [fieldState.error] : undefined}
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel>User ID</FieldLabel>{' '}
+                  <Input
+                    aria-invalid={fieldState.invalid}
+                    {...field}
+                    disabled
                   />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                   <FieldDescription>
                     The identification number of this user in your workspace.
                     This is automatically managed by Tuturuuu, and cannot be
@@ -365,12 +370,16 @@ export function UserRowActions({ row, href, extraData }: UserRowActionsProps) {
               control={form.control}
               name="full_name"
               render={({ field, fieldState }) => (
-                <Field data-invalid={!!fieldState.error}>
+                <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>Full Name</FieldLabel>{' '}
-                  <Input placeholder="John Doe" {...field} />
-                  <FieldError
-                    errors={fieldState.error ? [fieldState.error] : undefined}
+                  <Input
+                    placeholder="John Doe"
+                    aria-invalid={fieldState.invalid}
+                    {...field}
                   />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                   <FieldDescription>
                     The real name of this user.
                   </FieldDescription>
@@ -382,12 +391,16 @@ export function UserRowActions({ row, href, extraData }: UserRowActionsProps) {
               control={form.control}
               name="display_name"
               render={({ field, fieldState }) => (
-                <Field data-invalid={!!fieldState.error}>
+                <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>Display Name</FieldLabel>{' '}
-                  <Input placeholder="John Doe" {...field} />
-                  <FieldError
-                    errors={fieldState.error ? [fieldState.error] : undefined}
+                  <Input
+                    placeholder="John Doe"
+                    aria-invalid={fieldState.invalid}
+                    {...field}
                   />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                   <FieldDescription>
                     This name will be displayed everywhere in the current
                     workspace for this user.
@@ -402,12 +415,16 @@ export function UserRowActions({ row, href, extraData }: UserRowActionsProps) {
               control={form.control}
               name="email"
               render={({ field, fieldState }) => (
-                <Field data-invalid={!!fieldState.error}>
+                <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>Email</FieldLabel>{' '}
-                  <Input placeholder="example@tuturuuu.com" {...field} />
-                  <FieldError
-                    errors={fieldState.error ? [fieldState.error] : undefined}
+                  <Input
+                    placeholder="example@tuturuuu.com"
+                    aria-invalid={fieldState.invalid}
+                    {...field}
                   />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
@@ -416,12 +433,16 @@ export function UserRowActions({ row, href, extraData }: UserRowActionsProps) {
               control={form.control}
               name="phone"
               render={({ field, fieldState }) => (
-                <Field data-invalid={!!fieldState.error}>
+                <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>Phone Number</FieldLabel>{' '}
-                  <Input placeholder="+123456789" {...field} />
-                  <FieldError
-                    errors={fieldState.error ? [fieldState.error] : undefined}
+                  <Input
+                    placeholder="+123456789"
+                    aria-invalid={fieldState.invalid}
+                    {...field}
                   />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
@@ -432,7 +453,7 @@ export function UserRowActions({ row, href, extraData }: UserRowActionsProps) {
               control={form.control}
               name="gender"
               render={({ field, fieldState }) => (
-                <Field data-invalid={!!fieldState.error} className="w-full">
+                <Field data-invalid={fieldState.invalid} className="w-full">
                   <FieldLabel>Gender</FieldLabel>{' '}
                   <SelectField
                     id="gender"
@@ -454,9 +475,9 @@ export function UserRowActions({ row, href, extraData }: UserRowActionsProps) {
                       },
                     ]}
                   />
-                  <FieldError
-                    errors={fieldState.error ? [fieldState.error] : undefined}
-                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
@@ -467,7 +488,7 @@ export function UserRowActions({ row, href, extraData }: UserRowActionsProps) {
                 name="birthday"
                 render={({ field, fieldState }) => (
                   <Field
-                    data-invalid={!!fieldState.error}
+                    data-invalid={fieldState.invalid}
                     className="grid w-full"
                   >
                     <FieldLabel>Birthday</FieldLabel>
@@ -480,9 +501,9 @@ export function UserRowActions({ row, href, extraData }: UserRowActionsProps) {
                         className="w-full"
                       />
                     </div>
-                    <FieldError
-                      errors={fieldState.error ? [fieldState.error] : undefined}
-                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
                   </Field>
                 )}
               />
@@ -503,12 +524,16 @@ export function UserRowActions({ row, href, extraData }: UserRowActionsProps) {
               control={form.control}
               name="national_id"
               render={({ field, fieldState }) => (
-                <Field data-invalid={!!fieldState.error}>
+                <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>National ID</FieldLabel>{' '}
-                  <Input placeholder="Empty" {...field} />
-                  <FieldError
-                    errors={fieldState.error ? [fieldState.error] : undefined}
+                  <Input
+                    placeholder="Empty"
+                    aria-invalid={fieldState.invalid}
+                    {...field}
                   />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
@@ -517,12 +542,16 @@ export function UserRowActions({ row, href, extraData }: UserRowActionsProps) {
               control={form.control}
               name="ethnicity"
               render={({ field, fieldState }) => (
-                <Field data-invalid={!!fieldState.error}>
+                <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>Ethnicity</FieldLabel>{' '}
-                  <Input placeholder="Empty" {...field} />
-                  <FieldError
-                    errors={fieldState.error ? [fieldState.error] : undefined}
+                  <Input
+                    placeholder="Empty"
+                    aria-invalid={fieldState.invalid}
+                    {...field}
                   />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
@@ -531,12 +560,16 @@ export function UserRowActions({ row, href, extraData }: UserRowActionsProps) {
               control={form.control}
               name="guardian"
               render={({ field, fieldState }) => (
-                <Field data-invalid={!!fieldState.error}>
+                <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>Guardian</FieldLabel>{' '}
-                  <Input placeholder="Empty" {...field} />
-                  <FieldError
-                    errors={fieldState.error ? [fieldState.error] : undefined}
+                  <Input
+                    placeholder="Empty"
+                    aria-invalid={fieldState.invalid}
+                    {...field}
                   />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
@@ -545,12 +578,16 @@ export function UserRowActions({ row, href, extraData }: UserRowActionsProps) {
               control={form.control}
               name="address"
               render={({ field, fieldState }) => (
-                <Field data-invalid={!!fieldState.error}>
+                <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>Address</FieldLabel>{' '}
-                  <Input placeholder="Empty" {...field} />
-                  <FieldError
-                    errors={fieldState.error ? [fieldState.error] : undefined}
+                  <Input
+                    placeholder="Empty"
+                    aria-invalid={fieldState.invalid}
+                    {...field}
                   />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
@@ -561,12 +598,16 @@ export function UserRowActions({ row, href, extraData }: UserRowActionsProps) {
               control={form.control}
               name="note"
               render={({ field, fieldState }) => (
-                <Field data-invalid={!!fieldState.error}>
+                <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>Notes</FieldLabel>{' '}
-                  <Input placeholder="Empty" {...field} />
-                  <FieldError
-                    errors={fieldState.error ? [fieldState.error] : undefined}
+                  <Input
+                    placeholder="Empty"
+                    aria-invalid={fieldState.invalid}
+                    {...field}
                   />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />

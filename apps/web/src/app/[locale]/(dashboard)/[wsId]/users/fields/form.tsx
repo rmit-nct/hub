@@ -84,16 +84,17 @@ export default function UserFieldForm({ data, submitLabel, onSubmit }: Props) {
             control={form.control}
             name="name"
             render={({ field, fieldState }) => (
-              <Field data-invalid={!!fieldState.error}>
+              <Field data-invalid={fieldState.invalid}>
                 <FieldLabel>{t('ws-user-fields.name')}</FieldLabel>{' '}
                 <Input
                   placeholder={t('ws-user-fields.name')}
                   autoComplete="off"
+                  aria-invalid={fieldState.invalid}
                   {...field}
                 />
-                <FieldError
-                  errors={fieldState.error ? [fieldState.error] : undefined}
-                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
               </Field>
             )}
           />
@@ -103,7 +104,7 @@ export default function UserFieldForm({ data, submitLabel, onSubmit }: Props) {
             name="type"
             render={({ field, fieldState }) => (
               <Field
-                data-invalid={!!fieldState.error}
+                data-invalid={fieldState.invalid}
                 className="flex flex-col"
               >
                 <FieldLabel>{t('ws-user-fields.type')}</FieldLabel>
@@ -198,9 +199,9 @@ export default function UserFieldForm({ data, submitLabel, onSubmit }: Props) {
                     </Command>
                   </PopoverContent>
                 </Popover>
-                <FieldError
-                  errors={fieldState.error ? [fieldState.error] : undefined}
-                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
               </Field>
             )}
           />
@@ -211,7 +212,7 @@ export default function UserFieldForm({ data, submitLabel, onSubmit }: Props) {
             control={form.control}
             name="possible_values"
             render={({ field, fieldState }) => (
-              <Field data-invalid={!!fieldState.error}>
+              <Field data-invalid={fieldState.invalid}>
                 <FieldLabel>{t('ws-user-fields.possible_values')}</FieldLabel>
                 <FieldDescription>
                   {t('ws-user-fields.possible_values_description')}
@@ -274,9 +275,9 @@ export default function UserFieldForm({ data, submitLabel, onSubmit }: Props) {
                     </div>
                   ))}
                 </div>
-                <FieldError
-                  errors={fieldState.error ? [fieldState.error] : undefined}
-                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
               </Field>
             )}
           />
@@ -303,16 +304,17 @@ export default function UserFieldForm({ data, submitLabel, onSubmit }: Props) {
             control={form.control}
             name="default_value"
             render={({ field, fieldState }) => (
-              <Field data-invalid={!!fieldState.error}>
+              <Field data-invalid={fieldState.invalid}>
                 <FieldLabel>{t('ws-user-fields.default_value')}</FieldLabel>{' '}
                 <Input
                   placeholder={t('user-field-data-table.null')}
                   autoComplete="off"
+                  aria-invalid={fieldState.invalid}
                   {...field}
                 />
-                <FieldError
-                  errors={fieldState.error ? [fieldState.error] : undefined}
-                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
               </Field>
             )}
           />
@@ -323,16 +325,17 @@ export default function UserFieldForm({ data, submitLabel, onSubmit }: Props) {
             control={form.control}
             name="description"
             render={({ field, fieldState }) => (
-              <Field data-invalid={!!fieldState.error}>
+              <Field data-invalid={fieldState.invalid}>
                 <FieldLabel>{t('ws-user-fields.description')}</FieldLabel>{' '}
                 <Textarea
                   placeholder={t('ws-user-fields.description')}
                   autoComplete="off"
+                  aria-invalid={fieldState.invalid}
                   {...field}
                 />
-                <FieldError
-                  errors={fieldState.error ? [fieldState.error] : undefined}
-                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
               </Field>
             )}
           />
@@ -341,16 +344,17 @@ export default function UserFieldForm({ data, submitLabel, onSubmit }: Props) {
             control={form.control}
             name="notes"
             render={({ field, fieldState }) => (
-              <Field data-invalid={!!fieldState.error}>
+              <Field data-invalid={fieldState.invalid}>
                 <FieldLabel>{t('ws-user-fields.notes')}</FieldLabel>{' '}
                 <Textarea
                   placeholder={t('ws-user-fields.notes')}
                   autoComplete="off"
+                  aria-invalid={fieldState.invalid}
                   {...field}
                 />
-                <FieldError
-                  errors={fieldState.error ? [fieldState.error] : undefined}
-                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
               </Field>
             )}
           />

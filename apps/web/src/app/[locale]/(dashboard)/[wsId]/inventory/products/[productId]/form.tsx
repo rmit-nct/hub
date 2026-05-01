@@ -158,12 +158,13 @@ export function ProductForm({
                   control={form.control}
                   name="name"
                   render={({ field, fieldState }) => (
-                    <Field data-invalid={!!fieldState.error}>
+                    <Field data-invalid={fieldState.invalid}>
                       <FieldLabel>
                         {t('ws-inventory-products.form.name')}
                       </FieldLabel>{' '}
                       <Input
                         placeholder={t('ws-inventory-products.form.name')}
+                        aria-invalid={fieldState.invalid}
                         {...field}
                       />
                       <FieldError
@@ -179,7 +180,7 @@ export function ProductForm({
                   control={form.control}
                   name="manufacturer"
                   render={({ field, fieldState }) => (
-                    <Field data-invalid={!!fieldState.error}>
+                    <Field data-invalid={fieldState.invalid}>
                       <FieldLabel>
                         {t('ws-inventory-products.form.manufacturer')}
                       </FieldLabel>{' '}
@@ -187,6 +188,7 @@ export function ProductForm({
                         placeholder={t(
                           'ws-inventory-products.form.manufacturer'
                         )}
+                        aria-invalid={fieldState.invalid}
                         {...field}
                       />
                       <FieldError
@@ -202,7 +204,7 @@ export function ProductForm({
                   control={form.control}
                   name="description"
                   render={({ field, fieldState }) => (
-                    <Field data-invalid={!!fieldState.error}>
+                    <Field data-invalid={fieldState.invalid}>
                       <FieldLabel>
                         {t('ws-inventory-products.form.description')}
                       </FieldLabel>{' '}
@@ -210,6 +212,7 @@ export function ProductForm({
                         placeholder={t(
                           'ws-inventory-products.form.description'
                         )}
+                        aria-invalid={fieldState.invalid}
                         {...field}
                       />
                       <FieldError
@@ -225,12 +228,13 @@ export function ProductForm({
                   control={form.control}
                   name="usage"
                   render={({ field, fieldState }) => (
-                    <Field data-invalid={!!fieldState.error}>
+                    <Field data-invalid={fieldState.invalid}>
                       <FieldLabel>
                         {t('ws-inventory-products.form.usage')}
                       </FieldLabel>{' '}
                       <Textarea
                         placeholder={t('ws-inventory-products.form.usage')}
+                        aria-invalid={fieldState.invalid}
                         {...field}
                       />
                       <FieldError
@@ -258,7 +262,7 @@ export function ProductForm({
                       name={`inventory.${i}.warehouse_id`}
                       render={({ field, fieldState }) => (
                         <Field
-                          data-invalid={!!fieldState.error}
+                          data-invalid={fieldState.invalid}
                           className="flex-1"
                         >
                           <FieldLabel>
@@ -339,7 +343,7 @@ export function ProductForm({
                       name={`inventory.${i}.price`}
                       render={({ field, fieldState }) => (
                         <Field
-                          data-invalid={!!fieldState.error}
+                          data-invalid={fieldState.invalid}
                           className="flex-1"
                         >
                           <FieldLabel>
@@ -348,6 +352,7 @@ export function ProductForm({
                           <Input
                             type="number"
                             placeholder={t('ws-inventory-products.form.price')}
+                            aria-invalid={fieldState.invalid}
                             {...field}
                           />
                           <FieldError
@@ -365,7 +370,7 @@ export function ProductForm({
                         name={`inventory.${i}.min_amount`}
                         render={({ field, fieldState }) => (
                           <Field
-                            data-invalid={!!fieldState.error}
+                            data-invalid={fieldState.invalid}
                             className="flex-1"
                           >
                             <FieldLabel>
@@ -376,6 +381,7 @@ export function ProductForm({
                               placeholder={t(
                                 'ws-inventory-products.form.min_amount'
                               )}
+                              aria-invalid={fieldState.invalid}
                               {...field}
                             />
                             <FieldError
@@ -394,7 +400,7 @@ export function ProductForm({
                         name={`inventory.${i}.amount`}
                         render={({ field, fieldState }) => (
                           <Field
-                            data-invalid={!!fieldState.error}
+                            data-invalid={fieldState.invalid}
                             className="flex-1"
                           >
                             <FieldLabel>
@@ -405,6 +411,7 @@ export function ProductForm({
                               placeholder={t(
                                 'ws-inventory-products.form.amount'
                               )}
+                              aria-invalid={fieldState.invalid}
                               {...field}
                             />
                             <FieldError
@@ -423,7 +430,7 @@ export function ProductForm({
                         name={`inventory.${i}.unit_id`}
                         render={({ field, fieldState }) => (
                           <Field
-                            data-invalid={!!fieldState.error}
+                            data-invalid={fieldState.invalid}
                             className="flex-1"
                           >
                             <FieldLabel>
@@ -506,7 +513,7 @@ export function ProductForm({
                   control={form.control}
                   name="category_id"
                   render={({ field, fieldState }) => (
-                    <Field data-invalid={!!fieldState.error} className="flex-1">
+                    <Field data-invalid={fieldState.invalid} className="flex-1">
                       <FieldLabel>
                         {t('ws-inventory-categories.singular')}
                       </FieldLabel>

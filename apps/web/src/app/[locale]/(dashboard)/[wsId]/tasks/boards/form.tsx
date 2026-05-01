@@ -77,16 +77,15 @@ export function TaskBoardForm({ wsId, data, onFinish }: Props) {
         control={form.control}
         name="name"
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>{t('ws-task-boards.name')}</FieldLabel>{' '}
             <Input
               placeholder={t('ws-task-boards.name')}
               autoComplete="off"
+              aria-invalid={fieldState.invalid}
               {...field}
             />
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
-            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />

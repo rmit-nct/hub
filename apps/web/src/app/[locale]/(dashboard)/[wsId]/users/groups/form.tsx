@@ -78,12 +78,15 @@ export default function UserGroupForm({ wsId, data, onFinish }: Props) {
         control={form.control}
         name="name"
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>{t('name')}</FieldLabel>{' '}
-            <Input placeholder={t('name')} autoComplete="off" {...field} />
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
+            <Input
+              placeholder={t('name')}
+              autoComplete="off"
+              aria-invalid={fieldState.invalid}
+              {...field}
             />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />

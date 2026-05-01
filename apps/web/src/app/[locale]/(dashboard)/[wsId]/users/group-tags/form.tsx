@@ -95,12 +95,15 @@ export default function GroupTagForm({ wsId, data, onFinish }: Props) {
         control={form.control}
         name="name"
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>{t('name')}</FieldLabel>{' '}
-            <Input placeholder={t('name')} autoComplete="off" {...field} />
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
+            <Input
+              placeholder={t('name')}
+              autoComplete="off"
+              aria-invalid={fieldState.invalid}
+              {...field}
             />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />
@@ -109,18 +112,17 @@ export default function GroupTagForm({ wsId, data, onFinish }: Props) {
         control={form.control}
         name="color"
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error} className="overflow-hidden">
+          <Field data-invalid={fieldState.invalid} className="overflow-hidden">
             <FieldLabel>{t('color')}</FieldLabel>{' '}
             <ColorPicker
+              aria-invalid={fieldState.invalid}
               {...field}
               text={form.watch('name')}
               value={field.value}
               onChange={field.onChange}
               className="line-clamp-1 w-full grow-0 break-all text-ellipsis whitespace-nowrap"
             />
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
-            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />

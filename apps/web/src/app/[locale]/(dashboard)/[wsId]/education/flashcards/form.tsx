@@ -88,12 +88,15 @@ export default function FlashcardForm({
         control={form.control}
         name="front"
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>{t('front')}</FieldLabel>{' '}
-            <Input placeholder={t('front')} autoComplete="off" {...field} />
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
+            <Input
+              placeholder={t('front')}
+              autoComplete="off"
+              aria-invalid={fieldState.invalid}
+              {...field}
             />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />
@@ -101,12 +104,15 @@ export default function FlashcardForm({
         control={form.control}
         name="back"
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>{t('back')}</FieldLabel>{' '}
-            <Input placeholder={t('back')} autoComplete="off" {...field} />
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
+            <Input
+              placeholder={t('back')}
+              autoComplete="off"
+              aria-invalid={fieldState.invalid}
+              {...field}
             />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />

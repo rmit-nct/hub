@@ -86,16 +86,15 @@ export default function CourseModuleForm({
         control={form.control}
         name="name"
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>{t('ws-quiz-sets.name')}</FieldLabel>{' '}
             <Input
               placeholder={t('ws-quiz-sets.name')}
               autoComplete="off"
+              aria-invalid={fieldState.invalid}
               {...field}
             />
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
-            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />

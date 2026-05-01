@@ -91,9 +91,13 @@ export default function DatasetForm({ wsId, data, onFinish }: Props) {
                   control={form.control}
                   name="id"
                   render={({ field, fieldState }) => (
-                    <Field data-invalid={!!fieldState.error}>
+                    <Field data-invalid={fieldState.invalid}>
                       <FieldLabel>Dataset ID</FieldLabel>{' '}
-                      <Input {...field} disabled />
+                      <Input
+                        aria-invalid={fieldState.invalid}
+                        {...field}
+                        disabled
+                      />
                       <FieldError
                         errors={
                           fieldState.error ? [fieldState.error] : undefined
@@ -115,12 +119,16 @@ export default function DatasetForm({ wsId, data, onFinish }: Props) {
               control={form.control}
               name="name"
               render={({ field, fieldState }) => (
-                <Field data-invalid={!!fieldState.error}>
+                <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>Name</FieldLabel>{' '}
-                  <Input placeholder="John Doe" {...field} />
-                  <FieldError
-                    errors={fieldState.error ? [fieldState.error] : undefined}
+                  <Input
+                    placeholder="John Doe"
+                    aria-invalid={fieldState.invalid}
+                    {...field}
                   />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
@@ -129,12 +137,16 @@ export default function DatasetForm({ wsId, data, onFinish }: Props) {
               control={form.control}
               name="description"
               render={({ field, fieldState }) => (
-                <Field data-invalid={!!fieldState.error}>
+                <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>Description</FieldLabel>{' '}
-                  <Textarea placeholder="Empty" {...field} />
-                  <FieldError
-                    errors={fieldState.error ? [fieldState.error] : undefined}
+                  <Textarea
+                    placeholder="Empty"
+                    aria-invalid={fieldState.invalid}
+                    {...field}
                   />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />

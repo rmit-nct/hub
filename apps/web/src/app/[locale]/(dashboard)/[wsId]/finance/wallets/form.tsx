@@ -83,12 +83,14 @@ export function WalletForm({ wsId, data, onFinish }: Props) {
         name="name"
         disabled={loading}
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>{t('wallet-data-table.wallet_name')}</FieldLabel>{' '}
-            <Input placeholder="Cash" {...field} />
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
+            <Input
+              placeholder="Cash"
+              aria-invalid={fieldState.invalid}
+              {...field}
             />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />
@@ -97,10 +99,11 @@ export function WalletForm({ wsId, data, onFinish }: Props) {
         control={form.control}
         name="balance"
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>{t('wallet-data-table.wallet_balance')}</FieldLabel>{' '}
             <Input
               placeholder="0"
+              aria-invalid={fieldState.invalid}
               {...field}
               value={
                 !field.value
@@ -123,9 +126,7 @@ export function WalletForm({ wsId, data, onFinish }: Props) {
               }}
               disabled
             />
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
-            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
         // disabled={loading}
@@ -137,7 +138,7 @@ export function WalletForm({ wsId, data, onFinish }: Props) {
           control={form.control}
           name="type"
           render={({ field, fieldState }) => (
-            <Field data-invalid={!!fieldState.error} className="w-full">
+            <Field data-invalid={fieldState.invalid} className="w-full">
               <FieldLabel>{t('wallet-data-table.wallet_type')}</FieldLabel>{' '}
               <SelectField
                 id="wallet-type"
@@ -155,11 +156,10 @@ export function WalletForm({ wsId, data, onFinish }: Props) {
                   },
                 ]}
                 classNames={{ root: 'w-full' }}
+                aria-invalid={fieldState.invalid}
                 {...field}
               />
-              <FieldError
-                errors={fieldState.error ? [fieldState.error] : undefined}
-              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />
@@ -167,7 +167,7 @@ export function WalletForm({ wsId, data, onFinish }: Props) {
           control={form.control}
           name="currency"
           render={({ field, fieldState }) => (
-            <Field data-invalid={!!fieldState.error} className="w-full">
+            <Field data-invalid={fieldState.invalid} className="w-full">
               <FieldLabel>{t('wallet-data-table.currency')}</FieldLabel>{' '}
               <SelectField
                 id="wallet-currency"
@@ -178,11 +178,10 @@ export function WalletForm({ wsId, data, onFinish }: Props) {
                   { value: 'USD', label: 'USD', disabled: true },
                 ]}
                 classNames={{ root: 'w-full' }}
+                aria-invalid={fieldState.invalid}
                 {...field}
               />
-              <FieldError
-                errors={fieldState.error ? [fieldState.error] : undefined}
-              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />

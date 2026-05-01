@@ -107,12 +107,16 @@ export function AIPromptForm({ wsId, data, onComplete, submitLabel }: Props) {
               name="name"
               disabled={loading}
               render={({ field, fieldState }) => (
-                <Field data-invalid={!!fieldState.error}>
+                <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>Prompt name</FieldLabel>{' '}
-                  <Input placeholder="New prompt" {...field} />
-                  <FieldError
-                    errors={fieldState.error ? [fieldState.error] : undefined}
+                  <Input
+                    placeholder="New prompt"
+                    aria-invalid={fieldState.invalid}
+                    {...field}
                   />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
@@ -122,7 +126,7 @@ export function AIPromptForm({ wsId, data, onComplete, submitLabel }: Props) {
               name="model"
               disabled={!!data?.id || loadingModels || loading}
               render={({ field, fieldState }) => (
-                <Field data-invalid={!!fieldState.error}>
+                <Field data-invalid={fieldState.invalid}>
                   <AIModelSelector
                     label="AI Model"
                     fetchUrl="/api/v1/infrastructure/ai/models"
@@ -148,9 +152,9 @@ export function AIPromptForm({ wsId, data, onComplete, submitLabel }: Props) {
                     }}
                     disabled={!!data?.id || loadingModels || loading}
                   />
-                  <FieldError
-                    errors={fieldState.error ? [fieldState.error] : undefined}
-                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
@@ -160,12 +164,16 @@ export function AIPromptForm({ wsId, data, onComplete, submitLabel }: Props) {
               name="input"
               disabled={!!data?.id || loading}
               render={({ field, fieldState }) => (
-                <Field data-invalid={!!fieldState.error}>
+                <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>Input</FieldLabel>{' '}
-                  <Textarea placeholder="Input" {...field} />
-                  <FieldError
-                    errors={fieldState.error ? [fieldState.error] : undefined}
+                  <Textarea
+                    placeholder="Input"
+                    aria-invalid={fieldState.invalid}
+                    {...field}
                   />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />

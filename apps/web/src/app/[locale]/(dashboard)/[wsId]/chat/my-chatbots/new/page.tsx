@@ -92,20 +92,21 @@ export default function WorkspaceUserGroupTagsPage({ params }: Props) {
             control={form.control}
             name="name"
             render={({ field, fieldState }) => (
-              <Field data-invalid={!!fieldState.error}>
+              <Field data-invalid={fieldState.invalid}>
                 <FieldLabel>Chatbot Name</FieldLabel>{' '}
                 <input
                   type="text"
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2"
                   placeholder="e.g., Marketing Assistant, Code Review Expert"
+                  aria-invalid={fieldState.invalid}
                   {...field}
                 />
                 <FieldDescription>
                   Choose a name that reflects your chatbot's primary function.
                 </FieldDescription>
-                <FieldError
-                  errors={fieldState.error ? [fieldState.error] : undefined}
-                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
               </Field>
             )}
           />
@@ -114,20 +115,21 @@ export default function WorkspaceUserGroupTagsPage({ params }: Props) {
             control={form.control}
             name="purpose"
             render={({ field, fieldState }) => (
-              <Field data-invalid={!!fieldState.error}>
+              <Field data-invalid={fieldState.invalid}>
                 <FieldLabel>Primary Purpose</FieldLabel>{' '}
                 <Textarea
                   placeholder="Describe the main tasks and objectives this chatbot should accomplish..."
                   className="min-h-[100px]"
+                  aria-invalid={fieldState.invalid}
                   {...field}
                 />
                 <FieldDescription>
                   Clearly define what problems this chatbot will solve or tasks
                   it will help with.
                 </FieldDescription>
-                <FieldError
-                  errors={fieldState.error ? [fieldState.error] : undefined}
-                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
               </Field>
             )}
           />
@@ -136,20 +138,21 @@ export default function WorkspaceUserGroupTagsPage({ params }: Props) {
             control={form.control}
             name="personality"
             render={({ field, fieldState }) => (
-              <Field data-invalid={!!fieldState.error}>
+              <Field data-invalid={fieldState.invalid}>
                 <FieldLabel>Personality & Communication Style</FieldLabel>{' '}
                 <Textarea
                   placeholder="Describe how the chatbot should interact and communicate..."
                   className="min-h-[100px]"
+                  aria-invalid={fieldState.invalid}
                   {...field}
                 />
                 <FieldDescription>
                   Define the tone, style, and personality traits (e.g.,
                   professional, friendly, technical, casual).
                 </FieldDescription>
-                <FieldError
-                  errors={fieldState.error ? [fieldState.error] : undefined}
-                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
               </Field>
             )}
           />
@@ -158,20 +161,21 @@ export default function WorkspaceUserGroupTagsPage({ params }: Props) {
             control={form.control}
             name="expertise"
             render={({ field, fieldState }) => (
-              <Field data-invalid={!!fieldState.error}>
+              <Field data-invalid={fieldState.invalid}>
                 <FieldLabel>Knowledge & Expertise</FieldLabel>{' '}
                 <Textarea
                   placeholder="Specify the domains, topics, or skills the chatbot should be knowledgeable about..."
                   className="min-h-[100px]"
+                  aria-invalid={fieldState.invalid}
                   {...field}
                 />
                 <FieldDescription>
                   List specific areas of expertise, technical knowledge, or
                   subject matter the chatbot should focus on.
                 </FieldDescription>
-                <FieldError
-                  errors={fieldState.error ? [fieldState.error] : undefined}
-                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
               </Field>
             )}
           />
@@ -180,20 +184,21 @@ export default function WorkspaceUserGroupTagsPage({ params }: Props) {
             control={form.control}
             name="rules"
             render={({ field, fieldState }) => (
-              <Field data-invalid={!!fieldState.error}>
+              <Field data-invalid={fieldState.invalid}>
                 <FieldLabel>Rules & Constraints</FieldLabel>{' '}
                 <Textarea
                   placeholder="List any specific rules, limitations, or guidelines the chatbot should follow..."
                   className="min-h-[100px]"
+                  aria-invalid={fieldState.invalid}
                   {...field}
                 />
                 <FieldDescription>
                   Define boundaries, ethical guidelines, and specific behaviors
                   to avoid.
                 </FieldDescription>
-                <FieldError
-                  errors={fieldState.error ? [fieldState.error] : undefined}
-                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
               </Field>
             )}
           />
@@ -202,20 +207,21 @@ export default function WorkspaceUserGroupTagsPage({ params }: Props) {
             control={form.control}
             name="exampleConversation"
             render={({ field, fieldState }) => (
-              <Field data-invalid={!!fieldState.error}>
+              <Field data-invalid={fieldState.invalid}>
                 <FieldLabel>Example Conversations</FieldLabel>{' '}
                 <Textarea
                   placeholder="Provide example interactions between users and the chatbot..."
                   className="min-h-[150px]"
+                  aria-invalid={fieldState.invalid}
                   {...field}
                 />
                 <FieldDescription>
                   Add sample dialogues showing ideal interactions and how the
                   chatbot should handle different scenarios.
                 </FieldDescription>
-                <FieldError
-                  errors={fieldState.error ? [fieldState.error] : undefined}
-                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
               </Field>
             )}
           />

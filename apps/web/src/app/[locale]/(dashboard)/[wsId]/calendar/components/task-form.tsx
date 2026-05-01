@@ -85,12 +85,14 @@ export function TaskForm({ listId, onSuccess }: TaskFormProps) {
         control={form.control}
         name="name"
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>Task Name</FieldLabel>{' '}
-            <Input placeholder="Enter task name" {...field} />
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
+            <Input
+              placeholder="Enter task name"
+              aria-invalid={fieldState.invalid}
+              {...field}
             />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />
@@ -98,15 +100,14 @@ export function TaskForm({ listId, onSuccess }: TaskFormProps) {
         control={form.control}
         name="description"
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>Description</FieldLabel>{' '}
             <Textarea
               placeholder="(Optional) Enter task description"
+              aria-invalid={fieldState.invalid}
               {...field}
             />
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
-            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />
@@ -115,13 +116,16 @@ export function TaskForm({ listId, onSuccess }: TaskFormProps) {
         control={form.control}
         name="end_date" // Changed from due_date
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>End Date</FieldLabel>{' '}
-            <Input type="date" {...field} value={field.value || ''} />
-            <FieldDescription>(Optional) Select an end date.</FieldDescription>
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
+            <Input
+              type="date"
+              aria-invalid={fieldState.invalid}
+              {...field}
+              value={field.value || ''}
             />
+            <FieldDescription>(Optional) Select an end date.</FieldDescription>
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />

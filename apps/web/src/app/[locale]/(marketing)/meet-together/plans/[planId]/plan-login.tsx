@@ -250,7 +250,7 @@ export default function PlanLogin({ plan }: { plan: MeetTogetherPlan }) {
               control={form.control}
               name="guestName"
               render={({ field, fieldState }) => (
-                <Field data-invalid={!!fieldState.error}>
+                <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>
                     {t('meet-together-plan-details.your_name')}
                   </FieldLabel>{' '}
@@ -260,14 +260,15 @@ export default function PlanLogin({ plan }: { plan: MeetTogetherPlan }) {
                     autoComplete="off"
                     autoCorrect="off"
                     autoFocus
+                    aria-invalid={fieldState.invalid}
                     {...field}
                   />
                   <FieldDescription>
                     {t('meet-together-plan-details.your_name_desc')}
                   </FieldDescription>
-                  <FieldError
-                    errors={fieldState.error ? [fieldState.error] : undefined}
-                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
@@ -275,7 +276,7 @@ export default function PlanLogin({ plan }: { plan: MeetTogetherPlan }) {
               control={form.control}
               name="guestPassword"
               render={({ field, fieldState }) => (
-                <Field data-invalid={!!fieldState.error}>
+                <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>
                     {t('meet-together-plan-details.password')}
                   </FieldLabel>{' '}
@@ -285,14 +286,15 @@ export default function PlanLogin({ plan }: { plan: MeetTogetherPlan }) {
                     disabled={missingFields || loginMutation.isPending}
                     autoComplete="off"
                     autoCorrect="off"
+                    aria-invalid={fieldState.invalid}
                     {...field}
                   />
                   <FieldDescription>
                     {t('meet-together-plan-details.password_desc')}
                   </FieldDescription>
-                  <FieldError
-                    errors={fieldState.error ? [fieldState.error] : undefined}
-                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
@@ -302,7 +304,7 @@ export default function PlanLogin({ plan }: { plan: MeetTogetherPlan }) {
               name="saveCredentials"
               render={({ field, fieldState }) => (
                 <Field
-                  data-invalid={!!fieldState.error}
+                  data-invalid={fieldState.invalid}
                   className="flex flex-row items-start space-x-3 space-y-0"
                 >
                   {' '}

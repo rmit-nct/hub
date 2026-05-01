@@ -75,17 +75,16 @@ export function ProductCategoryForm({ wsId, data, onFinish }: Props) {
         name="name"
         disabled={loading}
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>
               {t('transaction-category-data-table.category_name')}
             </FieldLabel>{' '}
             <Input
               placeholder={t('transaction-category-data-table.category_name')}
+              aria-invalid={fieldState.invalid}
               {...field}
             />
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
-            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />

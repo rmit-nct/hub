@@ -119,12 +119,16 @@ export default function InviteMemberButton({
                 control={form.control}
                 name="email"
                 render={({ field, fieldState }) => (
-                  <Field data-invalid={!!fieldState.error}>
+                  <Field data-invalid={fieldState.invalid}>
                     <FieldLabel>Email</FieldLabel>{' '}
-                    <Input placeholder="username@example.com" {...field} />
-                    <FieldError
-                      errors={fieldState.error ? [fieldState.error] : undefined}
+                    <Input
+                      placeholder="username@example.com"
+                      aria-invalid={fieldState.invalid}
+                      {...field}
                     />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
                   </Field>
                 )}
               />
@@ -135,15 +139,16 @@ export default function InviteMemberButton({
                 control={form.control}
                 name="role"
                 render={({ field, fieldState }) => (
-                  <Field data-invalid={!!fieldState.error}>
+                  <Field data-invalid={fieldState.invalid}>
                     <FieldLabel>Workspace Role</FieldLabel>{' '}
                     <Input
                       placeholder="Graphic Designer, Marketing Manager, etc."
+                      aria-invalid={fieldState.invalid}
                       {...field}
                     />
-                    <FieldError
-                      errors={fieldState.error ? [fieldState.error] : undefined}
-                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
                     <FieldDescription>
                       The role of the member in the workspace is only for
                       display purposes and does not affect workspace
@@ -160,7 +165,7 @@ export default function InviteMemberButton({
                   control={form.control}
                   name="accessLevel"
                   render={({ field, fieldState }) => (
-                    <Field data-invalid={!!fieldState.error} className="w-full">
+                    <Field data-invalid={fieldState.invalid} className="w-full">
                       <FieldLabel>Access Level</FieldLabel>                        <SelectField
                           id="access-level"
                           placeholder="Select an access level"
@@ -184,7 +189,7 @@ export default function InviteMemberButton({
                           classNames={{ root: 'w-full' }}
                           disabled={currentUser?.role === 'MEMBER'}
                         />
-                      <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                       <FieldDescription>
                         This will affect the member&apos;s permissions in the
                         workspace.

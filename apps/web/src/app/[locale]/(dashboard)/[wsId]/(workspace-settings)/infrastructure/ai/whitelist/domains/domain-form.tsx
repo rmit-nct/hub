@@ -44,17 +44,16 @@ export default function WhitelistDomainForm({ onSubmit }: Props) {
         control={form.control}
         name="domain"
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>Domain</FieldLabel>{' '}
             <Input
               type="text"
               placeholder="example.com"
               autoComplete="off"
+              aria-invalid={fieldState.invalid}
               {...field}
             />
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
-            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />
@@ -63,15 +62,14 @@ export default function WhitelistDomainForm({ onSubmit }: Props) {
         control={form.control}
         name="description"
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>Description</FieldLabel>{' '}
             <Textarea
               placeholder="Optional description for this domain"
+              aria-invalid={fieldState.invalid}
               {...field}
             />
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
-            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />

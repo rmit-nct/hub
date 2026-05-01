@@ -116,7 +116,7 @@ export default function ResetPasswordForm({ user }: { user: WorkspaceUser }) {
               control={form.control}
               name="password"
               render={({ field, fieldState }) => (
-                <Field data-invalid={!!fieldState.error}>
+                <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>{t('login.password')}</FieldLabel>{' '}
                   <div className="relative">
                     <Lock className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -124,6 +124,7 @@ export default function ResetPasswordForm({ user }: { user: WorkspaceUser }) {
                       className="pr-10 pl-10"
                       type={showPassword ? 'text' : 'password'}
                       placeholder="Enter new password"
+                      aria-invalid={fieldState.invalid}
                       {...field}
                       disabled={loading}
                     />
@@ -140,9 +141,9 @@ export default function ResetPasswordForm({ user }: { user: WorkspaceUser }) {
                       )}
                     </button>
                   </div>
-                  <FieldError
-                    errors={fieldState.error ? [fieldState.error] : undefined}
-                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
@@ -151,7 +152,7 @@ export default function ResetPasswordForm({ user }: { user: WorkspaceUser }) {
               control={form.control}
               name="confirmPassword"
               render={({ field, fieldState }) => (
-                <Field data-invalid={!!fieldState.error}>
+                <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>Confirm Password</FieldLabel>{' '}
                   <div className="relative">
                     <Lock className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -159,6 +160,7 @@ export default function ResetPasswordForm({ user }: { user: WorkspaceUser }) {
                       className="pr-10 pl-10"
                       type={showConfirmPassword ? 'text' : 'password'}
                       placeholder="Confirm your password"
+                      aria-invalid={fieldState.invalid}
                       {...field}
                       disabled={loading}
                     />
@@ -177,9 +179,9 @@ export default function ResetPasswordForm({ user }: { user: WorkspaceUser }) {
                       )}
                     </button>
                   </div>
-                  <FieldError
-                    errors={fieldState.error ? [fieldState.error] : undefined}
-                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />

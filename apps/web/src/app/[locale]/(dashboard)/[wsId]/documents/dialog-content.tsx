@@ -63,18 +63,17 @@ export default function MyDialogContent({ wsId }: MyDialogContentProps) {
           control={form.control}
           name="name"
           render={({ field, fieldState }) => (
-            <Field data-invalid={!!fieldState.error}>
+            <Field data-invalid={fieldState.invalid}>
               <FieldLabel>{t('documents.document-name')}</FieldLabel>{' '}
               <Input
                 placeholder={t('documents.document-name-placeholder')}
                 autoComplete="off"
                 required
+                aria-invalid={fieldState.invalid}
                 {...field}
                 disabled={loading}
               />
-              <FieldError
-                errors={fieldState.error ? [fieldState.error] : undefined}
-              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />

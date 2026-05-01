@@ -32,12 +32,15 @@ export default function UserReportForm({
           control={form.control}
           name="title"
           render={({ field, fieldState }) => (
-            <Field data-invalid={!!fieldState.error}>
+            <Field data-invalid={fieldState.invalid}>
               <FieldLabel>Title</FieldLabel>{' '}
-              <Input placeholder="Title" {...field} disabled={isNew} />
-              <FieldError
-                errors={fieldState.error ? [fieldState.error] : undefined}
+              <Input
+                placeholder="Title"
+                aria-invalid={fieldState.invalid}
+                {...field}
+                disabled={isNew}
               />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />
@@ -46,16 +49,15 @@ export default function UserReportForm({
           control={form.control}
           name="content"
           render={({ field, fieldState }) => (
-            <Field data-invalid={!!fieldState.error}>
+            <Field data-invalid={fieldState.invalid}>
               <FieldLabel>Content</FieldLabel>{' '}
               <AutosizeTextarea
                 placeholder="Content"
+                aria-invalid={fieldState.invalid}
                 {...field}
                 disabled={isNew}
               />
-              <FieldError
-                errors={fieldState.error ? [fieldState.error] : undefined}
-              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />
@@ -64,16 +66,15 @@ export default function UserReportForm({
           control={form.control}
           name="feedback"
           render={({ field, fieldState }) => (
-            <Field data-invalid={!!fieldState.error}>
+            <Field data-invalid={fieldState.invalid}>
               <FieldLabel>Feedback</FieldLabel>{' '}
               <AutosizeTextarea
                 placeholder="Feedback"
+                aria-invalid={fieldState.invalid}
                 {...field}
                 disabled={isNew}
               />
-              <FieldError
-                errors={fieldState.error ? [fieldState.error] : undefined}
-              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />

@@ -89,7 +89,7 @@ export default function RoleFormPermissionsSection({
                       control={form.control}
                       name={`permissions.${permission.id}`}
                       render={({ field, fieldState }) => (
-                        <Field data-invalid={!!fieldState.error}>
+                        <Field data-invalid={fieldState.invalid}>
                           <RolePermission
                             icon={permission.icon}
                             title={permission.title}

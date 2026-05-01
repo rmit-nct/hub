@@ -52,12 +52,15 @@ export default function TimezoneForm({ data, submitLabel, onSubmit }: Props) {
         control={form.control}
         name="value"
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>{t('value')}</FieldLabel>{' '}
-            <Input placeholder="Value" autoComplete="off" {...field} />
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
+            <Input
+              placeholder="Value"
+              autoComplete="off"
+              aria-invalid={fieldState.invalid}
+              {...field}
             />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />
@@ -66,12 +69,15 @@ export default function TimezoneForm({ data, submitLabel, onSubmit }: Props) {
         control={form.control}
         name="abbr"
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>{t('abbr')}</FieldLabel>{' '}
-            <Input placeholder="Abbr" autoComplete="off" {...field} />
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
+            <Input
+              placeholder="Abbr"
+              autoComplete="off"
+              aria-invalid={fieldState.invalid}
+              {...field}
             />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />
@@ -80,12 +86,15 @@ export default function TimezoneForm({ data, submitLabel, onSubmit }: Props) {
         control={form.control}
         name="offset"
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>{t('offset')}</FieldLabel>{' '}
-            <Input placeholder="Offset" autoComplete="off" {...field} />
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
+            <Input
+              placeholder="Offset"
+              autoComplete="off"
+              aria-invalid={fieldState.invalid}
+              {...field}
             />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />
@@ -94,12 +103,10 @@ export default function TimezoneForm({ data, submitLabel, onSubmit }: Props) {
         control={form.control}
         name="isdst"
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>{t('isdst')}</FieldLabel>{' '}
             <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
-            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />
@@ -108,12 +115,15 @@ export default function TimezoneForm({ data, submitLabel, onSubmit }: Props) {
         control={form.control}
         name="text"
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>{t('text')}</FieldLabel>{' '}
-            <Input placeholder="Text" autoComplete="off" {...field} />
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
+            <Input
+              placeholder="Text"
+              autoComplete="off"
+              aria-invalid={fieldState.invalid}
+              {...field}
             />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />
@@ -122,12 +132,15 @@ export default function TimezoneForm({ data, submitLabel, onSubmit }: Props) {
         control={form.control}
         name="utc"
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>{t('utc')}</FieldLabel>{' '}
-            <Input placeholder="Utc" autoComplete="off" {...field} />
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
+            <Input
+              placeholder="Utc"
+              autoComplete="off"
+              aria-invalid={fieldState.invalid}
+              {...field}
             />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />

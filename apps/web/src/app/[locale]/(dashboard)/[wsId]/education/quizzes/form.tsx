@@ -150,17 +150,16 @@ export default function QuizForm({ wsId, moduleId, data, onFinish }: Props) {
         control={form.control}
         name="question"
         render={({ field, fieldState }) => (
-          <Field data-invalid={!!fieldState.error}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>{t('common.question')}</FieldLabel>{' '}
             <Input
               placeholder={t('common.question')}
               autoComplete="off"
+              aria-invalid={fieldState.invalid}
               {...field}
               className="rounded-md border-foreground/20 shadow-sm"
             />
-            <FieldError
-              errors={fieldState.error ? [fieldState.error] : undefined}
-            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />
@@ -176,13 +175,13 @@ export default function QuizForm({ wsId, moduleId, data, onFinish }: Props) {
                   control={form.control}
                   name={`quiz_options.${index}.value`}
                   render={({ field, fieldState }) => (
-                    <Field data-invalid={!!fieldState.error} className="flex-1">
+                    <Field data-invalid={fieldState.invalid} className="flex-1">
                       <Controller
                         control={form.control}
                         name={`quiz_options.${index}.is_correct`}
                         render={({ field, fieldState }) => (
                           <Field
-                            data-invalid={!!fieldState.error}
+                            data-invalid={fieldState.invalid}
                             className="flex items-center space-y-0 space-x-1"
                           >
                             <Checkbox
@@ -198,6 +197,7 @@ export default function QuizForm({ wsId, moduleId, data, onFinish }: Props) {
                       <Input
                         placeholder={`${t('common.option')} ${index + 1}`}
                         autoComplete="off"
+                        aria-invalid={fieldState.invalid}
                         {...field}
                         className="rounded-md border-foreground/20 shadow-sm"
                       />
@@ -222,7 +222,7 @@ export default function QuizForm({ wsId, moduleId, data, onFinish }: Props) {
                 control={form.control}
                 name={`quiz_options.${index}.explanation`}
                 render={({ field, fieldState }) => (
-                  <Field data-invalid={!!fieldState.error}>
+                  <Field data-invalid={fieldState.invalid}>
                     <FieldLabel className="flex items-end justify-between gap-2">
                       {t('common.explanation')}
                       <Button
@@ -248,12 +248,13 @@ export default function QuizForm({ wsId, moduleId, data, onFinish }: Props) {
                     <AutosizeTextarea
                       placeholder={t('common.explanation')}
                       autoComplete="off"
+                      aria-invalid={fieldState.invalid}
                       {...field}
                       className="rounded-md border-foreground/20 shadow-sm"
                     />
-                    <FieldError
-                      errors={fieldState.error ? [fieldState.error] : undefined}
-                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
                   </Field>
                 )}
               />

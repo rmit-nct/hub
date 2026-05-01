@@ -821,9 +821,10 @@ export function DatasetCrawler({
           control={form.control}
           name="headerRow"
           render={({ field, fieldState }) => (
-            <Field data-invalid={!!fieldState.error}>
+            <Field data-invalid={fieldState.invalid}>
               <FieldLabel>Header Row</FieldLabel>{' '}
               <Input
+                aria-invalid={fieldState.invalid}
                 {...field}
                 type="number"
                 min="1"
@@ -837,9 +838,7 @@ export function DatasetCrawler({
               <FieldDescription>
                 Row number containing column headers
               </FieldDescription>
-              <FieldError
-                errors={fieldState.error ? [fieldState.error] : undefined}
-              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />
@@ -847,9 +846,10 @@ export function DatasetCrawler({
           control={form.control}
           name="dataRow"
           render={({ field, fieldState }) => (
-            <Field data-invalid={!!fieldState.error}>
+            <Field data-invalid={fieldState.invalid}>
               <FieldLabel>Data Start Row</FieldLabel>{' '}
               <Input
+                aria-invalid={fieldState.invalid}
                 {...field}
                 type="number"
                 min="1"
@@ -863,9 +863,7 @@ export function DatasetCrawler({
               <FieldDescription>
                 First row containing actual data
               </FieldDescription>
-              <FieldError
-                errors={fieldState.error ? [fieldState.error] : undefined}
-              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />
