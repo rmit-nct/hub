@@ -2,14 +2,8 @@ import { isValidURL } from '@/utils/url-helper';
 import { WorkspaceConfig } from '@ncthub/types/primitives/WorkspaceConfig';
 import { Button } from '@ncthub/ui/button';
 import { AutosizeTextarea } from '@ncthub/ui/custom/autosize-textarea';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
+import { Field, FieldLabel, FieldError } from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
 import { zodResolver } from '@ncthub/ui/resolvers';
 import { useTranslations } from 'next-intl';
@@ -59,33 +53,31 @@ export default function ApiKeyForm({
   const disabled = !resetMode && (!isDirty || !isValid || isSubmitting);
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
-        {resetMode || (
-          <FormField
-            control={form.control}
-            name="value"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t('value')}</FormLabel>
-                <FormControl>
-                  <AutosizeTextarea
-                    placeholder="Value"
-                    autoComplete="off"
-                    maxHeight={200}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        )}
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+      {resetMode || (
+        <Controller
+          control={form.control}
+          name="value"
+          render={({ field, fieldState }) => (
+            <Field data-invalid={!!fieldState.error}>
+              <FieldLabel>{t('value')}</FieldLabel>{' '}
+              <AutosizeTextarea
+                placeholder="Value"
+                autoComplete="off"
+                maxHeight={200}
+                {...field}
+              />
+              <FieldError
+                errors={fieldState.error ? [fieldState.error] : undefined}
+              />
+            </Field>
+          )}
+        />
+      )}
 
-        <Button type="submit" className="w-full" disabled={disabled}>
-          {submitLabel}
-        </Button>
-      </form>
-    </Form>
+      <Button type="submit" className="w-full" disabled={disabled}>
+        {submitLabel}
+      </Button>
+    </form>
   );
 }

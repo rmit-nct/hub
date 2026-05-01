@@ -14,14 +14,12 @@ import {
 } from '@ncthub/ui/card';
 import { DateTimePicker } from '@ncthub/ui/date-time-picker';
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
+  Field,
+  FieldLabel,
+  FieldDescription,
+  FieldError,
+} from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
 import { useToast } from '@ncthub/ui/hooks/use-toast';
 import {
@@ -146,76 +144,74 @@ export default function Page() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-6"
-                >
-                  <FormField
-                    control={form.control}
-                    name="prompt"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Event Description</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="e.g. Meet with James at Starbucks on 5th Avenue next Monday at 10am for coffee"
-                            className="min-h-[120px]"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormDescription>
-                          Be as specific as possible with dates, times, and
-                          locations
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="timezone"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Your Timezone</FormLabel>
-                        <FormControl>
-                          <Input {...field} readOnly />
-                        </FormControl>
-                        <FormDescription>
-                          We'll use this to create events in your local time
-                        </FormDescription>
-                      </FormItem>
-                    )}
-                  />
-
-                  {error && (
-                    <Alert variant="destructive">
-                      <AlertCircle className="h-4 w-4" />
-                      <AlertTitle>Error</AlertTitle>
-                      <AlertDescription>
-                        {error.message ||
-                          'Failed to generate the event. Please try again with more details.'}
-                      </AlertDescription>
-                    </Alert>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-6"
+              >
+                <Controller
+                  control={form.control}
+                  name="prompt"
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={!!fieldState.error}>
+                      <FieldLabel>Event Description</FieldLabel>{' '}
+                      <Textarea
+                        placeholder="e.g. Meet with James at Starbucks on 5th Avenue next Monday at 10am for coffee"
+                        className="min-h-[120px]"
+                        {...field}
+                      />
+                      <FieldDescription>
+                        Be as specific as possible with dates, times, and
+                        locations
+                      </FieldDescription>
+                      <FieldError
+                        errors={
+                          fieldState.error ? [fieldState.error] : undefined
+                        }
+                      />
+                    </Field>
                   )}
+                />
 
-                  <Button
-                    type="submit"
-                    className="w-full"
-                    disabled={isLoading || generating}
-                  >
-                    {isLoading || generating ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Generating...
-                      </>
-                    ) : (
-                      'Generate Event'
-                    )}
-                  </Button>
-                </form>
-              </Form>
+                <Controller
+                  control={form.control}
+                  name="timezone"
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={!!fieldState.error}>
+                      <FieldLabel>Your Timezone</FieldLabel>{' '}
+                      <Input {...field} readOnly />
+                      <FieldDescription>
+                        We'll use this to create events in your local time
+                      </FieldDescription>
+                    </Field>
+                  )}
+                />
+
+                {error && (
+                  <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Error</AlertTitle>
+                    <AlertDescription>
+                      {error.message ||
+                        'Failed to generate the event. Please try again with more details.'}
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={isLoading || generating}
+                >
+                  {isLoading || generating ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Generating...
+                    </>
+                  ) : (
+                    'Generate Event'
+                  )}
+                </Button>
+              </form>
             </CardContent>
           </Card>
         </TabsContent>
@@ -319,17 +315,17 @@ export default function Page() {
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <FormLabel>Event Title</FormLabel>
+                      <FieldLabel>Event Title</FieldLabel>
                       <Input placeholder="Meeting with Team" />
                     </div>
 
                     <div className="space-y-2">
-                      <FormLabel>Location</FormLabel>
+                      <FieldLabel>Location</FieldLabel>
                       <Input placeholder="Conference Room 3" />
                     </div>
 
                     <div className="space-y-2">
-                      <FormLabel>Color</FormLabel>
+                      <FieldLabel>Color</FieldLabel>
                       <Select defaultValue="blue">
                         <SelectTrigger>
                           <SelectValue placeholder="Select a color" />
@@ -354,13 +350,13 @@ export default function Page() {
                   <div className="space-y-4">
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <FormLabel>All Day</FormLabel>
+                        <FieldLabel>All Day</FieldLabel>
                         <Switch />
                       </div>
                     </div>
 
                     <div className="space-y-2">
-                      <FormLabel>Start Date & Time</FormLabel>
+                      <FieldLabel>Start Date & Time</FieldLabel>
                       <DateTimePicker
                         date={new Date()}
                         setDate={(date) =>
@@ -370,7 +366,7 @@ export default function Page() {
                     </div>
 
                     <div className="space-y-2">
-                      <FormLabel>End Date & Time</FormLabel>
+                      <FieldLabel>End Date & Time</FieldLabel>
                       <DateTimePicker
                         date={new Date(new Date().getTime() + 60 * 60 * 1000)}
                         setDate={(date) =>
@@ -382,7 +378,7 @@ export default function Page() {
                 </div>
 
                 <div className="space-y-2">
-                  <FormLabel>Description</FormLabel>
+                  <FieldLabel>Description</FieldLabel>
                   <Textarea
                     placeholder="Event details and notes"
                     className="min-h-[120px]"
@@ -390,7 +386,7 @@ export default function Page() {
                 </div>
 
                 <div className="space-y-2">
-                  <FormLabel>Timezone</FormLabel>
+                  <FieldLabel>Timezone</FieldLabel>
                   <Input value={userTimezone} readOnly />
                 </div>
               </div>

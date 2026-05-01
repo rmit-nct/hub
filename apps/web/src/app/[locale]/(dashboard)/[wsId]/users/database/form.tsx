@@ -7,14 +7,12 @@ import { Avatar, AvatarFallback, AvatarImage } from '@ncthub/ui/avatar';
 import { Button } from '@ncthub/ui/button';
 import { SelectField } from '@ncthub/ui/custom/select-field';
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
+  Field,
+  FieldLabel,
+  FieldDescription,
+  FieldError,
+} from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
 import { toast } from '@ncthub/ui/hooks/use-toast';
 import { Loader2, UserIcon } from '@ncthub/ui/icons';
@@ -176,263 +174,261 @@ export default function UserForm({ wsId, data, onFinish }: Props) {
 
   return (
     <>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-3">
-          <ScrollArea className="grid h-[50vh] gap-3 border-b">
-            {data?.id && (
-              <>
-                <FormField
-                  control={form.control}
-                  name="id"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>User ID</FormLabel>
-                      <FormControl>
-                        <Input {...field} disabled />
-                      </FormControl>
-                      <FormMessage />
-                      <FormDescription>
-                        The identification number of this user in your
-                        workspace. This is automatically managed by Tuturuuu,
-                        and cannot be changed.
-                      </FormDescription>
-                    </FormItem>
-                  )}
-                />
-                <Separator />
-              </>
-            )}
-
-            <div className="flex items-center gap-2 rounded-md border p-4">
-              <Avatar>
-                <AvatarImage src={previewSrc || data?.avatar_url || ''} />
-                <AvatarFallback className="font-semibold">
-                  {name ? getInitials(name) : <UserIcon className="h-5 w-5" />}
-                </AvatarFallback>
-              </Avatar>
-
-              <div>
-                <Button variant="ghost" type="button" className="mt-2">
-                  <label htmlFor="file-upload" className="cursor-pointer">
-                    {previewSrc
-                      ? t('settings-account.new_avatar')
-                      : t('settings-account.upload_avatar')}
-                  </label>
-                </Button>
-                <input
-                  id="file-upload"
-                  type="file"
-                  accept="image/png,image/jpeg,image/jpg,image/webp"
-                  onChange={(e) => {
-                    if (e.target.files?.[0]) {
-                      handleFileSelect(e.target.files[0]);
-                    }
-                  }}
-                  className="hidden"
-                />
-                {previewSrc && (
-                  <Button variant="destructive" onClick={removeAvatar}>
-                    {saving ? (
-                      <Loader2 className="h-5 w-5 animate-spin" />
-                    ) : (
-                      t('settings-account.remove_avatar')
-                    )}
-                  </Button>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-3">
+        <ScrollArea className="grid h-[50vh] gap-3 border-b">
+          {data?.id && (
+            <>
+              <Controller
+                control={form.control}
+                name="id"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={!!fieldState.error}>
+                    <FieldLabel>User ID</FieldLabel>{' '}
+                    <Input {...field} disabled />
+                    <FieldError
+                      errors={fieldState.error ? [fieldState.error] : undefined}
+                    />
+                    <FieldDescription>
+                      The identification number of this user in your workspace.
+                      This is automatically managed by Tuturuuu, and cannot be
+                      changed.
+                    </FieldDescription>
+                  </Field>
                 )}
-              </div>
+              />
+              <Separator />
+            </>
+          )}
+
+          <div className="flex items-center gap-2 rounded-md border p-4">
+            <Avatar>
+              <AvatarImage src={previewSrc || data?.avatar_url || ''} />
+              <AvatarFallback className="font-semibold">
+                {name ? getInitials(name) : <UserIcon className="h-5 w-5" />}
+              </AvatarFallback>
+            </Avatar>
+
+            <div>
+              <Button variant="ghost" type="button" className="mt-2">
+                <label htmlFor="file-upload" className="cursor-pointer">
+                  {previewSrc
+                    ? t('settings-account.new_avatar')
+                    : t('settings-account.upload_avatar')}
+                </label>
+              </Button>
+              <input
+                id="file-upload"
+                type="file"
+                accept="image/png,image/jpeg,image/jpg,image/webp"
+                onChange={(e) => {
+                  if (e.target.files?.[0]) {
+                    handleFileSelect(e.target.files[0]);
+                  }
+                }}
+                className="hidden"
+              />
+              {previewSrc && (
+                <Button variant="destructive" onClick={removeAvatar}>
+                  {saving ? (
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                  ) : (
+                    t('settings-account.remove_avatar')
+                  )}
+                </Button>
+              )}
             </div>
-
-            <FormField
-              control={form.control}
-              name="full_name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Full Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="John Doe" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                  <FormDescription>The real name of this user.</FormDescription>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="display_name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Display Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="John Doe" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                  <FormDescription>
-                    This name will be displayed everywhere in the current
-                    workspace for this user.
-                  </FormDescription>
-                </FormItem>
-              )}
-            />
-
-            <Separator />
-
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input placeholder="example@tuturuuu.com" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="phone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Phone Number</FormLabel>
-                  <FormControl>
-                    <Input placeholder="+123456789" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <Separator />
-
-            <FormField
-              control={form.control}
-              name="gender"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel>Gender</FormLabel>
-                  <FormControl>
-                    <SelectField
-                      id="gender"
-                      placeholder="Please select a gender"
-                      defaultValue={field.value}
-                      onValueChange={field.onChange}
-                      options={[
-                        { value: 'MALE', label: 'Male' },
-                        { value: 'FEMALE', label: 'Female' },
-                        { value: 'OTHER', label: 'Other' },
-                      ]}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="birthday"
-              render={({ field }) => (
-                <FormItem className="grid w-full">
-                  <FormLabel>Birthday</FormLabel>
-                  <FormControl>
-                    <DatePicker
-                      defaultValue={
-                        field.value ? dayjs(field.value).toDate() : undefined
-                      }
-                      onValueChange={field.onChange}
-                      className="w-full"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <Separator />
-
-            <FormField
-              control={form.control}
-              name="national_id"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>National ID</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Empty" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="ethnicity"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Ethnicity</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Empty" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="guardian"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Guardian</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Empty" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="address"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Address</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Empty" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <Separator />
-
-            <FormField
-              control={form.control}
-              name="note"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Notes</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Empty" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </ScrollArea>
-
-          <div className="flex justify-center gap-2">
-            <Button type="submit" className="w-full">
-              Save changes
-            </Button>
           </div>
-        </form>
-      </Form>
+
+          <Controller
+            control={form.control}
+            name="full_name"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={!!fieldState.error}>
+                <FieldLabel>Full Name</FieldLabel>{' '}
+                <Input placeholder="John Doe" {...field} />
+                <FieldError
+                  errors={fieldState.error ? [fieldState.error] : undefined}
+                />
+                <FieldDescription>The real name of this user.</FieldDescription>
+              </Field>
+            )}
+          />
+
+          <Controller
+            control={form.control}
+            name="display_name"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={!!fieldState.error}>
+                <FieldLabel>Display Name</FieldLabel>{' '}
+                <Input placeholder="John Doe" {...field} />
+                <FieldError
+                  errors={fieldState.error ? [fieldState.error] : undefined}
+                />
+                <FieldDescription>
+                  This name will be displayed everywhere in the current
+                  workspace for this user.
+                </FieldDescription>
+              </Field>
+            )}
+          />
+
+          <Separator />
+
+          <Controller
+            control={form.control}
+            name="email"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={!!fieldState.error}>
+                <FieldLabel>Email</FieldLabel>{' '}
+                <Input placeholder="example@tuturuuu.com" {...field} />
+                <FieldError
+                  errors={fieldState.error ? [fieldState.error] : undefined}
+                />
+              </Field>
+            )}
+          />
+
+          <Controller
+            control={form.control}
+            name="phone"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={!!fieldState.error}>
+                <FieldLabel>Phone Number</FieldLabel>{' '}
+                <Input placeholder="+123456789" {...field} />
+                <FieldError
+                  errors={fieldState.error ? [fieldState.error] : undefined}
+                />
+              </Field>
+            )}
+          />
+
+          <Separator />
+
+          <Controller
+            control={form.control}
+            name="gender"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={!!fieldState.error} className="w-full">
+                <FieldLabel>Gender</FieldLabel>{' '}
+                <SelectField
+                  id="gender"
+                  placeholder="Please select a gender"
+                  defaultValue={field.value}
+                  onValueChange={field.onChange}
+                  options={[
+                    { value: 'MALE', label: 'Male' },
+                    { value: 'FEMALE', label: 'Female' },
+                    { value: 'OTHER', label: 'Other' },
+                  ]}
+                />
+                <FieldError
+                  errors={fieldState.error ? [fieldState.error] : undefined}
+                />
+              </Field>
+            )}
+          />
+
+          <Controller
+            control={form.control}
+            name="birthday"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={!!fieldState.error} className="grid w-full">
+                <FieldLabel>Birthday</FieldLabel>{' '}
+                <DatePicker
+                  defaultValue={
+                    field.value ? dayjs(field.value).toDate() : undefined
+                  }
+                  onValueChange={field.onChange}
+                  className="w-full"
+                />
+                <FieldError
+                  errors={fieldState.error ? [fieldState.error] : undefined}
+                />
+              </Field>
+            )}
+          />
+
+          <Separator />
+
+          <Controller
+            control={form.control}
+            name="national_id"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={!!fieldState.error}>
+                <FieldLabel>National ID</FieldLabel>{' '}
+                <Input placeholder="Empty" {...field} />
+                <FieldError
+                  errors={fieldState.error ? [fieldState.error] : undefined}
+                />
+              </Field>
+            )}
+          />
+
+          <Controller
+            control={form.control}
+            name="ethnicity"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={!!fieldState.error}>
+                <FieldLabel>Ethnicity</FieldLabel>{' '}
+                <Input placeholder="Empty" {...field} />
+                <FieldError
+                  errors={fieldState.error ? [fieldState.error] : undefined}
+                />
+              </Field>
+            )}
+          />
+
+          <Controller
+            control={form.control}
+            name="guardian"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={!!fieldState.error}>
+                <FieldLabel>Guardian</FieldLabel>{' '}
+                <Input placeholder="Empty" {...field} />
+                <FieldError
+                  errors={fieldState.error ? [fieldState.error] : undefined}
+                />
+              </Field>
+            )}
+          />
+
+          <Controller
+            control={form.control}
+            name="address"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={!!fieldState.error}>
+                <FieldLabel>Address</FieldLabel>{' '}
+                <Input placeholder="Empty" {...field} />
+                <FieldError
+                  errors={fieldState.error ? [fieldState.error] : undefined}
+                />
+              </Field>
+            )}
+          />
+
+          <Separator />
+
+          <Controller
+            control={form.control}
+            name="note"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={!!fieldState.error}>
+                <FieldLabel>Notes</FieldLabel>{' '}
+                <Input placeholder="Empty" {...field} />
+                <FieldError
+                  errors={fieldState.error ? [fieldState.error] : undefined}
+                />
+              </Field>
+            )}
+          />
+        </ScrollArea>
+
+        <div className="flex justify-center gap-2">
+          <Button type="submit" className="w-full">
+            Save changes
+          </Button>
+        </div>
+      </form>
     </>
   );
 }

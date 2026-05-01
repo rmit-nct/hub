@@ -2,14 +2,8 @@
 
 import type { ProductPromotion } from '@ncthub/types/primitives/ProductPromotion';
 import { Button } from '@ncthub/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
+import { Field, FieldLabel, FieldError } from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
 import { toast } from '@ncthub/ui/hooks/use-toast';
 import { Input } from '@ncthub/ui/input';
@@ -104,123 +98,121 @@ export function PromotionForm({ wsId, wsUserId, data, onFinish }: Props) {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">
-        <FormField
+    <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">
+      <Controller
+        control={form.control}
+        name="name"
+        render={({ field, fieldState }) => (
+          <Field data-invalid={!!fieldState.error}>
+            <FieldLabel>{t('ws-inventory-promotions.form.name')}</FieldLabel>{' '}
+            <Input
+              {...field}
+              placeholder={t('ws-inventory-promotions.form.name')}
+            />
+            <FieldError
+              errors={fieldState.error ? [fieldState.error] : undefined}
+            />
+          </Field>
+        )}
+      />
+      <Controller
+        control={form.control}
+        name="description"
+        render={({ field, fieldState }) => (
+          <Field data-invalid={!!fieldState.error}>
+            <FieldLabel>
+              {t('ws-inventory-promotions.form.description')}
+            </FieldLabel>{' '}
+            <Textarea
+              {...field}
+              placeholder={t('ws-inventory-promotions.form.description')}
+            />
+            <FieldError
+              errors={fieldState.error ? [fieldState.error] : undefined}
+            />
+          </Field>
+        )}
+      />
+      <Separator className="my-4" />
+      <Controller
+        control={form.control}
+        name="code"
+        render={({ field, fieldState }) => (
+          <Field data-invalid={!!fieldState.error} className="flex-1">
+            <FieldLabel>{t('ws-inventory-promotions.form.code')}</FieldLabel>{' '}
+            <Input
+              {...field}
+              placeholder={t('ws-inventory-promotions.form.code')}
+            />
+            <FieldError
+              errors={fieldState.error ? [fieldState.error] : undefined}
+            />
+          </Field>
+        )}
+      />
+      <div className="flex gap-6">
+        <Controller
           control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t('ws-inventory-promotions.form.name')}</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  placeholder={t('ws-inventory-promotions.form.name')}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+          name="value"
+          render={({ field, fieldState }) => (
+            <Field data-invalid={!!fieldState.error} className="flex-1">
+              <FieldLabel>{t('ws-inventory-promotions.form.value')}</FieldLabel>{' '}
+              <Input
+                type="number"
+                {...field}
+                placeholder={t('ws-inventory-promotions.form.value')}
+              />
+              <FieldError
+                errors={fieldState.error ? [fieldState.error] : undefined}
+              />
+            </Field>
           )}
         />
-        <FormField
+        <Controller
           control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>
-                {t('ws-inventory-promotions.form.description')}
-              </FormLabel>
-              <FormControl>
-                <Textarea
-                  {...field}
-                  placeholder={t('ws-inventory-promotions.form.description')}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Separator className="my-4" />
-        <FormField
-          control={form.control}
-          name="code"
-          render={({ field }) => (
-            <FormItem className="flex-1">
-              <FormLabel>{t('ws-inventory-promotions.form.code')}</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  placeholder={t('ws-inventory-promotions.form.code')}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div className="flex gap-6">
-          <FormField
-            control={form.control}
-            name="value"
-            render={({ field }) => (
-              <FormItem className="flex-1">
-                <FormLabel>{t('ws-inventory-promotions.form.value')}</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
+          name="unit"
+          render={({ field, fieldState }) => (
+            <Field data-invalid={!!fieldState.error}>
+              <FieldLabel>
+                {t('ws-inventory-promotions.form.unit.placeholder')}
+              </FieldLabel>{' '}
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger className="w-32">
+                  <SelectValue
                     {...field}
-                    placeholder={t('ws-inventory-promotions.form.value')}
+                    placeholder={t(
+                      'ws-inventory-promotions.form.unit.placeholder'
+                    )}
                   />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="unit"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>
-                  {t('ws-inventory-promotions.form.unit.placeholder')}
-                </FormLabel>
-                <FormControl>
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger className="w-32">
-                      <SelectValue
-                        {...field}
-                        placeholder={t(
-                          'ws-inventory-promotions.form.unit.placeholder'
-                        )}
-                      />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="currency">
-                        <FormLabel>
-                          {t('ws-inventory-promotions.form.unit.currency')}
-                        </FormLabel>
-                      </SelectItem>
-                      <SelectItem value="percentage">
-                        <FormLabel>
-                          {t('ws-inventory-promotions.form.unit.percentage')}
-                        </FormLabel>
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="currency">
+                    <FieldLabel>
+                      {t('ws-inventory-promotions.form.unit.currency')}
+                    </FieldLabel>
+                  </SelectItem>
+                  <SelectItem value="percentage">
+                    <FieldLabel>
+                      {t('ws-inventory-promotions.form.unit.percentage')}
+                    </FieldLabel>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              <FieldError
+                errors={fieldState.error ? [fieldState.error] : undefined}
+              />
+            </Field>
+          )}
+        />
+      </div>
 
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading
-            ? t('common.processing')
-            : data?.id
-              ? t('common.edit')
-              : t('common.create')}
-        </Button>
-      </form>
-    </Form>
+      <Button type="submit" className="w-full" disabled={loading}>
+        {loading
+          ? t('common.processing')
+          : data?.id
+            ? t('common.edit')
+            : t('common.create')}
+      </Button>
+    </form>
   );
 }

@@ -3,14 +3,12 @@
 import { createClient } from '@ncthub/supabase/next/client';
 import { Button } from '@ncthub/ui/button';
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
+  Field,
+  FieldLabel,
+  FieldDescription,
+  FieldError,
+} from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
 import { toast } from '@ncthub/ui/hooks/use-toast';
 import { Input } from '@ncthub/ui/input';
@@ -82,60 +80,58 @@ export function TaskForm({ listId, onSuccess }: TaskFormProps) {
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Task Name</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter task name" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="(Optional) Enter task description"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
+      <Controller
+        control={form.control}
+        name="name"
+        render={({ field, fieldState }) => (
+          <Field data-invalid={!!fieldState.error}>
+            <FieldLabel>Task Name</FieldLabel>{' '}
+            <Input placeholder="Enter task name" {...field} />
+            <FieldError
+              errors={fieldState.error ? [fieldState.error] : undefined}
+            />
+          </Field>
+        )}
+      />
+      <Controller
+        control={form.control}
+        name="description"
+        render={({ field, fieldState }) => (
+          <Field data-invalid={!!fieldState.error}>
+            <FieldLabel>Description</FieldLabel>{' '}
+            <Textarea
+              placeholder="(Optional) Enter task description"
+              {...field}
+            />
+            <FieldError
+              errors={fieldState.error ? [fieldState.error] : undefined}
+            />
+          </Field>
+        )}
+      />
 
-        <FormField
-          control={form.control}
-          name="end_date" // Changed from due_date
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>End Date</FormLabel>
-              <FormControl>
-                <Input type="date" {...field} value={field.value || ''} />
-              </FormControl>
-              <FormDescription>(Optional) Select an end date.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button
-          type="submit"
-          disabled={form.formState.isSubmitting}
-          className="w-full"
-        >
-          {form.formState.isSubmitting ? 'Creating...' : 'Create Task'}
-        </Button>
-      </form>
-    </Form>
+      <Controller
+        control={form.control}
+        name="end_date" // Changed from due_date
+        render={({ field, fieldState }) => (
+          <Field data-invalid={!!fieldState.error}>
+            <FieldLabel>End Date</FieldLabel>{' '}
+            <Input type="date" {...field} value={field.value || ''} />
+            <FieldDescription>(Optional) Select an end date.</FieldDescription>
+            <FieldError
+              errors={fieldState.error ? [fieldState.error] : undefined}
+            />
+          </Field>
+        )}
+      />
+      <Button
+        type="submit"
+        disabled={form.formState.isSubmitting}
+        className="w-full"
+      >
+        {form.formState.isSubmitting ? 'Creating...' : 'Create Task'}
+      </Button>
+    </form>
   );
 }

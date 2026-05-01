@@ -8,7 +8,7 @@ import {
   CommandItem,
   CommandList,
 } from '@ncthub/ui/command';
-import { FormControl, FormLabel } from '@ncthub/ui/form';
+import { FieldLabel } from '@ncthub/ui/field';
 import { CheckIcon, ChevronsUpDown } from '@ncthub/ui/icons';
 import { Popover, PopoverContent, PopoverTrigger } from '@ncthub/ui/popover';
 import { cn } from '@ncthub/utils/format';
@@ -52,27 +52,23 @@ export default function AIModelSelector({
 
   return (
     <div className="grid">
-      <FormLabel className="pb-2">{label || 'Selector'}</FormLabel>
+      <FieldLabel className="pb-2">{label || 'Selector'}</FieldLabel>
       <Popover open={open} onOpenChange={onOpenChange}>
         <PopoverTrigger asChild>
-          <FormControl>
-            <Button
-              variant="outline"
-              role="combobox"
-              className={cn(
-                'justify-between',
-                !value && 'text-muted-foreground'
-              )}
-              disabled={disabled || loading}
-            >
-              {value
-                ? data?.find((c) => c.id === value)?.name
-                : loading
-                  ? 'Fetching...'
-                  : placeholder || 'Select an item'}
-              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-            </Button>
-          </FormControl>
+          {' '}
+          <Button
+            variant="outline"
+            role="combobox"
+            className={cn('justify-between', !value && 'text-muted-foreground')}
+            disabled={disabled || loading}
+          >
+            {value
+              ? data?.find((c) => c.id === value)?.name
+              : loading
+                ? 'Fetching...'
+                : placeholder || 'Select an item'}
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
         </PopoverTrigger>
         <PopoverContent className="w-full p-0">
           <Command>

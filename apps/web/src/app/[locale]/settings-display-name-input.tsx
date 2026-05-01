@@ -1,13 +1,8 @@
 'use client';
 
 import { Button } from '@ncthub/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from '@ncthub/ui/form';
+import { Field, FieldError } from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
 import { toast } from '@ncthub/ui/hooks/use-toast';
 import { Check, Loader2 } from '@ncthub/ui/icons';
@@ -74,41 +69,40 @@ export default function DisplayNameInput({
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
-        <div className="flex items-start gap-2">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormControl>
-                  <Input
-                    id="display-name"
-                    placeholder={t('display-name')}
-                    disabled={disabled}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+    <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+      <div className="flex items-start gap-2">
+        <Controller
+          control={form.control}
+          name="name"
+          render={({ field, fieldState }) => (
+            <Field data-invalid={!!fieldState.error} className="w-full">
+              {' '}
+              <Input
+                id="display-name"
+                placeholder={t('display-name')}
+                disabled={disabled}
+                {...field}
+              />
+              <FieldError
+                errors={fieldState.error ? [fieldState.error] : undefined}
+              />
+            </Field>
+          )}
+        />
 
-          <Button
-            type="submit"
-            size="icon"
-            onClick={form.handleSubmit(onSubmit)}
-            disabled={name === defaultValue || saving || disabled}
-          >
-            {saving ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
-            ) : (
-              <Check className="h-5 w-5" />
-            )}
-          </Button>
-        </div>
-      </form>
-    </Form>
+        <Button
+          type="submit"
+          size="icon"
+          onClick={form.handleSubmit(onSubmit)}
+          disabled={name === defaultValue || saving || disabled}
+        >
+          {saving ? (
+            <Loader2 className="h-5 w-5 animate-spin" />
+          ) : (
+            <Check className="h-5 w-5" />
+          )}
+        </Button>
+      </div>
+    </form>
   );
 }

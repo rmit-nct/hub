@@ -22,14 +22,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@ncthub/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
+import { Field, FieldLabel, FieldError } from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
 import { toast } from '@ncthub/ui/hooks/use-toast';
 import { Pencil } from '@ncthub/ui/icons';
@@ -149,103 +143,91 @@ export default function EditPlanDialog({ plan }: Props) {
             {t('meet-together-plan-details.update_plan_desc')}
           </DialogDescription>
         </DialogHeader>
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-3">
+          <Controller
+            control={form.control}
+            name="name"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={!!fieldState.error}>
+                <FieldLabel>{t('meet-together-plan-details.name')}</FieldLabel>{' '}
+                <Input placeholder="Name" autoComplete="off" {...field} />
+                <FieldError
+                  errors={fieldState.error ? [fieldState.error] : undefined}
+                />
+              </Field>
+            )}
+          />
 
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-3"
-          >
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('meet-together-plan-details.name')}</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Name" autoComplete="off" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <Controller
+            control={form.control}
+            name="is_public"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={!!fieldState.error}>
+                <div className="flex items-start justify-between gap-4 rounded-lg border p-4">
+                  <div className="space-y-1">
+                    <FieldLabel>
+                      {t('meet-together-plan-details.public_plan')}
+                    </FieldLabel>
+                    <p className="text-muted-foreground text-sm">
+                      {t('meet-together-plan-details.public_plan_desc')}
+                    </p>
+                  </div>{' '}
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </div>
+              </Field>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="is_public"
-              render={({ field }) => (
-                <FormItem>
-                  <div className="flex items-start justify-between gap-4 rounded-lg border p-4">
-                    <div className="space-y-1">
-                      <FormLabel>
-                        {t('meet-together-plan-details.public_plan')}
-                      </FormLabel>
-                      <p className="text-muted-foreground text-sm">
-                        {t('meet-together-plan-details.public_plan_desc')}
-                      </p>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </div>
-                </FormItem>
-              )}
-            />
+          <DialogFooter>
+            <div className="grid w-full gap-2">
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={!hasChanges || disabled || updating || deleting}
+              >
+                {updating
+                  ? t('meet-together-plan-details.updating_plan')
+                  : t('meet-together-plan-details.update_plan')}
+              </Button>
 
-            <DialogFooter>
-              <div className="grid w-full gap-2">
-                <Button
-                  type="submit"
-                  className="w-full"
-                  disabled={!hasChanges || disabled || updating || deleting}
-                >
-                  {updating
-                    ? t('meet-together-plan-details.updating_plan')
-                    : t('meet-together-plan-details.update_plan')}
-                </Button>
+              <Separator />
 
-                <Separator />
-
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      type="button"
-                      className="w-full"
-                      variant="destructive"
-                      disabled={disabled || updating || deleting}
-                    >
-                      {deleting
-                        ? t('meet-together-plan-details.deleting_plan')
-                        : t('meet-together-plan-details.delete_plan')}
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        {t(
-                          'meet-together-plan-details.are_you_absolutely_sure'
-                        )}
-                      </AlertDialogTitle>
-                      <AlertDialogDescription>
-                        {t('meet-together-plan-details.delete_plan_warning')}
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>
-                        {t('common.cancel')}
-                      </AlertDialogCancel>
-                      <AlertDialogAction onClick={handleDelete}>
-                        {t('common.continue')}
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </div>
-            </DialogFooter>
-          </form>
-        </Form>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    type="button"
+                    className="w-full"
+                    variant="destructive"
+                    disabled={disabled || updating || deleting}
+                  >
+                    {deleting
+                      ? t('meet-together-plan-details.deleting_plan')
+                      : t('meet-together-plan-details.delete_plan')}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      {t('meet-together-plan-details.are_you_absolutely_sure')}
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      {t('meet-together-plan-details.delete_plan_warning')}
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDelete}>
+                      {t('common.continue')}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

@@ -12,14 +12,12 @@ import {
   DialogTitle,
 } from '@ncthub/ui/dialog';
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
+  Field,
+  FieldLabel,
+  FieldDescription,
+  FieldError,
+} from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
@@ -247,96 +245,96 @@ export default function PlanLogin({ plan }: { plan: MeetTogetherPlan }) {
             </Button>
           </div>
         ) : displayMode === 'login' ? (
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <FormField
-                control={form.control}
-                name="guestName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t('meet-together-plan-details.your_name')}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Tuturuuu"
-                        disabled={loginMutation.isPending}
-                        autoComplete="off"
-                        autoCorrect="off"
-                        autoFocus
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      {t('meet-together-plan-details.your_name_desc')}
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="guestPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t('meet-together-plan-details.password')}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="••••••••"
-                        type="password"
-                        disabled={missingFields || loginMutation.isPending}
-                        autoComplete="off"
-                        autoCorrect="off"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      {t('meet-together-plan-details.password_desc')}
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <Controller
+              control={form.control}
+              name="guestName"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={!!fieldState.error}>
+                  <FieldLabel>
+                    {t('meet-together-plan-details.your_name')}
+                  </FieldLabel>{' '}
+                  <Input
+                    placeholder="Tuturuuu"
+                    disabled={loginMutation.isPending}
+                    autoComplete="off"
+                    autoCorrect="off"
+                    autoFocus
+                    {...field}
+                  />
+                  <FieldDescription>
+                    {t('meet-together-plan-details.your_name_desc')}
+                  </FieldDescription>
+                  <FieldError
+                    errors={fieldState.error ? [fieldState.error] : undefined}
+                  />
+                </Field>
+              )}
+            />
+            <Controller
+              control={form.control}
+              name="guestPassword"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={!!fieldState.error}>
+                  <FieldLabel>
+                    {t('meet-together-plan-details.password')}
+                  </FieldLabel>{' '}
+                  <Input
+                    placeholder="••••••••"
+                    type="password"
+                    disabled={missingFields || loginMutation.isPending}
+                    autoComplete="off"
+                    autoCorrect="off"
+                    {...field}
+                  />
+                  <FieldDescription>
+                    {t('meet-together-plan-details.password_desc')}
+                  </FieldDescription>
+                  <FieldError
+                    errors={fieldState.error ? [fieldState.error] : undefined}
+                  />
+                </Field>
+              )}
+            />
 
-              <FormField
-                control={form.control}
-                name="saveCredentials"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        disabled={loginMutation.isPending}
-                      />
-                    </FormControl>
-                    <div className="space-y-1 leading-none">
-                      <FormLabel>
-                        {t('meet-together-plan-details.save_credentials')}
-                      </FormLabel>
-                      <FormDescription>
-                        {t('meet-together-plan-details.save_credentials_desc')}
-                      </FormDescription>
-                    </div>
-                  </FormItem>
-                )}
-              />
-
-              <DialogFooter>
-                <Button
-                  type="submit"
-                  className="w-full"
-                  disabled={missingFields || loginMutation.isPending}
+            <Controller
+              control={form.control}
+              name="saveCredentials"
+              render={({ field, fieldState }) => (
+                <Field
+                  data-invalid={!!fieldState.error}
+                  className="flex flex-row items-start space-x-3 space-y-0"
                 >
-                  {loginMutation.isPending
-                    ? t('common.processing')
-                    : t('common.continue')}
-                </Button>
-              </DialogFooter>
-            </form>
-          </Form>
+                  {' '}
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    disabled={loginMutation.isPending}
+                  />
+                  <div className="space-y-1 leading-none">
+                    <FieldLabel>
+                      {t('meet-together-plan-details.save_credentials')}
+                    </FieldLabel>
+                    <FieldDescription>
+                      {t('meet-together-plan-details.save_credentials_desc')}
+                    </FieldDescription>
+                  </div>
+                </Field>
+              )}
+            />
+
+            <DialogFooter>
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={missingFields || loginMutation.isPending}
+              >
+                {loginMutation.isPending
+                  ? t('common.processing')
+                  : t('common.continue')}
+              </Button>
+            </DialogFooter>
+          </form>
         ) : null}
       </DialogContent>
     </Dialog>

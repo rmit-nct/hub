@@ -3,14 +3,8 @@
 import { TransactionCategory } from '@ncthub/types/primitives/TransactionCategory';
 import { Button } from '@ncthub/ui/button';
 import { SelectField } from '@ncthub/ui/custom/select-field';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
+import { Field, FieldLabel, FieldError } from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
 import { toast } from '@ncthub/ui/hooks/use-toast';
 import { Input } from '@ncthub/ui/input';
@@ -81,76 +75,70 @@ export function TransactionCategoryForm({ wsId, data, onFinish }: Props) {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-        <div className="grid gap-2 md:grid-cols-2">
-          <FormField
-            control={form.control}
-            name="name"
-            disabled={loading}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>
-                  {t('transaction-category-data-table.category_name')}
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder={t(
-                      'transaction-category-data-table.name_examples'
-                    )}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+      <div className="grid gap-2 md:grid-cols-2">
+        <Controller
+          control={form.control}
+          name="name"
+          disabled={loading}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={!!fieldState.error}>
+              <FieldLabel>
+                {t('transaction-category-data-table.category_name')}
+              </FieldLabel>{' '}
+              <Input
+                placeholder={t('transaction-category-data-table.name_examples')}
+                {...field}
+              />
+              <FieldError
+                errors={fieldState.error ? [fieldState.error] : undefined}
+              />
+            </Field>
+          )}
+        />
 
-          <FormField
-            control={form.control}
-            name="type"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>
-                  {t('transaction-category-data-table.category_type')}
-                </FormLabel>
-                <FormControl>
-                  <SelectField
-                    id="category-type"
-                    placeholder={t(
-                      'transaction-category-data-table.select_type'
-                    )}
-                    options={[
-                      {
-                        value: 'EXPENSE',
-                        label: t('transaction-category-data-table.expense'),
-                      },
-                      {
-                        value: 'INCOME',
-                        label: t('transaction-category-data-table.income'),
-                      },
-                    ]}
-                    classNames={{ root: 'w-full' }}
-                    {...field}
-                    onValueChange={(value) => field.onChange(value)}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+        <Controller
+          control={form.control}
+          name="type"
+          render={({ field, fieldState }) => (
+            <Field data-invalid={!!fieldState.error} className="w-full">
+              <FieldLabel>
+                {t('transaction-category-data-table.category_type')}
+              </FieldLabel>{' '}
+              <SelectField
+                id="category-type"
+                placeholder={t('transaction-category-data-table.select_type')}
+                options={[
+                  {
+                    value: 'EXPENSE',
+                    label: t('transaction-category-data-table.expense'),
+                  },
+                  {
+                    value: 'INCOME',
+                    label: t('transaction-category-data-table.income'),
+                  },
+                ]}
+                classNames={{ root: 'w-full' }}
+                {...field}
+                onValueChange={(value) => field.onChange(value)}
+              />
+              <FieldError
+                errors={fieldState.error ? [fieldState.error] : undefined}
+              />
+            </Field>
+          )}
+        />
+      </div>
 
-        <div className="h-2" />
+      <div className="h-2" />
 
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading
-            ? t('common.processing')
-            : data?.id
-              ? t('ws-transaction-categories.edit')
-              : t('ws-transaction-categories.create')}
-        </Button>
-      </form>
-    </Form>
+      <Button type="submit" className="w-full" disabled={loading}>
+        {loading
+          ? t('common.processing')
+          : data?.id
+            ? t('ws-transaction-categories.edit')
+            : t('ws-transaction-categories.create')}
+      </Button>
+    </form>
   );
 }

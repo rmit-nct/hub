@@ -7,14 +7,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@ncthub/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
+import { Field, FieldLabel, FieldError } from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
@@ -64,34 +58,31 @@ export default function MyDialogContent({ wsId }: MyDialogContentProps) {
       <DialogDescription>
         {t('ws-documents.create_description')}
       </DialogDescription>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-3">
+        <Controller
+          control={form.control}
+          name="name"
+          render={({ field, fieldState }) => (
+            <Field data-invalid={!!fieldState.error}>
+              <FieldLabel>{t('documents.document-name')}</FieldLabel>{' '}
+              <Input
+                placeholder={t('documents.document-name-placeholder')}
+                autoComplete="off"
+                required
+                {...field}
+                disabled={loading}
+              />
+              <FieldError
+                errors={fieldState.error ? [fieldState.error] : undefined}
+              />
+            </Field>
+          )}
+        />
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-3">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t('documents.document-name')}</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder={t('documents.document-name-placeholder')}
-                    autoComplete="off"
-                    required
-                    {...field}
-                    disabled={loading}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? t('common.processing') : t('ws-documents.create')}
-          </Button>
-        </form>
-      </Form>
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading ? t('common.processing') : t('ws-documents.create')}
+        </Button>
+      </form>
     </DialogContent>
   );
 }

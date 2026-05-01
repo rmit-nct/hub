@@ -3,14 +3,12 @@
 import type { WorkspaceAIModel } from '@ncthub/types/db';
 import { Button } from '@ncthub/ui/button';
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
+  Field,
+  FieldLabel,
+  FieldDescription,
+  FieldError,
+} from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
 import { toast } from '@ncthub/ui/hooks/use-toast';
 import { Input } from '@ncthub/ui/input';
@@ -88,69 +86,67 @@ export default function ModelForm({ wsId, data, onFinish }: Props) {
 
   return (
     <>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-3">
-          <ScrollArea className="grid gap-3 border-b">
-            {data?.id && (
-              <>
-                <FormField
-                  control={form.control}
-                  name="id"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Model ID</FormLabel>
-                      <FormControl>
-                        <Input {...field} disabled />
-                      </FormControl>
-                      <FormMessage />
-                      <FormDescription>
-                        The identification number of this user in your
-                        workspace. This is automatically managed by Tuturuuu,
-                        and cannot be changed.
-                      </FormDescription>
-                    </FormItem>
-                  )}
+      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-3">
+        <ScrollArea className="grid gap-3 border-b">
+          {data?.id && (
+            <>
+              <Controller
+                control={form.control}
+                name="id"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={!!fieldState.error}>
+                    <FieldLabel>Model ID</FieldLabel>{' '}
+                    <Input {...field} disabled />
+                    <FieldError
+                      errors={fieldState.error ? [fieldState.error] : undefined}
+                    />
+                    <FieldDescription>
+                      The identification number of this user in your workspace.
+                      This is automatically managed by Tuturuuu, and cannot be
+                      changed.
+                    </FieldDescription>
+                  </Field>
+                )}
+              />
+              <Separator />
+            </>
+          )}
+
+          <Controller
+            control={form.control}
+            name="name"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={!!fieldState.error}>
+                <FieldLabel>Name</FieldLabel>{' '}
+                <Input placeholder="John Doe" {...field} />
+                <FieldError
+                  errors={fieldState.error ? [fieldState.error] : undefined}
                 />
-                <Separator />
-              </>
+              </Field>
             )}
+          />
 
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="John Doe" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <Controller
+            control={form.control}
+            name="description"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={!!fieldState.error}>
+                <FieldLabel>Description</FieldLabel>{' '}
+                <Textarea placeholder="Empty" {...field} />
+                <FieldError
+                  errors={fieldState.error ? [fieldState.error] : undefined}
+                />
+              </Field>
+            )}
+          />
+        </ScrollArea>
 
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="Empty" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </ScrollArea>
-
-          <div className="flex justify-center gap-2">
-            <Button type="submit" className="w-full" disabled={saving}>
-              Save changes
-            </Button>
-          </div>
-        </form>
-      </Form>
+        <div className="flex justify-center gap-2">
+          <Button type="submit" className="w-full" disabled={saving}>
+            Save changes
+          </Button>
+        </div>
+      </form>
     </>
   );
 }

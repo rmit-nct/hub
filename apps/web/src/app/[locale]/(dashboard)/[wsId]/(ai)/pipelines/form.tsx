@@ -3,14 +3,12 @@
 import type { CrawledUrl } from '@ncthub/types/db';
 import { Button } from '@ncthub/ui/button';
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
+  Field,
+  FieldLabel,
+  FieldDescription,
+  FieldError,
+} from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
 import { toast } from '@ncthub/ui/hooks/use-toast';
 import { Input } from '@ncthub/ui/input';
@@ -81,57 +79,57 @@ export default function DatasetForm({ wsId, data, onFinish }: Props) {
 
   return (
     <>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-3">
-          <ScrollArea className="max-h-96">
-            <div className="grid gap-2">
-              {data?.id && (
-                <>
-                  <FormField
-                    control={form.control}
-                    name="id"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Dataset ID</FormLabel>
-                        <FormControl>
-                          <Input {...field} disabled />
-                        </FormControl>
-                        <FormMessage />
-                        <FormDescription>
-                          The identification number of this user in your
-                          workspace. This is automatically managed by Tuturuuu,
-                          and cannot be changed.
-                        </FormDescription>
-                      </FormItem>
-                    )}
+      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-3">
+        <ScrollArea className="max-h-96">
+          <div className="grid gap-2">
+            {data?.id && (
+              <>
+                <Controller
+                  control={form.control}
+                  name="id"
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={!!fieldState.error}>
+                      <FieldLabel>Dataset ID</FieldLabel>{' '}
+                      <Input {...field} disabled />
+                      <FieldError
+                        errors={
+                          fieldState.error ? [fieldState.error] : undefined
+                        }
+                      />
+                      <FieldDescription>
+                        The identification number of this user in your
+                        workspace. This is automatically managed by Tuturuuu,
+                        and cannot be changed.
+                      </FieldDescription>
+                    </Field>
+                  )}
+                />
+                <Separator />
+              </>
+            )}
+
+            <Controller
+              control={form.control}
+              name="url"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={!!fieldState.error}>
+                  <FieldLabel>URL</FieldLabel>{' '}
+                  <Input placeholder="https://example.com" {...field} />
+                  <FieldError
+                    errors={fieldState.error ? [fieldState.error] : undefined}
                   />
-                  <Separator />
-                </>
+                </Field>
               )}
-
-              <FormField
-                control={form.control}
-                name="url"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>URL</FormLabel>
-                    <FormControl>
-                      <Input placeholder="https://example.com" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </ScrollArea>
-
-          <div className="flex justify-center gap-2">
-            <Button type="submit" className="w-full" disabled={saving}>
-              Save changes
-            </Button>
+            />
           </div>
-        </form>
-      </Form>
+        </ScrollArea>
+
+        <div className="flex justify-center gap-2">
+          <Button type="submit" className="w-full" disabled={saving}>
+            Save changes
+          </Button>
+        </div>
+      </form>
     </>
   );
 }

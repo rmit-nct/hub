@@ -21,14 +21,12 @@ import {
   DropdownMenuTrigger,
 } from '@ncthub/ui/dropdown-menu';
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
+  Field,
+  FieldLabel,
+  FieldDescription,
+  FieldError,
+} from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
 import { toast } from '@ncthub/ui/hooks/use-toast';
 import { Ellipsis, Eye, Loader2, UserIcon, XIcon } from '@ncthub/ui/icons';
@@ -339,251 +337,250 @@ export function UserRowActions({ row, href, extraData }: UserRowActionsProps) {
               )}
             </div>
           </div>
+          <form
+            onSubmit={form.handleSubmit(updateMember)}
+            className="space-y-3"
+          >
+            <Controller
+              control={form.control}
+              name="id"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={!!fieldState.error}>
+                  <FieldLabel>User ID</FieldLabel> <Input {...field} disabled />
+                  <FieldError
+                    errors={fieldState.error ? [fieldState.error] : undefined}
+                  />
+                  <FieldDescription>
+                    The identification number of this user in your workspace.
+                    This is automatically managed by Tuturuuu, and cannot be
+                    changed.
+                  </FieldDescription>
+                </Field>
+              )}
+            />
 
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(updateMember)}
-              className="space-y-3"
-            >
-              <FormField
+            <Separator />
+
+            <Controller
+              control={form.control}
+              name="full_name"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={!!fieldState.error}>
+                  <FieldLabel>Full Name</FieldLabel>{' '}
+                  <Input placeholder="John Doe" {...field} />
+                  <FieldError
+                    errors={fieldState.error ? [fieldState.error] : undefined}
+                  />
+                  <FieldDescription>
+                    The real name of this user.
+                  </FieldDescription>
+                </Field>
+              )}
+            />
+
+            <Controller
+              control={form.control}
+              name="display_name"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={!!fieldState.error}>
+                  <FieldLabel>Display Name</FieldLabel>{' '}
+                  <Input placeholder="John Doe" {...field} />
+                  <FieldError
+                    errors={fieldState.error ? [fieldState.error] : undefined}
+                  />
+                  <FieldDescription>
+                    This name will be displayed everywhere in the current
+                    workspace for this user.
+                  </FieldDescription>
+                </Field>
+              )}
+            />
+
+            <Separator />
+
+            <Controller
+              control={form.control}
+              name="email"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={!!fieldState.error}>
+                  <FieldLabel>Email</FieldLabel>{' '}
+                  <Input placeholder="example@tuturuuu.com" {...field} />
+                  <FieldError
+                    errors={fieldState.error ? [fieldState.error] : undefined}
+                  />
+                </Field>
+              )}
+            />
+
+            <Controller
+              control={form.control}
+              name="phone"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={!!fieldState.error}>
+                  <FieldLabel>Phone Number</FieldLabel>{' '}
+                  <Input placeholder="+123456789" {...field} />
+                  <FieldError
+                    errors={fieldState.error ? [fieldState.error] : undefined}
+                  />
+                </Field>
+              )}
+            />
+
+            <Separator />
+
+            <Controller
+              control={form.control}
+              name="gender"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={!!fieldState.error} className="w-full">
+                  <FieldLabel>Gender</FieldLabel>{' '}
+                  <SelectField
+                    id="gender"
+                    placeholder="Please select a gender"
+                    defaultValue={field.value}
+                    onValueChange={field.onChange}
+                    options={[
+                      {
+                        value: 'MALE',
+                        label: 'Male',
+                      },
+                      {
+                        value: 'FEMALE',
+                        label: 'Female',
+                      },
+                      {
+                        value: 'OTHER',
+                        label: 'Other',
+                      },
+                    ]}
+                  />
+                  <FieldError
+                    errors={fieldState.error ? [fieldState.error] : undefined}
+                  />
+                </Field>
+              )}
+            />
+
+            <div className="flex items-end justify-between gap-2">
+              <Controller
                 control={form.control}
-                name="id"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>User ID</FormLabel>
-                    <FormControl>
-                      <Input {...field} disabled />
-                    </FormControl>
-                    <FormMessage />
-                    <FormDescription>
-                      The identification number of this user in your workspace.
-                      This is automatically managed by Tuturuuu, and cannot be
-                      changed.
-                    </FormDescription>
-                  </FormItem>
-                )}
-              />
-
-              <Separator />
-
-              <FormField
-                control={form.control}
-                name="full_name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Full Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="John Doe" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                    <FormDescription>
-                      The real name of this user.
-                    </FormDescription>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="display_name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Display Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="John Doe" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                    <FormDescription>
-                      This name will be displayed everywhere in the current
-                      workspace for this user.
-                    </FormDescription>
-                  </FormItem>
-                )}
-              />
-
-              <Separator />
-
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input placeholder="example@tuturuuu.com" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone Number</FormLabel>
-                    <FormControl>
-                      <Input placeholder="+123456789" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <Separator />
-
-              <FormField
-                control={form.control}
-                name="gender"
-                render={({ field }) => (
-                  <FormItem className="w-full">
-                    <FormLabel>Gender</FormLabel>
-                    <FormControl>
-                      <SelectField
-                        id="gender"
-                        placeholder="Please select a gender"
-                        defaultValue={field.value}
+                name="birthday"
+                render={({ field, fieldState }) => (
+                  <Field
+                    data-invalid={!!fieldState.error}
+                    className="grid w-full"
+                  >
+                    <FieldLabel>Birthday</FieldLabel>
+                    <div className="flex">
+                      <DatePicker
+                        value={
+                          field.value ? dayjs(field.value).toDate() : undefined
+                        }
                         onValueChange={field.onChange}
-                        options={[
-                          {
-                            value: 'MALE',
-                            label: 'Male',
-                          },
-                          {
-                            value: 'FEMALE',
-                            label: 'Female',
-                          },
-                          {
-                            value: 'OTHER',
-                            label: 'Other',
-                          },
-                        ]}
+                        className="w-full"
                       />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                    </div>
+                    <FieldError
+                      errors={fieldState.error ? [fieldState.error] : undefined}
+                    />
+                  </Field>
                 )}
               />
+              <Button
+                type="button"
+                size="icon"
+                onClick={() => form.setValue('birthday', null)}
+                className="aspect-square"
+                disabled={!form.watch('birthday')}
+              >
+                <XIcon className="h-7 w-7"></XIcon>{' '}
+              </Button>
+            </div>
 
-              <div className="flex items-end justify-between gap-2">
-                <FormField
-                  control={form.control}
-                  name="birthday"
-                  render={({ field }) => (
-                    <FormItem className="grid w-full">
-                      <FormLabel>Birthday</FormLabel>
-                      <FormControl className="flex">
-                        <DatePicker
-                          value={
-                            field.value
-                              ? dayjs(field.value).toDate()
-                              : undefined
-                          }
-                          onValueChange={field.onChange}
-                          className="w-full"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button
-                  type="button"
-                  size="icon"
-                  onClick={() => form.setValue('birthday', null)}
-                  className="aspect-square"
-                  disabled={!form.watch('birthday')}
-                >
-                  <XIcon className="h-7 w-7"></XIcon>{' '}
-                </Button>
-              </div>
+            <Separator />
 
-              <Separator />
+            <Controller
+              control={form.control}
+              name="national_id"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={!!fieldState.error}>
+                  <FieldLabel>National ID</FieldLabel>{' '}
+                  <Input placeholder="Empty" {...field} />
+                  <FieldError
+                    errors={fieldState.error ? [fieldState.error] : undefined}
+                  />
+                </Field>
+              )}
+            />
 
-              <FormField
-                control={form.control}
-                name="national_id"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>National ID</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Empty" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+            <Controller
+              control={form.control}
+              name="ethnicity"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={!!fieldState.error}>
+                  <FieldLabel>Ethnicity</FieldLabel>{' '}
+                  <Input placeholder="Empty" {...field} />
+                  <FieldError
+                    errors={fieldState.error ? [fieldState.error] : undefined}
+                  />
+                </Field>
+              )}
+            />
+
+            <Controller
+              control={form.control}
+              name="guardian"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={!!fieldState.error}>
+                  <FieldLabel>Guardian</FieldLabel>{' '}
+                  <Input placeholder="Empty" {...field} />
+                  <FieldError
+                    errors={fieldState.error ? [fieldState.error] : undefined}
+                  />
+                </Field>
+              )}
+            />
+
+            <Controller
+              control={form.control}
+              name="address"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={!!fieldState.error}>
+                  <FieldLabel>Address</FieldLabel>{' '}
+                  <Input placeholder="Empty" {...field} />
+                  <FieldError
+                    errors={fieldState.error ? [fieldState.error] : undefined}
+                  />
+                </Field>
+              )}
+            />
+
+            <Separator />
+
+            <Controller
+              control={form.control}
+              name="note"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={!!fieldState.error}>
+                  <FieldLabel>Notes</FieldLabel>{' '}
+                  <Input placeholder="Empty" {...field} />
+                  <FieldError
+                    errors={fieldState.error ? [fieldState.error] : undefined}
+                  />
+                </Field>
+              )}
+            />
+
+            <div className="flex justify-center gap-2">
+              <Button type="submit" className="w-full" disabled={saving}>
+                {saving ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : (
+                  'Save changes'
                 )}
-              />
-
-              <FormField
-                control={form.control}
-                name="ethnicity"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Ethnicity</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Empty" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="guardian"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Guardian</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Empty" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="address"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Address</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Empty" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <Separator />
-
-              <FormField
-                control={form.control}
-                name="note"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Notes</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Empty" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="flex justify-center gap-2">
-                <Button type="submit" className="w-full" disabled={saving}>
-                  {saving ? (
-                    <Loader2 className="h-5 w-5 animate-spin" />
-                  ) : (
-                    'Save changes'
-                  )}
-                </Button>
-              </div>
-            </form>
-          </Form>
+              </Button>
+            </div>
+          </form>
         </DialogContent>
       </Dialog>
 

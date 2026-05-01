@@ -1,13 +1,7 @@
 import { WorkspaceApiKey } from '@ncthub/types/primitives/WorkspaceApiKey';
 import { Button } from '@ncthub/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
+import { Field, FieldLabel, FieldError } from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
@@ -45,47 +39,45 @@ export default function ApiKeyForm({ data, submitLabel, onSubmit }: Props) {
   const disabled = !isDirty || !isValid || isSubmitting;
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
-        <FormField
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+      <Controller
+        control={form.control}
+        name="name"
+        render={({ field, fieldState }) => (
+          <Field data-invalid={!!fieldState.error}>
+            <FieldLabel>{t('name')}</FieldLabel>{' '}
+            <Input placeholder="Name" autoComplete="off" {...field} />
+            <FieldError
+              errors={fieldState.error ? [fieldState.error] : undefined}
+            />
+          </Field>
+        )}
+      />
+
+      {data?.value && (
+        <Controller
           control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t('name')}</FormLabel>
-              <FormControl>
-                <Input placeholder="Name" autoComplete="off" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+          name="value"
+          render={({ field, fieldState }) => (
+            <Field data-invalid={!!fieldState.error}>
+              <FieldLabel>{t('value')}</FieldLabel>{' '}
+              <Input
+                placeholder="Value"
+                autoComplete="off"
+                {...field}
+                disabled
+              />
+              <FieldError
+                errors={fieldState.error ? [fieldState.error] : undefined}
+              />
+            </Field>
           )}
         />
+      )}
 
-        {data?.value && (
-          <FormField
-            control={form.control}
-            name="value"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t('value')}</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Value"
-                    autoComplete="off"
-                    {...field}
-                    disabled
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        )}
-
-        <Button type="submit" className="w-full" disabled={disabled}>
-          {submitLabel}
-        </Button>
-      </form>
-    </Form>
+      <Button type="submit" className="w-full" disabled={disabled}>
+        {submitLabel}
+      </Button>
+    </form>
   );
 }

@@ -11,14 +11,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@ncthub/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
+import { Field, FieldLabel, FieldError } from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
 import { toast } from '@ncthub/ui/hooks/use-toast';
 import { Input } from '@ncthub/ui/input';
@@ -240,60 +234,52 @@ export default function CreatePlanDialog({
           <DialogTitle>{t('new_plan')}</DialogTitle>
           <DialogDescription>{t('new_plan_desc')}</DialogDescription>
         </DialogHeader>
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-3">
+          <Controller
+            control={form.control}
+            name="name"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={!!fieldState.error}>
+                <FieldLabel>{t('name')}</FieldLabel>{' '}
+                <Input placeholder="Name" autoComplete="off" {...field} />
+                <FieldError
+                  errors={fieldState.error ? [fieldState.error] : undefined}
+                />
+              </Field>
+            )}
+          />
 
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-3"
-          >
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('name')}</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Name" autoComplete="off" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <Controller
+            control={form.control}
+            name="is_public"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={!!fieldState.error}>
+                <div className="flex items-start justify-between gap-4 rounded-lg border p-4">
+                  <div className="space-y-1">
+                    <FieldLabel>{t('public_plan')}</FieldLabel>
+                    <p className="text-muted-foreground text-sm">
+                      {t('public_plan_desc')}
+                    </p>
+                  </div>{' '}
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </div>
+              </Field>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="is_public"
-              render={({ field }) => (
-                <FormItem>
-                  <div className="flex items-start justify-between gap-4 rounded-lg border p-4">
-                    <div className="space-y-1">
-                      <FormLabel>{t('public_plan')}</FormLabel>
-                      <p className="text-muted-foreground text-sm">
-                        {t('public_plan_desc')}
-                      </p>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </div>
-                </FormItem>
-              )}
-            />
-
-            <DialogFooter>
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={disabled || creating}
-              >
-                {creating ? t('creating_plan') : t('create_plan')}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
+          <DialogFooter>
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={disabled || creating}
+            >
+              {creating ? t('creating_plan') : t('create_plan')}
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

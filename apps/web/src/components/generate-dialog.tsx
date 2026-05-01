@@ -9,13 +9,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@ncthub/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-} from '@ncthub/ui/form';
+import { Field, FieldLabel } from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
 import { Loader2, Sparkles } from '@ncthub/ui/icons';
 import { Input } from '@ncthub/ui/input';
@@ -70,59 +65,55 @@ export function GenerateDialog({
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="context"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('common.context')}</FormLabel>
-                  <FormControl>
-                    <Input placeholder={t('common.enter_context')} {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <Controller
+            control={form.control}
+            name="context"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={!!fieldState.error}>
+                <FieldLabel>{t('common.context')}</FieldLabel>{' '}
+                <Input placeholder={t('common.enter_context')} {...field} />
+              </Field>
+            )}
+          />
 
-            <div className="flex items-center space-x-2">
-              <Checkbox id="include-content" disabled />
-              <label
-                htmlFor="include-content"
-                className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                {t('ws-ai-workflows.include_module_content')}
-              </label>
-            </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox id="include-content" disabled />
+            <label
+              htmlFor="include-content"
+              className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              {t('ws-ai-workflows.include_module_content')}
+            </label>
+          </div>
 
-            <div className="flex items-center space-x-2">
-              <Checkbox id="include-resources" disabled />
-              <label
-                htmlFor="include-resources"
-                className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                {t('ws-ai-workflows.include_resources')}
-              </label>
-            </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox id="include-resources" disabled />
+            <label
+              htmlFor="include-resources"
+              className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              {t('ws-ai-workflows.include_resources')}
+            </label>
+          </div>
 
-            <div className="flex items-center space-x-2">
-              <Checkbox id="include-youtube-links" disabled />
-              <label
-                htmlFor="include-youtube-links"
-                className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                {t('ws-ai-workflows.include_youtube_links')}
-              </label>
-            </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox id="include-youtube-links" disabled />
+            <label
+              htmlFor="include-youtube-links"
+              className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              {t('ws-ai-workflows.include_youtube_links')}
+            </label>
+          </div>
 
-            <DialogFooter>
-              <Button type="submit" disabled={isLoading}>
-                {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-                {t('common.generate')}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
+          <DialogFooter>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+              {t('common.generate')}
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

@@ -3,14 +3,8 @@
 import { Wallet } from '@ncthub/types/primitives/Wallet';
 import { Button } from '@ncthub/ui/button';
 import { SelectField } from '@ncthub/ui/custom/select-field';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
+import { Field, FieldLabel, FieldError } from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
 import { toast } from '@ncthub/ui/hooks/use-toast';
 import { Input } from '@ncthub/ui/input';
@@ -83,128 +77,126 @@ export function WalletForm({ wsId, data, onFinish }: Props) {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-        <FormField
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+      <Controller
+        control={form.control}
+        name="name"
+        disabled={loading}
+        render={({ field, fieldState }) => (
+          <Field data-invalid={!!fieldState.error}>
+            <FieldLabel>{t('wallet-data-table.wallet_name')}</FieldLabel>{' '}
+            <Input placeholder="Cash" {...field} />
+            <FieldError
+              errors={fieldState.error ? [fieldState.error] : undefined}
+            />
+          </Field>
+        )}
+      />
+
+      <Controller
+        control={form.control}
+        name="balance"
+        render={({ field, fieldState }) => (
+          <Field data-invalid={!!fieldState.error}>
+            <FieldLabel>{t('wallet-data-table.wallet_balance')}</FieldLabel>{' '}
+            <Input
+              placeholder="0"
+              {...field}
+              value={
+                !field.value
+                  ? ''
+                  : new Intl.NumberFormat('en-US', {
+                      maximumFractionDigits: 2,
+                    }).format(Math.abs(field.value))
+              }
+              onChange={(e) => {
+                // Remove non-numeric characters except decimal point, then parse
+                const numericValue = parseFloat(
+                  e.target.value.replace(/[^0-9.]/g, '')
+                );
+                if (!isNaN(numericValue)) {
+                  field.onChange(numericValue);
+                } else {
+                  // Handle case where the input is not a number (e.g., all non-numeric characters are deleted)
+                  field.onChange(0);
+                }
+              }}
+              disabled
+            />
+            <FieldError
+              errors={fieldState.error ? [fieldState.error] : undefined}
+            />
+          </Field>
+        )}
+        // disabled={loading}
+        disabled
+      />
+
+      <div className="flex gap-2">
+        <Controller
           control={form.control}
-          name="name"
-          disabled={loading}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t('wallet-data-table.wallet_name')}</FormLabel>
-              <FormControl>
-                <Input placeholder="Cash" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+          name="type"
+          render={({ field, fieldState }) => (
+            <Field data-invalid={!!fieldState.error} className="w-full">
+              <FieldLabel>{t('wallet-data-table.wallet_type')}</FieldLabel>{' '}
+              <SelectField
+                id="wallet-type"
+                placeholder="Select a type"
+                defaultValue="STANDARD"
+                options={[
+                  {
+                    value: 'STANDARD',
+                    label: t('wallet-data-table.standard'),
+                  },
+                  {
+                    value: 'CREDIT',
+                    label: t('wallet-data-table.credit'),
+                    disabled: true,
+                  },
+                ]}
+                classNames={{ root: 'w-full' }}
+                {...field}
+              />
+              <FieldError
+                errors={fieldState.error ? [fieldState.error] : undefined}
+              />
+            </Field>
           )}
         />
-
-        <FormField
+        <Controller
           control={form.control}
-          name="balance"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t('wallet-data-table.wallet_balance')}</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="0"
-                  {...field}
-                  value={
-                    !field.value
-                      ? ''
-                      : new Intl.NumberFormat('en-US', {
-                          maximumFractionDigits: 2,
-                        }).format(Math.abs(field.value))
-                  }
-                  onChange={(e) => {
-                    // Remove non-numeric characters except decimal point, then parse
-                    const numericValue = parseFloat(
-                      e.target.value.replace(/[^0-9.]/g, '')
-                    );
-                    if (!isNaN(numericValue)) {
-                      field.onChange(numericValue);
-                    } else {
-                      // Handle case where the input is not a number (e.g., all non-numeric characters are deleted)
-                      field.onChange(0);
-                    }
-                  }}
-                  disabled
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+          name="currency"
+          render={({ field, fieldState }) => (
+            <Field data-invalid={!!fieldState.error} className="w-full">
+              <FieldLabel>{t('wallet-data-table.currency')}</FieldLabel>{' '}
+              <SelectField
+                id="wallet-currency"
+                defaultValue="VND"
+                placeholder="Select a currency"
+                options={[
+                  { value: 'VND', label: 'VND' },
+                  { value: 'USD', label: 'USD', disabled: true },
+                ]}
+                classNames={{ root: 'w-full' }}
+                {...field}
+              />
+              <FieldError
+                errors={fieldState.error ? [fieldState.error] : undefined}
+              />
+            </Field>
           )}
-          // disabled={loading}
-          disabled
         />
+      </div>
 
-        <div className="flex gap-2">
-          <FormField
-            control={form.control}
-            name="type"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>{t('wallet-data-table.wallet_type')}</FormLabel>
-                <FormControl>
-                  <SelectField
-                    id="wallet-type"
-                    placeholder="Select a type"
-                    defaultValue="STANDARD"
-                    options={[
-                      {
-                        value: 'STANDARD',
-                        label: t('wallet-data-table.standard'),
-                      },
-                      {
-                        value: 'CREDIT',
-                        label: t('wallet-data-table.credit'),
-                        disabled: true,
-                      },
-                    ]}
-                    classNames={{ root: 'w-full' }}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="currency"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>{t('wallet-data-table.currency')}</FormLabel>
-                <FormControl>
-                  <SelectField
-                    id="wallet-currency"
-                    defaultValue="VND"
-                    placeholder="Select a currency"
-                    options={[
-                      { value: 'VND', label: 'VND' },
-                      { value: 'USD', label: 'USD', disabled: true },
-                    ]}
-                    classNames={{ root: 'w-full' }}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+      <div className="h-2" />
 
-        <div className="h-2" />
-
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading
-            ? t('common.processing')
-            : data?.id
-              ? t('ws-wallets.edit')
-              : t('ws-wallets.create')}
-        </Button>
-      </form>
-    </Form>
+      <Button type="submit" className="w-full" disabled={loading}>
+        {loading
+          ? t('common.processing')
+          : data?.id
+            ? t('ws-wallets.edit')
+            : t('ws-wallets.create')}
+      </Button>
+    </form>
   );
 }

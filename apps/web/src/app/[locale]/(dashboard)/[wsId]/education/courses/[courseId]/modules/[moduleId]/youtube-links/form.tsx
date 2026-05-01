@@ -1,14 +1,8 @@
 'use client';
 
 import { Button } from '@ncthub/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
+import { Field, FieldLabel, FieldError } from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
 import { toast } from '@ncthub/ui/hooks/use-toast';
 import { Input } from '@ncthub/ui/input';
@@ -90,30 +84,28 @@ export default function YouTubeLinkForm({
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-3">
-        <FormField
-          control={form.control}
-          name="link"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t('youtube_link')}</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder={t('youtube_link')}
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-3">
+      <Controller
+        control={form.control}
+        name="link"
+        render={({ field, fieldState }) => (
+          <Field data-invalid={!!fieldState.error}>
+            <FieldLabel>{t('youtube_link')}</FieldLabel>{' '}
+            <Input
+              placeholder={t('youtube_link')}
+              autoComplete="off"
+              {...field}
+            />
+            <FieldError
+              errors={fieldState.error ? [fieldState.error] : undefined}
+            />
+          </Field>
+        )}
+      />
 
-        <Button type="submit" className="w-full" disabled={disabled}>
-          {link ? t('edit_link') : t('add_link')}
-        </Button>
-      </form>
-    </Form>
+      <Button type="submit" className="w-full" disabled={disabled}>
+        {link ? t('edit_link') : t('add_link')}
+      </Button>
+    </form>
   );
 }
