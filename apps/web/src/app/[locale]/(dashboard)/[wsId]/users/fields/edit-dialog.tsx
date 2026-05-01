@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@ncthub/ui/dialog';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
@@ -58,8 +58,7 @@ export default function UserFieldEditDialog({
       router.refresh();
     } else {
       const data = await res.json();
-      toast({
-        title: `Failed to ${data.id ? 'edit' : 'create'} user field`,
+      toast(`Failed to ${data.id ? 'edit' : 'create'} user field`, {
         description: data.message,
       });
     }

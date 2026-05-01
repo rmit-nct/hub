@@ -20,11 +20,10 @@ import {
   FormMessage,
 } from '@ncthub/ui/form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
 import { Switch } from '@ncthub/ui/switch';
-import { ToastAction } from '@ncthub/ui/toast';
 import { cn } from '@ncthub/utils/format';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
@@ -93,24 +92,18 @@ export default function CreatePlanDialog({
 
   const handleSubmit = async () => {
     if (!isLoggedIn) {
-      toast({
-        title: t('login_required_title'),
+      toast(t('login_required_title'), {
         description: t('login_required_desc'),
-        action: (
-          <ToastAction
-            altText={t('login_action')}
-            onClick={() => router.push('/login')}
-          >
-            {t('login_action')}
-          </ToastAction>
-        ),
+        action: {
+          label: t('login_action'),
+          onClick: () => router.push('/login'),
+        },
       });
       return;
     }
 
     if (hasReachedPlanLimit) {
-      toast({
-        title: t('plan_limit_reached_title'),
+      toast(t('plan_limit_reached_title'), {
         description: t('plan_limit_reached_desc', {
           limit: MAX_MEETING_PLANS,
         }),
@@ -124,26 +117,17 @@ export default function CreatePlanDialog({
     let hasError = false;
 
     if (!data.start_time) {
-      toast({
-        title: t('missing_fields'),
-        description: t('start_time_required'),
-      });
+      toast(t('missing_fields'), { description: t('start_time_required') });
       hasError = true;
     }
 
     if (!data.end_time) {
-      toast({
-        title: t('missing_fields'),
-        description: t('end_time_required'),
-      });
+      toast(t('missing_fields'), { description: t('end_time_required') });
       hasError = true;
     }
 
     if (!data.dates) {
-      toast({
-        title: t('missing_fields'),
-        description: t('dates_required'),
-      });
+      toast(t('missing_fields'), { description: t('dates_required') });
       hasError = true;
     }
 
@@ -167,24 +151,18 @@ export default function CreatePlanDialog({
       setCreating(false);
 
       if (res.status === 401) {
-        toast({
-          title: t('login_required_title'),
+        toast(t('login_required_title'), {
           description: payload?.message || t('login_required_desc'),
-          action: (
-            <ToastAction
-              altText={t('login_action')}
-              onClick={() => router.push('/login')}
-            >
-              {t('login_action')}
-            </ToastAction>
-          ),
+          action: {
+            label: t('login_action'),
+            onClick: () => router.push('/login'),
+          },
         });
         return;
       }
 
       if (res.status === 409) {
-        toast({
-          title: t('plan_limit_reached_title'),
+        toast(t('plan_limit_reached_title'), {
           description:
             payload?.message ||
             t('plan_limit_reached_desc', { limit: MAX_MEETING_PLANS }),
@@ -192,8 +170,7 @@ export default function CreatePlanDialog({
         return;
       }
 
-      toast({
-        title: t('something_went_wrong'),
+      toast(t('something_went_wrong'), {
         description: payload?.message || t('cant_create_plan_right_now'),
       });
     }

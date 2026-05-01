@@ -6,7 +6,7 @@ import { type Locale, routing, supportedLocales } from '@/i18n/routing';
 import { StaffToolbar } from './staff-toolbar';
 import '@/style/prosemirror.css';
 import '@ncthub/ui/globals.css';
-import { Toaster } from '@ncthub/ui/toaster';
+import { Toaster } from '@ncthub/ui/sonner';
 import { cn } from '@ncthub/utils/format';
 import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
 import { SpeedInsights as VercelInsights } from '@vercel/speed-insights/next';

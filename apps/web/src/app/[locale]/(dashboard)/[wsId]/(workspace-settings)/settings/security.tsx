@@ -2,7 +2,7 @@
 
 import { Workspace } from '@ncthub/types/db';
 import { Button } from '@ncthub/ui/button';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -71,20 +71,16 @@ const deleteWorkspace = async (
 
     if (!res.ok) {
       if (options?.onError) options.onError();
-      toast({
-        title: 'Failed to delete workspace',
-        content: 'Please try again later.',
-        color: 'red',
+      toast.error('Failed to delete workspace', {
+        description: 'Please try again later.',
       });
     }
 
     if (options?.onSuccess) options.onSuccess();
   } catch (e) {
     if (options?.onError) options.onError();
-    toast({
-      title: 'Failed to delete workspace',
-      content: 'Please try again later.',
-      color: 'red',
+    toast.error('Failed to delete workspace', {
+      description: 'Please try again later.',
     });
   } finally {
     if (options?.onCompleted) options.onCompleted();

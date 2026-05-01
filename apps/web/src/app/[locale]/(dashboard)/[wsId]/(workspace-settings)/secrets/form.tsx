@@ -11,7 +11,7 @@ import {
   FormMessage,
 } from '@ncthub/ui/form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
 import { useTranslations } from 'next-intl';
@@ -62,8 +62,7 @@ export default function SecretForm({ wsId, data, onFinish }: Props) {
       router.refresh();
     } else {
       const data = await res.json();
-      toast({
-        title: `Failed to ${data.id ? 'edit' : 'create'} secret`,
+      toast(`Failed to ${data.id ? 'edit' : 'create'} secret`, {
         description: data.message,
       });
     }

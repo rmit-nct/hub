@@ -13,7 +13,7 @@ import {
   FormMessage,
 } from '@ncthub/ui/form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Check, Trash } from '@ncthub/ui/icons';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
@@ -88,8 +88,7 @@ export function StorageFolderForm({
       router.refresh();
     } else {
       setLoading(false);
-      toast({
-        title: 'Error creating folder',
+      toast('Error creating folder', {
         description: 'An error occurred while creating the folder',
       });
     }

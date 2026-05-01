@@ -15,7 +15,7 @@ import {
 } from '@ncthub/ui/dialog';
 import { Form } from '@ncthub/ui/form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Loader2, Settings, UserIcon } from '@ncthub/ui/icons';
 import { Label } from '@ncthub/ui/label';
 import { zodResolver } from '@ncthub/ui/resolvers';
@@ -127,19 +127,16 @@ export default function UserAvatar({ user }: AvatarProps) {
 
       if (updateError) throw updateError;
 
-      toast({
-        title: 'Avatar updated',
+      toast('Avatar updated', {
         description: 'Your avatar has been successfully updated.',
       });
       router.refresh();
       setOpen(false);
     } catch (error) {
       console.error('Error:', error);
-      toast({
-        title: 'Update failed',
+      toast.error('Update failed', {
         description:
           'There was an error updating your avatar. Please try again.',
-        variant: 'destructive',
       });
     } finally {
       form.reset();
@@ -162,15 +159,12 @@ export default function UserAvatar({ user }: AvatarProps) {
       .eq('id', user.id);
 
     if (updateError) {
-      toast({
-        title: 'Remove failed',
+      toast.error('Remove failed', {
         description:
           'There was an error removing your avatar. Please try again.',
-        variant: 'destructive',
       });
     } else {
-      toast({
-        title: 'Avatar removed',
+      toast('Avatar removed', {
         description: 'Your avatar has been successfully removed.',
       });
       router.refresh();
@@ -190,11 +184,9 @@ export default function UserAvatar({ user }: AvatarProps) {
       );
     } catch (error) {
       console.error('Error compressing image:', error);
-      toast({
-        title: 'Compression failed',
+      toast.error('Compression failed', {
         description:
           'There was an error compressing your image. Please try again.',
-        variant: 'destructive',
       });
     }
   };

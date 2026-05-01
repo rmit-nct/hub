@@ -12,7 +12,7 @@ import {
   FormMessage,
 } from '@ncthub/ui/form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
 import { useTranslations } from 'next-intl';
@@ -75,8 +75,7 @@ export function WalletForm({ wsId, data, onFinish }: Props) {
       router.refresh();
     } else {
       setLoading(false);
-      toast({
-        title: 'Error creating wallet',
+      toast('Error creating wallet', {
         description: 'An error occurred while creating the wallet',
       });
     }

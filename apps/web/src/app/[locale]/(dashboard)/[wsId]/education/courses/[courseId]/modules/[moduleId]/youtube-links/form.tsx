@@ -10,7 +10,7 @@ import {
   FormMessage,
 } from '@ncthub/ui/form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
 import { useTranslations } from 'next-intl';
@@ -76,14 +76,12 @@ export default function YouTubeLinkForm({
         router.refresh();
       } else {
         const data = await res.json();
-        toast({
-          title: `Failed to ${link ? 'edit' : 'create'} youtube link`,
+        toast(`Failed to ${link ? 'edit' : 'create'} youtube link`, {
           description: data.message,
         });
       }
     } catch (error) {
-      toast({
-        title: `Failed to ${link ? 'edit' : 'create'} youtube link`,
+      toast(`Failed to ${link ? 'edit' : 'create'} youtube link`, {
         description: error instanceof Error ? error.message : String(error),
       });
     }

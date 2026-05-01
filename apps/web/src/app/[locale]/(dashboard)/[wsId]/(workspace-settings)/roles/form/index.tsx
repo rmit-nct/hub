@@ -12,7 +12,7 @@ import { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
 import { Button } from '@ncthub/ui/button';
 import { Form } from '@ncthub/ui/form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Monitor, PencilRuler, Users } from '@ncthub/ui/icons';
 import { zodResolver } from '@ncthub/ui/resolvers';
 import { ScrollArea } from '@ncthub/ui/scroll-area';
@@ -147,8 +147,7 @@ export function RoleForm({ wsId, user, data, forceDefault, onFinish }: Props) {
     } else {
       setLoading(false);
       const data = await res.json();
-      toast({
-        title: `Failed to ${roleId ? 'edit' : 'create'} role`,
+      toast(`Failed to ${roleId ? 'edit' : 'create'} role`, {
         description: data.message,
       });
     }

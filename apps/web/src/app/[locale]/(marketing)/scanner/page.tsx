@@ -21,7 +21,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@ncthub/ui/card';
-import { useToast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import {
   Camera,
   Clock,
@@ -47,7 +47,6 @@ export default function ScannerPage() {
   const [filteredStudents, setFilteredStudents] = useState<Student[]>([]);
   const [showClearDialog, setShowClearDialog] = useState(false);
   const [whitelisted, setWhitelisted] = useState(false);
-  const { toast } = useToast();
 
   useEffect(() => {
     const checkWhitelisted = async () => {
@@ -178,8 +177,7 @@ export default function ScannerPage() {
     const updatedStudents = students.filter((s) => s.id !== id);
     setStudents(updatedStudents);
 
-    toast({
-      title: 'Student Deleted',
+    toast('Student Deleted', {
       description: 'Student has been deleted successfully',
     });
   };
@@ -190,11 +188,9 @@ export default function ScannerPage() {
 
   const handleUpload = async () => {
     if (!whitelisted) {
-      toast({
-        title: 'Access Denied',
+      toast.error('Access Denied', {
         description:
           'You must be a member of a workspace to upload students to the database.',
-        variant: 'destructive',
       });
       return;
     }
@@ -235,26 +231,18 @@ export default function ScannerPage() {
       setStudents(remainingStudents);
 
       if (successfulUploads.length > 0) {
-        toast({
-          title: 'Students Uploaded',
+        toast('Students Uploaded', {
           description: `Successfully uploaded ${successfulUploads.length}/${students.length} student(s)`,
-          variant: 'default',
         });
       } else {
-        toast({
-          title: 'No Students Uploaded',
+        toast.error('No Students Uploaded', {
           description: 'Failed to upload students to database',
-          variant: 'destructive',
         });
       }
     } catch (error) {
       console.error(error);
 
-      toast({
-        title: 'Error',
-        description: 'Unexpected error occurred',
-        variant: 'destructive',
-      });
+      toast.error('Error', { description: 'Unexpected error occurred' });
     }
   };
 

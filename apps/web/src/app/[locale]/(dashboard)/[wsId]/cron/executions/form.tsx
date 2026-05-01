@@ -12,7 +12,7 @@ import {
   FormMessage,
 } from '@ncthub/ui/form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
 import { ScrollArea } from '@ncthub/ui/scroll-area';
@@ -71,14 +71,12 @@ export default function ModelForm({ wsId, data, onFinish }: Props) {
         router.refresh();
       } else {
         const resData = await res.json();
-        toast({
-          title: `Failed to ${formData.id ? 'edit' : 'create'} user`,
+        toast(`Failed to ${formData.id ? 'edit' : 'create'} user`, {
           description: resData.message,
         });
       }
     } catch (error) {
-      toast({
-        title: `Failed to ${formData.id ? 'edit' : 'create'} user`,
+      toast(`Failed to ${formData.id ? 'edit' : 'create'} user`, {
         description: error instanceof Error ? error.message : String(error),
       });
     } finally {

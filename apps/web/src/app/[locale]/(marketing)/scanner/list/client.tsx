@@ -2,7 +2,7 @@
 
 import type { Student } from '@ncthub/types/primitives/Student';
 import { Button } from '@ncthub/ui/button';
-import { useToast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { ArrowLeft } from '@ncthub/ui/icons';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
@@ -13,7 +13,6 @@ export default function StudentListClient() {
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { toast } = useToast();
 
   const fetchStudents = useCallback(
     async (startDate?: Date | null, endDate?: Date | null) => {
@@ -113,11 +112,7 @@ export default function StudentListClient() {
     } catch (error) {
       console.error(error);
 
-      toast({
-        title: 'Failed to add student',
-        description: 'Please try again',
-        variant: 'destructive',
-      });
+      toast.error('Failed to add student', { description: 'Please try again' });
     }
   };
 
@@ -142,10 +137,8 @@ export default function StudentListClient() {
     } catch (error) {
       console.error(error);
 
-      toast({
-        title: 'Failed to update student',
+      toast.error('Failed to update student', {
         description: 'Please try again',
-        variant: 'destructive',
       });
     }
   };
@@ -163,17 +156,14 @@ export default function StudentListClient() {
       const updatedStudents = students.filter((student) => student.id !== id);
       setStudents(updatedStudents);
 
-      toast({
-        title: 'Student Deleted',
+      toast('Student Deleted', {
         description: 'Student has been deleted successfully',
       });
     } catch (error) {
       console.error(error);
 
-      toast({
-        title: 'Failed to delete student',
+      toast.error('Failed to delete student', {
         description: 'Please try again',
-        variant: 'destructive',
       });
     }
   };

@@ -12,7 +12,7 @@ import {
   FormMessage,
 } from '@ncthub/ui/form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { zodResolver } from '@ncthub/ui/resolvers';
 import { Textarea } from '@ncthub/ui/textarea';
 import { useTranslations } from 'next-intl';
@@ -69,8 +69,7 @@ export default function WorkspaceUserGroupTagsPage({ params }: Props) {
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast({
-      title: 'You submitted the following values:',
+    toast('You submitted the following values:', {
       description: (
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
           <code className="text-white">{JSON.stringify(data, null, 2)}</code>
