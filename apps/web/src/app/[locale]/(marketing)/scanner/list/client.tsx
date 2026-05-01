@@ -6,7 +6,7 @@ import { useToast } from '@ncthub/ui/hooks/use-toast';
 import { ArrowLeft } from '@ncthub/ui/icons';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as UUIDv4 } from 'uuid';
 import StudentList from '../StudentList';
 
 export default function StudentListClient() {
@@ -77,7 +77,7 @@ export default function StudentListClient() {
     program: string;
   }): Student => {
     return {
-      id: uuidv4(),
+      id: UUIDv4(),
       name: studentData.name.trim(),
       studentNumber: studentData.studentNumber.trim(),
       program: studentData.program ? studentData.program.trim() : '',

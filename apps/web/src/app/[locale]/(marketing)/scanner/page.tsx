@@ -36,7 +36,7 @@ import {
 import { Separator } from '@ncthub/ui/separator';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as UUIDv4 } from 'uuid';
 import StudentForm from './StudentForm';
 import StudentList from './StudentList';
 import VideoCapture from './VideoCapture';
@@ -140,7 +140,7 @@ export default function ScannerPage() {
     program: string | null;
   }): Student => {
     return {
-      id: uuidv4(),
+      id: UUIDv4(),
       name: studentData.name.trim(),
       studentNumber: studentData.studentNumber.trim(),
       program: studentData.program ? studentData.program.trim() : null,

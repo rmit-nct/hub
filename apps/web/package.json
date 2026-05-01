@@ -99,7 +99,7 @@
     "three-stdlib": "^2.36.1",
     "tldraw": "^4.5.10",
     "use-debounce": "^10.1.1",
-    "uuid": "^13.0.1",
+    "uuid": "^14.0.0",
     "xlsx": "file:vendor/xlsx-0.20.3.tgz",
     "zod": "^3.25.76"
   },
