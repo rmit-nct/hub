@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@ncthub/ui/dropdown-menu';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Ellipsis } from '@ncthub/ui/icons';
 import { Row } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
@@ -42,10 +42,7 @@ export function StorageObjectRowActions({ wsId, row, path = '' }: Props) {
     if (!error) {
       router.refresh();
     } else {
-      toast({
-        title: 'Failed to delete file',
-        description: error.message,
-      });
+      toast('Failed to delete file', { description: error.message });
     }
   };
 
@@ -60,8 +57,7 @@ export function StorageObjectRowActions({ wsId, row, path = '' }: Props) {
       .ilike('name', joinPath(wsId, path, storageObj.name, '%'));
 
     if (objects.error) {
-      toast({
-        title: 'Failed to get folder files',
+      toast('Failed to get folder files', {
         description: objects.error.message,
       });
       return;
@@ -74,8 +70,7 @@ export function StorageObjectRowActions({ wsId, row, path = '' }: Props) {
     if (!error) {
       router.refresh();
     } else {
-      toast({
-        title: 'Failed to delete files from folder',
+      toast('Failed to delete files from folder', {
         description: error.message,
       });
     }
@@ -108,10 +103,7 @@ export function StorageObjectRowActions({ wsId, row, path = '' }: Props) {
     if (!error) {
       router.refresh();
     } else {
-      toast({
-        title: 'Failed to rename file',
-        description: error.message,
-      });
+      toast('Failed to rename file', { description: error.message });
     }
   };
 
@@ -133,10 +125,7 @@ export function StorageObjectRowActions({ wsId, row, path = '' }: Props) {
       .ilike('name', joinPath(wsId, path, storageObj.name, '%'));
 
     if (error) {
-      toast({
-        title: 'Failed to get folder files',
-        description: error.message,
-      });
+      toast('Failed to get folder files', { description: error.message });
       return;
     }
 
@@ -154,8 +143,7 @@ export function StorageObjectRowActions({ wsId, row, path = '' }: Props) {
 
       // prompt in case of error, continue otherwise
       if (error) {
-        toast({
-          title: `Failed to move ${source} to ${destination}`,
+        toast(`Failed to move ${source} to ${destination}`, {
           description: error.message,
         });
       }
@@ -173,10 +161,7 @@ export function StorageObjectRowActions({ wsId, row, path = '' }: Props) {
       .download(joinPath(wsId, path, storageObj.name));
 
     if (error) {
-      toast({
-        title: 'Failed to download file',
-        description: error.message,
-      });
+      toast('Failed to download file', { description: error.message });
       return;
     }
 

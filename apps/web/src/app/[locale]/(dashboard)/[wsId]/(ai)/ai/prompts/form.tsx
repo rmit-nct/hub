@@ -18,7 +18,7 @@ import {
   FormMessage,
 } from '@ncthub/ui/form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
 import { Separator } from '@ncthub/ui/separator';
@@ -84,8 +84,7 @@ export function AIPromptForm({ wsId, data, onComplete, submitLabel }: Props) {
     } else {
       setLoading(false);
       setAccordionValue('prompt');
-      toast({
-        title: 'Error creating prompt',
+      toast('Error creating prompt', {
         description: 'An error occurred while creating the prompt',
       });
     }

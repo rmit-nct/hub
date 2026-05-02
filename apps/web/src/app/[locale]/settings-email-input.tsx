@@ -11,7 +11,7 @@ import {
   FormMessage,
 } from '@ncthub/ui/form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Check, Loader2 } from '@ncthub/ui/icons';
 import { zodResolver } from '@ncthub/ui/resolvers';
 import { useTranslations } from 'next-intl';
@@ -58,23 +58,19 @@ export default function EmailInput({ oldEmail, newEmail, disabled }: Props) {
     });
 
     if (res.ok) {
-      toast({
-        title:
-          data.email !== oldEmail
-            ? 'Email update initiated'
-            : 'Reverted change',
-        description:
-          data.email !== oldEmail
-            ? 'Confirmation emails have been sent to both emails.'
-            : 'Email change has been reverted.',
-      });
+      toast(
+        data.email !== oldEmail ? 'Email update initiated' : 'Reverted change',
+        {
+          description:
+            data.email !== oldEmail
+              ? 'Confirmation emails have been sent to both emails.'
+              : 'Email change has been reverted.',
+        }
+      );
 
       router.refresh();
     } else {
-      toast({
-        title: 'An error occurred',
-        description: 'Please try again.',
-      });
+      toast('An error occurred', { description: 'Please try again.' });
     }
 
     form.reset();

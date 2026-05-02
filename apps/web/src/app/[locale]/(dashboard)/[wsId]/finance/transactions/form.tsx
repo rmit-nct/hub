@@ -19,7 +19,7 @@ import {
   FormMessage,
 } from '@ncthub/ui/form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { CalendarIcon } from '@ncthub/ui/icons';
 import { Input } from '@ncthub/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@ncthub/ui/popover';
@@ -123,8 +123,7 @@ export function TransactionForm({ wsId, data, onFinish }: Props) {
       router.refresh();
     } else {
       setLoading(false);
-      toast({
-        title: 'Error creating category',
+      toast('Error creating category', {
         description: 'An error occurred while creating the category',
       });
     }

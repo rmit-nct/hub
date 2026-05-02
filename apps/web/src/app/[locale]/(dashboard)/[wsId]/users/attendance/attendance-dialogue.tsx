@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@ncthub/ui/dialog';
-import { useToast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import {
   Select,
   SelectContent,
@@ -54,8 +54,6 @@ export function AttendanceDialog({
     queryFn: () => getGroupData({ wsId, userId: user.id }),
   });
 
-  const { toast } = useToast();
-
   useEffect(() => {
     setSelectedGroupId(groupsQuery?.data?.data?.[0]?.id);
     setStatus(currentStatus);
@@ -83,15 +81,11 @@ export function AttendanceDialog({
 
       if (error) {
         console.error('Error updating attendance:', error);
-        toast({
-          title: t('ws-user-attendance.update_error'),
+        toast.error(t('ws-user-attendance.update_error'), {
           description: error.message,
-          variant: 'destructive',
         });
       } else {
-        toast({
-          title: t('ws-user-attendance.update_success'),
-        });
+        toast(t('ws-user-attendance.update_success'));
       }
     } else {
       // Remove the attendance record
@@ -106,15 +100,11 @@ export function AttendanceDialog({
 
       if (error) {
         console.error('Error removing attendance:', error);
-        toast({
-          title: t('ws-user-attendance.update_error'),
+        toast.error(t('ws-user-attendance.update_error'), {
           description: error.message,
-          variant: 'destructive',
         });
       } else {
-        toast({
-          title: t('ws-user-attendance.update_success'),
-        });
+        toast(t('ws-user-attendance.update_success'));
       }
     }
 

@@ -13,7 +13,7 @@ import {
   FormMessage,
 } from '@ncthub/ui/form';
 import { useFieldArray, useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Loader, Pencil, Plus, PlusCircle, Wand } from '@ncthub/ui/icons';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
@@ -106,14 +106,12 @@ export default function QuizForm({ wsId, moduleId, data, onFinish }: Props) {
         router.refresh();
       } else {
         const resData = await res.json();
-        toast({
-          title: `Failed to ${data.id ? 'edit' : 'create'} quiz`,
+        toast(`Failed to ${data.id ? 'edit' : 'create'} quiz`, {
           description: resData.message,
         });
       }
     } catch (error) {
-      toast({
-        title: `Failed to ${data.id ? 'edit' : 'create'} quiz`,
+      toast(`Failed to ${data.id ? 'edit' : 'create'} quiz`, {
         description: error instanceof Error ? error.message : String(error),
       });
     }
@@ -135,14 +133,12 @@ export default function QuizForm({ wsId, moduleId, data, onFinish }: Props) {
         const { explanation } = await res.json();
         form.setValue(`quiz_options.${index}.explanation`, explanation);
       } else {
-        toast({
-          title: t('common.error'),
+        toast(t('common.error'), {
           description: t('ws-quizzes.generation_error'),
         });
       }
     } catch (error) {
-      toast({
-        title: t('common.error'),
+      toast(t('common.error'), {
         description: error instanceof Error ? error.message : String(error),
       });
     } finally {

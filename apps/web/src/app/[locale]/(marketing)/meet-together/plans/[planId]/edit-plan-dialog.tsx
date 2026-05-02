@@ -31,7 +31,7 @@ import {
   FormMessage,
 } from '@ncthub/ui/form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Pencil } from '@ncthub/ui/icons';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
@@ -99,8 +99,7 @@ export default function EditPlanDialog({ plan }: Props) {
       setIsOpened(false);
     } else {
       setUpdating(false);
-      toast({
-        title: t('meet-together-plan-details.something_went_wrong'),
+      toast(t('meet-together-plan-details.something_went_wrong'), {
         description: t('meet-together-plan-details.cant_update_plan_right_now'),
       });
     }
@@ -117,8 +116,7 @@ export default function EditPlanDialog({ plan }: Props) {
       router.push('/meet-together');
     } else {
       setDeleting(false);
-      toast({
-        title: t('meet-together-plan-details.something_went_wrong'),
+      toast(t('meet-together-plan-details.something_went_wrong'), {
         description: t('meet-together-plan-details.cant_delete_plan_right_now'),
       });
     }

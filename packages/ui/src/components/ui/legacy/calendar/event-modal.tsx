@@ -47,7 +47,7 @@ import {
   FormMessage,
 } from '@ncthub/ui/form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { useToast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from 'sonner';
 import { ScrollArea } from '@ncthub/ui/scroll-area';
 import { Separator } from '@ncthub/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ncthub/ui/tabs';
@@ -100,7 +100,6 @@ const AIFormSchema = z.object({
 });
 
 export function EventModal() {
-  const { toast } = useToast();
   const startPickerRef = useRef<HTMLButtonElement>(null);
   const endPickerRef = useRef<HTMLButtonElement>(null);
 
@@ -342,10 +341,8 @@ export function EventModal() {
       closeModal();
     } catch (error) {
       console.error('Error saving event:', error);
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: 'Failed to save or sync event. Please try again.',
-        variant: 'destructive',
       });
     } finally {
       setIsSaving(false);
@@ -398,10 +395,8 @@ export function EventModal() {
       });
     } catch (error) {
       console.error('Error generating events:', error);
-      toast({
-        title: 'Error generating events',
+      toast.error('Error generating events', {
         description: 'Please try again with a different prompt',
-        variant: 'destructive',
       });
     }
   };
@@ -440,8 +435,7 @@ export function EventModal() {
 
       // Show success notification
       if (savedEvents.length > 0) {
-        toast({
-          title: 'Success',
+        toast('Success', {
           description: `${savedEvents.length}/${eventsToSave.length} event${savedEvents.length > 1 ? 's' : ''} saved`,
         });
         closeModal();
@@ -449,18 +443,14 @@ export function EventModal() {
 
       // If there are failed events, show an error notification
       if (failedEvents.length > 0) {
-        toast({
-          title: 'Warning',
+        toast.error('Warning', {
           description: `${failedEvents.length} event${failedEvents.length > 1 ? 's' : ''} failed to save`,
-          variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Error saving AI events to calendar:', error);
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: 'Failed to save or sync AI-generated events.',
-        variant: 'destructive',
       });
     } finally {
       setIsSaving(false);
@@ -487,10 +477,8 @@ export function EventModal() {
       closeModal();
     } catch (error) {
       console.error('Error deleting event:', error);
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: 'Failed to delete event. Please try again.',
-        variant: 'destructive',
       });
     } finally {
       setIsDeleting(false);
@@ -742,18 +730,14 @@ export function EventModal() {
         aiForm.setValue('prompt', result.text);
       } else {
         console.error('Failed to transcribe audio:', result.error);
-        toast({
-          title: 'Transcription Error',
+        toast.error('Transcription Error', {
           description: result.error || 'Failed to transcribe audio',
-          variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Error calling API:', error);
-      toast({
-        title: 'API Error',
+      toast.error('API Error', {
         description: 'Failed to process audio recording',
-        variant: 'destructive',
       });
     } finally {
       setIsProcessingAudio(false);
@@ -793,18 +777,14 @@ export function EventModal() {
           aiForm.setValue('prompt', result.text);
         } else {
           console.error('Failed to extract text from image:', result.error);
-          toast({
-            title: 'Image Processing Error',
+          toast.error('Image Processing Error', {
             description: result.error || 'Failed to extract text from image',
-            variant: 'destructive',
           });
         }
       } catch (error) {
         console.error('Error when sending image to server:', error);
-        toast({
-          title: 'API Error',
+        toast.error('API Error', {
           description: 'Failed to process uploaded image',
-          variant: 'destructive',
         });
       } finally {
         setIsProcessingImage(false);
@@ -871,16 +851,13 @@ export function EventModal() {
       }
 
       setEvent(updatedEvent);
-      toast({
-        title: 'Success',
+      toast('Success', {
         description: `Event ${checked ? 'locked' : 'unlocked'} successfully`,
       });
     } catch (error) {
       console.error('Error updating event lock status:', error);
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: 'Failed to update event lock status',
-        variant: 'destructive',
       });
       // Revert the toggle if update fails
       setEvent((prev) => ({ ...prev, locked: !checked }));

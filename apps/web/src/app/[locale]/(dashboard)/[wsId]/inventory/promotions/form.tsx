@@ -1,6 +1,6 @@
 'use client';
 
-import { ProductPromotion } from '@ncthub/types/primitives/ProductPromotion';
+import type { ProductPromotion } from '@ncthub/types/primitives/ProductPromotion';
 import { Button } from '@ncthub/ui/button';
 import {
   Form,
@@ -11,7 +11,7 @@ import {
   FormMessage,
 } from '@ncthub/ui/form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
 import {
@@ -23,8 +23,8 @@ import {
 } from '@ncthub/ui/select';
 import { Separator } from '@ncthub/ui/separator';
 import { Textarea } from '@ncthub/ui/textarea';
-import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { z } from 'zod';
 
@@ -41,7 +41,7 @@ const FormSchema = z
     name: z.string().min(1).max(255),
     description: z.string().optional(),
     code: z.string().min(1).max(255),
-    value: z.coerce.number().min(0),
+    value: z.number().min(0),
     unit: z.string(),
   })
   .refine(
@@ -96,8 +96,7 @@ export function PromotionForm({ wsId, wsUserId, data, onFinish }: Props) {
       router.refresh();
     } else {
       setLoading(false);
-      toast({
-        title: 'Error creating promotion',
+      toast('Error creating promotion', {
         description: 'An error occurred while creating the promotion',
       });
     }

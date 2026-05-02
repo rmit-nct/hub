@@ -31,7 +31,7 @@ import {
   FormMessage,
 } from '@ncthub/ui/form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from 'sonner';
 import { Input } from '@ncthub/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@ncthub/ui/popover';
 import { zodResolver } from '@ncthub/ui/resolvers';
@@ -114,8 +114,7 @@ export function WorkspaceSelect({
       setOpen(false);
     } else {
       setLoading(false);
-      toast({
-        title: 'Error creating workspace',
+      toast('Error creating workspace', {
         description: 'An error occurred while creating the workspace',
       });
     }

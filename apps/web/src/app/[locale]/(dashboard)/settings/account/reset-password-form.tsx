@@ -21,7 +21,7 @@ import {
   FormMessage,
 } from '@ncthub/ui/form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Eye, EyeOff, Lock } from '@ncthub/ui/icons';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
@@ -74,8 +74,7 @@ export default function ResetPasswordForm({ user }: { user: WorkspaceUser }) {
         throw error;
       }
 
-      toast({
-        title: t('common.success'),
+      toast(t('common.success'), {
         description:
           'Password has been updated successfully. You can now log in with your new password.',
       });
@@ -91,11 +90,9 @@ export default function ResetPasswordForm({ user }: { user: WorkspaceUser }) {
       form.reset();
     } catch (error) {
       console.error('Error resetting password:', error);
-      toast({
-        title: t('common.error'),
+      toast.error(t('common.error'), {
         description:
           'An error occurred while resetting your password. Please try again later.',
-        variant: 'destructive',
       });
     } finally {
       setLoading(false);

@@ -14,7 +14,7 @@ import {
   FormMessage,
 } from '@ncthub/ui/form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
 import { ScrollArea } from '@ncthub/ui/scroll-area';
@@ -47,9 +47,7 @@ const FormSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   schedule: z.string().min(1, 'Schedule is required'),
   active: z.boolean().default(true),
-  dataset_id: z.string({
-    required_error: 'Please select a dataset',
-  }),
+  dataset_id: z.string().min(1, 'Please select a dataset'),
   ws_id: z.string(),
 });
 
@@ -101,14 +99,12 @@ export function CronJobForm({ wsId, data, onFinish }: Props) {
         router.refresh();
       } else {
         const resData = await res.json();
-        toast({
-          title: `Failed to ${formData.id ? 'update' : 'create'} cron job`,
+        toast(`Failed to ${formData.id ? 'update' : 'create'} cron job`, {
           description: resData.message,
         });
       }
     } catch (error) {
-      toast({
-        title: `Failed to ${formData.id ? 'update' : 'create'} cron job`,
+      toast(`Failed to ${formData.id ? 'update' : 'create'} cron job`, {
         description: error instanceof Error ? error.message : String(error),
       });
     } finally {

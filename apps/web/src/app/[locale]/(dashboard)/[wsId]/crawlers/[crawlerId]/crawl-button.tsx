@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@ncthub/ui/button';
-import { useToast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { BugPlay, ExternalLink, Loader2, RefreshCw } from '@ncthub/ui/icons';
 import { Progress } from '@ncthub/ui/progress';
 import { cn } from '@ncthub/utils/format';
@@ -23,7 +23,6 @@ export default function CrawlButton({
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [progress, setProgress] = useState(0);
-  const { toast } = useToast();
 
   const handleCrawl = async () => {
     if (loading) return;
@@ -50,8 +49,7 @@ export default function CrawlButton({
       setSuccess(true);
       onCrawlComplete?.();
 
-      toast({
-        title: 'URL crawled successfully',
+      toast('URL crawled successfully', {
         description: (
           <div className="flex flex-col gap-1 truncate">
             <span className="truncate">{url}</span>
@@ -65,9 +63,7 @@ export default function CrawlButton({
       });
     } catch (err) {
       setProgress(0);
-      toast({
-        variant: 'destructive',
-        title: 'Failed to crawl URL',
+      toast.error('Failed to crawl URL', {
         description: 'Please try again later',
       });
       console.error('Error crawling URL:', err);
