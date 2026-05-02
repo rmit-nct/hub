@@ -21,7 +21,7 @@ import {
 } from '@ncthub/ui/field';
 import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { useToast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import {
   AlertCircle,
   Calendar as CalendarIcon,
@@ -51,7 +51,6 @@ const FormSchema = z.object({
 });
 
 export default function Page() {
-  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<'ai' | 'preview' | 'manual'>('ai');
   const [generatedEvent, setGeneratedEvent] = useState<any>(null);
   const [generating, setGenerating] = useState(false);
@@ -91,10 +90,8 @@ export default function Page() {
       });
     } catch (error) {
       console.error('Error generating event:', error);
-      toast({
-        title: 'Error generating event',
+      toast.error('Error generating event', {
         description: 'Please try again with a different prompt',
-        variant: 'destructive',
       });
       setGenerating(false);
     }

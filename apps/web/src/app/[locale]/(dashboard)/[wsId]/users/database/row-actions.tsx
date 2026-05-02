@@ -28,7 +28,7 @@ import {
 } from '@ncthub/ui/field';
 import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Ellipsis, Eye, Loader2, UserIcon, XIcon } from '@ncthub/ui/icons';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
@@ -161,16 +161,13 @@ export function UserRowActions({ row, href, extraData }: UserRowActionsProps) {
       );
 
       if (response.ok) {
-        toast({
-          title: t('ws-members.member-updated'),
+        toast.success(t('ws-members.member-updated'), {
           description: `"${user?.display_name || user?.full_name || 'Unknown'}" ${t(
             'ws-members.has-been-updated'
           )}`,
-          color: 'teal',
         });
       } else {
-        toast({
-          title: t('ws-members.error'),
+        toast(t('ws-members.error'), {
           description: `${t('ws-members.update-error')} "${
             user?.display_name || user?.full_name || 'Unknown'
           }"`,
@@ -179,10 +176,7 @@ export function UserRowActions({ row, href, extraData }: UserRowActionsProps) {
       router.refresh();
       // eslint-disable-next-line no-unused-vars
     } catch (error) {
-      toast({
-        title: t('ws-members.error'),
-        description: 'Failed to update member',
-      });
+      toast(t('ws-members.error'), { description: 'Failed to update member' });
     } finally {
       setSaving(false);
     }
@@ -200,10 +194,7 @@ export function UserRowActions({ row, href, extraData }: UserRowActionsProps) {
       router.refresh();
     } else {
       const data = await res.json();
-      toast({
-        title: 'Failed to delete workspace user',
-        description: data.message,
-      });
+      toast('Failed to delete workspace user', { description: data.message });
     }
   };
   const removeAvatar = async () => {
@@ -229,13 +220,11 @@ export function UserRowActions({ row, href, extraData }: UserRowActionsProps) {
       setPreviewSrc(null);
       form.setValue('avatar_url', null); // Clear avatar_url in the form state
 
-      toast({
-        title: 'Avatar removed successfully',
+      toast('Avatar removed successfully', {
         description: 'The user avatar has been removed.',
       });
     } catch (error) {
-      toast({
-        title: 'Error',
+      toast('Error', {
         description:
           error instanceof Error ? error.message : 'Failed to remove avatar',
       });
@@ -266,10 +255,7 @@ export function UserRowActions({ row, href, extraData }: UserRowActionsProps) {
       router.refresh();
     } else {
       const data = await res.json();
-      toast({
-        title: 'Failed to remove user from group',
-        description: data.message,
-      });
+      toast('Failed to remove user from group', { description: data.message });
     }
   };
   return (

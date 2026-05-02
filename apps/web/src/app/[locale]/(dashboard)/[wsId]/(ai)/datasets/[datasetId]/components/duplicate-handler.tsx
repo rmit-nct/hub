@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@ncthub/ui/dialog';
-import { useToast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import {
   AlertCircle,
   CheckCircle,
@@ -37,7 +37,7 @@ interface LogEntry {
 
 export function DuplicateHandler({ wsId, datasetId }: Props) {
   const router = useRouter();
-  const { toast } = useToast();
+
   const [isOpen, setIsOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -95,10 +95,8 @@ export function DuplicateHandler({ wsId, datasetId }: Props) {
         `Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
         'error'
       );
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: 'Failed to detect duplicates. Please try again.',
-        variant: 'destructive',
       });
     } finally {
       setIsProcessing(false);
@@ -138,8 +136,7 @@ export function DuplicateHandler({ wsId, datasetId }: Props) {
       // Refresh the page data
       router.refresh();
 
-      toast({
-        title: 'Success',
+      toast('Success', {
         description: `Successfully removed ${data.removedCount} duplicate rows.`,
       });
     } catch (error) {
@@ -148,10 +145,8 @@ export function DuplicateHandler({ wsId, datasetId }: Props) {
         `Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
         'error'
       );
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: 'Failed to remove duplicates. Please try again.',
-        variant: 'destructive',
       });
     } finally {
       setIsRemoving(false);

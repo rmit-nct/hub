@@ -4,7 +4,7 @@ import { downloadPublicObject, uploadObject } from '@/lib/storage-helper';
 import { createClient } from '@ncthub/supabase/next/client';
 import { Workspace } from '@ncthub/types/db';
 import { Button } from '@ncthub/ui/button';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Check, Loader2 } from '@ncthub/ui/icons';
 import { Input } from '@ncthub/ui/input';
 import Image from 'next/image';
@@ -37,8 +37,7 @@ export default function AvatarInput({ workspace, disabled }: Props) {
         path: workspace.avatar_url,
         onSuccess: setAvatarUrl,
         onError: () => {
-          toast({
-            title: 'Error downloading avatar',
+          toast('Error downloading avatar', {
             description: 'There was an error downloading the avatar.',
           });
         },
@@ -60,15 +59,13 @@ export default function AvatarInput({ workspace, disabled }: Props) {
           .eq('id', workspace.id);
 
         if (updateError) {
-          toast({
-            title: 'Error uploading avatar',
+          toast('Error uploading avatar', {
             description: 'There was an error uploading the avatar.',
           });
           return;
         }
 
-        toast({
-          title: 'Workspace updated',
+        toast('Workspace updated', {
           description: 'Workspace avatar updated successfully.',
         });
 
@@ -76,8 +73,7 @@ export default function AvatarInput({ workspace, disabled }: Props) {
         router.refresh();
       },
       onError: () => {
-        toast({
-          title: 'Error uploading avatar',
+        toast('Error uploading avatar', {
           description: 'There was an error uploading the avatar.',
         });
       },

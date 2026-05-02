@@ -5,7 +5,7 @@ import { GenerateDialog } from '@/components/generate-dialog';
 import { useObject } from '@ncthub/ai/object/core';
 import { flashcardSchema } from '@ncthub/ai/object/types';
 import { Button } from '@ncthub/ui/button';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -44,8 +44,7 @@ export function AIFlashcards({
 
       await Promise.all(promises);
 
-      toast({
-        title: t('common.success'),
+      toast(t('common.success'), {
         description: t('ws-flashcards.generation_accepted'),
       });
 
@@ -53,8 +52,7 @@ export function AIFlashcards({
       setAccepted(true);
     } catch (e) {
       console.log(e);
-      toast({
-        title: t('common.error'),
+      toast(t('common.error'), {
         description: t('ws-flashcards.generation_error'),
       });
     }

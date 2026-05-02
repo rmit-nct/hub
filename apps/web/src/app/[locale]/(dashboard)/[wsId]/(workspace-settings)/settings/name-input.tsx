@@ -4,7 +4,7 @@ import { Button } from '@ncthub/ui/button';
 import { Field, FieldError } from '@ncthub/ui/field';
 import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Check, Loader2 } from '@ncthub/ui/icons';
 import { Input } from '@ncthub/ui/input';
 import { Label } from '@ncthub/ui/label';
@@ -52,17 +52,13 @@ export default function NameInput({
     });
 
     if (res.ok) {
-      toast({
-        title: 'Workspace updated',
+      toast('Workspace updated', {
         description: 'The name of the workspace has been updated.',
       });
 
       router.refresh();
     } else {
-      toast({
-        title: 'An error occurred',
-        description: 'Please try again.',
-      });
+      toast('An error occurred', { description: 'Please try again.' });
     }
 
     setSaving(false);

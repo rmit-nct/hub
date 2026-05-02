@@ -5,7 +5,7 @@ import { Button } from '@ncthub/ui/button';
 import { Field, FieldLabel, FieldError } from '@ncthub/ui/field';
 import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
 import { useRouter } from 'next/navigation';
@@ -46,18 +46,15 @@ export function TaskListForm({ boardId, onSuccess }: TaskListFormProps) {
 
       if (error) throw error;
 
-      toast({
-        title: 'Task list created',
+      toast('Task list created', {
         description: 'The new task list has been added successfully.',
       });
       onSuccess?.();
       router.refresh();
     } catch (error: any) {
       console.error('Error creating task list:', error);
-      toast({
-        title: 'Failed to create task list',
+      toast.error('Failed to create task list', {
         description: error.message || 'An unexpected error occurred.',
-        variant: 'destructive',
       });
     }
   };

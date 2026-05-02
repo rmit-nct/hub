@@ -5,7 +5,7 @@ import { Button } from '@ncthub/ui/button';
 import { Field, FieldLabel, FieldError } from '@ncthub/ui/field';
 import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
 import {
@@ -90,8 +90,7 @@ export function PromotionForm({ wsId, wsUserId, data, onFinish }: Props) {
       router.refresh();
     } else {
       setLoading(false);
-      toast({
-        title: 'Error creating promotion',
+      toast('Error creating promotion', {
         description: 'An error occurred while creating the promotion',
       });
     }

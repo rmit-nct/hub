@@ -20,7 +20,7 @@ import {
 } from '@ncthub/ui/field';
 import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Settings, User as UserIcon } from '@ncthub/ui/icons';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
@@ -73,8 +73,7 @@ export function MemberSettingsButton({
     );
 
     if (response.ok) {
-      toast({
-        title: invited ? t('invitation_revoked') : t('member_removed'),
+      toast.success(invited ? t('invitation_revoked') : t('member_removed'), {
         description: invited
           ? `${t('invitation_to')} ${
               (user?.handle && `@${user?.handle}`) ||
@@ -82,12 +81,10 @@ export function MemberSettingsButton({
               user?.email
             } ${t('has_been_revoked')}`
           : `"${user?.display_name || 'Unknown'}" ${t('has_been_removed')}`,
-        color: 'teal',
       });
       if (user.id === currentUser?.id) router.push('/onboarding');
     } else {
-      toast({
-        title: t('error'),
+      toast(t('error'), {
         description: invited
           ? t('revoke_error')
           : `${t('remove_error')} "${user?.display_name || 'Unknown'}"`,
@@ -115,16 +112,13 @@ export function MemberSettingsButton({
     );
 
     if (response.ok) {
-      toast({
-        title: t('member-updated'),
+      toast.success(t('member-updated'), {
         description: `"${user?.display_name || 'Unknown'}" ${t(
           'has-been-updated'
         )}`,
-        color: 'teal',
       });
     } else {
-      toast({
-        title: t('error'),
+      toast(t('error'), {
         description: `${t('update-error')} "${
           user?.display_name || 'Unknown'
         }"`,

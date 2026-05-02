@@ -6,7 +6,7 @@ import { useChat } from '@ncthub/ai/react';
 import type { UIMessage } from '@ncthub/ai/types';
 import { createClient } from '@ncthub/supabase/next/client';
 import type { AIChat } from '@ncthub/types/db';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { cn } from '@ncthub/utils/format';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -74,8 +74,7 @@ const Chat = ({
         const response = await fetch(input, init);
 
         if (!response.ok) {
-          toast({
-            title: t('something_went_wrong'),
+          toast(t('something_went_wrong'), {
             description: t('try_again_later'),
           });
         }
@@ -84,10 +83,7 @@ const Chat = ({
       },
     }),
     onError() {
-      toast({
-        title: t('something_went_wrong'),
-        description: t('try_again_later'),
-      });
+      toast(t('something_went_wrong'), { description: t('try_again_later') });
     },
   });
   const isLoading = status === 'submitted' || status === 'streaming';
@@ -134,10 +130,7 @@ const Chat = ({
       );
 
       if (!res.ok) {
-        toast({
-          title: t('something_went_wrong'),
-          description: res.statusText,
-        });
+        toast(t('something_went_wrong'), { description: res.statusText });
         return;
       }
 
@@ -210,10 +203,7 @@ const Chat = ({
     );
 
     if (!res.ok) {
-      toast({
-        title: t('something_went_wrong'),
-        description: res.statusText,
-      });
+      toast(t('something_went_wrong'), { description: res.statusText });
       return;
     }
 
@@ -238,18 +228,12 @@ const Chat = ({
       .eq('id', chat?.id);
 
     if (error) {
-      toast({
-        title: t('something_went_wrong'),
-        description: error.message,
-      });
+      toast(t('something_went_wrong'), { description: error.message });
       return;
     }
 
     setChat({ ...chat, is_public });
-    toast({
-      title: t('chat_updated'),
-      description: t('visibility_updated_desc'),
-    });
+    toast(t('chat_updated'), { description: t('visibility_updated_desc') });
   };
 
   const clearChat = useCallback(() => {

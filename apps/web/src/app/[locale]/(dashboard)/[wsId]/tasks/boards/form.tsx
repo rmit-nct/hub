@@ -5,7 +5,7 @@ import { Button } from '@ncthub/ui/button';
 import { Field, FieldLabel, FieldError } from '@ncthub/ui/field';
 import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
 import { useTranslations } from 'next-intl';
@@ -58,14 +58,12 @@ export function TaskBoardForm({ wsId, data, onFinish }: Props) {
         router.refresh();
       } else {
         const data = await res.json();
-        toast({
-          title: `Failed to ${data.id ? 'edit' : 'create'} task board`,
+        toast(`Failed to ${data.id ? 'edit' : 'create'} task board`, {
           description: data.message,
         });
       }
     } catch (error) {
-      toast({
-        title: `Failed to ${data.id ? 'edit' : 'create'} task board`,
+      toast(`Failed to ${data.id ? 'edit' : 'create'} task board`, {
         description: error instanceof Error ? error.message : String(error),
       });
     }

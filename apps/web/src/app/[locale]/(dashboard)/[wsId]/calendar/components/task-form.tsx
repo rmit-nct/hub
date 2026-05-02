@@ -10,7 +10,7 @@ import {
 } from '@ncthub/ui/field';
 import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
 import { Textarea } from '@ncthub/ui/textarea';
@@ -63,18 +63,15 @@ export function TaskForm({ listId, onSuccess }: TaskFormProps) {
 
       if (error) throw error;
 
-      toast({
-        title: 'Task created',
+      toast('Task created', {
         description: 'The new task has been added successfully.',
       });
       onSuccess?.();
       router.refresh();
     } catch (error: any) {
       console.error('Error creating task:', error);
-      toast({
-        title: 'Failed to create task',
+      toast.error('Failed to create task', {
         description: error.message || 'An unexpected error occurred.',
-        variant: 'destructive',
       });
     }
   };

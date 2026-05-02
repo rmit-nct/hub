@@ -18,7 +18,7 @@ import ModifiableDialogTrigger from '@ncthub/ui/custom/modifiable-dialog-trigger
 import { Field, FieldLabel, FieldError } from '@ncthub/ui/field';
 import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useFieldArray, useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Check, ChevronsUpDown, Plus, Trash } from '@ncthub/ui/icons';
 import { Input } from '@ncthub/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@ncthub/ui/popover';
@@ -134,8 +134,7 @@ export function ProductForm({
       router.push('../products');
     } else {
       setLoading(false);
-      toast({
-        title: 'Error creating product',
+      toast('Error creating product', {
         description: 'An error occurred while creating the product',
       });
     }

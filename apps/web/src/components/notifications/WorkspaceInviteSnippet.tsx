@@ -1,7 +1,7 @@
 'use client';
 
 import type { Workspace } from '@ncthub/types/db';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import moment from 'moment';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -42,17 +42,13 @@ const WorkspaceInviteSnippet = ({ ws, transparent = true }: Props) => {
     });
 
     if (response.ok) {
-      toast({
-        title: acceptInviteSuccessTitle,
+      toast.success(acceptInviteSuccessTitle, {
         description: acceptInviteSuccessMessage,
-        color: 'teal',
       });
       router.refresh();
     } else {
-      toast({
-        title: acceptInviteErrorTitle,
+      toast.error(acceptInviteErrorTitle, {
         description: acceptInviteErrorMessage,
-        color: 'red',
       });
     }
   };
@@ -63,17 +59,13 @@ const WorkspaceInviteSnippet = ({ ws, transparent = true }: Props) => {
     });
 
     if (response.ok) {
-      toast({
-        title: declineInviteSuccessTitle,
+      toast.success(declineInviteSuccessTitle, {
         description: declineInviteSuccessMessage,
-        color: 'teal',
       });
       router.refresh();
     } else {
-      toast({
-        title: declineInviteErrorTitle,
+      toast.error(declineInviteErrorTitle, {
         description: declineInviteErrorMessage,
-        color: 'red',
       });
     }
   };

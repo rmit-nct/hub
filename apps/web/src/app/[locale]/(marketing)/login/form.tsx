@@ -11,7 +11,7 @@ import {
 } from '@ncthub/ui/field';
 import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Mail } from '@ncthub/ui/icons';
 import { Input } from '@ncthub/ui/input';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@ncthub/ui/input-otp';
@@ -113,10 +113,7 @@ export default function LoginForm() {
 
     if (result.success) {
       // Notify user
-      toast({
-        title: t('success'),
-        description: t('otp_sent'),
-      });
+      toast(t('success'), { description: t('otp_sent') });
 
       // OTP has been sent
       form.setValue('otp', '');
@@ -126,10 +123,7 @@ export default function LoginForm() {
       // Reset cooldown
       setResendCooldown(cooldown);
     } else {
-      toast({
-        title: t('failed'),
-        description: result.error || t('failed_to_send'),
-      });
+      toast(t('failed'), { description: result.error || t('failed_to_send') });
     }
 
     setLoading(false);
@@ -154,8 +148,7 @@ export default function LoginForm() {
       form.setError('otp', { message: t('invalid_verification_code') });
       form.setValue('otp', '');
 
-      toast({
-        title: t('failed'),
+      toast(t('failed'), {
         description: result.error || t('failed_to_verify'),
       });
     }
@@ -168,8 +161,7 @@ export default function LoginForm() {
     else if (otp) await verifyOtp({ email, otp });
     else {
       setLoading(false);
-      toast({
-        title: 'Error',
+      toast('Error', {
         description:
           'Please enter the OTP code sent to your email to continue.',
       });

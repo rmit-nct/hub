@@ -18,7 +18,7 @@ import {
 } from '@ncthub/ui/field';
 import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { UserPlus } from '@ncthub/ui/icons';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
@@ -71,15 +71,14 @@ export default function InviteMemberButton({
     });
 
     if (res.ok) {
-      toast({
-        title: 'Invitation sent',
+      toast('Invitation sent', {
         description: `An invitation has been sent to ${values.email}.`,
       });
       setOpen(false);
       router.refresh();
     } else {
       const data = await res.json();
-      toast({ title: 'Failed to invite member', description: data.message });
+      toast('Failed to invite member', { description: data.message });
     }
   };
 

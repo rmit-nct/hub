@@ -10,10 +10,10 @@ import {
 import { Button } from '@ncthub/ui/button';
 import { Field, FieldError, FieldLabel } from '@ncthub/ui/field';
 import { Controller, useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
 import { Separator } from '@ncthub/ui/separator';
+import { toast } from '@ncthub/ui/sonner';
 import { Textarea } from '@ncthub/ui/textarea';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -77,8 +77,7 @@ export function AIPromptForm({ wsId, data, onComplete, submitLabel }: Props) {
     } else {
       setLoading(false);
       setAccordionValue('prompt');
-      toast({
-        title: 'Error creating prompt',
+      toast('Error creating prompt', {
         description: 'An error occurred while creating the prompt',
       });
     }
