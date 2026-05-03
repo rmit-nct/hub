@@ -6,14 +6,8 @@ import { UserGroup } from '@ncthub/types/primitives/UserGroup';
 import { UserGroupTag } from '@ncthub/types/primitives/UserGroupTag';
 import { Button } from '@ncthub/ui/button';
 import { ColorPicker } from '@ncthub/ui/color-picker';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
+import { Field, FieldLabel, FieldError } from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
 import { toast } from '@ncthub/ui/sonner';
 import { Users } from '@ncthub/ui/icons';
@@ -94,71 +88,71 @@ export default function GroupTagForm({ wsId, data, onFinish }: Props) {
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-3">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t('name')}</FormLabel>
-              <FormControl>
-                <Input placeholder={t('name')} autoComplete="off" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="color"
-          render={({ field }) => (
-            <FormItem className="overflow-hidden">
-              <FormLabel>{t('color')}</FormLabel>
-              <FormControl>
-                <ColorPicker
-                  {...field}
-                  text={form.watch('name')}
-                  value={field.value}
-                  onChange={field.onChange}
-                  className="line-clamp-1 w-full grow-0 break-all text-ellipsis whitespace-nowrap"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {true || !!data?.id || (
-          <>
-            <Separator />
-
-            <Filter
-              title={t('linked_user_groups')}
-              icon={<Users className="mr-2 h-4 w-4" />}
-              defaultValues={form.watch('group_ids')}
-              options={
-                userGroups?.map((group) => ({
-                  label: group.name || 'No name',
-                  value: group.id,
-                  count: group.amount,
-                })) || []
-              }
-              onSet={(value) => form.setValue('group_ids', value)}
-              disabled={isPending || !!data?.id}
-              align="center"
-              alwaysEnableZero
-              alwaysShowNumber
+    <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-3">
+      <Controller
+        control={form.control}
+        name="name"
+        render={({ field, fieldState }) => (
+          <Field data-invalid={fieldState.invalid}>
+            <FieldLabel>{t('name')}</FieldLabel>{' '}
+            <Input
+              placeholder={t('name')}
+              autoComplete="off"
+              aria-invalid={fieldState.invalid}
+              {...field}
             />
-          </>
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          </Field>
         )}
+      />
 
-        <Button type="submit" className="w-full" disabled={disabled}>
-          {!!data?.id ? t('edit') : t('create')}
-        </Button>
-      </form>
-    </Form>
+      <Controller
+        control={form.control}
+        name="color"
+        render={({ field, fieldState }) => (
+          <Field data-invalid={fieldState.invalid} className="overflow-hidden">
+            <FieldLabel>{t('color')}</FieldLabel>{' '}
+            <ColorPicker
+              aria-invalid={fieldState.invalid}
+              {...field}
+              text={form.watch('name')}
+              value={field.value}
+              onChange={field.onChange}
+              className="line-clamp-1 w-full grow-0 break-all text-ellipsis whitespace-nowrap"
+            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          </Field>
+        )}
+      />
+
+      {true || !!data?.id || (
+        <>
+          <Separator />
+
+          <Filter
+            title={t('linked_user_groups')}
+            icon={<Users className="mr-2 h-4 w-4" />}
+            defaultValues={form.watch('group_ids')}
+            options={
+              userGroups?.map((group) => ({
+                label: group.name || 'No name',
+                value: group.id,
+                count: group.amount,
+              })) || []
+            }
+            onSet={(value) => form.setValue('group_ids', value)}
+            disabled={isPending || !!data?.id}
+            align="center"
+            alwaysEnableZero
+            alwaysShowNumber
+          />
+        </>
+      )}
+
+      <Button type="submit" className="w-full" disabled={disabled}>
+        {!!data?.id ? t('edit') : t('create')}
+      </Button>
+    </form>
   );
 }
 

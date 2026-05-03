@@ -10,14 +10,8 @@ import { Button } from '@ncthub/ui/button';
 import { Calendar } from '@ncthub/ui/calendar';
 import { Combobox } from '@ncthub/ui/custom/combobox';
 import { Dialog, DialogContent } from '@ncthub/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
+import { Field, FieldLabel, FieldError } from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
 import { toast } from '@ncthub/ui/sonner';
 import { CalendarIcon } from '@ncthub/ui/icons';
@@ -166,204 +160,215 @@ export function TransactionForm({ wsId, data, onFinish }: Props) {
           />
         )}
       </DialogContent>
-
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col space-y-2"
-        >
-          <div className="grid gap-2 md:grid-cols-2">
-            <FormField
-              control={form.control}
-              name="origin_wallet_id"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>{t('transaction-data-table.wallet')}</FormLabel>
-                  <Combobox
-                    t={t}
-                    {...field}
-                    mode="single"
-                    options={
-                      wallets
-                        ? wallets.map((wallet) => ({
-                            value: wallet.id!,
-                            label: wallet.name || '',
-                          }))
-                        : []
-                    }
-                    label={walletsLoading ? 'Loading...' : undefined}
-                    placeholder={t('transaction-data-table.select_wallet')}
-                    selected={field.value}
-                    onChange={field.onChange}
-                    onCreate={(name) => {
-                      setNewContentType('wallet');
-                      setNewContent({
-                        name,
-                      });
-                    }}
-                    disabled={loading || walletsLoading}
-                    useFirstValueAsDefault
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="category_id"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>{t('transaction-data-table.category')}</FormLabel>
-                  <Combobox
-                    t={t}
-                    {...field}
-                    mode="single"
-                    options={
-                      categories
-                        ? categories.map((category) => ({
-                            value: category.id!,
-                            label: category.name || '',
-                          }))
-                        : []
-                    }
-                    label={walletsLoading ? 'Loading...' : undefined}
-                    placeholder={t('transaction-data-table.select_category')}
-                    selected={field.value}
-                    onChange={field.onChange}
-                    onCreate={(name) => {
-                      setNewContentType('transaction-category');
-                      setNewContent({
-                        name,
-                      });
-                    }}
-                    disabled={loading || categoriesLoading}
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <div className="h-0" />
-          <Separator />
-
-          <FormField
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex flex-col space-y-2"
+      >
+        <div className="grid gap-2 md:grid-cols-2">
+          <Controller
             control={form.control}
-            name="amount"
-            disabled={loading}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t('transaction-data-table.amount')}</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    placeholder="0"
-                    value={
-                      !field.value
-                        ? ''
-                        : new Intl.NumberFormat('en-US', {
-                            maximumFractionDigits: 2,
-                          }).format(Math.abs(field.value))
-                    }
-                    onChange={(e) => {
-                      // Remove non-numeric characters except decimal point, then parse
-                      const numericValue = parseFloat(
-                        e.target.value.replace(/[^0-9.]/g, '')
-                      );
-                      if (!isNaN(numericValue)) {
-                        field.onChange(numericValue);
-                      } else {
-                        // Handle case where the input is not a number (e.g., all non-numeric characters are deleted)
-                        field.onChange(0);
-                      }
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+            name="origin_wallet_id"
+            render={({ field, fieldState }) => (
+              <Field
+                data-invalid={fieldState.invalid}
+                className="flex flex-col"
+              >
+                <FieldLabel>{t('transaction-data-table.wallet')}</FieldLabel>
+                <Combobox
+                  t={t}
+                  aria-invalid={fieldState.invalid}
+                  {...field}
+                  mode="single"
+                  options={
+                    wallets
+                      ? wallets.map((wallet) => ({
+                          value: wallet.id!,
+                          label: wallet.name || '',
+                        }))
+                      : []
+                  }
+                  label={walletsLoading ? 'Loading...' : undefined}
+                  placeholder={t('transaction-data-table.select_wallet')}
+                  selected={field.value}
+                  onChange={field.onChange}
+                  onCreate={(name) => {
+                    setNewContentType('wallet');
+                    setNewContent({
+                      name,
+                    });
+                  }}
+                  disabled={loading || walletsLoading}
+                  useFirstValueAsDefault
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
             )}
           />
 
-          <FormField
+          <Controller
             control={form.control}
-            name="description"
-            disabled={loading}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t('transaction-data-table.description')}</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder={t('transaction-data-table.description')}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+            name="category_id"
+            render={({ field, fieldState }) => (
+              <Field
+                data-invalid={fieldState.invalid}
+                className="flex flex-col"
+              >
+                <FieldLabel>{t('transaction-data-table.category')}</FieldLabel>
+                <Combobox
+                  t={t}
+                  aria-invalid={fieldState.invalid}
+                  {...field}
+                  mode="single"
+                  options={
+                    categories
+                      ? categories.map((category) => ({
+                          value: category.id!,
+                          label: category.name || '',
+                        }))
+                      : []
+                  }
+                  label={walletsLoading ? 'Loading...' : undefined}
+                  placeholder={t('transaction-data-table.select_category')}
+                  selected={field.value}
+                  onChange={field.onChange}
+                  onCreate={(name) => {
+                    setNewContentType('transaction-category');
+                    setNewContent({
+                      name,
+                    });
+                  }}
+                  disabled={loading || categoriesLoading}
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
             )}
           />
+        </div>
 
-          <div className="h-0" />
+        <div className="h-0" />
+        <Separator />
 
-          <Popover open={datePickerOpen} onOpenChange={setDatePickerOpen}>
-            <FormField
-              control={form.control}
-              name="taken_at"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>{t('transaction-data-table.taken_at')}</FormLabel>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          'pl-3 text-left font-normal',
-                          !field.value && 'text-muted-foreground'
-                        )}
-                      >
-                        {field.value ? (
-                          format(
-                            field.value,
-                            locale === 'vi' ? 'dd/MM/yyyy, ppp' : 'PPP',
-                            {
-                              locale: locale === 'vi' ? vi : enUS,
-                            }
-                          )
-                        ) : (
-                          <span>{t('transaction-data-table.taken_at')}</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="center">
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={(date) => {
-                        field.onChange(date);
-                        setDatePickerOpen(false);
-                      }}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </Popover>
+        <Controller
+          control={form.control}
+          name="amount"
+          disabled={loading}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel>{t('transaction-data-table.amount')}</FieldLabel>{' '}
+              <Input
+                aria-invalid={fieldState.invalid}
+                {...field}
+                placeholder="0"
+                value={
+                  !field.value
+                    ? ''
+                    : new Intl.NumberFormat('en-US', {
+                        maximumFractionDigits: 2,
+                      }).format(Math.abs(field.value))
+                }
+                onChange={(e) => {
+                  // Remove non-numeric characters except decimal point, then parse
+                  const numericValue = parseFloat(
+                    e.target.value.replace(/[^0-9.]/g, '')
+                  );
+                  if (!isNaN(numericValue)) {
+                    field.onChange(numericValue);
+                  } else {
+                    // Handle case where the input is not a number (e.g., all non-numeric characters are deleted)
+                    field.onChange(0);
+                  }
+                }}
+              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
 
-          <div className="h-2" />
+        <Controller
+          control={form.control}
+          name="description"
+          disabled={loading}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel>{t('transaction-data-table.description')}</FieldLabel>{' '}
+              <Textarea
+                placeholder={t('transaction-data-table.description')}
+                aria-invalid={fieldState.invalid}
+                {...field}
+              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
 
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading
-              ? t('common.processing')
-              : data?.id
-                ? t('ws-transactions.edit')
-                : t('ws-transactions.create')}
-          </Button>
-        </form>
-      </Form>
+        <div className="h-0" />
+
+        <Popover open={datePickerOpen} onOpenChange={setDatePickerOpen}>
+          <Controller
+            control={form.control}
+            name="taken_at"
+            render={({ field, fieldState }) => (
+              <Field
+                data-invalid={fieldState.invalid}
+                className="flex flex-col"
+              >
+                <FieldLabel>{t('transaction-data-table.taken_at')}</FieldLabel>
+                <PopoverTrigger asChild>
+                  {' '}
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      'pl-3 text-left font-normal',
+                      !field.value && 'text-muted-foreground'
+                    )}
+                  >
+                    {field.value ? (
+                      format(
+                        field.value,
+                        locale === 'vi' ? 'dd/MM/yyyy, ppp' : 'PPP',
+                        {
+                          locale: locale === 'vi' ? vi : enUS,
+                        }
+                      )
+                    ) : (
+                      <span>{t('transaction-data-table.taken_at')}</span>
+                    )}
+                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="center">
+                  <Calendar
+                    mode="single"
+                    selected={field.value}
+                    onSelect={(date) => {
+                      field.onChange(date);
+                      setDatePickerOpen(false);
+                    }}
+                    initialFocus
+                  />
+                </PopoverContent>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+        </Popover>
+
+        <div className="h-2" />
+
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading
+            ? t('common.processing')
+            : data?.id
+              ? t('ws-transactions.edit')
+              : t('ws-transactions.create')}
+        </Button>
+      </form>
     </Dialog>
   );
 }

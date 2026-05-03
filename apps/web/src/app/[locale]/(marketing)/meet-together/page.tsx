@@ -2,7 +2,7 @@ import { createClient } from '@ncthub/supabase/next/server';
 import type { SupabaseUser } from '@ncthub/supabase/next/user';
 import type { MeetTogetherPlan } from '@ncthub/types/primitives/MeetTogetherPlan';
 import { Separator } from '@ncthub/ui/separator';
-import Form from './form';
+import MeetTogetherForm from './form';
 import NeoMeetHeader from './neo-meet-header';
 import PlanCard from './plan-card';
 import 'dayjs/locale/vi';
@@ -24,7 +24,7 @@ export default async function MeetTogetherPage() {
       <div className="container mx-auto flex max-w-6xl flex-col gap-6 px-3 py-10 lg:gap-14 lg:py-16">
         <NeoMeetHeader />
       </div>
-      <Form
+      <MeetTogetherForm
         createdPlanCount={createdPlanCount}
         isLoggedIn={Boolean(user?.id)}
       />

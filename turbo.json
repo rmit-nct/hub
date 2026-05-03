@@ -37,13 +37,7 @@
     "OCR_SERVICE_URL",
     "PRODUCTION_DB_PASSWORD",
     "PRODUCTION_PROJECT_ID",
-    "SUPABASE_ACCESS_TOKEN",
-    "KV_URL",
-    "KV_REST_API_READ_ONLY_TOKEN",
-    "REDIS_URL",
-    "KV_REST_API_TOKEN",
-    "KV_REST_API_URL",
-    "test"
+    "SUPABASE_ACCESS_TOKEN"
   ],
   "tasks": {
     "build": {

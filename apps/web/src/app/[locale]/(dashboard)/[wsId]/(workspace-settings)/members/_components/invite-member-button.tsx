@@ -11,14 +11,12 @@ import {
   DialogTrigger,
 } from '@ncthub/ui/dialog';
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
+  Field,
+  FieldLabel,
+  FieldDescription,
+  FieldError,
+} from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
 import { toast } from '@ncthub/ui/sonner';
 import { UserPlus } from '@ncthub/ui/icons';
@@ -112,60 +110,62 @@ export default function InviteMemberButton({
 
         {currentUser?.role !== 'MEMBER' ? (
           <>
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(inviteMember)}
-                className="space-y-3"
-              >
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input placeholder="username@example.com" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+            <form
+              onSubmit={form.handleSubmit(inviteMember)}
+              className="space-y-3"
+            >
+              <Controller
+                control={form.control}
+                name="email"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel>Email</FieldLabel>{' '}
+                    <Input
+                      placeholder="username@example.com"
+                      aria-invalid={fieldState.invalid}
+                      {...field}
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
 
-                <Separator />
+              <Separator />
 
-                <FormField
-                  control={form.control}
-                  name="role"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Workspace Role</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Graphic Designer, Marketing Manager, etc."
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                      <FormDescription>
-                        The role of the member in the workspace is only for
-                        display purposes and does not affect workspace
-                        permissions.
-                      </FormDescription>
-                    </FormItem>
-                  )}
-                  disabled={currentUser?.role === 'ADMIN'}
-                />
+              <Controller
+                control={form.control}
+                name="role"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel>Workspace Role</FieldLabel>{' '}
+                    <Input
+                      placeholder="Graphic Designer, Marketing Manager, etc."
+                      aria-invalid={fieldState.invalid}
+                      {...field}
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                    <FieldDescription>
+                      The role of the member in the workspace is only for
+                      display purposes and does not affect workspace
+                      permissions.
+                    </FieldDescription>
+                  </Field>
+                )}
+                disabled={currentUser?.role === 'ADMIN'}
+              />
 
-                {/* <Separator />
+              {/* <Separator />
 
-                <FormField
+                <Controller
                   control={form.control}
                   name="accessLevel"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormLabel>Access Level</FormLabel>
-                      <FormControl>
-                        <SelectField
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid} className="w-full">
+                      <FieldLabel>Access Level</FieldLabel>                        <SelectField
                           id="access-level"
                           placeholder="Select an access level"
                           defaultValue={field.value}
@@ -188,21 +188,19 @@ export default function InviteMemberButton({
                           classNames={{ root: 'w-full' }}
                           disabled={currentUser?.role === 'MEMBER'}
                         />
-                      </FormControl>
-                      <FormMessage />
-                      <FormDescription>
+                      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                      <FieldDescription>
                         This will affect the member&apos;s permissions in the
                         workspace.
-                      </FormDescription>
-                    </FormItem>
+                      </FieldDescription>
+                    </Field>
                   )}
                 /> */}
 
-                <Button type="submit" className="w-full">
-                  Invite Member
-                </Button>
-              </form>
-            </Form>
+              <Button type="submit" className="w-full">
+                Invite Member
+              </Button>
+            </form>
           </>
         ) : (
           <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed p-8">

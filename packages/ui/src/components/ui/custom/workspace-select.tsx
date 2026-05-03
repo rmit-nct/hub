@@ -22,14 +22,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@ncthub/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
+import { Field, FieldLabel, FieldError } from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
 import { toast } from 'sonner';
 import { Input } from '@ncthub/ui/input';
@@ -297,90 +291,87 @@ export function WorkspaceSelect({
               {t('common.create_workspace_description')}
             </DialogDescription>
           </DialogHeader>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-2">
-              <FormField
-                control={form.control}
-                name="name"
-                disabled={loading}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('common.workspace_name')}</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Acme Inc." {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+          <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-2">
+            <Controller
+              control={form.control}
+              name="name"
+              disabled={loading}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel>{t('common.workspace_name')}</FieldLabel>{' '}
+                  <Input
+                    placeholder="Acme Inc."
+                    aria-invalid={fieldState.invalid}
+                    {...field}
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
 
-              <FormField
-                control={form.control}
-                name="plan"
-                disabled={loading}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('common.subscription_plan')}</FormLabel>
-                    <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a plan" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="FREE">
-                            <span className="font-medium">
-                              {t('common.free')}
-                            </span>{' '}
-                            -{' '}
-                            <span className="text-muted-foreground">
-                              {t('common.0_usd_per_month')}
-                            </span>
-                          </SelectItem>
-                          <SelectItem value="PRO" disabled>
-                            <span className="font-medium">
-                              {t('common.pro')}
-                            </span>{' '}
-                            -{' '}
-                            <span className="text-muted-foreground">
-                              {t('common.coming_soon')}
-                            </span>
-                          </SelectItem>
-                          <SelectItem value="ENTERPRISE" disabled>
-                            <span className="font-medium">
-                              {t('common.enterprise')}
-                            </span>{' '}
-                            -{' '}
-                            <span className="text-muted-foreground">
-                              {t('common.coming_soon')}
-                            </span>
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <Controller
+              control={form.control}
+              name="plan"
+              disabled={loading}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel>{t('common.subscription_plan')}</FieldLabel>{' '}
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <SelectTrigger aria-invalid={fieldState.invalid}>
+                      <SelectValue placeholder="Select a plan" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="FREE">
+                        <span className="font-medium">{t('common.free')}</span>{' '}
+                        -{' '}
+                        <span className="text-muted-foreground">
+                          {t('common.0_usd_per_month')}
+                        </span>
+                      </SelectItem>
+                      <SelectItem value="PRO" disabled>
+                        <span className="font-medium">{t('common.pro')}</span> -{' '}
+                        <span className="text-muted-foreground">
+                          {t('common.coming_soon')}
+                        </span>
+                      </SelectItem>
+                      <SelectItem value="ENTERPRISE" disabled>
+                        <span className="font-medium">
+                          {t('common.enterprise')}
+                        </span>{' '}
+                        -{' '}
+                        <span className="text-muted-foreground">
+                          {t('common.coming_soon')}
+                        </span>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
 
-              <DialogFooter>
-                <Button
-                  variant="outline"
-                  onClick={() => setShowNewWorkspaceDialog(false)}
-                >
-                  {t('common.cancel')}
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={loading || !form.formState.isValid}
-                >
-                  {t('common.continue')}
-                </Button>
-              </DialogFooter>
-            </form>
-          </Form>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setShowNewWorkspaceDialog(false)}
+              >
+                {t('common.cancel')}
+              </Button>
+              <Button
+                type="submit"
+                disabled={loading || !form.formState.isValid}
+              >
+                {t('common.continue')}
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
 

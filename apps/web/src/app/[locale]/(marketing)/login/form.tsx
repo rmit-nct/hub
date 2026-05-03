@@ -4,14 +4,12 @@ import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile';
 import { resolveTurnstileClientState } from '@ncthub/turnstile/client';
 import { Button } from '@ncthub/ui/button';
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
+  Field,
+  FieldLabel,
+  FieldDescription,
+  FieldError,
+} from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
 import { toast } from '@ncthub/ui/sonner';
 import { Mail } from '@ncthub/ui/icons';
@@ -171,116 +169,130 @@ export default function LoginForm() {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder={t('email_placeholder')}
-                  {...field}
-                  disabled={otpSent || loading}
-                />
-              </FormControl>
-
-              {otpSent || (
-                <FormDescription>{t('email_description')}</FormDescription>
-              )}
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="otp"
-          render={({ field }) => (
-            <FormItem className={otpSent ? '' : 'hidden'}>
-              <FormLabel>{t('otp_code')}</FormLabel>
-              <FormControl>
-                <div className="flex flex-col gap-2 md:flex-row">
-                  <InputOTP
-                    maxLength={maxOTPLength}
-                    {...field}
-                    onChange={(value) => {
-                      form.setValue('otp', value);
-                      if (value.length === maxOTPLength)
-                        form.handleSubmit(onSubmit)();
-                    }}
-                    disabled={loading}
-                  >
-                    <InputOTPGroup className="w-full justify-center">
-                      {Array.from({ length: maxOTPLength }).map((_, index) => (
-                        <InputOTPSlot
-                          key={index}
-                          index={index}
-                          className="max-md:w-full"
-                        />
-                      ))}
-                    </InputOTPGroup>
-                  </InputOTP>
-
-                  <Button
-                    onClick={() => sendOtp({ email: form.getValues('email') })}
-                    disabled={
-                      loading ||
-                      resendCooldown > 0 ||
-                      (turnstileClientState.isRequired && !captchaToken)
-                    }
-                    className="md:w-full"
-                    variant="secondary"
-                    type="button"
-                  >
-                    {resendCooldown > 0
-                      ? `${t('resend')} (${resendCooldown})`
-                      : t('resend')}
-                  </Button>
-                </div>
-              </FormControl>
-              {form.formState.errors.otp && (
-                <FormMessage>{form.formState.errors.otp.message}</FormMessage>
-              )}
-              <FormDescription>{t('otp_description')}</FormDescription>
-            </FormItem>
-          )}
-        />
-
-        {turnstileClientState.isRequired && (
-          <div className="flex flex-col items-center gap-2">
-            {turnstileClientState.canRenderWidget && turnstileSiteKey ? (
-              <Turnstile
-                ref={captchaRef}
-                siteKey={turnstileSiteKey}
-                onSuccess={(token) => {
-                  setCaptchaToken(token);
-                  setCaptchaError(undefined);
-                }}
-                onExpire={() => setCaptchaToken(undefined)}
-                onError={handleCaptchaError}
-                onTimeout={handleCaptchaTimeout}
-              />
-            ) : (
-              <p className="text-destructive text-sm">
-                {t('captcha_not_configured')}
-              </p>
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+      <Controller
+        control={form.control}
+        name="email"
+        render={({ field, fieldState }) => (
+          <Field data-invalid={fieldState.invalid}>
+            <FieldLabel>Email</FieldLabel>{' '}
+            <Input
+              placeholder={t('email_placeholder')}
+              aria-invalid={fieldState.invalid}
+              {...field}
+              disabled={otpSent || loading}
+            />
+            {otpSent || (
+              <FieldDescription>{t('email_description')}</FieldDescription>
             )}
-            {captchaError && (
-              <p className="text-destructive text-sm">{captchaError}</p>
-            )}
-          </div>
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          </Field>
         )}
+      />
 
-        {otpSent && (
-          <div className="grid gap-2 md:grid-cols-2">
-            {DEV_MODE ? (
+      <Controller
+        control={form.control}
+        name="otp"
+        render={({ field, fieldState }) => (
+          <Field
+            data-invalid={fieldState.invalid}
+            className={otpSent ? '' : 'hidden'}
+          >
+            <FieldLabel>{t('otp_code')}</FieldLabel>{' '}
+            <div className="flex flex-col gap-2 md:flex-row">
+              <InputOTP
+                maxLength={maxOTPLength}
+                aria-invalid={fieldState.invalid}
+                {...field}
+                onChange={(value) => {
+                  form.setValue('otp', value);
+                  if (value.length === maxOTPLength)
+                    form.handleSubmit(onSubmit)();
+                }}
+                disabled={loading}
+              >
+                <InputOTPGroup className="w-full justify-center">
+                  {Array.from({ length: maxOTPLength }).map((_, index) => (
+                    <InputOTPSlot
+                      key={index}
+                      index={index}
+                      className="max-md:w-full"
+                    />
+                  ))}
+                </InputOTPGroup>
+              </InputOTP>
+
+              <Button
+                onClick={() => sendOtp({ email: form.getValues('email') })}
+                disabled={
+                  loading ||
+                  resendCooldown > 0 ||
+                  (turnstileClientState.isRequired && !captchaToken)
+                }
+                className="md:w-full"
+                variant="secondary"
+                type="button"
+              >
+                {resendCooldown > 0
+                  ? `${t('resend')} (${resendCooldown})`
+                  : t('resend')}
+              </Button>
+            </div>
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            <FieldDescription>{t('otp_description')}</FieldDescription>
+          </Field>
+        )}
+      />
+
+      {turnstileClientState.isRequired && (
+        <div className="flex flex-col items-center gap-2">
+          {turnstileClientState.canRenderWidget && turnstileSiteKey ? (
+            <Turnstile
+              ref={captchaRef}
+              siteKey={turnstileSiteKey}
+              onSuccess={(token) => {
+                setCaptchaToken(token);
+                setCaptchaError(undefined);
+              }}
+              onExpire={() => setCaptchaToken(undefined)}
+              onError={handleCaptchaError}
+              onTimeout={handleCaptchaTimeout}
+            />
+          ) : (
+            <p className="text-destructive text-sm">
+              {t('captcha_not_configured')}
+            </p>
+          )}
+          {captchaError && (
+            <p className="text-destructive text-sm">{captchaError}</p>
+          )}
+        </div>
+      )}
+
+      {otpSent && (
+        <div className="grid gap-2 md:grid-cols-2">
+          {DEV_MODE ? (
+            <Link
+              href="http://localhost:8004"
+              target="_blank"
+              className="col-span-full"
+              aria-disabled={loading}
+            >
+              <Button
+                type="button"
+                className="w-full"
+                variant="outline"
+                disabled={loading}
+              >
+                <Mail size={18} className="mr-1" />
+                {t('open_inbucket')}
+              </Button>
+            </Link>
+          ) : (
+            <>
               <Link
-                href="http://localhost:8004"
+                href="https://mail.google.com/mail/u/0/#inbox"
                 target="_blank"
-                className="col-span-full"
                 aria-disabled={loading}
               >
                 <Button
@@ -290,63 +302,45 @@ export default function LoginForm() {
                   disabled={loading}
                 >
                   <Mail size={18} className="mr-1" />
-                  {t('open_inbucket')}
+                  {t('open_gmail')}
                 </Button>
               </Link>
-            ) : (
-              <>
-                <Link
-                  href="https://mail.google.com/mail/u/0/#inbox"
-                  target="_blank"
-                  aria-disabled={loading}
-                >
-                  <Button
-                    type="button"
-                    className="w-full"
-                    variant="outline"
-                    disabled={loading}
-                  >
-                    <Mail size={18} className="mr-1" />
-                    {t('open_gmail')}
-                  </Button>
-                </Link>
 
-                <Link
-                  href="https://outlook.live.com/mail/inbox"
-                  target="_blank"
-                  aria-disabled={loading}
+              <Link
+                href="https://outlook.live.com/mail/inbox"
+                target="_blank"
+                aria-disabled={loading}
+              >
+                <Button
+                  type="button"
+                  className="w-full"
+                  variant="outline"
+                  disabled={loading}
                 >
-                  <Button
-                    type="button"
-                    className="w-full"
-                    variant="outline"
-                    disabled={loading}
-                  >
-                    <Mail size={18} className="mr-1" />
-                    {t('open_outlook')}
-                  </Button>
-                </Link>
-              </>
-            )}
-          </div>
-        )}
-
-        <div className="grid gap-2">
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={
-              loading ||
-              form.formState.isSubmitting ||
-              !form.formState.isValid ||
-              (otpSent && !form.formState.dirtyFields.otp) ||
-              (!otpSent && turnstileClientState.isRequired && !captchaToken)
-            }
-          >
-            {loading ? t('processing') : t('continue')}
-          </Button>
+                  <Mail size={18} className="mr-1" />
+                  {t('open_outlook')}
+                </Button>
+              </Link>
+            </>
+          )}
         </div>
-      </form>
-    </Form>
+      )}
+
+      <div className="grid gap-2">
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={
+            loading ||
+            form.formState.isSubmitting ||
+            !form.formState.isValid ||
+            (otpSent && !form.formState.dirtyFields.otp) ||
+            (!otpSent && turnstileClientState.isRequired && !captchaToken)
+          }
+        >
+          {loading ? t('processing') : t('continue')}
+        </Button>
+      </div>
+    </form>
   );
 }

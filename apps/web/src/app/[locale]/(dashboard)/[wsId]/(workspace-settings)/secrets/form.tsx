@@ -2,14 +2,8 @@
 
 import { WorkspaceSecret } from '@ncthub/types/primitives/WorkspaceSecret';
 import { Button } from '@ncthub/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
+import { Field, FieldLabel, FieldError } from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
 import { toast } from '@ncthub/ui/sonner';
 import { Input } from '@ncthub/ui/input';
@@ -75,52 +69,52 @@ export default function SecretForm({ wsId, data, onFinish }: Props) {
   const disabled = !isDirty || !isValid || isSubmitting;
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t('ws-secrets.name')}</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Name"
-                  autoComplete="off"
-                  {...field}
-                  onChange={(e) =>
-                    field.onChange(
-                      e.target.value
-                        .replace(/-/g, '_')
-                        .replace(/\s/g, '_')
-                        .toUpperCase()
-                    )
-                  }
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+      <Controller
+        control={form.control}
+        name="name"
+        render={({ field, fieldState }) => (
+          <Field data-invalid={fieldState.invalid}>
+            <FieldLabel>{t('ws-secrets.name')}</FieldLabel>{' '}
+            <Input
+              placeholder="Name"
+              autoComplete="off"
+              aria-invalid={fieldState.invalid}
+              {...field}
+              onChange={(e) =>
+                field.onChange(
+                  e.target.value
+                    .replace(/-/g, '_')
+                    .replace(/\s/g, '_')
+                    .toUpperCase()
+                )
+              }
+            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          </Field>
+        )}
+      />
 
-        <FormField
-          control={form.control}
-          name="value"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t('ws-secrets.value')}</FormLabel>
-              <FormControl>
-                <Input placeholder="Value" autoComplete="off" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+      <Controller
+        control={form.control}
+        name="value"
+        render={({ field, fieldState }) => (
+          <Field data-invalid={fieldState.invalid}>
+            <FieldLabel>{t('ws-secrets.value')}</FieldLabel>{' '}
+            <Input
+              placeholder="Value"
+              autoComplete="off"
+              aria-invalid={fieldState.invalid}
+              {...field}
+            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          </Field>
+        )}
+      />
 
-        <Button type="submit" className="w-full" disabled={disabled}>
-          {data?.id ? t('common.edit') : t('common.create')}
-        </Button>
-      </form>
-    </Form>
+      <Button type="submit" className="w-full" disabled={disabled}>
+        {data?.id ? t('common.edit') : t('common.create')}
+      </Button>
+    </form>
   );
 }

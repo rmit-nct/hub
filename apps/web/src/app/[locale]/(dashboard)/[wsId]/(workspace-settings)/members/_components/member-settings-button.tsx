@@ -13,14 +13,12 @@ import {
   DialogTrigger,
 } from '@ncthub/ui/dialog';
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
+  Field,
+  FieldLabel,
+  FieldDescription,
+  FieldError,
+} from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
 import { toast } from '@ncthub/ui/sonner';
 import { Settings, User as UserIcon } from '@ncthub/ui/icons';
@@ -185,45 +183,39 @@ export function MemberSettingsButton({
             </p>
           </div>
         </div>
-
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(updateMember)}
-            className="space-y-3"
-          >
-            <FormField
-              control={form.control}
-              name="role"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Workspace Role</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Graphic Designer, Marketing Manager, etc."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                  <FormDescription>
-                    The role of the member in the workspace is only for display
-                    purposes and does not affect workspace permissions.
-                  </FormDescription>
-                </FormItem>
-              )}
-              disabled={
-                currentUser.role === 'MEMBER' ||
-                (currentUser.role === 'ADMIN' && user.role === 'OWNER')
-              }
-            />
-            {/* <Separator />
-            <FormField
+        <form onSubmit={form.handleSubmit(updateMember)} className="space-y-3">
+          <Controller
+            control={form.control}
+            name="role"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel>Workspace Role</FieldLabel>{' '}
+                <Input
+                  placeholder="Graphic Designer, Marketing Manager, etc."
+                  aria-invalid={fieldState.invalid}
+                  {...field}
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+                <FieldDescription>
+                  The role of the member in the workspace is only for display
+                  purposes and does not affect workspace permissions.
+                </FieldDescription>
+              </Field>
+            )}
+            disabled={
+              currentUser.role === 'MEMBER' ||
+              (currentUser.role === 'ADMIN' && user.role === 'OWNER')
+            }
+          />
+          {/* <Separator />
+            <Controller
               control={form.control}
               name="accessLevel"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel>Access Level</FormLabel>
-                  <FormControl>
-                    <SelectField
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid} className="w-full">
+                  <FieldLabel>Access Level</FieldLabel>                    <SelectField
                       id="access-level"
                       placeholder="Select an access level"
                       defaultValue={field.value}
@@ -249,42 +241,39 @@ export function MemberSettingsButton({
                         (currentUser.role === 'ADMIN' && user.role === 'OWNER')
                       }
                     />
-                  </FormControl>
-                  <FormMessage />
-                  <FormDescription>
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  <FieldDescription>
                     This will affect the member&apos;s permissions in the
                     workspace.
-                  </FormDescription>
-                </FormItem>
+                  </FieldDescription>
+                </Field>
               )}
               disabled={currentUser.role === 'MEMBER'}
             /> */}
-            {(currentUser.role === 'ADMIN' && user.role === 'OWNER') ||
-              ((currentUser.role !== 'MEMBER' ||
-                currentUser.id === user.id) && (
-                <div className="flex justify-center gap-2">
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    className="flex-none"
-                    onClick={deleteMember}
-                  >
-                    {currentUser.id === user.id
-                      ? 'Leave Workspace'
-                      : user.pending
-                        ? 'Revoke Invitation'
-                        : 'Remove Member'}
-                  </Button>
+          {(currentUser.role === 'ADMIN' && user.role === 'OWNER') ||
+            ((currentUser.role !== 'MEMBER' || currentUser.id === user.id) && (
+              <div className="flex justify-center gap-2">
+                <Button
+                  type="button"
+                  variant="destructive"
+                  className="flex-none"
+                  onClick={deleteMember}
+                >
+                  {currentUser.id === user.id
+                    ? 'Leave Workspace'
+                    : user.pending
+                      ? 'Revoke Invitation'
+                      : 'Remove Member'}
+                </Button>
 
-                  {currentUser.role === 'MEMBER' || (
-                    <Button type="submit" className="w-full">
-                      Save changes
-                    </Button>
-                  )}
-                </div>
-              ))}
-          </form>
-        </Form>
+                {currentUser.role === 'MEMBER' || (
+                  <Button type="submit" className="w-full">
+                    Save changes
+                  </Button>
+                )}
+              </div>
+            ))}
+        </form>
       </DialogContent>
     </Dialog>
   );
