@@ -2,7 +2,7 @@
 
 import { Button } from '@ncthub/ui/button';
 import { Combobox } from '@ncthub/ui/custom/combobox';
-import { useToast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import {
   Filter,
   Loader2,
@@ -22,7 +22,6 @@ export default function CrawlerFilters({ wsId }: { wsId: string }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { toast } = useToast();
 
   const [urlSearch, setUrlSearch] = useState(searchParams.get('search') || '');
   const currentDomain = searchParams.get('domain') || 'all';
@@ -38,9 +37,7 @@ export default function CrawlerFilters({ wsId }: { wsId: string }) {
       setDomains(data.domains);
     } catch (err) {
       console.error('Error fetching domains:', err);
-      toast({
-        variant: 'destructive',
-        title: 'Failed to fetch domains',
+      toast.error('Failed to fetch domains', {
         description: 'Please try again later',
       });
     } finally {
@@ -56,8 +53,7 @@ export default function CrawlerFilters({ wsId }: { wsId: string }) {
     setRefreshing(true);
     await fetchDomains();
     setRefreshing(false);
-    toast({
-      title: 'Domains refreshed',
+    toast('Domains refreshed', {
       description: `Found ${domains.length} unique domains`,
     });
   };

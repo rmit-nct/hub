@@ -38,16 +38,14 @@ import {
   DialogTitle,
 } from '@ncthub/ui/dialog';
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
+  Field,
+  FieldLabel,
+  FieldDescription,
+  FieldError,
+} from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { useToast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from 'sonner';
 import { ScrollArea } from '@ncthub/ui/scroll-area';
 import { Separator } from '@ncthub/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ncthub/ui/tabs';
@@ -100,7 +98,6 @@ const AIFormSchema = z.object({
 });
 
 export function EventModal() {
-  const { toast } = useToast();
   const startPickerRef = useRef<HTMLButtonElement>(null);
   const endPickerRef = useRef<HTMLButtonElement>(null);
 
@@ -342,10 +339,8 @@ export function EventModal() {
       closeModal();
     } catch (error) {
       console.error('Error saving event:', error);
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: 'Failed to save or sync event. Please try again.',
-        variant: 'destructive',
       });
     } finally {
       setIsSaving(false);
@@ -398,10 +393,8 @@ export function EventModal() {
       });
     } catch (error) {
       console.error('Error generating events:', error);
-      toast({
-        title: 'Error generating events',
+      toast.error('Error generating events', {
         description: 'Please try again with a different prompt',
-        variant: 'destructive',
       });
     }
   };
@@ -440,8 +433,7 @@ export function EventModal() {
 
       // Show success notification
       if (savedEvents.length > 0) {
-        toast({
-          title: 'Success',
+        toast('Success', {
           description: `${savedEvents.length}/${eventsToSave.length} event${savedEvents.length > 1 ? 's' : ''} saved`,
         });
         closeModal();
@@ -449,18 +441,14 @@ export function EventModal() {
 
       // If there are failed events, show an error notification
       if (failedEvents.length > 0) {
-        toast({
-          title: 'Warning',
+        toast.error('Warning', {
           description: `${failedEvents.length} event${failedEvents.length > 1 ? 's' : ''} failed to save`,
-          variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Error saving AI events to calendar:', error);
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: 'Failed to save or sync AI-generated events.',
-        variant: 'destructive',
       });
     } finally {
       setIsSaving(false);
@@ -487,10 +475,8 @@ export function EventModal() {
       closeModal();
     } catch (error) {
       console.error('Error deleting event:', error);
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: 'Failed to delete event. Please try again.',
-        variant: 'destructive',
       });
     } finally {
       setIsDeleting(false);
@@ -742,18 +728,14 @@ export function EventModal() {
         aiForm.setValue('prompt', result.text);
       } else {
         console.error('Failed to transcribe audio:', result.error);
-        toast({
-          title: 'Transcription Error',
+        toast.error('Transcription Error', {
           description: result.error || 'Failed to transcribe audio',
-          variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Error calling API:', error);
-      toast({
-        title: 'API Error',
+      toast.error('API Error', {
         description: 'Failed to process audio recording',
-        variant: 'destructive',
       });
     } finally {
       setIsProcessingAudio(false);
@@ -793,18 +775,14 @@ export function EventModal() {
           aiForm.setValue('prompt', result.text);
         } else {
           console.error('Failed to extract text from image:', result.error);
-          toast({
-            title: 'Image Processing Error',
+          toast.error('Image Processing Error', {
             description: result.error || 'Failed to extract text from image',
-            variant: 'destructive',
           });
         }
       } catch (error) {
         console.error('Error when sending image to server:', error);
-        toast({
-          title: 'API Error',
+        toast.error('API Error', {
           description: 'Failed to process uploaded image',
-          variant: 'destructive',
         });
       } finally {
         setIsProcessingImage(false);
@@ -871,16 +849,13 @@ export function EventModal() {
       }
 
       setEvent(updatedEvent);
-      toast({
-        title: 'Success',
+      toast('Success', {
         description: `Event ${checked ? 'locked' : 'unlocked'} successfully`,
       });
     } catch (error) {
       console.error('Error updating event lock status:', error);
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: 'Failed to update event lock status',
-        variant: 'destructive',
       });
       // Revert the toggle if update fails
       setEvent((prev) => ({ ...prev, locked: !checked }));
@@ -1233,161 +1208,162 @@ export function EventModal() {
               className="h-full p-0 focus-visible:ring-0 focus-visible:outline-none data-[state=active]:flex data-[state=active]:flex-col"
               style={{ display: activeTab === 'ai' ? 'flex' : 'none' }}
             >
-              <Form {...aiForm}>
-                <form
-                  onSubmit={aiForm.handleSubmit(handleGenerateEvent)}
-                  className="flex h-full flex-1 flex-col"
-                >
-                  <div className="flex flex-1 flex-col overflow-hidden">
-                    <ScrollArea className="h-[calc(90vh-250px)] flex-1">
-                      <div className="space-y-6 p-6">
-                        <FormField
-                          control={aiForm.control}
-                          name="prompt"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-base font-medium">
-                                Describe your event
-                              </FormLabel>
-                              <FormControl>
-                                <div className="relative w-full">
-                                  <AutosizeTextarea
-                                    {...field}
-                                    autoFocus
-                                    placeholder="E.g., Schedule a team meeting next Monday at 2pm for 1 hour..."
-                                    className="min-h-[200px] w-full resize-none rounded-md border border-input bg-background p-4 pr-20 text-base focus:ring-1 focus:ring-ring focus:outline-none"
-                                    disabled={
-                                      isLoading ||
-                                      isRecording ||
-                                      isProcessingAudio ||
-                                      isProcessingImage
-                                    }
-                                  />
+              <form
+                onSubmit={aiForm.handleSubmit(handleGenerateEvent)}
+                className="flex h-full flex-1 flex-col"
+              >
+                <div className="flex flex-1 flex-col overflow-hidden">
+                  <ScrollArea className="h-[calc(90vh-250px)] flex-1">
+                    <div className="space-y-6 p-6">
+                      <Controller
+                        control={aiForm.control}
+                        name="prompt"
+                        render={({ field, fieldState }) => (
+                          <Field data-invalid={fieldState.invalid}>
+                            <FieldLabel className="text-base font-medium">
+                              Describe your event
+                            </FieldLabel>{' '}
+                            <div className="relative w-full">
+                              <AutosizeTextarea
+                                aria-invalid={fieldState.invalid}
+                                {...field}
+                                autoFocus
+                                placeholder="E.g., Schedule a team meeting next Monday at 2pm for 1 hour..."
+                                className="min-h-[200px] w-full resize-none rounded-md border border-input bg-background p-4 pr-20 text-base focus:ring-1 focus:ring-ring focus:outline-none"
+                                disabled={
+                                  isLoading ||
+                                  isRecording ||
+                                  isProcessingAudio ||
+                                  isProcessingImage
+                                }
+                              />
 
-                                  {/* Record Button */}
-                                  <div className="absolute right-2 bottom-2 flex items-center gap-1">
-                                    <Button
-                                      size="xs"
-                                      type="button"
-                                      variant={
-                                        isRecording ? 'destructive' : 'default'
-                                      }
-                                      onClick={
-                                        isRecording
-                                          ? stopRecording
-                                          : startRecording
-                                      }
-                                      disabled={
-                                        isProcessingAudio ||
-                                        isProcessingImage ||
-                                        isLoading
-                                      }
-                                      className="flex items-center rounded-md"
-                                    >
-                                      {isRecording ? (
-                                        <StopCircle className="h-4 w-4" />
-                                      ) : isProcessingAudio ? (
-                                        <Loader2 className="h-4 w-4 animate-spin" />
-                                      ) : (
-                                        <Mic className="h-4 w-4" />
-                                      )}
-                                    </Button>
+                              {/* Record Button */}
+                              <div className="absolute right-2 bottom-2 flex items-center gap-1">
+                                <Button
+                                  size="xs"
+                                  type="button"
+                                  variant={
+                                    isRecording ? 'destructive' : 'default'
+                                  }
+                                  onClick={
+                                    isRecording ? stopRecording : startRecording
+                                  }
+                                  disabled={
+                                    isProcessingAudio ||
+                                    isProcessingImage ||
+                                    isLoading
+                                  }
+                                  className="flex items-center rounded-md"
+                                >
+                                  {isRecording ? (
+                                    <StopCircle className="h-4 w-4" />
+                                  ) : isProcessingAudio ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                  ) : (
+                                    <Mic className="h-4 w-4" />
+                                  )}
+                                </Button>
 
-                                    {/* 📸 Image button */}
-                                    <Button
-                                      size="xs"
-                                      type="button"
-                                      variant="default"
-                                      onClick={triggerImageUpload}
-                                      disabled={
-                                        isRecording ||
-                                        isProcessingAudio ||
-                                        isProcessingImage ||
-                                        isLoading
-                                      }
-                                      className="flex items-center rounded-md"
-                                    >
-                                      {isProcessingImage ? (
-                                        <Loader2 className="h-4 w-4 animate-spin" />
-                                      ) : (
-                                        <ImageIcon className="h-4 w-4" />
-                                      )}
-                                    </Button>
-                                    <input
-                                      type="file"
-                                      ref={fileInputRef}
-                                      accept="image/*"
-                                      onChange={handleUploadImage}
-                                      className="hidden"
-                                    />
-                                  </div>
-                                </div>
-                              </FormControl>
-                              <FormDescription className="flex items-center gap-1 text-xs">
-                                <Info className="h-3 w-3" />
-                                Be as specific as possible for best results
-                              </FormDescription>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        {isLoading && (
-                          <div className="flex items-center justify-center py-8">
-                            <div className="flex flex-col items-center gap-2">
-                              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                              <p className="text-sm text-muted-foreground">
-                                Creating your event...
-                              </p>
+                                {/* 📸 Image button */}
+                                <Button
+                                  size="xs"
+                                  type="button"
+                                  variant="default"
+                                  onClick={triggerImageUpload}
+                                  disabled={
+                                    isRecording ||
+                                    isProcessingAudio ||
+                                    isProcessingImage ||
+                                    isLoading
+                                  }
+                                  className="flex items-center rounded-md"
+                                >
+                                  {isProcessingImage ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                  ) : (
+                                    <ImageIcon className="h-4 w-4" />
+                                  )}
+                                </Button>
+                                <input
+                                  type="file"
+                                  ref={fileInputRef}
+                                  accept="image/*"
+                                  onChange={handleUploadImage}
+                                  className="hidden"
+                                />
+                              </div>
                             </div>
+                            <FieldDescription className="flex items-center gap-1 text-xs">
+                              <Info className="h-3 w-3" />
+                              Be as specific as possible for best results
+                            </FieldDescription>
+                            <FieldError
+                              errors={
+                                fieldState.error
+                                  ? [fieldState.error]
+                                  : undefined
+                              }
+                            />
+                          </Field>
+                        )}
+                      />
+                      {isLoading && (
+                        <div className="flex items-center justify-center py-8">
+                          <div className="flex flex-col items-center gap-2">
+                            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                            <p className="text-sm text-muted-foreground">
+                              Creating your event...
+                            </p>
                           </div>
-                        )}
-                        {error && (
-                          <Alert variant="destructive">
-                            <AlertCircle className="h-4 w-4" />
-                            <AlertTitle>Error</AlertTitle>
-                            <AlertDescription>
-                              {error.message ||
-                                'Failed to generate event. Please try again.'}
-                            </AlertDescription>
-                          </Alert>
-                        )}
-                      </div>
-                    </ScrollArea>
+                        </div>
+                      )}
+                      {error && (
+                        <Alert variant="destructive">
+                          <AlertCircle className="h-4 w-4" />
+                          <AlertTitle>Error</AlertTitle>
+                          <AlertDescription>
+                            {error.message ||
+                              'Failed to generate event. Please try again.'}
+                          </AlertDescription>
+                        </Alert>
+                      )}
+                    </div>
+                  </ScrollArea>
 
-                    {/* Action Buttons */}
-                    <div className="mt-auto border-t p-6">
-                      <div className="flex justify-between">
-                        <Button
-                          variant="outline"
-                          onClick={closeModal}
-                          disabled={isLoading}
-                          className="flex items-center gap-2"
-                        >
-                          <X className="h-4 w-4" />
-                          <span>Cancel</span>
-                        </Button>
-                        <Button
-                          type="submit"
-                          disabled={isLoading || !aiForm.watch('prompt')}
-                          className="flex items-center gap-2 bg-primary"
-                        >
-                          {isLoading ? (
-                            <>
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                              <span>Creating...</span>
-                            </>
-                          ) : (
-                            <>
-                              <Sparkles className="h-4 w-4" />
-                              <span>Generate Event</span>
-                            </>
-                          )}
-                        </Button>
-                      </div>
+                  {/* Action Buttons */}
+                  <div className="mt-auto border-t p-6">
+                    <div className="flex justify-between">
+                      <Button
+                        variant="outline"
+                        onClick={closeModal}
+                        disabled={isLoading}
+                        className="flex items-center gap-2"
+                      >
+                        <X className="h-4 w-4" />
+                        <span>Cancel</span>
+                      </Button>
+                      <Button
+                        type="submit"
+                        disabled={isLoading || !aiForm.watch('prompt')}
+                        className="flex items-center gap-2 bg-primary"
+                      >
+                        {isLoading ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            <span>Creating...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="h-4 w-4" />
+                            <span>Generate Event</span>
+                          </>
+                        )}
+                      </Button>
                     </div>
                   </div>
-                </form>
-              </Form>
+                </div>
+              </form>
             </TabsContent>
 
             {/* Preview Tab */}

@@ -1,7 +1,6 @@
 'use client';
 
-import AIModelSelector from './model-selector';
-import { AIPrompt } from '@ncthub/types/db';
+import type { AIPrompt } from '@ncthub/types/db';
 import {
   Accordion,
   AccordionContent,
@@ -9,24 +8,18 @@ import {
   AccordionTrigger,
 } from '@ncthub/ui/accordion';
 import { Button } from '@ncthub/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
-import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { Field, FieldError, FieldLabel } from '@ncthub/ui/field';
+import { Controller, useForm } from '@ncthub/ui/hooks/use-form';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
 import { Separator } from '@ncthub/ui/separator';
+import { toast } from '@ncthub/ui/sonner';
 import { Textarea } from '@ncthub/ui/textarea';
-import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import * as z from 'zod';
+import AIModelSelector from './model-selector';
 
 interface Props {
   wsId: string;
@@ -84,8 +77,7 @@ export function AIPromptForm({ wsId, data, onComplete, submitLabel }: Props) {
     } else {
       setLoading(false);
       setAccordionValue('prompt');
-      toast({
-        title: 'Error creating prompt',
+      toast('Error creating prompt', {
         description: 'An error occurred while creating the prompt',
       });
     }
@@ -108,81 +100,89 @@ export function AIPromptForm({ wsId, data, onComplete, submitLabel }: Props) {
       <AccordionItem value="prompt">
         <AccordionTrigger>Prompt</AccordionTrigger>
         <AccordionContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-2">
-              <FormField
-                control={form.control}
-                name="name"
-                disabled={loading}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Prompt name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="New prompt" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+          <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-2">
+            <Controller
+              control={form.control}
+              name="name"
+              disabled={loading}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel>Prompt name</FieldLabel>{' '}
+                  <Input
+                    placeholder="New prompt"
+                    aria-invalid={fieldState.invalid}
+                    {...field}
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
 
-              <FormField
-                control={form.control}
-                name="model"
-                disabled={!!data?.id || loadingModels || loading}
-                render={({ field }) => (
-                  <FormItem>
-                    <AIModelSelector
-                      label="AI Model"
-                      fetchUrl="/api/v1/infrastructure/ai/models"
-                      placeholder="Select a model"
-                      searchPlaceholder="Find a model"
-                      emptyDataMessage="No models found."
-                      open={openModelSelector}
-                      value={field.value}
-                      onValueChange={field.onChange}
-                      onOpenChange={setOpenModelSelector}
-                      beforeFetch={() => setLoadingModels(true)}
-                      afterFetch={(data) => {
-                        // if "GOOGLE_GEMINI_PRO" is in the data, set it as the default model
-                        const defaultModel = data.find(
-                          (model: { id: string }) =>
-                            model.id === 'gemini-2.0-flash-001'
-                        );
+            <Controller
+              control={form.control}
+              name="model"
+              disabled={!!data?.id || loadingModels || loading}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <AIModelSelector
+                    label="AI Model"
+                    fetchUrl="/api/v1/infrastructure/ai/models"
+                    placeholder="Select a model"
+                    searchPlaceholder="Find a model"
+                    emptyDataMessage="No models found."
+                    open={openModelSelector}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    onOpenChange={setOpenModelSelector}
+                    beforeFetch={() => setLoadingModels(true)}
+                    afterFetch={(data) => {
+                      // if "GOOGLE_GEMINI_PRO" is in the data, set it as the default model
+                      const defaultModel = data.find(
+                        (model: { id: string }) =>
+                          model.id === 'gemini-2.0-flash-001'
+                      );
 
-                        if (defaultModel) field.onChange(defaultModel.id);
-                        else field.onChange(data?.[0]?.id);
+                      if (defaultModel) field.onChange(defaultModel.id);
+                      else field.onChange(data?.[0]?.id);
 
-                        setLoadingModels(false);
-                      }}
-                      disabled={!!data?.id || loadingModels || loading}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                      setLoadingModels(false);
+                    }}
+                    disabled={!!data?.id || loadingModels || loading}
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
 
-              <FormField
-                control={form.control}
-                name="input"
-                disabled={!!data?.id || loading}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Input</FormLabel>
-                    <FormControl>
-                      <Textarea placeholder="Input" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <Controller
+              control={form.control}
+              name="input"
+              disabled={!!data?.id || loading}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel>Input</FieldLabel>{' '}
+                  <Textarea
+                    placeholder="Input"
+                    aria-invalid={fieldState.invalid}
+                    {...field}
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
 
-              <Separator />
+            <Separator />
 
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? t('common.processing') : submitLabel}
-              </Button>
-            </form>
-          </Form>
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? t('common.processing') : submitLabel}
+            </Button>
+          </form>
         </AccordionContent>
       </AccordionItem>
 

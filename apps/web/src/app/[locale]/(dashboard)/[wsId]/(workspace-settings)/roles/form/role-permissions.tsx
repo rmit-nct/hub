@@ -7,7 +7,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@ncthub/ui/accordion';
-import { FormField, FormItem } from '@ncthub/ui/form';
+import { Field } from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { ShieldCheck } from '@ncthub/ui/icons';
 import { Separator } from '@ncthub/ui/separator';
 import { useTranslations } from 'next-intl';
@@ -84,11 +85,11 @@ export default function RoleFormPermissionsSection({
                   <Fragment
                     key={`group-${group.id}-permission-${permission.id}`}
                   >
-                    <FormField
+                    <Controller
                       control={form.control}
                       name={`permissions.${permission.id}`}
-                      render={({ field }) => (
-                        <FormItem>
+                      render={({ field, fieldState }) => (
+                        <Field data-invalid={fieldState.invalid}>
                           <RolePermission
                             icon={permission.icon}
                             title={permission.title}
@@ -100,7 +101,7 @@ export default function RoleFormPermissionsSection({
                             }}
                             disabled={permission?.disabled}
                           />
-                        </FormItem>
+                        </Field>
                       )}
                     />
                     {idx !== group.permissions.length - 1 && (

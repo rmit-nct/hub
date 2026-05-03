@@ -13,7 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@ncthub/ui/dialog';
-import { useToast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { AlertCircle, BugPlay, Check, Loader2 } from '@ncthub/ui/icons';
 import { Input } from '@ncthub/ui/input';
 import {
@@ -48,7 +48,7 @@ interface PaginationData {
 
 export default function UncrawledUrls({ wsId }: { wsId: string }) {
   const t = useTranslations('ws-crawlers');
-  const { toast } = useToast();
+
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -161,10 +161,8 @@ export default function UncrawledUrls({ wsId }: { wsId: string }) {
           })
       );
 
-      toast({
-        title: 'Bulk crawl completed',
+      toast('Bulk crawl completed', {
         description: `Successfully crawled ${successCount} URLs${failCount > 0 ? `, ${failCount} failed` : ''}`,
-        variant: failCount > 0 ? 'destructive' : 'default',
       });
 
       router.refresh();

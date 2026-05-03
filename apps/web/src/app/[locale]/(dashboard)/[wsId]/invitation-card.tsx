@@ -12,7 +12,7 @@ import {
   CardTitle,
 } from '@ncthub/ui/card';
 import { LoadingIndicator } from '@ncthub/ui/custom/loading-indicator';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -50,18 +50,14 @@ export default function InvitationCard({
     });
 
     if (response.ok) {
-      toast({
-        title: acceptInviteSuccessTitle,
+      toast.success(acceptInviteSuccessTitle, {
         description: acceptInviteSuccessMessage,
-        color: 'teal',
       });
       router.refresh();
     } else {
       setLoading(undefined);
-      toast({
-        title: acceptInviteErrorTitle,
+      toast.error(acceptInviteErrorTitle, {
         description: acceptInviteErrorMessage,
-        color: 'red',
       });
     }
   };
@@ -73,19 +69,15 @@ export default function InvitationCard({
     });
 
     if (response.ok) {
-      toast({
-        title: declineInviteSuccessTitle,
+      toast.success(declineInviteSuccessTitle, {
         description: declineInviteSuccessMessage,
-        color: 'teal',
       });
       router.push('/onboarding');
       router.refresh();
     } else {
       setLoading(undefined);
-      toast({
-        title: declineInviteErrorTitle,
+      toast.error(declineInviteErrorTitle, {
         description: declineInviteErrorMessage,
-        color: 'red',
       });
     }
   };

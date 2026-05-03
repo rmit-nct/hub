@@ -11,20 +11,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@ncthub/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
+import { Field, FieldLabel, FieldError } from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
 import { Switch } from '@ncthub/ui/switch';
-import { ToastAction } from '@ncthub/ui/toast';
 import { cn } from '@ncthub/utils/format';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
@@ -93,24 +86,18 @@ export default function CreatePlanDialog({
 
   const handleSubmit = async () => {
     if (!isLoggedIn) {
-      toast({
-        title: t('login_required_title'),
+      toast(t('login_required_title'), {
         description: t('login_required_desc'),
-        action: (
-          <ToastAction
-            altText={t('login_action')}
-            onClick={() => router.push('/login')}
-          >
-            {t('login_action')}
-          </ToastAction>
-        ),
+        action: {
+          label: t('login_action'),
+          onClick: () => router.push('/login'),
+        },
       });
       return;
     }
 
     if (hasReachedPlanLimit) {
-      toast({
-        title: t('plan_limit_reached_title'),
+      toast(t('plan_limit_reached_title'), {
         description: t('plan_limit_reached_desc', {
           limit: MAX_MEETING_PLANS,
         }),
@@ -124,26 +111,17 @@ export default function CreatePlanDialog({
     let hasError = false;
 
     if (!data.start_time) {
-      toast({
-        title: t('missing_fields'),
-        description: t('start_time_required'),
-      });
+      toast(t('missing_fields'), { description: t('start_time_required') });
       hasError = true;
     }
 
     if (!data.end_time) {
-      toast({
-        title: t('missing_fields'),
-        description: t('end_time_required'),
-      });
+      toast(t('missing_fields'), { description: t('end_time_required') });
       hasError = true;
     }
 
     if (!data.dates) {
-      toast({
-        title: t('missing_fields'),
-        description: t('dates_required'),
-      });
+      toast(t('missing_fields'), { description: t('dates_required') });
       hasError = true;
     }
 
@@ -167,24 +145,18 @@ export default function CreatePlanDialog({
       setCreating(false);
 
       if (res.status === 401) {
-        toast({
-          title: t('login_required_title'),
+        toast(t('login_required_title'), {
           description: payload?.message || t('login_required_desc'),
-          action: (
-            <ToastAction
-              altText={t('login_action')}
-              onClick={() => router.push('/login')}
-            >
-              {t('login_action')}
-            </ToastAction>
-          ),
+          action: {
+            label: t('login_action'),
+            onClick: () => router.push('/login'),
+          },
         });
         return;
       }
 
       if (res.status === 409) {
-        toast({
-          title: t('plan_limit_reached_title'),
+        toast(t('plan_limit_reached_title'), {
           description:
             payload?.message ||
             t('plan_limit_reached_desc', { limit: MAX_MEETING_PLANS }),
@@ -192,8 +164,7 @@ export default function CreatePlanDialog({
         return;
       }
 
-      toast({
-        title: t('something_went_wrong'),
+      toast(t('something_went_wrong'), {
         description: payload?.message || t('cant_create_plan_right_now'),
       });
     }
@@ -240,60 +211,57 @@ export default function CreatePlanDialog({
           <DialogTitle>{t('new_plan')}</DialogTitle>
           <DialogDescription>{t('new_plan_desc')}</DialogDescription>
         </DialogHeader>
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-3">
+          <Controller
+            control={form.control}
+            name="name"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel>{t('name')}</FieldLabel>{' '}
+                <Input
+                  placeholder="Name"
+                  autoComplete="off"
+                  aria-invalid={fieldState.invalid}
+                  {...field}
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
 
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-3"
-          >
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('name')}</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Name" autoComplete="off" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <Controller
+            control={form.control}
+            name="is_public"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <div className="flex items-start justify-between gap-4 rounded-lg border p-4">
+                  <div className="space-y-1">
+                    <FieldLabel>{t('public_plan')}</FieldLabel>
+                    <p className="text-muted-foreground text-sm">
+                      {t('public_plan_desc')}
+                    </p>
+                  </div>{' '}
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </div>
+              </Field>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="is_public"
-              render={({ field }) => (
-                <FormItem>
-                  <div className="flex items-start justify-between gap-4 rounded-lg border p-4">
-                    <div className="space-y-1">
-                      <FormLabel>{t('public_plan')}</FormLabel>
-                      <p className="text-muted-foreground text-sm">
-                        {t('public_plan_desc')}
-                      </p>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </div>
-                </FormItem>
-              )}
-            />
-
-            <DialogFooter>
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={disabled || creating}
-              >
-                {creating ? t('creating_plan') : t('create_plan')}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
+          <DialogFooter>
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={disabled || creating}
+            >
+              {creating ? t('creating_plan') : t('create_plan')}
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

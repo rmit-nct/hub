@@ -12,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@ncthub/ui/card';
-import { useToast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from 'sonner';
 import { Progress } from '@ncthub/ui/progress';
 import { Check, ExternalLink, Link, Loader2, RefreshCw } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -81,7 +81,7 @@ export function GoogleCalendarSettings({
     statusMessage: '',
     changesMade: false,
   });
-  const { toast } = useToast();
+
   const { syncGoogleCalendarNow, getEvents } = useCalendar();
 
   // Show connected events count
@@ -91,10 +91,8 @@ export function GoogleCalendarSettings({
 
   const handleGoogleAuth = async () => {
     if (!wsId) {
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: 'Workspace ID is required to link Google Calendar',
-        variant: 'destructive',
       });
       return;
     }
@@ -113,10 +111,8 @@ export function GoogleCalendarSettings({
       window.location.href = authUrl;
     } catch (error) {
       console.error('Error initiating Google auth:', error);
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: 'Failed to initiate Google authentication',
-        variant: 'destructive',
       });
       setIsGoogleAuthenticating(false);
     }
@@ -124,10 +120,8 @@ export function GoogleCalendarSettings({
 
   const handleSyncNow = async () => {
     if (!experimentalGoogleToken) {
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: 'You need to connect Google Calendar first',
-        variant: 'destructive',
       });
       return;
     }
@@ -183,8 +177,7 @@ export function GoogleCalendarSettings({
       );
 
       if (success) {
-        toast({
-          title: 'Sync Complete',
+        toast('Sync Complete', {
           description:
             syncProgress.statusMessage || 'Calendar synced successfully',
         });
@@ -208,8 +201,7 @@ export function GoogleCalendarSettings({
         syncProgress.phase === 'complete' &&
         !syncProgress.changesMade
       ) {
-        toast({
-          title: 'Sync Status',
+        toast('Sync Status', {
           description: 'No changes detected or sync was not needed',
         });
 
@@ -248,11 +240,7 @@ export function GoogleCalendarSettings({
         message: errorMessage,
       });
 
-      toast({
-        title: 'Sync Failed',
-        description: errorMessage,
-        variant: 'destructive',
-      });
+      toast.error('Sync Failed', { description: errorMessage });
     } finally {
       setIsSyncing(false);
     }
@@ -276,8 +264,7 @@ export function GoogleCalendarSettings({
         throw error;
       }
 
-      toast({
-        title: 'Disconnected',
+      toast('Disconnected', {
         description: 'Google Calendar has been disconnected successfully',
       });
 
@@ -286,10 +273,8 @@ export function GoogleCalendarSettings({
       router.refresh();
     } catch (error) {
       console.error('Error disconnecting Google Calendar:', error);
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: 'Failed to disconnect Google Calendar',
-        variant: 'destructive',
       });
     } finally {
       setIsDisconnecting(false);

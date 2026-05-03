@@ -2,16 +2,10 @@
 
 import { TaskBoard } from '@ncthub/types/primitives/TaskBoard';
 import { Button } from '@ncthub/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
+import { Field, FieldLabel, FieldError } from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
 import { useTranslations } from 'next-intl';
@@ -64,44 +58,39 @@ export function TaskBoardForm({ wsId, data, onFinish }: Props) {
         router.refresh();
       } else {
         const data = await res.json();
-        toast({
-          title: `Failed to ${data.id ? 'edit' : 'create'} task board`,
+        toast(`Failed to ${data.id ? 'edit' : 'create'} task board`, {
           description: data.message,
         });
       }
     } catch (error) {
-      toast({
-        title: `Failed to ${data.id ? 'edit' : 'create'} task board`,
+      toast(`Failed to ${data.id ? 'edit' : 'create'} task board`, {
         description: error instanceof Error ? error.message : String(error),
       });
     }
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-3">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t('ws-task-boards.name')}</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder={t('ws-task-boards.name')}
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-3">
+      <Controller
+        control={form.control}
+        name="name"
+        render={({ field, fieldState }) => (
+          <Field data-invalid={fieldState.invalid}>
+            <FieldLabel>{t('ws-task-boards.name')}</FieldLabel>{' '}
+            <Input
+              placeholder={t('ws-task-boards.name')}
+              autoComplete="off"
+              aria-invalid={fieldState.invalid}
+              {...field}
+            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          </Field>
+        )}
+      />
 
-        <Button type="submit" className="w-full" disabled={disabled}>
-          {!!data?.id ? t('common.edit') : t('common.create')}
-        </Button>
-      </form>
-    </Form>
+      <Button type="submit" className="w-full" disabled={disabled}>
+        {!!data?.id ? t('common.edit') : t('common.create')}
+      </Button>
+    </form>
   );
 }

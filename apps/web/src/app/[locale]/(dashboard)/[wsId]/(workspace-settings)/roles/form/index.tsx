@@ -10,9 +10,9 @@ import { SupabaseUser } from '@ncthub/supabase/next/user';
 import { PermissionId, WorkspaceRole } from '@ncthub/types/db';
 import { WorkspaceUser } from '@ncthub/types/primitives/WorkspaceUser';
 import { Button } from '@ncthub/ui/button';
-import { Form } from '@ncthub/ui/form';
+import {} from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Monitor, PencilRuler, Users } from '@ncthub/ui/icons';
 import { zodResolver } from '@ncthub/ui/resolvers';
 import { ScrollArea } from '@ncthub/ui/scroll-area';
@@ -147,8 +147,7 @@ export function RoleForm({ wsId, user, data, forceDefault, onFinish }: Props) {
     } else {
       setLoading(false);
       const data = await res.json();
-      toast({
-        title: `Failed to ${roleId ? 'edit' : 'create'} role`,
+      toast(`Failed to ${roleId ? 'edit' : 'create'} role`, {
         description: data.message,
       });
     }
@@ -170,65 +169,63 @@ export function RoleForm({ wsId, user, data, forceDefault, onFinish }: Props) {
   );
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
-        <Tabs
-          defaultValue={forceDefault ? 'permissions' : 'display'}
-          className="w-full"
-          value={tab}
-          onValueChange={(value) =>
-            setTab(value as 'display' | 'permissions' | 'members')
-          }
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+      <Tabs
+        defaultValue={forceDefault ? 'permissions' : 'display'}
+        className="w-full"
+        value={tab}
+        onValueChange={(value) =>
+          setTab(value as 'display' | 'permissions' | 'members')
+        }
+      >
+        <TabsList
+          className={cn('grid h-fit w-full grid-cols-1 md:grid-cols-3')}
         >
-          <TabsList
-            className={cn('grid h-fit w-full grid-cols-1 md:grid-cols-3')}
-          >
-            <TabsTrigger value="display" disabled={forceDefault}>
-              <Monitor className="mr-1 h-5 w-5" />
-              {t('ws-roles.display')}
-            </TabsTrigger>
-            <TabsTrigger value="permissions">
-              <PencilRuler className="mr-1 h-5 w-5" />
-              {t('ws-roles.permissions')} (
-              {enabledPermissionsCount.reduce(
-                (acc, group) => acc + group.count,
-                0
-              )}
-              /{totalPermissions({ wsId, user })})
-            </TabsTrigger>
-            <TabsTrigger value="members" disabled={forceDefault || !isEdit}>
-              <Users className="mr-1 h-5 w-5" />
-              {t('ws-roles.members')} ({membersCount})
-            </TabsTrigger>
-          </TabsList>
+          <TabsTrigger value="display" disabled={forceDefault}>
+            <Monitor className="mr-1 h-5 w-5" />
+            {t('ws-roles.display')}
+          </TabsTrigger>
+          <TabsTrigger value="permissions">
+            <PencilRuler className="mr-1 h-5 w-5" />
+            {t('ws-roles.permissions')} (
+            {enabledPermissionsCount.reduce(
+              (acc, group) => acc + group.count,
+              0
+            )}
+            /{totalPermissions({ wsId, user })})
+          </TabsTrigger>
+          <TabsTrigger value="members" disabled={forceDefault || !isEdit}>
+            <Users className="mr-1 h-5 w-5" />
+            {t('ws-roles.members')} ({membersCount})
+          </TabsTrigger>
+        </TabsList>
 
-          <ScrollArea className="h-[50vh] border-b md:h-[60vh]">
-            <div className="mb-4">
-              <TabsContent value="display">
-                <RoleFormDisplaySection {...sectionProps} />
-              </TabsContent>
-              <TabsContent value="permissions">
-                <RoleFormPermissionsSection {...sectionProps} />
-              </TabsContent>
-              <TabsContent value="members">
-                <RoleFormMembersSection
-                  {...sectionProps}
-                  onUpdate={setRoleMembersCount}
-                />
-              </TabsContent>
-            </div>
-          </ScrollArea>
-        </Tabs>
+        <ScrollArea className="h-[50vh] border-b md:h-[60vh]">
+          <div className="mb-4">
+            <TabsContent value="display">
+              <RoleFormDisplaySection {...sectionProps} />
+            </TabsContent>
+            <TabsContent value="permissions">
+              <RoleFormPermissionsSection {...sectionProps} />
+            </TabsContent>
+            <TabsContent value="members">
+              <RoleFormMembersSection
+                {...sectionProps}
+                onUpdate={setRoleMembersCount}
+              />
+            </TabsContent>
+          </div>
+        </ScrollArea>
+      </Tabs>
 
-        <Button type="submit" className="w-full" disabled={disabled}>
-          {loading
-            ? t('common.processing')
-            : isEdit
-              ? t('ws-roles.edit')
-              : t('ws-roles.create')}
-        </Button>
-      </form>
-    </Form>
+      <Button type="submit" className="w-full" disabled={disabled}>
+        {loading
+          ? t('common.processing')
+          : isEdit
+            ? t('ws-roles.edit')
+            : t('ws-roles.create')}
+      </Button>
+    </form>
   );
 }
 

@@ -14,14 +14,12 @@ import {
   DialogTrigger,
 } from '@ncthub/ui/dialog';
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
+  Field,
+  FieldLabel,
+  FieldDescription,
+  FieldError,
+} from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
 import { Info, RefreshCw } from '@ncthub/ui/icons';
 import { Input } from '@ncthub/ui/input';
@@ -800,81 +798,77 @@ export function DatasetCrawler({
   );
 
   const renderConfigurationSection = () => (
-    <Form {...form}>
-      <form className="space-y-4">
-        <div className="grid grid-cols-3 gap-4">
-          {availableSheets.length > 1 && (
-            <FormItem>
-              <FormLabel>Sheet</FormLabel>
-              <select
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground hover:bg-accent/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-                value={selectedSheet}
-                onChange={(e) => handleSheetChange(e.target.value)}
-              >
-                {availableSheets.map((sheet) => (
-                  <option key={sheet} value={sheet}>
-                    {sheet}
-                  </option>
-                ))}
-              </select>
-              <FormDescription>Select the sheet to import</FormDescription>
-            </FormItem>
+    <form className="space-y-4">
+      <div className="grid grid-cols-3 gap-4">
+        {availableSheets.length > 1 && (
+          <Field>
+            <FieldLabel>Sheet</FieldLabel>
+            <select
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground hover:bg-accent/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+              value={selectedSheet}
+              onChange={(e) => handleSheetChange(e.target.value)}
+            >
+              {availableSheets.map((sheet) => (
+                <option key={sheet} value={sheet}>
+                  {sheet}
+                </option>
+              ))}
+            </select>
+            <FieldDescription>Select the sheet to import</FieldDescription>
+          </Field>
+        )}
+        <Controller
+          control={form.control}
+          name="headerRow"
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel>Header Row</FieldLabel>{' '}
+              <Input
+                aria-invalid={fieldState.invalid}
+                {...field}
+                type="number"
+                min="1"
+                placeholder="1"
+                onChange={(e) => {
+                  field.onChange(e);
+                  handleConfigChange();
+                }}
+                className="transition-colors hover:bg-accent/50"
+              />
+              <FieldDescription>
+                Row number containing column headers
+              </FieldDescription>
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
           )}
-          <FormField
-            control={form.control}
-            name="headerRow"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Header Row</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    type="number"
-                    min="1"
-                    placeholder="1"
-                    onChange={(e) => {
-                      field.onChange(e);
-                      handleConfigChange();
-                    }}
-                    className="transition-colors hover:bg-accent/50"
-                  />
-                </FormControl>
-                <FormDescription>
-                  Row number containing column headers
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="dataRow"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Data Start Row</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    type="number"
-                    min="1"
-                    placeholder="2"
-                    onChange={(e) => {
-                      field.onChange(e);
-                      handleConfigChange();
-                    }}
-                    className="transition-colors hover:bg-accent/50"
-                  />
-                </FormControl>
-                <FormDescription>
-                  First row containing actual data
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-      </form>
-    </Form>
+        />
+        <Controller
+          control={form.control}
+          name="dataRow"
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel>Data Start Row</FieldLabel>{' '}
+              <Input
+                aria-invalid={fieldState.invalid}
+                {...field}
+                type="number"
+                min="1"
+                placeholder="2"
+                onChange={(e) => {
+                  field.onChange(e);
+                  handleConfigChange();
+                }}
+                className="transition-colors hover:bg-accent/50"
+              />
+              <FieldDescription>
+                First row containing actual data
+              </FieldDescription>
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+      </div>
+    </form>
   );
 
   const renderDataPreview = () => (
