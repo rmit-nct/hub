@@ -617,8 +617,7 @@ export default function NeoQrGeneratorPage() {
     };
 
     createShortUrl();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDynamicMode, qrType, isGenerated, urlInput, urlInputValid]);
+  }, [isDynamicMode, qrType, isGenerated, urlInput, urlInputValid, dynamicQRMetadata?.originalUrl]);
 
   // Handles updating the destination URL of an existing dynamic QR code.
   // The QR image stays the same (still encodes the same short URL).
