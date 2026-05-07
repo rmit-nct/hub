@@ -34,6 +34,16 @@ export interface CreatedShortLink {
   slug: string;
 }
 
+// Returned by createDynamicQRUrl and consumed by the QR generator frontend.
+// Carries everything the UI needs: the short URL to encode, the slug for
+// future updates, the creation timestamp, and the original destination.
+export interface DynamicQRMetadata {
+  shortUrl: string;
+  slug: string;
+  createdAt: string;
+  originalUrl: string;
+}
+
 function resolveShortenerBaseUrl() {
   return (
     process.env.NEXT_PUBLIC_SHORTENER_URL ||
@@ -127,7 +137,8 @@ export async function createShortLink(
   for (let attempt = 0; attempt < attemptLimit; attempt++) {
     const slug = requestedSlug || generateSlug();
 
-    const { data, error } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result = await (supabase as any)
       .from('shortened_links')
       .insert([
         {
@@ -139,6 +150,14 @@ export async function createShortLink(
       ])
       .select('id, link, slug, domain, creator_id, created_at')
       .single();
+
+    const data = result.data as
+      | (Omit<CreatedShortLink, 'createdAt' | 'creatorId'> & {
+          created_at: string;
+          creator_id: string;
+        })
+      | null;
+    const error = result.error as { code: string; message: string } | null;
 
     if (!error && data) {
       return {
@@ -165,4 +184,138 @@ export async function createShortLink(
   }
 
   throw new Error('Could not generate a unique short link after 10 attempts');
+}
+
+/**
+ * Creates a short link from a URL string for dynamic QR code generation.
+ *
+ * Returns the full DynamicQRMetadata object so the frontend can:
+ *  - encode `shortUrl` into the QR image
+ *  - display `shortUrl` and `originalUrl` in the UI
+ *  - store `slug` to call updateDynamicQRUrl later (change destination)
+ *  - show `createdAt` in analytics / history views
+ *
+ * @param url - The destination URL to shorten
+ */
+export async function createDynamicQRUrl(
+  url: string
+): Promise<DynamicQRMetadata> {
+  const formData = new FormData();
+  formData.set('url', url);
+  // Let any error from createShortLink bubble up as-is so the frontend
+  // can distinguish auth errors from validation errors.
+  const result = await createShortLink(formData);
+  return {
+    shortUrl: result.shortUrl,
+    slug: result.slug,
+    createdAt: result.createdAt,
+    originalUrl: result.link,
+  };
+}
+
+/**
+ * Updates the destination URL of an existing dynamic QR code.
+ *
+ * This is what makes the QR code truly "dynamic": the printed QR image
+ * never changes (it still encodes the same short URL), but scanning it
+ * will now redirect to the new destination.
+ *
+ * Only the original creator can update their own link (enforced by
+ * matching both `slug` and `creator_id` in the WHERE clause).
+ *
+ * @param slug      - The slug returned by createDynamicQRUrl
+ * @param newUrl    - The new destination URL
+ */
+export async function updateDynamicQRUrl(
+  slug: string,
+  newUrl: string
+): Promise<void> {
+  const parsedSlug = slugSchema.safeParse(slug);
+  if (!parsedSlug.success) {
+    throw new Error(parsedSlug.error.issues[0]?.message || 'Invalid slug');
+  }
+
+  const normalizedUrl = parseHttpUrl(newUrl);
+
+  const shortenerBaseUrl = resolveShortenerBaseUrl();
+  const parsedShortenerBaseUrl = new URL(shortenerBaseUrl);
+
+  // Prevent turning a short link into a redirect loop back to the shortener.
+  if (normalizedUrl.origin === parsedShortenerBaseUrl.origin) {
+    throw new Error(
+      'Please enter a destination URL, not an existing short link'
+    );
+  }
+
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    throw new Error('Please sign in to update this link');
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (supabase as any)
+    .from('shortened_links')
+    .update({ link: normalizedUrl.toString() })
+    .eq('slug', slug)
+    .eq('creator_id', user.id); // security: only the owner can update
+
+  if (error) {
+    console.error(error);
+    throw new Error(error.message || 'Failed to update short link');
+  }
+}
+
+/**
+ * Fetches the current metadata for a dynamic QR code by slug.
+ *
+ * Useful for the "edit destination" UI: load the current destination
+ * URL into the input field before the user types a new one.
+ *
+ * @param slug - The slug returned by createDynamicQRUrl
+ */
+export async function getDynamicQRMetadata(
+  slug: string
+): Promise<DynamicQRMetadata> {
+  const parsedSlug = slugSchema.safeParse(slug);
+  if (!parsedSlug.success) {
+    throw new Error(parsedSlug.error.issues[0]?.message || 'Invalid slug');
+  }
+
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    throw new Error('Please sign in to view this link');
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (supabase as any)
+    .from('shortened_links')
+    .select('link, slug, created_at')
+    .eq('slug', slug)
+    .eq('creator_id', user.id)
+    .single();
+
+  if (error || !data) {
+    throw new Error('Short link not found or you do not have access to it');
+  }
+
+  const shortenerBaseUrl = resolveShortenerBaseUrl();
+
+  return {
+    shortUrl: `${shortenerBaseUrl}/${data.slug}`,
+    slug: data.slug,
+    createdAt: data.created_at,
+    originalUrl: data.link,
+  };
 }
