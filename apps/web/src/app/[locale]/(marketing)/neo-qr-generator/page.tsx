@@ -18,6 +18,11 @@ import QRCodeStyling, { type TypeNumber } from 'qr-code-styling';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ColorPicker } from 'react-color-pikr';
+import {
+  createDynamicQRUrl,
+  type DynamicQRMetadata,
+  updateDynamicQRUrl,
+} from '../neo-shortener/functions';
 import NeoGeneratorHero from './hero';
 
 // Type definitions
@@ -288,14 +293,10 @@ function buildQrOptions({
 
   // BULLETPROOF: Validate complete object before returning
   if (
-    !options.dotsOptions ||
-    !options.dotsOptions.type ||
-    !options.cornersSquareOptions ||
-    !options.cornersSquareOptions.type ||
-    !options.cornersDotOptions ||
-    !options.cornersDotOptions.type ||
-    !options.backgroundOptions ||
-    !options.backgroundOptions.color
+    !options.dotsOptions?.type ||
+    !options.cornersSquareOptions?.type ||
+    !options.cornersDotOptions?.type ||
+    !options.backgroundOptions?.color
   ) {
     console.warn(
       '[QR WARN] Options object has missing fields, using safe defaults'
@@ -403,6 +404,20 @@ export default function NeoQrGeneratorPage() {
   const [downloadFormat, setDownloadFormat] = useState<QrDownloadFormat>('png');
   const [downloadName, setDownloadName] = useState('qrcode');
 
+  // Dynamic QR mode - toggle between static and dynamic (shortened URL) generation
+  const [isDynamicMode, setIsDynamicMode] = useState(false);
+  // Full metadata object returned by createDynamicQRUrl — contains shortUrl,
+  // slug (needed for updateDynamicQRUrl), createdAt, and originalUrl.
+  const [dynamicQRMetadata, setDynamicQRMetadata] =
+    useState<DynamicQRMetadata | null>(null);
+  const [isCreatingShortLink, setIsCreatingShortLink] = useState(false);
+  const [dynamicQRError, setDynamicQRError] = useState<string>('');
+  // Edit-destination flow: when user wants to change the URL after creation
+  const [isEditingDestination, setIsEditingDestination] = useState(false);
+  const [editDestinationInput, setEditDestinationInput] = useState('');
+  const [isUpdatingDestination, setIsUpdatingDestination] = useState(false);
+  const [updateDestinationError, setUpdateDestinationError] = useState('');
+
   // Preview / render
   const qrContainerRef = useRef<HTMLDivElement | null>(null);
   const qrRef = useRef<QRCodeStyling | null>(null);
@@ -477,7 +492,10 @@ export default function NeoQrGeneratorPage() {
   const qrPayload = useMemo(() => {
     switch (qrType) {
       case 'url':
-        return urlInput.trim();
+        // Use dynamic short URL if in dynamic mode and metadata exists, otherwise use regular URL
+        return isDynamicMode
+          ? dynamicQRMetadata?.shortUrl || ''
+          : urlInput.trim();
       case 'facebook':
         return facebookUrl.trim();
       case 'wifi':
@@ -526,13 +544,113 @@ export default function NeoQrGeneratorPage() {
     vOrg,
     vTel,
     vTitle,
+    isDynamicMode,
+    dynamicQRMetadata,
   ]);
 
   // Normalize QR value into a single source of truth.
   useEffect(() => {
     setQrValue(qrPayload);
-    setIsGenerated(false);
-  }, [qrPayload]);
+    if (!isDynamicMode) {
+      // ← only reset when user changes input, not when metadata arrives
+      setIsGenerated(false);
+    }
+  }, [qrPayload, isDynamicMode]);
+
+  // Handle dynamic QR URL creation when in dynamic mode.
+  // Guard: only fires when isDynamicMode=true, qrType='url', and Generate was clicked.
+  // Loop prevention: skips creation if metadata already exists for the same URL.
+  useEffect(() => {
+    if (!isDynamicMode || qrType !== 'url') {
+      // Only clear metadata when mode is fully off — not on every isGenerated=false tick
+      setDynamicQRMetadata(null);
+      setDynamicQRError('');
+      setIsEditingDestination(false);
+      setEditDestinationInput('');
+      setUpdateDestinationError('');
+      return;
+    }
+
+    // Don't attempt creation until user has explicitly clicked Generate
+    if (!isGenerated) return;
+
+    if (!urlInput.trim() || !urlInputValid) {
+      setDynamicQRMetadata(null);
+      setDynamicQRError('');
+      return;
+    }
+
+    // Loop-prevention guard: if we already have metadata for this exact URL,
+    // don't create another short link.
+    if (dynamicQRMetadata?.originalUrl === urlInput.trim()) {
+      return;
+    }
+
+    const createShortUrl = async () => {
+      setIsCreatingShortLink(true);
+      setDynamicQRError('');
+      try {
+        const metadata = await createDynamicQRUrl(urlInput);
+        setDynamicQRMetadata(metadata);
+        // Re-assert isGenerated so the QR renders and Download/Copy buttons enable.
+        // qrPayload will update to shortUrl, and the qrPayload useEffect skips
+        // resetting isGenerated because isDynamicMode is true.
+        setIsGenerated(true);
+      } catch (error) {
+        let message =
+          error instanceof Error
+            ? error.message
+            : 'Failed to create short link';
+        if (
+          message.includes('sign in') ||
+          message.includes('Auth') ||
+          message.includes('session')
+        ) {
+          message = 'Please sign in to create dynamic QR codes';
+        }
+        setDynamicQRError(message);
+        setDynamicQRMetadata(null);
+        setIsDynamicMode(false);
+      } finally {
+        setIsCreatingShortLink(false);
+      }
+    };
+
+    createShortUrl();
+  }, [
+    isDynamicMode,
+    qrType,
+    isGenerated,
+    urlInput,
+    urlInputValid,
+    dynamicQRMetadata?.originalUrl,
+  ]);
+
+  // Handles updating the destination URL of an existing dynamic QR code.
+  // The QR image stays the same (still encodes the same short URL).
+  // Only the redirect target in the database changes — that's what makes it "dynamic".
+  const handleUpdateDestination = useCallback(async () => {
+    if (!dynamicQRMetadata?.slug || !editDestinationInput.trim()) return;
+    setIsUpdatingDestination(true);
+    setUpdateDestinationError('');
+    try {
+      await updateDynamicQRUrl(
+        dynamicQRMetadata.slug,
+        editDestinationInput.trim()
+      );
+      setDynamicQRMetadata((prev) =>
+        prev ? { ...prev, originalUrl: editDestinationInput.trim() } : prev
+      );
+      setIsEditingDestination(false);
+      setEditDestinationInput('');
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Failed to update destination';
+      setUpdateDestinationError(message);
+    } finally {
+      setIsUpdatingDestination(false);
+    }
+  }, [dynamicQRMetadata, editDestinationInput]);
 
   // Extract the actual QR update logic into a separate function for clarity
   // Declare this BEFORE the useEffect that uses it
@@ -556,7 +674,7 @@ export default function NeoQrGeneratorPage() {
     const displaySize = qrSize;
 
     // Defensive: Ensure dot style returns expected shape
-    if (!dot || !dot.shape || !dot.dots) {
+    if (!dot?.shape || !dot?.dots) {
       console.warn('Invalid dot style configuration');
       return;
     }
@@ -1952,7 +2070,7 @@ export default function NeoQrGeneratorPage() {
                             className="w-auto border-border bg-card p-2 shadow-xl"
                             align="start"
                           >
-                            <div className="[&>div]:!w-full [&>div]:!min-w-0 [&>div]:!bg-transparent [&>div]:!shadow-none [&_*]:!border-border [&_*]:!text-foreground [&_input]:!bg-background [&_input]:!text-foreground [&_button]:!text-black [&_span]:!text-black w-full overflow-hidden">
+                            <div className="w-full overflow-hidden **:border-border! **:text-foreground! [&>div]:w-full! [&>div]:min-w-0! [&>div]:bg-transparent! [&>div]:shadow-none! [&_button]:text-black! [&_input]:bg-background! [&_input]:text-foreground! [&_span]:text-black!">
                               <ColorPicker
                                 value={fgColor}
                                 onChange={(c: any) => setFgColor(c.hex || c)}
@@ -1992,7 +2110,7 @@ export default function NeoQrGeneratorPage() {
                             className="w-auto border-border bg-card p-2 shadow-xl"
                             align="start"
                           >
-                            <div className="[&>div]:!w-full [&>div]:!min-w-0 [&>div]:!bg-transparent [&>div]:!shadow-none [&_*]:!border-border [&_*]:!text-foreground [&_input]:!bg-background [&_input]:!text-foreground [&_button]:!text-black [&_span]:!text-black w-full overflow-hidden">
+                            <div className="w-full overflow-hidden **:border-border! **:text-foreground! [&>div]:w-full! [&>div]:min-w-0! [&>div]:bg-transparent! [&>div]:shadow-none! [&_button]:text-black! [&_input]:bg-background! [&_input]:text-foreground! [&_span]:text-black!">
                               <ColorPicker
                                 value={bgColor}
                                 onChange={(c: any) => setBgColor(c.hex || c)}
@@ -2321,7 +2439,7 @@ export default function NeoQrGeneratorPage() {
             {/* Right Column: QR Preview and Actions */}
             <div className="flex flex-1 flex-col gap-0 lg:pr-8 lg:pl-8">
               {/* Title Section */}
-              <div className="mt-4 flex-shrink-0 border-slate-200 border-b px-6 py-4 sm:px-8 lg:pr-8 dark:border-slate-700">
+              <div className="mt-4 shrink-0 border-slate-200 border-b px-6 py-4 sm:px-8 lg:pr-8 dark:border-slate-700">
                 <h3 className="text-center font-semibold text-lg text-slate-900 tracking-wide dark:text-white">
                   Live Preview
                 </h3>
@@ -2338,7 +2456,7 @@ export default function NeoQrGeneratorPage() {
                     <div
                       className={`relative inline-flex items-center justify-center transition-all duration-500 will-change-transform ${
                         !isGenerated
-                          ? 'pointer-events-none select-none opacity-40 blur-md grayscale-[50%]'
+                          ? 'pointer-events-none select-none opacity-40 blur-md grayscale-50'
                           : ''
                       }`}
                       style={{
@@ -2417,7 +2535,7 @@ export default function NeoQrGeneratorPage() {
 
               {/* Generate Button - If hidden, space is reserved */}
               <div
-                className="flex-shrink-0"
+                className="shrink-0"
                 style={{ minHeight: !isGenerated ? '88px' : '0px' }}
               >
                 {!isGenerated && (
@@ -2436,14 +2554,205 @@ export default function NeoQrGeneratorPage() {
                 )}
               </div>
 
+              {/* Dynamic QR Mode Toggle - Shows after QR is generated */}
+              {isGenerated && qrType === 'url' && (
+                <div className="shrink-0 border-slate-200 border-t px-6 py-4 dark:border-slate-700">
+                  <div className="flex flex-col gap-4">
+                    {/* Toggle Switch */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex flex-col gap-1">
+                        <Label className="font-medium text-slate-900 dark:text-white">
+                          Dynamic QR Code
+                        </Label>
+                        <p className="text-slate-500 text-xs dark:text-slate-400">
+                          {isDynamicMode
+                            ? 'QR code points to a shortened URL (requires sign-in)'
+                            : 'QR code points to the original URL'}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setIsDynamicMode(!isDynamicMode)}
+                        className={`relative inline-flex h-8 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 ${
+                          isDynamicMode
+                            ? 'bg-blue-600'
+                            : 'bg-slate-300 dark:bg-slate-600'
+                        }`}
+                        role="switch"
+                        aria-checked={isDynamicMode}
+                      >
+                        <span
+                          className={`pointer-events-none inline-block h-7 w-7 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                            isDynamicMode ? 'translate-x-7' : 'translate-x-0'
+                          }`}
+                        />
+                      </button>
+                    </div>
+
+                    {/* Loading State */}
+                    {isDynamicMode && isCreatingShortLink && (
+                      <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-400 border-t-blue-600 dark:border-slate-600 dark:border-t-blue-500" />
+                        <span className="text-sm">Creating short link...</span>
+                      </div>
+                    )}
+
+                    {/* Success State */}
+                    {isDynamicMode &&
+                      dynamicQRMetadata &&
+                      !isCreatingShortLink && (
+                        <div className="space-y-3 rounded-lg border border-green-200 bg-green-50 px-3 py-3 dark:border-green-900 dark:bg-green-950">
+                          {/* Short URL row */}
+                          <div className="flex items-center gap-2">
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-4 w-4 shrink-0 text-green-600 dark:text-green-400"
+                            >
+                              <title>Check</title>
+                              <path
+                                d="M20 6L9 17l-5-5"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                            <div className="min-w-0 flex-1">
+                              <p className="font-medium text-green-700 text-sm dark:text-green-300">
+                                Dynamic QR active
+                              </p>
+                              <a
+                                href={dynamicQRMetadata.shortUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="break-all font-mono text-green-600 text-xs underline dark:text-green-400"
+                              >
+                                {dynamicQRMetadata.shortUrl}
+                              </a>
+                            </div>
+                          </div>
+
+                          {/* Current destination row */}
+                          {!isEditingDestination && (
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="min-w-0 flex-1">
+                                <p className="text-green-600 text-xs dark:text-green-400">
+                                  Currently redirects to:
+                                </p>
+                                <p className="break-all text-green-700 text-xs dark:text-green-300">
+                                  {dynamicQRMetadata.originalUrl}
+                                </p>
+                              </div>
+                              {/* "Change destination" button — opens the edit panel */}
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setEditDestinationInput(
+                                    dynamicQRMetadata.originalUrl
+                                  );
+                                  setIsEditingDestination(true);
+                                  setUpdateDestinationError('');
+                                }}
+                                className="shrink-0 rounded-md border border-green-300 bg-white px-2 py-1 font-medium text-green-700 text-xs transition hover:bg-green-100 dark:border-green-700 dark:bg-green-900 dark:text-green-300 dark:hover:bg-green-800"
+                              >
+                                Change
+                              </button>
+                            </div>
+                          )}
+
+                          {/* Edit destination panel — calls updateDynamicQRUrl on save */}
+                          {isEditingDestination && (
+                            <div className="space-y-2">
+                              <p className="font-medium text-green-700 text-xs dark:text-green-300">
+                                New destination URL:
+                              </p>
+                              <input
+                                value={editDestinationInput}
+                                onChange={(e) =>
+                                  setEditDestinationInput(e.target.value)
+                                }
+                                placeholder="https://new-destination.com"
+                                className="w-full rounded-md border border-green-300 bg-white px-3 py-2 text-slate-900 text-sm focus:border-green-500 focus:outline-none dark:border-green-700 dark:bg-slate-800 dark:text-white"
+                              />
+                              {updateDestinationError && (
+                                <p className="text-red-600 text-xs dark:text-red-400">
+                                  {updateDestinationError}
+                                </p>
+                              )}
+                              <div className="flex gap-2">
+                                <button
+                                  type="button"
+                                  onClick={handleUpdateDestination}
+                                  disabled={
+                                    isUpdatingDestination ||
+                                    !editDestinationInput.trim()
+                                  }
+                                  className="flex-1 rounded-md bg-green-600 px-3 py-1.5 font-medium text-white text-xs transition hover:bg-green-700 disabled:opacity-50"
+                                >
+                                  {isUpdatingDestination ? 'Saving…' : 'Save'}
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setIsEditingDestination(false);
+                                    setEditDestinationInput('');
+                                    setUpdateDestinationError('');
+                                  }}
+                                  className="flex-1 rounded-md border border-green-300 bg-white px-3 py-1.5 font-medium text-green-700 text-xs transition hover:bg-green-100 dark:border-green-700 dark:bg-green-900 dark:text-green-300"
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                    {/* Error State */}
+                    {isDynamicMode && dynamicQRError && (
+                      <div className="flex flex-col gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 dark:border-red-900 dark:bg-red-950">
+                        <div className="flex items-center gap-2">
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-4 w-4 shrink-0 text-red-600 dark:text-red-400"
+                          >
+                            <title>Error</title>
+                            <path
+                              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+                              fill="currentColor"
+                            />
+                          </svg>
+                          <span className="font-medium text-red-700 text-sm dark:text-red-300">
+                            {dynamicQRError}
+                          </span>
+                        </div>
+                        {dynamicQRError.includes('sign in') && (
+                          <p className="ml-6 text-red-600 text-xs dark:text-red-400">
+                            Sign in to your account to create trackable QR codes
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
               {/* Divider - Fixed and stable */}
               <div
-                className="flex-shrink-0 border-t"
+                className="shrink-0 border-t"
                 style={{ borderColor: 'var(--border)', height: '1px' }}
               />
 
               {/* Action Buttons - Fixed at bottom with padding */}
-              <div className="flex flex-shrink-0 flex-wrap items-center justify-center gap-3 px-6 py-6 sm:px-8">
+              <div className="flex shrink-0 flex-wrap items-center justify-center gap-3 px-6 py-6 sm:px-8">
                 <Button
                   type="button"
                   onClick={() => setShowDownloadModal(true)}

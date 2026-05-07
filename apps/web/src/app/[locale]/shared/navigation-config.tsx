@@ -109,6 +109,13 @@ export const useNavigation = (t: any): { categories: NavCategory[] } => {
       icon: <ScanLine />,
     },
     {
+      href: '/neo-shortener',
+      label: 'Neo Shortener',
+      description:
+        'Transform your long url into a shorter version. Perfect for sharing on social media and other platforms where space is limited.',
+      icon: <ScanLine />,
+    },
+    {
       href: '/neo-qr-generator',
       label: 'Neo QR Generator',
       description:
