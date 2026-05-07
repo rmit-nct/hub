@@ -950,7 +950,7 @@ export default function NeoQrGeneratorPage() {
       if (!ctx) {
         URL.revokeObjectURL(qrUrl);
         return null;
-      }
+      }       
 
       const config = getFrameConfig();
       canvas.width = config.totalWidth;
