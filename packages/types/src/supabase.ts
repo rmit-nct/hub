@@ -3660,6 +3660,61 @@ export type Database = {
           },
         ];
       };
+      shortened_links: {
+        Row: {
+          created_at: string;
+          creator_id: string;
+          domain: string;
+          id: string;
+          link: string;
+          password_hash: string | null;
+          password_hint: string | null;
+          slug: string;
+        };
+        Insert: {
+          created_at?: string;
+          creator_id: string;
+          domain: string;
+          id?: string;
+          link: string;
+          password_hash?: string | null;
+          password_hint?: string | null;
+          slug: string;
+        };
+        Update: {
+          created_at?: string;
+          creator_id?: string;
+          domain?: string;
+          id?: string;
+          link?: string;
+          password_hash?: string | null;
+          password_hint?: string | null;
+          slug?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'shortened_links_creator_id_fkey';
+            columns: ['creator_id'];
+            isOneToOne: false;
+            referencedRelation: 'nova_user_challenge_leaderboard';
+            referencedColumns: ['user_id'];
+          },
+          {
+            foreignKeyName: 'shortened_links_creator_id_fkey';
+            columns: ['creator_id'];
+            isOneToOne: false;
+            referencedRelation: 'nova_user_leaderboard';
+            referencedColumns: ['user_id'];
+          },
+          {
+            foreignKeyName: 'shortened_links_creator_id_fkey';
+            columns: ['creator_id'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       students: {
         Row: {
           created_at: string;
@@ -7458,6 +7513,7 @@ export type Database = {
         Args: { message: string; model: string; title: string };
         Returns: string;
       };
+      extract_domain: { Args: { url: string }; Returns: string };
       generate_cross_app_token:
         | {
             Args: {
