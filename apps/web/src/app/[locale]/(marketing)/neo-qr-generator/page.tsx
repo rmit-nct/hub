@@ -628,7 +628,10 @@ export default function NeoQrGeneratorPage() {
     setIsUpdatingDestination(true);
     setUpdateDestinationError('');
     try {
-      await updateDynamicQRUrl(dynamicQRMetadata.slug, editDestinationInput.trim());
+      await updateDynamicQRUrl(
+        dynamicQRMetadata.slug,
+        editDestinationInput.trim()
+      );
       setDynamicQRMetadata((prev) =>
         prev ? { ...prev, originalUrl: editDestinationInput.trim() } : prev
       );
