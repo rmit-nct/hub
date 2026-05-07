@@ -319,4 +319,3 @@ export async function getDynamicQRMetadata(
     originalUrl: data.link,
   };
 }
-     
