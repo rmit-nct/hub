@@ -11,18 +11,37 @@ import {
 } from '@ncthub/ui/card';
 import {
   Bot,
+  Check,
+  Copy,
   History,
   MessageSquare,
+  PanelLeftClose,
+  PanelLeftOpen,
   Plus,
   RefreshCcw,
   Send,
   Sparkles,
   WandSparkles,
 } from '@ncthub/ui/icons';
+import { Input } from '@ncthub/ui/input';
 import { ScrollArea } from '@ncthub/ui/scroll-area';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@ncthub/ui/select';
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from '@ncthub/ui/sheet';
 import { Textarea } from '@ncthub/ui/textarea';
 import { cn } from '@ncthub/utils/format';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 
 type ChatRole = 'assistant' | 'user';
@@ -156,11 +175,22 @@ export default function NeoChatbotClient({
   newChatLabel,
   historyItems,
 }: NeoChatbotClientProps) {
+  const t = useTranslations('neo-chatbot');
   const [messages, setMessages] = useState<ChatMessage[]>(starterMessages);
-  const [draft, setDraft] = useState('');
+  const [isDesktopSidebarOpen, setIsDesktopSidebarOpen] = useState(true);
+  const [isMobileHistoryOpen, setIsMobileHistoryOpen] = useState(false);
+  // Structured form state
+  const [eventTitle, setEventTitle] = useState('');
+  const [platform, setPlatform] = useState('Instagram');
+  const [tone, setTone] = useState('Upbeat');
+  const [cta, setCta] = useState('');
+  const [length, setLength] = useState('Short');
+  const [details, setDetails] = useState('');
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
   const [activeConversationId, setActiveConversationId] = useState(
-    historyItems[0] ?? 'conversation-1'
+    historyItems.length > 0 ? 'conversation-0' : 'conversation-0'
   );
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const timerRef = useRef<number | null>(null);
@@ -178,20 +208,45 @@ export default function NeoChatbotClient({
   }, []);
 
   const handleSend = () => {
-    const trimmedDraft = draft.trim();
+    // Validate required structured fields
+    const newErrors: Record<string, string> = {};
+    const trimmedTitle = eventTitle.trim();
+    const trimmedDetails = details.trim();
 
-    if (!trimmedDraft || isSending) {
-      return;
+    if (!eventTitle.trim()) newErrors.eventTitle = t('validation.eventTitle');
+    if (!platform.trim()) newErrors.platform = t('validation.platform');
+    if (!tone.trim()) newErrors.tone = t('validation.tone');
+    if (!trimmedDetails) newErrors.details = t('validation.details');
+    if (trimmedDetails && trimmedDetails.length < 30) {
+      newErrors.details = t('validation.detailsMin');
     }
+
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0 || isSending) return;
+
+    const promptParts = [
+      `${t('prompt.eventTitle')}: ${trimmedTitle}`,
+      `${t('prompt.platform')}: ${platform}`,
+      `${t('prompt.tone')}: ${tone}`,
+      `${t('prompt.length')}: ${length}`,
+    ];
+
+    if (cta.trim()) {
+      promptParts.push(`${t('prompt.cta')}: ${cta.trim()}`);
+    }
+
+    promptParts.push('');
+    promptParts.push(`${t('prompt.details')}\n${trimmedDetails}`);
+
+    const prompt = promptParts.join('\n');
 
     const userMessage: ChatMessage = {
       id: `user-${Date.now()}`,
       role: 'user',
-      content: trimmedDraft,
+      content: prompt,
     };
 
     setMessages((currentMessages) => [...currentMessages, userMessage]);
-    setDraft('');
     setIsSending(true);
 
     window.requestAnimationFrame(() => {
@@ -204,7 +259,7 @@ export default function NeoChatbotClient({
         {
           id: `assistant-${Date.now()}`,
           role: 'assistant',
-          content: buildMockReply(trimmedDraft),
+          content: buildMockReply(prompt),
         },
       ]);
       setIsSending(false);
@@ -222,7 +277,13 @@ export default function NeoChatbotClient({
     }
 
     setMessages(starterMessages);
-    setDraft('');
+    setEventTitle('');
+    setPlatform('Instagram');
+    setTone('Upbeat');
+    setCta('');
+    setLength('Short');
+    setDetails('');
+    setErrors({});
     setIsSending(false);
 
     window.requestAnimationFrame(() => {
@@ -238,61 +299,89 @@ export default function NeoChatbotClient({
   const handleSelectConversation = (conversationId: string) => {
     setActiveConversationId(conversationId);
     handleReset();
+    setIsMobileHistoryOpen(false);
+  };
+
+  const canSend =
+    !isSending &&
+    eventTitle.trim().length > 0 &&
+    details.trim().length >= 30 &&
+    platform.trim().length > 0 &&
+    tone.trim().length > 0;
+
+  const copyAssistantMessage = async (messageId: string, text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedMessageId(messageId);
+      window.setTimeout(() => {
+        setCopiedMessageId((current) =>
+          current === messageId ? null : current
+        );
+      }, 1500);
+    } catch {
+      // Ignore clipboard failures.
+    }
   };
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[0.9fr_1.45fr]">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.45, delay: 0.1 }}
-      >
-        <Card className="border-border/70 bg-card/80 shadow-sm backdrop-blur-sm">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <History className="size-5 text-brand-light-blue" />
-              <CardTitle className="text-lg">{historyTitle}</CardTitle>
-            </div>
-            <CardDescription>{historyIntro}</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Button
-              className="w-full justify-start bg-linear-to-r from-brand-light-orange to-brand-light-yellow font-semibold text-primary-foreground"
-              onClick={handleStartNewChat}
-            >
-              <Plus className="size-4" />
-              {newChatLabel}
-            </Button>
+    <div
+      className={cn(
+        'grid gap-6',
+        isDesktopSidebarOpen ? 'lg:grid-cols-[0.9fr_1.45fr]' : 'lg:grid-cols-1'
+      )}
+    >
+      {isDesktopSidebarOpen && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, delay: 0.1 }}
+          className="hidden lg:block"
+        >
+          <Card className="border-border/70 bg-card/80 shadow-sm backdrop-blur-sm">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <History className="size-5 text-brand-light-blue" />
+                <CardTitle className="text-lg">{historyTitle}</CardTitle>
+              </div>
+              <CardDescription>{historyIntro}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Button
+                className="w-full justify-start bg-linear-to-r from-brand-light-orange to-brand-light-yellow font-semibold text-primary-foreground"
+                onClick={handleStartNewChat}
+              >
+                <Plus className="size-4" />
+                {newChatLabel}
+              </Button>
 
-            <div className="space-y-2">
-              {historyItems.map((item, index) => {
-                const conversationId = `conversation-${index}`;
-                const isActive =
-                  activeConversationId === conversationId &&
-                  messages.length > 0;
+              <div className="space-y-2">
+                {historyItems.map((item, index) => {
+                  const conversationId = `conversation-${index}`;
+                  const isActive = activeConversationId === conversationId;
 
-                return (
-                  <Button
-                    key={conversationId}
-                    variant="outline"
-                    className={cn(
-                      'h-auto w-full justify-start whitespace-normal rounded-2xl px-3 py-3 text-left',
-                      isActive &&
-                        'border-brand-light-blue/40 bg-brand-light-blue/10 text-foreground'
-                    )}
-                    onClick={() => handleSelectConversation(conversationId)}
-                  >
-                    <span className="mr-2 inline-flex size-7 items-center justify-center rounded-full bg-brand-light-blue/10 text-brand-light-blue">
-                      <MessageSquare className="size-4" />
-                    </span>
-                    <span>{item}</span>
-                  </Button>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
+                  return (
+                    <Button
+                      key={conversationId}
+                      variant="outline"
+                      className={cn(
+                        'h-auto w-full justify-start whitespace-normal rounded-2xl px-3 py-3 text-left',
+                        isActive &&
+                          'border-brand-light-blue/40 bg-brand-light-blue/10 text-foreground'
+                      )}
+                      onClick={() => handleSelectConversation(conversationId)}
+                    >
+                      <span className="mr-2 inline-flex size-7 items-center justify-center rounded-full bg-brand-light-blue/10 text-brand-light-blue">
+                        <MessageSquare className="size-4" />
+                      </span>
+                      <span>{item}</span>
+                    </Button>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -311,13 +400,107 @@ export default function NeoChatbotClient({
                   {subtitle}
                 </CardDescription>
               </div>
+              <div className="flex items-center gap-2">
+                <Badge
+                  variant="outline"
+                  className="border-brand-light-blue/50 bg-brand-light-blue/10 px-3 py-1 text-brand-light-blue"
+                >
+                  {statusLabel}
+                </Badge>
 
-              <Badge
-                variant="outline"
-                className="border-brand-light-blue/50 bg-brand-light-blue/10 px-3 py-1 text-brand-light-blue"
-              >
-                {statusLabel}
-              </Badge>
+                {/* Mobile: open history in a sheet */}
+                <Sheet
+                  open={isMobileHistoryOpen}
+                  onOpenChange={setIsMobileHistoryOpen}
+                >
+                  <SheetTrigger asChild>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="lg:hidden"
+                      aria-label={t('sidebar.open')}
+                    >
+                      <History className="size-4" />
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent
+                    side="left"
+                    className="w-full border-r p-0 sm:w-96 lg:hidden"
+                  >
+                    <SheetTitle className="sr-only">{historyTitle}</SheetTitle>
+                    <div className="p-4">
+                      <div className="mb-4">
+                        <div className="flex items-center gap-2">
+                          <History className="size-5 text-brand-light-blue" />
+                          <h2 className="font-semibold text-lg">
+                            {historyTitle}
+                          </h2>
+                        </div>
+                        <p className="text-muted-foreground text-sm">
+                          {historyIntro}
+                        </p>
+                      </div>
+
+                      <div className="space-y-3">
+                        <Button
+                          className="w-full justify-start bg-linear-to-r from-brand-light-orange to-brand-light-yellow font-semibold text-primary-foreground"
+                          onClick={handleStartNewChat}
+                        >
+                          <Plus className="size-4" />
+                          {newChatLabel}
+                        </Button>
+
+                        <div className="space-y-2">
+                          {historyItems.map((item, index) => {
+                            const conversationId = `conversation-${index}`;
+                            const isActive =
+                              activeConversationId === conversationId;
+
+                            return (
+                              <Button
+                                key={conversationId}
+                                variant="outline"
+                                className={cn(
+                                  'h-auto w-full justify-start whitespace-normal rounded-2xl px-3 py-3 text-left',
+                                  isActive &&
+                                    'border-brand-light-blue/40 bg-brand-light-blue/10 text-foreground'
+                                )}
+                                onClick={() =>
+                                  handleSelectConversation(conversationId)
+                                }
+                              >
+                                <span className="mr-2 inline-flex size-7 items-center justify-center rounded-full bg-brand-light-blue/10 text-brand-light-blue">
+                                  <MessageSquare className="size-4" />
+                                </span>
+                                <span>{item}</span>
+                              </Button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  </SheetContent>
+                </Sheet>
+
+                {/* Desktop: collapse / expand sidebar */}
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="hidden lg:inline-flex"
+                  onClick={() => setIsDesktopSidebarOpen((s) => !s)}
+                  aria-label={
+                    isDesktopSidebarOpen
+                      ? t('sidebar.close')
+                      : t('sidebar.open')
+                  }
+                >
+                  {isDesktopSidebarOpen ? (
+                    <PanelLeftClose className="size-4" />
+                  ) : (
+                    <PanelLeftOpen className="size-4" />
+                  )}
+                </Button>
+              </div>
             </div>
 
             <p className="text-muted-foreground text-sm">{intro}</p>
@@ -333,7 +516,31 @@ export default function NeoChatbotClient({
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: index * 0.05 }}
                   >
-                    <ChatBubble message={message} />
+                    <div className="relative">
+                      <ChatBubble message={message} />
+                      {message.role === 'assistant' && (
+                        <div className="absolute top-2 right-2 flex gap-2">
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={() =>
+                              copyAssistantMessage(message.id, message.content)
+                            }
+                            aria-label={
+                              copiedMessageId === message.id
+                                ? t('actions.copied')
+                                : t('actions.copy')
+                            }
+                          >
+                            {copiedMessageId === message.id ? (
+                              <Check className="size-4" />
+                            ) : (
+                              <Copy className="size-4" />
+                            )}
+                          </Button>
+                        </div>
+                      )}
+                    </div>
                   </motion.div>
                 ))}
 
@@ -343,7 +550,7 @@ export default function NeoChatbotClient({
                       <Bot className="size-5 text-brand-light-blue" />
                     </div>
                     <div className="rounded-3xl border bg-card/80 px-4 py-3 text-muted-foreground text-sm shadow-sm">
-                      Thinking...
+                      {t('thinking')}
                     </div>
                   </div>
                 )}
@@ -351,15 +558,14 @@ export default function NeoChatbotClient({
                 <div ref={bottomRef} />
               </div>
             </ScrollArea>
-
             <div className="rounded-3xl border bg-background/70 p-4 shadow-sm">
-              <div className="mb-4 grid gap-2 sm:grid-cols-2">
+              <div className="mb-4 grid gap-3 sm:grid-cols-2">
                 {suggestions.map((suggestion) => (
                   <Button
                     key={suggestion}
                     variant="outline"
                     className="h-auto justify-start whitespace-normal rounded-2xl px-3 py-3 text-left text-sm"
-                    onClick={() => setDraft(suggestion)}
+                    onClick={() => setDetails(suggestion)}
                   >
                     <span className="mr-2 inline-flex size-7 items-center justify-center rounded-full bg-brand-light-orange/10 text-brand-light-orange">
                       <Sparkles className="size-4" />
@@ -369,18 +575,135 @@ export default function NeoChatbotClient({
                 ))}
               </div>
 
-              <Textarea
-                value={draft}
-                onChange={(event) => setDraft(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter' && !event.shiftKey) {
-                    event.preventDefault();
-                    handleSend();
-                  }
-                }}
-                placeholder={placeholder}
-                className="min-h-30 resize-none border-none bg-transparent px-0 py-0 text-base shadow-none focus-visible:ring-0"
-              />
+              <div className="grid gap-3 md:grid-cols-2">
+                <div>
+                  <label className="mb-1 block font-medium text-sm">
+                    {t('form.eventTitle')}
+                  </label>
+                  <Input
+                    value={eventTitle}
+                    onChange={(e) => setEventTitle(e.target.value)}
+                    maxLength={80}
+                  />
+                  <div className="mt-1 flex items-center justify-between">
+                    {errors.eventTitle ? (
+                      <p className="text-destructive text-xs">
+                        {errors.eventTitle}
+                      </p>
+                    ) : (
+                      <span />
+                    )}
+                    <p className="text-muted-foreground text-xs">
+                      {eventTitle.length}/80
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="mb-1 block font-medium text-sm">
+                    {t('form.platform')}
+                  </label>
+                  <Select
+                    value={platform}
+                    onValueChange={(v) => setPlatform(v)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Instagram">Instagram</SelectItem>
+                      <SelectItem value="Facebook">Facebook</SelectItem>
+                      <SelectItem value="LinkedIn">LinkedIn</SelectItem>
+                      <SelectItem value="Twitter">Twitter</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {errors.platform && (
+                    <p className="mt-1 text-destructive text-xs">
+                      {errors.platform}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="mb-1 block font-medium text-sm">
+                    {t('form.tone')}
+                  </label>
+                  <Select value={tone} onValueChange={(v) => setTone(v)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Upbeat">Upbeat</SelectItem>
+                      <SelectItem value="Formal">Formal</SelectItem>
+                      <SelectItem value="Friendly">Friendly</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {errors.tone && (
+                    <p className="mt-1 text-destructive text-xs">
+                      {errors.tone}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="mb-1 block font-medium text-sm">
+                    {t('form.length')}
+                  </label>
+                  <Select value={length} onValueChange={(v) => setLength(v)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Short">Short</SelectItem>
+                      <SelectItem value="Medium">Medium</SelectItem>
+                      <SelectItem value="Long">Long</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="mb-1 block font-medium text-sm">
+                    {t('form.cta')}
+                  </label>
+                  <Input
+                    value={cta}
+                    onChange={(e) => setCta(e.target.value)}
+                    maxLength={120}
+                  />
+                  <div className="mt-1 flex items-center justify-end">
+                    <p className="text-muted-foreground text-xs">
+                      {cta.length}/120
+                    </p>
+                  </div>
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="mb-1 block font-medium text-sm">
+                    {t('form.details')}
+                  </label>
+                  <Textarea
+                    value={details}
+                    onChange={(e) => setDetails(e.target.value)}
+                    placeholder={placeholder}
+                    className="min-h-30 resize-none border-none bg-transparent px-0 py-0 text-base shadow-none focus-visible:ring-0"
+                    maxLength={2000}
+                  />
+                  <div className="mt-1 flex items-center justify-between">
+                    {errors.details ? (
+                      <p className="text-destructive text-xs">
+                        {errors.details}
+                      </p>
+                    ) : (
+                      <p className="text-muted-foreground text-xs">
+                        {t('form.detailsHint')}
+                      </p>
+                    )}
+                    <p className="text-muted-foreground text-xs">
+                      {details.length}/2000
+                    </p>
+                  </div>
+                </div>
+              </div>
 
               <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-muted-foreground text-sm">{helper}</p>
@@ -393,7 +716,7 @@ export default function NeoChatbotClient({
                   <Button
                     className="bg-linear-to-r from-brand-light-orange to-brand-light-yellow font-semibold text-primary-foreground transition-transform hover:scale-[1.01]"
                     onClick={handleSend}
-                    disabled={!draft.trim() || isSending}
+                    disabled={!canSend}
                   >
                     {sendLabel}
                     <Send className="size-4" />

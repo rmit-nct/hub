@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 import NeoChatbotClient from './client';
 import NeoChatbotHero from './hero';
 
@@ -10,38 +11,44 @@ export const metadata: Metadata = {
     'social media writer, chatbot, caption generator, club branding, content format, neo chatbot',
 };
 
-export default function NeoChatbotPage() {
+export default async function NeoChatbotPage() {
+  const t = await getTranslations('neo-chatbot');
+
+  const suggestions =
+    t('suggestions')
+      ?.split('||')
+      .map((s: string) => s.trim())
+      .filter(Boolean) ?? [];
+  const historyItems =
+    t('historyItems')
+      ?.split('||')
+      .map((s: string) => s.trim())
+      .filter(Boolean) ?? [];
+
   return (
     <div className="flex w-full justify-center">
       <div className="container mx-auto max-w-6xl px-4 py-14 lg:py-20">
         <NeoChatbotHero
-          badge="Neo Chatbot"
-          title="Neo Chatbot"
-          description="A social media copywriting assistant designed to generate NCT-style posts based on event recaps and key details."
+          badge={t('badge')}
+          title={t('title')}
+          description={t('description')}
         />
 
         <div className="mt-12">
           <NeoChatbotClient
-            title="Neo Chatbot"
-            subtitle="Social Media Assistant"
-            intro=""
-            helper="Frontend-only preview."
-            placeholder="Paste your event recap details, key achievements, CTA, and member credits..."
-            sendLabel="Send"
-            resetLabel="Reset"
-            statusLabel="Local only"
-            suggestions={[
-              'Project Management Workshop recap for Instagram',
-              'Bilingual recap post for Facebook',
-            ]}
-            historyTitle="Conversation History"
-            historyIntro="Switch between saved social content sessions."
-            newChatLabel="New Chat"
-            historyItems={[
-              'Project Management Workshop recap',
-              'Tech sharing event bilingual draft',
-              'Member spotlight and contribution credits',
-            ]}
+            title={t('title')}
+            subtitle={t('subtitle')}
+            intro={t('intro')}
+            helper={t('helper')}
+            placeholder={t('placeholder')}
+            sendLabel={t('sendLabel')}
+            resetLabel={t('resetLabel')}
+            statusLabel={t('statusLabel')}
+            suggestions={suggestions}
+            historyTitle={t('historyTitle')}
+            historyIntro={t('historyIntro')}
+            newChatLabel={t('newChatLabel')}
+            historyItems={historyItems}
           />
         </div>
       </div>
