@@ -472,8 +472,7 @@ export default function NeoQrGeneratorPage() {
 
   // Error handling: Map error conditions to standardized error types
   const mapErrorToType = useCallback((error: Error | string): ErrorId => {
-    const message =
-      typeof error === 'string' ? error : error.message || '';
+    const message = typeof error === 'string' ? error : error.message || '';
     if (
       message.includes('sign in') ||
       message.includes('Auth') ||
@@ -671,17 +670,18 @@ export default function NeoQrGeneratorPage() {
       } catch (error) {
         const errorType = mapErrorToType(error as Error);
         let customMessage: string | undefined;
-        
+
         if (errorType === 'dynamic-auth-required') {
           customMessage = 'Please sign in to create dynamic QR codes';
         } else if (errorType === 'dynamic-generation-failed') {
-          customMessage = "We couldn't create your short link. Please try again.";
+          customMessage =
+            "We couldn't create your short link. Please try again.";
         }
 
         handleShowError(errorType, {
           description: customMessage,
         });
-        
+
         setDynamicQRError(
           error instanceof Error ? error.message : 'Failed to create short link'
         );
@@ -724,14 +724,19 @@ export default function NeoQrGeneratorPage() {
     } catch (error) {
       const errorType = mapErrorToType(error as Error);
       handleShowError(errorType);
-      
+
       const message =
         error instanceof Error ? error.message : 'Failed to update destination';
       setUpdateDestinationError(message);
     } finally {
       setIsUpdatingDestination(false);
     }
-  }, [dynamicQRMetadata, editDestinationInput, mapErrorToType, handleShowError]);
+  }, [
+    dynamicQRMetadata,
+    editDestinationInput,
+    mapErrorToType,
+    handleShowError,
+  ]);
 
   // Extract the actual QR update logic into a separate function for clarity
   // Declare this BEFORE the useEffect that uses it
