@@ -71,6 +71,7 @@
     "unrs-resolver"
   ],
   "dependencies": {
+    "lucide-react": "^1.14.0",
     "qr-code-styling": "^1.9.2",
     "react-color-pikr": "^1.1.2",
     "react-qr-code": "^2.0.18"
