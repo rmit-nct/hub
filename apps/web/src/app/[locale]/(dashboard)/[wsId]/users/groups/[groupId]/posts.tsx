@@ -20,7 +20,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@ncthub/ui/dialog';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { BookPlus, Clock, Eye, Pencil, Trash2 } from '@ncthub/ui/icons';
 import { Input } from '@ncthub/ui/input';
 import { Label } from '@ncthub/ui/label';
@@ -110,9 +110,8 @@ export default function UserGroupPosts({
       handleCloseDialog();
       router.refresh();
     } else {
-      toast({
-        title: 'Error',
-        content: 'An error occurred while saving the post.',
+      toast.error('Error', {
+        description: 'An error occurred while saving the post.',
       });
     }
   };
@@ -131,9 +130,8 @@ export default function UserGroupPosts({
       handleCloseDialog();
       router.refresh();
     } else {
-      toast({
-        title: 'Error',
-        content: 'An error occurred while deleting the post.',
+      toast.error('Error', {
+        description: 'An error occurred while deleting the post.',
       });
     }
   };

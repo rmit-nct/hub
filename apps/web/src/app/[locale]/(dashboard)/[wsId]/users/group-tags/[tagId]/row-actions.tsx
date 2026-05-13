@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@ncthub/ui/dropdown-menu';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Ellipsis, Eye } from '@ncthub/ui/icons';
 import { Row } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
@@ -49,10 +49,7 @@ export function UserGroupRowActions({
       router.refresh();
     } else {
       const data = await res.json();
-      toast({
-        title: 'Failed to remove user from group',
-        description: data.message,
-      });
+      toast('Failed to remove user from group', { description: data.message });
     }
   };
 

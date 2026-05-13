@@ -2,7 +2,7 @@
 
 import { createAdminClient } from '@ncthub/supabase/next/server';
 import { generateSalt, hashPassword } from '@ncthub/utils/crypto';
-import z from 'zod';
+import { z } from 'zod';
 import { GUEST_LIMIT } from '@/constants/meet-together';
 
 const GuestLoginInputSchema = z.object({
