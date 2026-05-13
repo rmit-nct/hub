@@ -2,7 +2,7 @@
 
 import { createClient } from '@ncthub/supabase/next/client';
 import { Button } from '@ncthub/ui/button';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Check, Loader2 } from '@ncthub/ui/icons';
 import {
   Select,
@@ -86,8 +86,7 @@ export default function DefaultWorkspaceSetting({
         throw new Error(error || 'Failed to update default workspace');
       }
 
-      toast({
-        title: 'Success!',
+      toast('Success!', {
         description: 'Your default workspace has been updated.',
       });
 
@@ -99,10 +98,8 @@ export default function DefaultWorkspaceSetting({
       router.refresh();
     } catch (error) {
       console.error('Error updating default workspace:', error);
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: 'Failed to update default workspace. Please try again.',
-        variant: 'destructive',
       });
     } finally {
       setIsUpdating(false);

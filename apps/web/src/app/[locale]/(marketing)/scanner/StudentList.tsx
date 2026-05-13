@@ -12,7 +12,7 @@ import {
 import { Badge } from '@ncthub/ui/badge';
 import { Button } from '@ncthub/ui/button';
 import { Card, CardContent } from '@ncthub/ui/card';
-import { useToast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import {
   Calendar,
   ChevronLeft,
@@ -69,7 +69,6 @@ export default function StudentList({
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
-  const { toast } = useToast();
 
   const handleEdit = (id: string) => {
     const student = students.find((s) => s.id === id);
@@ -180,8 +179,7 @@ export default function StudentList({
     a.click();
     URL.revokeObjectURL(url);
 
-    toast({
-      title: 'Export Successful',
+    toast('Export Successful', {
       description: 'Student data has been exported to CSV file',
     });
   };

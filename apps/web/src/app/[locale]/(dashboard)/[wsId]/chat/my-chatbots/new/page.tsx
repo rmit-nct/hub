@@ -3,16 +3,14 @@
 import { Button } from '@ncthub/ui/button';
 import FeatureSummary from '@ncthub/ui/custom/feature-summary';
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
+  Field,
+  FieldLabel,
+  FieldDescription,
+  FieldError,
+} from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { zodResolver } from '@ncthub/ui/resolvers';
 import { Textarea } from '@ncthub/ui/textarea';
 import { useTranslations } from 'next-intl';
@@ -69,8 +67,7 @@ export default function WorkspaceUserGroupTagsPage({ params }: Props) {
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast({
-      title: 'You submitted the following values:',
+    toast('You submitted the following values:', {
       description: (
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
           <code className="text-white">{JSON.stringify(data, null, 2)}</code>
@@ -86,148 +83,152 @@ export default function WorkspaceUserGroupTagsPage({ params }: Props) {
         description={t('ai_chat.my_chatbots_description')}
       />
       <div className="flex flex-col justify-between gap-4 rounded-lg border border-border bg-foreground/5 p-6 md:flex-row md:items-start">
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="w-full space-y-8"
-          >
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Chatbot Name</FormLabel>
-                  <FormControl>
-                    <input
-                      type="text"
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2"
-                      placeholder="e.g., Marketing Assistant, Code Review Expert"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Choose a name that reflects your chatbot's primary function.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="w-full space-y-8"
+        >
+          <Controller
+            control={form.control}
+            name="name"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel>Chatbot Name</FieldLabel>{' '}
+                <input
+                  type="text"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2"
+                  placeholder="e.g., Marketing Assistant, Code Review Expert"
+                  aria-invalid={fieldState.invalid}
+                  {...field}
+                />
+                <FieldDescription>
+                  Choose a name that reflects your chatbot's primary function.
+                </FieldDescription>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="purpose"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Primary Purpose</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Describe the main tasks and objectives this chatbot should accomplish..."
-                      className="min-h-[100px]"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Clearly define what problems this chatbot will solve or
-                    tasks it will help with.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <Controller
+            control={form.control}
+            name="purpose"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel>Primary Purpose</FieldLabel>{' '}
+                <Textarea
+                  placeholder="Describe the main tasks and objectives this chatbot should accomplish..."
+                  className="min-h-[100px]"
+                  aria-invalid={fieldState.invalid}
+                  {...field}
+                />
+                <FieldDescription>
+                  Clearly define what problems this chatbot will solve or tasks
+                  it will help with.
+                </FieldDescription>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="personality"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Personality & Communication Style</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Describe how the chatbot should interact and communicate..."
-                      className="min-h-[100px]"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Define the tone, style, and personality traits (e.g.,
-                    professional, friendly, technical, casual).
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <Controller
+            control={form.control}
+            name="personality"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel>Personality & Communication Style</FieldLabel>{' '}
+                <Textarea
+                  placeholder="Describe how the chatbot should interact and communicate..."
+                  className="min-h-[100px]"
+                  aria-invalid={fieldState.invalid}
+                  {...field}
+                />
+                <FieldDescription>
+                  Define the tone, style, and personality traits (e.g.,
+                  professional, friendly, technical, casual).
+                </FieldDescription>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="expertise"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Knowledge & Expertise</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Specify the domains, topics, or skills the chatbot should be knowledgeable about..."
-                      className="min-h-[100px]"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    List specific areas of expertise, technical knowledge, or
-                    subject matter the chatbot should focus on.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <Controller
+            control={form.control}
+            name="expertise"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel>Knowledge & Expertise</FieldLabel>{' '}
+                <Textarea
+                  placeholder="Specify the domains, topics, or skills the chatbot should be knowledgeable about..."
+                  className="min-h-[100px]"
+                  aria-invalid={fieldState.invalid}
+                  {...field}
+                />
+                <FieldDescription>
+                  List specific areas of expertise, technical knowledge, or
+                  subject matter the chatbot should focus on.
+                </FieldDescription>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="rules"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Rules & Constraints</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="List any specific rules, limitations, or guidelines the chatbot should follow..."
-                      className="min-h-[100px]"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Define boundaries, ethical guidelines, and specific
-                    behaviors to avoid.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <Controller
+            control={form.control}
+            name="rules"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel>Rules & Constraints</FieldLabel>{' '}
+                <Textarea
+                  placeholder="List any specific rules, limitations, or guidelines the chatbot should follow..."
+                  className="min-h-[100px]"
+                  aria-invalid={fieldState.invalid}
+                  {...field}
+                />
+                <FieldDescription>
+                  Define boundaries, ethical guidelines, and specific behaviors
+                  to avoid.
+                </FieldDescription>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="exampleConversation"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Example Conversations</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Provide example interactions between users and the chatbot..."
-                      className="min-h-[150px]"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Add sample dialogues showing ideal interactions and how the
-                    chatbot should handle different scenarios.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <Controller
+            control={form.control}
+            name="exampleConversation"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel>Example Conversations</FieldLabel>{' '}
+                <Textarea
+                  placeholder="Provide example interactions between users and the chatbot..."
+                  className="min-h-[150px]"
+                  aria-invalid={fieldState.invalid}
+                  {...field}
+                />
+                <FieldDescription>
+                  Add sample dialogues showing ideal interactions and how the
+                  chatbot should handle different scenarios.
+                </FieldDescription>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
 
-            <Button type="submit" className="w-full">
-              Create Chatbot
-            </Button>
-          </form>
-        </Form>
+          <Button type="submit" className="w-full">
+            Create Chatbot
+          </Button>
+        </form>
       </div>
     </div>
   );

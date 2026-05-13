@@ -1,16 +1,10 @@
 'use client';
 
 import { Button } from '@ncthub/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
+import { Field, FieldLabel, FieldError } from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
 import { useTranslations } from 'next-intl';
@@ -76,44 +70,39 @@ export default function YouTubeLinkForm({
         router.refresh();
       } else {
         const data = await res.json();
-        toast({
-          title: `Failed to ${link ? 'edit' : 'create'} youtube link`,
+        toast(`Failed to ${link ? 'edit' : 'create'} youtube link`, {
           description: data.message,
         });
       }
     } catch (error) {
-      toast({
-        title: `Failed to ${link ? 'edit' : 'create'} youtube link`,
+      toast(`Failed to ${link ? 'edit' : 'create'} youtube link`, {
         description: error instanceof Error ? error.message : String(error),
       });
     }
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-3">
-        <FormField
-          control={form.control}
-          name="link"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t('youtube_link')}</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder={t('youtube_link')}
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-3">
+      <Controller
+        control={form.control}
+        name="link"
+        render={({ field, fieldState }) => (
+          <Field data-invalid={fieldState.invalid}>
+            <FieldLabel>{t('youtube_link')}</FieldLabel>{' '}
+            <Input
+              placeholder={t('youtube_link')}
+              autoComplete="off"
+              aria-invalid={fieldState.invalid}
+              {...field}
+            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          </Field>
+        )}
+      />
 
-        <Button type="submit" className="w-full" disabled={disabled}>
-          {link ? t('edit_link') : t('add_link')}
-        </Button>
-      </form>
-    </Form>
+      <Button type="submit" className="w-full" disabled={disabled}>
+        {link ? t('edit_link') : t('add_link')}
+      </Button>
+    </form>
   );
 }

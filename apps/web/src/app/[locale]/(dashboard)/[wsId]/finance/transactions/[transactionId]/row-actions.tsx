@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@ncthub/ui/dropdown-menu';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Ellipsis } from '@ncthub/ui/icons';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
@@ -50,10 +50,7 @@ export function TransactionObjectRowActions({
     if (!error) {
       router.refresh();
     } else {
-      toast({
-        title: 'Failed to delete file',
-        description: error.message,
-      });
+      toast('Failed to delete file', { description: error.message });
     }
   };
 
@@ -90,10 +87,7 @@ export function TransactionObjectRowActions({
     if (!error) {
       router.refresh();
     } else {
-      toast({
-        title: 'Failed to rename file',
-        description: error.message,
-      });
+      toast('Failed to rename file', { description: error.message });
     }
   };
 
@@ -113,10 +107,7 @@ export function TransactionObjectRowActions({
       );
 
     if (error) {
-      toast({
-        title: 'Failed to download file',
-        description: error.message,
-      });
+      toast('Failed to download file', { description: error.message });
       return;
     }
 

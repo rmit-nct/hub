@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@ncthub/ui/dropdown-menu';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Ellipsis, Eye } from '@ncthub/ui/icons';
 import { Row } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
@@ -41,8 +41,7 @@ export function ProjectRowActions({ row }: ProjectRowActionsProps) {
       router.refresh();
     } else {
       const data = await res.json();
-      toast({
-        title: 'Failed to delete workspace project',
+      toast('Failed to delete workspace project', {
         description: data.message,
       });
     }

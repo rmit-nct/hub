@@ -2,16 +2,10 @@
 
 import { ProductUnit } from '@ncthub/types/primitives/ProductUnit';
 import { Button } from '@ncthub/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
+import { Field, FieldLabel, FieldError } from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
 import { useTranslations } from 'next-intl';
@@ -67,39 +61,38 @@ export function ProductUnitForm({ wsId, data, onFinish }: Props) {
       router.refresh();
     } else {
       setLoading(false);
-      toast({
-        title: 'Error creating unit',
+      toast('Error creating unit', {
         description: 'An error occurred while creating the unit',
       });
     }
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-        <FormField
-          control={form.control}
-          name="name"
-          disabled={loading}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t('basic-data-table.name')}</FormLabel>
-              <FormControl>
-                <Input placeholder={t('basic-data-table.name')} {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+      <Controller
+        control={form.control}
+        name="name"
+        disabled={loading}
+        render={({ field, fieldState }) => (
+          <Field data-invalid={fieldState.invalid}>
+            <FieldLabel>{t('basic-data-table.name')}</FieldLabel>{' '}
+            <Input
+              placeholder={t('basic-data-table.name')}
+              aria-invalid={fieldState.invalid}
+              {...field}
+            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          </Field>
+        )}
+      />
 
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading
-            ? t('common.processing')
-            : !!data?.id
-              ? t('common.edit')
-              : t('common.create')}
-        </Button>
-      </form>
-    </Form>
+      <Button type="submit" className="w-full" disabled={loading}>
+        {loading
+          ? t('common.processing')
+          : !!data?.id
+            ? t('common.edit')
+            : t('common.create')}
+      </Button>
+    </form>
   );
 }

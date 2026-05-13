@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@ncthub/ui/dropdown-menu';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Ellipsis } from '@ncthub/ui/icons';
 import { Row } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
@@ -40,10 +40,7 @@ export function GroupTagRowActions({ row }: GroupTagRowActionsProps) {
       router.refresh();
     } else {
       const data = await res.json();
-      toast({
-        title: 'Failed to delete user group tag',
-        description: data.message,
-      });
+      toast('Failed to delete user group tag', { description: data.message });
     }
   };
 

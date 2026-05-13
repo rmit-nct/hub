@@ -2,16 +2,10 @@
 
 import { WorkspaceFlashcard } from '@ncthub/types/db';
 import { Button } from '@ncthub/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
+import { Field, FieldLabel, FieldError } from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
 import { useTranslations } from 'next-intl';
@@ -75,53 +69,55 @@ export default function FlashcardForm({
         router.refresh();
       } else {
         const data = await res.json();
-        toast({
-          title: `Failed to ${data.id ? 'edit' : 'create'} course`,
+        toast(`Failed to ${data.id ? 'edit' : 'create'} course`, {
           description: data.message,
         });
       }
     } catch (error) {
-      toast({
-        title: `Failed to ${data.id ? 'edit' : 'create'} course`,
+      toast(`Failed to ${data.id ? 'edit' : 'create'} course`, {
         description: error instanceof Error ? error.message : String(error),
       });
     }
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-3">
-        <FormField
-          control={form.control}
-          name="front"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t('front')}</FormLabel>
-              <FormControl>
-                <Input placeholder={t('front')} autoComplete="off" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="back"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t('back')}</FormLabel>
-              <FormControl>
-                <Input placeholder={t('back')} autoComplete="off" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-3">
+      <Controller
+        control={form.control}
+        name="front"
+        render={({ field, fieldState }) => (
+          <Field data-invalid={fieldState.invalid}>
+            <FieldLabel>{t('front')}</FieldLabel>{' '}
+            <Input
+              placeholder={t('front')}
+              autoComplete="off"
+              aria-invalid={fieldState.invalid}
+              {...field}
+            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          </Field>
+        )}
+      />
+      <Controller
+        control={form.control}
+        name="back"
+        render={({ field, fieldState }) => (
+          <Field data-invalid={fieldState.invalid}>
+            <FieldLabel>{t('back')}</FieldLabel>{' '}
+            <Input
+              placeholder={t('back')}
+              autoComplete="off"
+              aria-invalid={fieldState.invalid}
+              {...field}
+            />
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          </Field>
+        )}
+      />
 
-        <Button type="submit" className="w-full" disabled={disabled}>
-          {data?.id ? t('edit') : t('create')}
-        </Button>
-      </form>
-    </Form>
+      <Button type="submit" className="w-full" disabled={disabled}>
+        {data?.id ? t('edit') : t('create')}
+      </Button>
+    </form>
   );
 }
