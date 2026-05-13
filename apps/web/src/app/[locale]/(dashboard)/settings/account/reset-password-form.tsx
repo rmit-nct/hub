@@ -12,16 +12,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@ncthub/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@ncthub/ui/form';
+import { Field, FieldLabel, FieldError } from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Eye, EyeOff, Lock } from '@ncthub/ui/icons';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
@@ -74,8 +68,7 @@ export default function ResetPasswordForm({ user }: { user: WorkspaceUser }) {
         throw error;
       }
 
-      toast({
-        title: t('common.success'),
+      toast(t('common.success'), {
         description:
           'Password has been updated successfully. You can now log in with your new password.',
       });
@@ -91,11 +84,9 @@ export default function ResetPasswordForm({ user }: { user: WorkspaceUser }) {
       form.reset();
     } catch (error) {
       console.error('Error resetting password:', error);
-      toast({
-        title: t('common.error'),
+      toast.error(t('common.error'), {
         description:
           'An error occurred while resetting your password. Please try again later.',
-        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -117,93 +108,92 @@ export default function ResetPasswordForm({ user }: { user: WorkspaceUser }) {
           <DialogHeader>
             <DialogTitle>{t('reset-password.reset-password')}</DialogTitle>
           </DialogHeader>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <Controller
+              control={form.control}
+              name="password"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel>{t('login.password')}</FieldLabel>{' '}
+                  <div className="relative">
+                    <Lock className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                      className="pr-10 pl-10"
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="Enter new password"
+                      aria-invalid={fieldState.invalid}
+                      {...field}
+                      disabled={loading}
+                    />
+                    <button
+                      tabIndex={-1}
+                      type="button"
+                      className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="size-4" />
+                      ) : (
+                        <Eye className="size-4" />
+                      )}
+                    </button>
+                  </div>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
 
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('login.password')}</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Lock className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-                        <Input
-                          className="pr-10 pl-10"
-                          type={showPassword ? 'text' : 'password'}
-                          placeholder="Enter new password"
-                          {...field}
-                          disabled={loading}
-                        />
-                        <button
-                          tabIndex={-1}
-                          type="button"
-                          className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground"
-                          onClick={() => setShowPassword(!showPassword)}
-                        >
-                          {showPassword ? (
-                            <EyeOff className="size-4" />
-                          ) : (
-                            <Eye className="size-4" />
-                          )}
-                        </button>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <Controller
+              control={form.control}
+              name="confirmPassword"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel>Confirm Password</FieldLabel>{' '}
+                  <div className="relative">
+                    <Lock className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                      className="pr-10 pl-10"
+                      type={showConfirmPassword ? 'text' : 'password'}
+                      placeholder="Confirm your password"
+                      aria-invalid={fieldState.invalid}
+                      {...field}
+                      disabled={loading}
+                    />
+                    <button
+                      tabIndex={-1}
+                      type="button"
+                      className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff className="size-4" />
+                      ) : (
+                        <Eye className="size-4" />
+                      )}
+                    </button>
+                  </div>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
 
-              <FormField
-                control={form.control}
-                name="confirmPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Confirm Password</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Lock className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-                        <Input
-                          className="pr-10 pl-10"
-                          type={showConfirmPassword ? 'text' : 'password'}
-                          placeholder="Confirm your password"
-                          {...field}
-                          disabled={loading}
-                        />
-                        <button
-                          tabIndex={-1}
-                          type="button"
-                          className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground"
-                          onClick={() =>
-                            setShowConfirmPassword(!showConfirmPassword)
-                          }
-                        >
-                          {showConfirmPassword ? (
-                            <EyeOff className="size-4" />
-                          ) : (
-                            <Eye className="size-4" />
-                          )}
-                        </button>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? (
-                  <>
-                    <LoadingIndicator className="mr-2 h-4 w-4" />
-                    {t('reset-password.resetting')}
-                  </>
-                ) : (
-                  t('reset-password.reset-password')
-                )}
-              </Button>
-            </form>
-          </Form>
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? (
+                <>
+                  <LoadingIndicator className="mr-2 h-4 w-4" />
+                  {t('reset-password.resetting')}
+                </>
+              ) : (
+                t('reset-password.reset-password')
+              )}
+            </Button>
+          </form>
         </DialogContent>
       </Dialog>
     </SettingItemTab>

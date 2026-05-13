@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@ncthub/ui/dialog';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import * as z from 'zod';
@@ -51,8 +51,7 @@ export default function ConfigEditDialog({
       router.refresh();
     } else {
       const data = await res.json();
-      toast({
-        title: `Failed to ${data.id ? 'edit' : 'create'} api key`,
+      toast(`Failed to ${data.id ? 'edit' : 'create'} api key`, {
         description: data.message,
       });
     }

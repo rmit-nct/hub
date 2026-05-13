@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@ncthub/ui/dialog';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { generateRandomUUID } from '@ncthub/utils/uuid-helper';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
@@ -64,8 +64,7 @@ export default function ApiKeyEditDialog({
       router.refresh();
     } else {
       const data = await res.json();
-      toast({
-        title: `Failed to ${data.id ? 'edit' : 'create'} api key`,
+      toast(`Failed to ${data.id ? 'edit' : 'create'} api key`, {
         description: data.message,
       });
     }

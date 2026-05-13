@@ -5,7 +5,7 @@ import { GenerateDialog } from '@/components/generate-dialog';
 import { useObject } from '@ncthub/ai/object/core';
 import { quizSchema } from '@ncthub/ai/object/types';
 import { Button } from '@ncthub/ui/button';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -45,8 +45,7 @@ export default function AIQuizzes({
 
       await Promise.all(promises);
 
-      toast({
-        title: t('common.success'),
+      toast(t('common.success'), {
         description: t('ws-quizzes.generation_accepted'),
       });
 
@@ -54,8 +53,7 @@ export default function AIQuizzes({
       setAccepted(true);
     } catch (e) {
       console.log(e);
-      toast({
-        title: t('common.error'),
+      toast(t('common.error'), {
         description: t('ws-quizzes.generation_error'),
       });
     }

@@ -1,15 +1,10 @@
 'use client';
 
 import { Button } from '@ncthub/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from '@ncthub/ui/form';
+import { Field, FieldError } from '@ncthub/ui/field';
+import { Controller } from '@ncthub/ui/hooks/use-form';
 import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Check, Loader2 } from '@ncthub/ui/icons';
 import { Input } from '@ncthub/ui/input';
 import { zodResolver } from '@ncthub/ui/resolvers';
@@ -57,58 +52,52 @@ export default function DisplayNameInput({
     });
 
     if (res.ok) {
-      toast({
-        title: 'Profile updated',
+      toast('Profile updated', {
         description: 'Your display name has been updated.',
       });
 
       router.refresh();
     } else {
-      toast({
-        title: 'An error occurred',
-        description: 'Please try again.',
-      });
+      toast('An error occurred', { description: 'Please try again.' });
     }
 
     setSaving(false);
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
-        <div className="flex items-start gap-2">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormControl>
-                  <Input
-                    id="display-name"
-                    placeholder={t('display-name')}
-                    disabled={disabled}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+    <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+      <div className="flex items-start gap-2">
+        <Controller
+          control={form.control}
+          name="name"
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid} className="w-full">
+              {' '}
+              <Input
+                id="display-name"
+                placeholder={t('display-name')}
+                disabled={disabled}
+                aria-invalid={fieldState.invalid}
+                {...field}
+              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
 
-          <Button
-            type="submit"
-            size="icon"
-            onClick={form.handleSubmit(onSubmit)}
-            disabled={name === defaultValue || saving || disabled}
-          >
-            {saving ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
-            ) : (
-              <Check className="h-5 w-5" />
-            )}
-          </Button>
-        </div>
-      </form>
-    </Form>
+        <Button
+          type="submit"
+          size="icon"
+          onClick={form.handleSubmit(onSubmit)}
+          disabled={name === defaultValue || saving || disabled}
+        >
+          {saving ? (
+            <Loader2 className="h-5 w-5 animate-spin" />
+          ) : (
+            <Check className="h-5 w-5" />
+          )}
+        </Button>
+      </div>
+    </form>
   );
 }

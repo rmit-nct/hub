@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@ncthub/ui/dropdown-menu';
-import { useToast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import {
   AlertCircle,
   Camera,
@@ -39,8 +39,6 @@ export default function VideoCapture({ onNewStudent }: VideoCaptureProps) {
   const [cameraOn, setCameraOn] = useState<boolean>(false);
   const [capturing, setCapturing] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
-
-  const { toast } = useToast();
 
   const getSelectedDeviceIdLabel = () => {
     const device = availableDevices.find(
@@ -120,10 +118,8 @@ export default function VideoCapture({ onNewStudent }: VideoCaptureProps) {
       console.error(error);
       setCameraOn(false);
 
-      toast({
-        title: 'Could not access the webcam',
+      toast.error('Could not access the webcam', {
         description: 'Could not access the webcam.',
-        variant: 'destructive',
       });
     }
   };
@@ -203,26 +199,21 @@ export default function VideoCapture({ onNewStudent }: VideoCaptureProps) {
 
           if (data.name && data.studentNumber) {
             onNewStudent(data.name, data.studentNumber);
-            toast({
-              title: 'Student Information Detected',
+            toast('Student Information Detected', {
               description: `Found: ${data.name} (${data.studentNumber})`,
             });
           } else {
-            toast({
-              title: 'No Student Information Found',
+            toast.error('No Student Information Found', {
               description:
                 'Please ensure the ID card is clearly visible and try again.',
-              variant: 'destructive',
             });
           }
         } catch (error) {
           console.error('Capture error:', error);
 
-          toast({
-            title: 'Processing Failed',
+          toast.error('Processing Failed', {
             description:
               'Unable to process the image. Please check your connection and try again.',
-            variant: 'destructive',
           });
         } finally {
           setCapturing(false);

@@ -3,7 +3,7 @@
 import type { AuroraForecast } from '@ncthub/types/db';
 import { Alert, AlertTitle } from '@ncthub/ui/alert';
 import { Card, CardContent, CardHeader, CardTitle } from '@ncthub/ui/card';
-import { useToast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { AlertCircle } from '@ncthub/ui/icons';
 import {
   Select,
@@ -85,7 +85,6 @@ const CommodityComparison = ({
   const colors = resolvedTheme === 'dark' ? COLORS.dark : COLORS.light;
   const [selectedDate, setSelectedDate] = useState('');
   const [data, setData] = useState<any[]>([]);
-  const { toast } = useToast();
 
   useEffect(() => {
     const loadData = async () => {
@@ -110,11 +109,7 @@ const CommodityComparison = ({
           error instanceof Error
             ? error.message
             : 'Failed to fetch forecast data';
-        toast({
-          variant: 'destructive',
-          title: 'Error',
-          description: message,
-        });
+        toast.error('Error', { description: message });
       }
     };
 

@@ -4,7 +4,7 @@ import { downloadPrivateObject, uploadObject } from '@/lib/storage-helper';
 import { createClient } from '@ncthub/supabase/next/client';
 import { Workspace } from '@ncthub/types/db';
 import { Button } from '@ncthub/ui/button';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import { Check, Loader2 } from '@ncthub/ui/icons';
 import { Input } from '@ncthub/ui/input';
 import Image from 'next/image';
@@ -54,15 +54,13 @@ export default function LogoInput({ workspace, disabled }: Props) {
           .eq('id', workspace.id);
 
         if (updateError) {
-          toast({
-            title: 'Error uploading logo',
+          toast('Error uploading logo', {
             description: 'There was an error uploading the logo.',
           });
           return;
         }
 
-        toast({
-          title: 'Workspace updated',
+        toast('Workspace updated', {
           description: 'Workspace logo updated successfully.',
         });
 
@@ -70,8 +68,7 @@ export default function LogoInput({ workspace, disabled }: Props) {
         router.refresh();
       },
       onError: () => {
-        toast({
-          title: 'Error uploading logo',
+        toast('Error uploading logo', {
           description: 'There was an error uploading the logo.',
         });
       },
