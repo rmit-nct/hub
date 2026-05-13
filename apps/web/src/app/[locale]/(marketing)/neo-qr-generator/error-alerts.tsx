@@ -2,14 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Button } from '@ncthub/ui/button';
-import {
-  AlertCircle,
-  AlertOctagon,
-  Lock,
-  Wifi,
-  Zap,
-  X,
-} from 'lucide-react';
+import { AlertCircle, AlertOctagon, Lock, Wifi, Zap, X } from 'lucide-react';
 import './error-animations.css';
 
 export interface QRError {
@@ -35,7 +28,7 @@ export const ERROR_TYPES = {
   'dynamic-generation-failed': {
     title: "Couldn't Create Short Link",
     description:
-      "We encountered an issue while generating your short link. Please try again.",
+      'We encountered an issue while generating your short link. Please try again.',
     actionLabel: 'Try Again',
     severity: 'error' as const,
     icon: AlertCircle,
@@ -66,7 +59,7 @@ export const ERROR_TYPES = {
   'unexpected-application-error': {
     title: 'Something Went Wrong',
     description:
-      'We\'re sorry for the inconvenience. Please try again, or contact support if the problem persists.',
+      "We're sorry for the inconvenience. Please try again, or contact support if the problem persists.",
     actionLabel: 'Try Again',
     severity: 'error' as const,
     icon: AlertOctagon,
@@ -81,16 +74,20 @@ export interface QRErrorInlineAlertProps {
   onDismiss?: () => void;
 }
 
-export function QRErrorInlineAlert({ error, onDismiss }: QRErrorInlineAlertProps) {
-  const errorConfig = ERROR_TYPES[error.id as ErrorId] || ERROR_TYPES['unexpected-application-error'];
+export function QRErrorInlineAlert({
+  error,
+  onDismiss,
+}: QRErrorInlineAlertProps) {
+  const errorConfig =
+    ERROR_TYPES[error.id as ErrorId] ||
+    ERROR_TYPES['unexpected-application-error'];
   const IconComponent = errorConfig.icon;
 
   const severityClasses = {
     info: 'border-blue-200 bg-blue-50 dark:border-blue-900/30 dark:bg-blue-950/20',
     warning:
       'border-amber-200 bg-amber-50 dark:border-amber-900/30 dark:bg-amber-950/20',
-    error:
-      'border-red-200 bg-red-50 dark:border-red-900/30 dark:bg-red-950/20',
+    error: 'border-red-200 bg-red-50 dark:border-red-900/30 dark:bg-red-950/20',
   };
 
   const iconClasses = {
@@ -122,7 +119,9 @@ export function QRErrorInlineAlert({ error, onDismiss }: QRErrorInlineAlertProps
           className={`${iconClasses[error.severity]} mt-0.5 h-5 w-5 shrink-0 animate-pulse`}
         />
         <div className="flex-1">
-          <h3 className={`${titleClasses[error.severity]} font-semibold text-sm`}>
+          <h3
+            className={`${titleClasses[error.severity]} font-semibold text-sm`}
+          >
             {error.title}
           </h3>
           <p className={`${descClasses[error.severity]} mt-1 text-sm`}>
@@ -141,11 +140,7 @@ export function QRErrorInlineAlert({ error, onDismiss }: QRErrorInlineAlertProps
                 </Button>
               )}
               {onDismiss && (
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={onDismiss}
-                >
+                <Button size="sm" variant="ghost" onClick={onDismiss}>
                   Dismiss
                 </Button>
               )}
@@ -183,7 +178,9 @@ export function QRErrorToast({
 }: QRErrorToastProps) {
   const [isVisible, setIsVisible] = useState(true);
 
-  const errorConfig = ERROR_TYPES[error.id as ErrorId] || ERROR_TYPES['unexpected-application-error'];
+  const errorConfig =
+    ERROR_TYPES[error.id as ErrorId] ||
+    ERROR_TYPES['unexpected-application-error'];
   const IconComponent = errorConfig.icon;
 
   useEffect(() => {
@@ -260,7 +257,9 @@ export function QRErrorModal({
 }: QRErrorModalProps) {
   if (!isOpen) return null;
 
-  const errorConfig = ERROR_TYPES[error.id as ErrorId] || ERROR_TYPES['unexpected-application-error'];
+  const errorConfig =
+    ERROR_TYPES[error.id as ErrorId] ||
+    ERROR_TYPES['unexpected-application-error'];
   const IconComponent = errorConfig.icon;
 
   const iconBgClasses = {
