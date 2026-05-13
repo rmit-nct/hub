@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@ncthub/ui/card';
-import { toast } from '@ncthub/ui/hooks/use-toast';
+import { toast } from '@ncthub/ui/sonner';
 import {
   AlertCircle,
   Check,
@@ -25,7 +25,6 @@ import { Input } from '@ncthub/ui/input';
 import { Label } from '@ncthub/ui/label';
 import { Switch } from '@ncthub/ui/switch';
 import { Textarea } from '@ncthub/ui/textarea';
-import { ToastAction } from '@ncthub/ui/toast';
 import { cn } from '@ncthub/utils/format';
 import { motion } from 'framer-motion';
 import type React from 'react';
@@ -279,18 +278,13 @@ export default function NeoShortenerPage() {
     setResult(null);
 
     if (isAuthenticated === false) {
-      toast({
-        title: 'Login required',
+      toast('Login required', {
         description:
           'Please log in to create, save, and manage your short links.',
-        action: (
-          <ToastAction
-            altText="Login to continue"
-            onClick={() => window.location.assign(SHORTENER_LOGIN_URL)}
-          >
-            Login
-          </ToastAction>
-        ),
+        action: {
+          label: 'Login',
+          onClick: () => window.location.assign(SHORTENER_LOGIN_URL),
+        },
       });
       return;
     }
