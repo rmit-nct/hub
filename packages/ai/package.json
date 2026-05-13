@@ -12,27 +12,27 @@
   },
   "packageManager": "bun@1.3.13",
   "dependencies": {
-    "@ai-sdk/anthropic": "^3.0.74",
-    "@ai-sdk/google": "^3.0.67",
-    "@ai-sdk/google-vertex": "^4.0.116",
-    "@ai-sdk/openai": "^3.0.57",
-    "@ai-sdk/react": "^3.0.175",
+    "@ai-sdk/anthropic": "^3.0.76",
+    "@ai-sdk/google": "^3.0.72",
+    "@ai-sdk/google-vertex": "^4.0.126",
+    "@ai-sdk/openai": "^3.0.63",
+    "@ai-sdk/react": "^3.0.179",
     "@ncthub/supabase": "workspace:*",
     "@ncthub/utils": "workspace:*",
-    "ai": "^6.0.173",
+    "ai": "^6.0.177",
     "dayjs": "^1.11.20",
-    "next": "16.2.4",
-    "react": "^19.2.5",
-    "react-dom": "^19.2.5",
-    "zod": "^4.4.1"
+    "next": "16.2.6",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@ncthub/types": "workspace:*",
     "@ncthub/typescript-config": "workspace:*",
-    "@types/node": "^25.6.0",
+    "@types/node": "^25.7.0",
     "@types/react": "^19.2.14",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.5"
+    "vitest": "^4.1.6"
   },
   "exports": {
     "./*": "./src/*.ts"
