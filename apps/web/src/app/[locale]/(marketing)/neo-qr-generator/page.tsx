@@ -24,6 +24,12 @@ import {
   updateDynamicQRUrl,
 } from '../neo-shortener/functions';
 import NeoGeneratorHero from './hero';
+import {
+  QRErrorToast,
+  QRErrorModal,
+  type QRError,
+  type ErrorId,
+} from './error-alerts';
 
 // Type definitions
 interface QRTypeTab {
@@ -418,6 +424,9 @@ export default function NeoQrGeneratorPage() {
   const [isUpdatingDestination, setIsUpdatingDestination] = useState(false);
   const [updateDestinationError, setUpdateDestinationError] = useState('');
 
+  // Error handling state
+  const [currentError, setCurrentError] = useState<QRError | null>(null);
+
   // Preview / render
   const qrContainerRef = useRef<HTMLDivElement | null>(null);
   const qrRef = useRef<QRCodeStyling | null>(null);
@@ -455,6 +464,69 @@ export default function NeoQrGeneratorPage() {
   else if (qrType === 'facebook') isCurrentInputValid = facebookUrlValid;
   else if (qrType === 'email') isCurrentInputValid = emailToValid;
   else if (qrType === 'vcard') isCurrentInputValid = vEmailValid;
+
+  // Dismiss error
+  const handleDismissError = useCallback(() => {
+    setCurrentError(null);
+  }, []);
+
+  // Error handling: Map error conditions to standardized error types
+  const mapErrorToType = useCallback((error: Error | string): ErrorId => {
+    const message =
+      typeof error === 'string' ? error : error.message || '';
+    if (
+      message.includes('sign in') ||
+      message.includes('Auth') ||
+      message.includes('session')
+    ) {
+      return 'dynamic-auth-required';
+    }
+    if (
+      message.includes('network') ||
+      message.includes('fetch') ||
+      message.includes('connection')
+    ) {
+      return 'network-connection-issue';
+    }
+    if (
+      message.includes('limit') ||
+      message.includes('quota') ||
+      message.includes('exceeded')
+    ) {
+      return 'qr-limit-reached';
+    }
+    if (
+      message.includes('invalid') ||
+      message.includes('format') ||
+      message.includes('malformed')
+    ) {
+      return 'invalid-qr-content';
+    }
+    if (
+      message.includes('generation') ||
+      message.includes('failed') ||
+      message.includes('create')
+    ) {
+      return 'dynamic-generation-failed';
+    }
+    return 'unexpected-application-error';
+  }, []);
+
+  // Handle showing an error
+  const handleShowError = useCallback(
+    (errorId: ErrorId, config?: Partial<QRError>) => {
+      setCurrentError({
+        id: errorId,
+        title: config?.title || '',
+        description: config?.description || '',
+        actionLabel: config?.actionLabel,
+        severity: config?.severity || 'error',
+        onAction: config?.onAction,
+        onDismiss: () => handleDismissError(),
+      });
+    },
+    [handleDismissError]
+  );
 
   // Slider drag behavior: smooth visual scaling via transform during drag, then update QR on release
   const handleQrSizeSliderStart = useCallback(() => {
@@ -597,18 +669,22 @@ export default function NeoQrGeneratorPage() {
         // resetting isGenerated because isDynamicMode is true.
         setIsGenerated(true);
       } catch (error) {
-        let message =
-          error instanceof Error
-            ? error.message
-            : 'Failed to create short link';
-        if (
-          message.includes('sign in') ||
-          message.includes('Auth') ||
-          message.includes('session')
-        ) {
-          message = 'Please sign in to create dynamic QR codes';
+        const errorType = mapErrorToType(error as Error);
+        let customMessage: string | undefined;
+        
+        if (errorType === 'dynamic-auth-required') {
+          customMessage = 'Please sign in to create dynamic QR codes';
+        } else if (errorType === 'dynamic-generation-failed') {
+          customMessage = "We couldn't create your short link. Please try again.";
         }
-        setDynamicQRError(message);
+
+        handleShowError(errorType, {
+          description: customMessage,
+        });
+        
+        setDynamicQRError(
+          error instanceof Error ? error.message : 'Failed to create short link'
+        );
         setDynamicQRMetadata(null);
         setIsDynamicMode(false);
       } finally {
@@ -624,6 +700,8 @@ export default function NeoQrGeneratorPage() {
     urlInput,
     urlInputValid,
     dynamicQRMetadata?.originalUrl,
+    mapErrorToType,
+    handleShowError,
   ]);
 
   // Handles updating the destination URL of an existing dynamic QR code.
@@ -644,13 +722,16 @@ export default function NeoQrGeneratorPage() {
       setIsEditingDestination(false);
       setEditDestinationInput('');
     } catch (error) {
+      const errorType = mapErrorToType(error as Error);
+      handleShowError(errorType);
+      
       const message =
         error instanceof Error ? error.message : 'Failed to update destination';
       setUpdateDestinationError(message);
     } finally {
       setIsUpdatingDestination(false);
     }
-  }, [dynamicQRMetadata, editDestinationInput]);
+  }, [dynamicQRMetadata, editDestinationInput, mapErrorToType, handleShowError]);
 
   // Extract the actual QR update logic into a separate function for clarity
   // Declare this BEFORE the useEffect that uses it
@@ -2883,6 +2964,37 @@ export default function NeoQrGeneratorPage() {
           frameText={frameText}
           setFrameText={setFrameText}
         />
+      )}
+
+      {/* Error Handling UI */}
+      {currentError && (
+        <>
+          {currentError.severity === 'warning' && (
+            <QRErrorToast
+              error={currentError}
+              autoDismiss={true}
+              duration={5000}
+              onDismiss={handleDismissError}
+            />
+          )}
+          {currentError.severity === 'error' &&
+            currentError.id === 'qr-limit-reached' && (
+              <QRErrorModal
+                error={currentError}
+                isOpen={true}
+                onClose={handleDismissError}
+              />
+            )}
+          {currentError.severity === 'error' &&
+            currentError.id !== 'qr-limit-reached' && (
+              <QRErrorToast
+                error={currentError}
+                autoDismiss={true}
+                duration={5000}
+                onDismiss={handleDismissError}
+              />
+            )}
+        </>
       )}
     </div>
   );
