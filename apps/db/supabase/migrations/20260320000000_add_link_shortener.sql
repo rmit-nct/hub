@@ -46,7 +46,7 @@ alter table "public"."shortened_links"
 alter table "public"."shortened_links"
   add constraint "shortened_links_creator_id_fkey"
   foreign key (creator_id)
-  references users(id)
+  references "public"."users"(id)
   on update cascade
   on delete set default;
 
@@ -55,7 +55,9 @@ alter table "public"."shortened_links"
   check (password_hint is null or char_length(password_hint) <= 200);
 
 create or replace function set_shortened_links_domain()
-returns trigger as $$
+returns trigger
+language plpgsql
+as $$
 begin
   new.domain := regexp_replace(
     regexp_replace(new.link, '^https?://|^//', ''),
@@ -64,13 +66,49 @@ begin
   );
   return new;
 end;
-$$ language plpgsql;
+$$;
 
 create trigger "trg_set_shortened_links_domain"
 before insert or update of link
 on "public"."shortened_links"
 for each row
 execute function set_shortened_links_domain();
+
+create or replace function "public"."enforce_shortened_links_limit"()
+returns trigger
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+declare
+  current_link_count integer;
+begin
+  if new.creator_id is null then
+    raise exception 'creator_id is required';
+  end if;
+
+  -- prevent race condition
+  perform pg_advisory_xact_lock(hashtext(new.creator_id::text));
+
+  select count(*)::integer
+  into current_link_count
+  from "public"."shortened_links"
+  where "creator_id" = new.creator_id;
+
+  if current_link_count >= 30 then
+    raise exception 'You have reached the 30-link limit for your account'
+      using errcode = 'P0001';
+  end if;
+
+  return new;
+end;
+$$;
+
+create trigger "trg_enforce_shortened_links_limit"
+before insert
+on "public"."shortened_links"
+for each row
+execute function "public"."enforce_shortened_links_limit"();
 
 grant delete on table "public"."shortened_links" to "anon";
 grant insert on table "public"."shortened_links" to "anon";
@@ -110,7 +148,9 @@ on "public"."shortened_links"
 as permissive
 for insert
 to authenticated
-with check (true);
+with check (
+  creator_id = auth.uid()
+);
 
 create policy "Allow users to update"
 on "public"."shortened_links"
