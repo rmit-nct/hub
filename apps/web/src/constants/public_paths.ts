@@ -9,6 +9,7 @@ export const APP_PUBLIC_PATHS = [
   '/meet-together',
   '/neo-generator',
   '/neo-meeting-agent',
+  '/neo-shortener',
   '/projects',
   '/neo-crush',
   '/neo-chess',
