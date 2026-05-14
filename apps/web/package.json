@@ -83,6 +83,7 @@
     "qr-code-styling": "^1.9.2",
     "qrcode.react": "^4.2.0",
     "react": "^19.2.6",
+    "react-color-pikr": "^1.1.2",
     "react-confetti": "^6.4.0",
     "react-dom": "^19.2.6",
     "react-intersection-observer": "^10.0.3",

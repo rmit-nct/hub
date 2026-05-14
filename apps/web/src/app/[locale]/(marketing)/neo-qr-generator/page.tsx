@@ -23,13 +23,13 @@ import {
   type DynamicQRMetadata,
   updateDynamicQRUrl,
 } from '../neo-shortener/functions';
-import NeoGeneratorHero from './hero';
 import {
-  QRErrorToast,
-  QRErrorModal,
-  type QRError,
   type ErrorId,
+  type QRError,
+  QRErrorModal,
+  QRErrorToast,
 } from './error-alerts';
+import NeoGeneratorHero from './hero';
 
 // Type definitions
 interface QRTypeTab {

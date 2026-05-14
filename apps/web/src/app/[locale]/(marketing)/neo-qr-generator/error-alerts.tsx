@@ -1,8 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { Button } from '@ncthub/ui/button';
-import { AlertCircle, AlertOctagon, Lock, Wifi, Zap, X } from 'lucide-react';
+import {
+  AlertCircle,
+  AlertOctagon,
+  Lock,
+  Wifi,
+  X,
+  Zap,
+} from '@ncthub/ui/icons';
+import { useEffect, useState } from 'react';
 import './error-animations.css';
 
 export interface QRError {
@@ -151,7 +158,7 @@ export function QRErrorInlineAlert({
           <button
             type="button"
             onClick={onDismiss}
-            className="text-foreground hover:text-foreground/70 transition-colors"
+            className="text-foreground transition-colors hover:text-foreground/70"
             aria-label="Close alert"
           >
             <X className="h-4 w-4" />
@@ -204,7 +211,7 @@ export function QRErrorToast({
 
   return (
     <div
-      className={`${bgClasses[error.severity]} fixed bottom-6 right-6 max-w-sm animate-slideFromRight rounded-lg p-4 shadow-lg`}
+      className={`${bgClasses[error.severity]} fixed right-6 bottom-6 max-w-sm animate-slideFromRight rounded-lg p-4 shadow-lg`}
       role="status"
       aria-live="polite"
     >
@@ -220,7 +227,7 @@ export function QRErrorToast({
                 error.onAction?.();
                 setIsVisible(false);
               }}
-              className="mt-3 inline-block rounded px-3 py-1.5 text-sm font-medium transition-colors hover:bg-white/20"
+              className="mt-3 inline-block rounded px-3 py-1.5 font-medium text-sm transition-colors hover:bg-white/20"
             >
               {error.actionLabel}
             </button>
@@ -229,7 +236,7 @@ export function QRErrorToast({
         <button
           type="button"
           onClick={() => setIsVisible(false)}
-          className="text-white/60 hover:text-white transition-colors"
+          className="text-white/60 transition-colors hover:text-white"
           aria-label="Close notification"
         >
           <X className="h-4 w-4" />
@@ -278,21 +285,21 @@ export function QRErrorModal({
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-40 bg-black/50 animate-fadeIn"
+        className="fixed inset-0 z-40 animate-fadeIn bg-black/50"
         onClick={onClose}
         aria-hidden="true"
       />
 
       {/* Modal */}
       <div
-        className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-scaleIn"
+        className="fixed inset-0 z-50 flex animate-scaleIn items-center justify-center p-4"
         role="dialog"
         aria-modal="true"
         aria-labelledby="error-title"
       >
         <div className="w-full max-w-sm rounded-xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-900">
           {/* Header with Icon Badge */}
-          <div className="flex justify-center border-b border-slate-200 p-6 dark:border-slate-700">
+          <div className="flex justify-center border-slate-200 border-b p-6 dark:border-slate-700">
             <div
               className={`${iconBgClasses[error.severity]} flex h-12 w-12 items-center justify-center rounded-full`}
             >
@@ -310,13 +317,13 @@ export function QRErrorModal({
             >
               {error.title}
             </h2>
-            <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+            <p className="mt-2 text-slate-600 text-sm dark:text-slate-400">
               {error.description}
             </p>
           </div>
 
           {/* Actions */}
-          <div className="border-t border-slate-200 px-6 py-4 dark:border-slate-700">
+          <div className="border-slate-200 border-t px-6 py-4 dark:border-slate-700">
             <div className="flex gap-3">
               {onSecondary && (
                 <Button
