@@ -13,6 +13,7 @@ import {
   Puzzle,
   ScanLine,
   Sparkles,
+  QrCode,
 } from '@ncthub/ui/icons';
 import type { ReactNode } from 'react';
 
@@ -114,6 +115,19 @@ export const useNavigation = (t: any): { categories: NavCategory[] } => {
       description:
         'Effortlessly capture and manage student information with AI-powered scanning technology.',
       icon: <ScanLine />,
+    },
+    {
+      href: '/neo-shortener',
+      label: 'Shortener',
+      description: 'Shorten a long URL into a simpler version',
+      icon: <ScanLine />,
+    },
+    {
+      href: '/neo-qr-generator',
+      label: 'Neo QR Generator',
+      description:
+        'Generate and customize QR codes instantly for links, text, and more.',
+      icon: <QrCode />,
     },
   ] as NavItem[];
 

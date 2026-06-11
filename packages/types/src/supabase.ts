@@ -3372,6 +3372,61 @@ export type Database = {
           },
         ];
       };
+      qr_code: {
+        Row: {
+          created_at: string | null;
+          design_settings: Json | null;
+          id: string;
+          qr_type: string | null;
+          scan_count: number | null;
+          short_code: string;
+          target_url: string | null;
+          user_id: string | null;
+        };
+        Insert: {
+          created_at?: string | null;
+          design_settings?: Json | null;
+          id?: string;
+          qr_type?: string | null;
+          scan_count?: number | null;
+          short_code: string;
+          target_url?: string | null;
+          user_id?: string | null;
+        };
+        Update: {
+          created_at?: string | null;
+          design_settings?: Json | null;
+          id?: string;
+          qr_type?: string | null;
+          scan_count?: number | null;
+          short_code?: string;
+          target_url?: string | null;
+          user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'qr_code_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'nova_user_challenge_leaderboard';
+            referencedColumns: ['user_id'];
+          },
+          {
+            foreignKeyName: 'qr_code_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'nova_user_leaderboard';
+            referencedColumns: ['user_id'];
+          },
+          {
+            foreignKeyName: 'qr_code_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       quiz_options: {
         Row: {
           created_at: string;
@@ -3477,6 +3532,41 @@ export type Database = {
             columns: ['media_upload_id'];
             isOneToOne: false;
             referencedRelation: 'media_uploads';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      scans: {
+        Row: {
+          country: string | null;
+          device_type: string | null;
+          id: string;
+          ip_address: string | null;
+          qr_id: string;
+          scanned_at: string | null;
+        };
+        Insert: {
+          country?: string | null;
+          device_type?: string | null;
+          id?: string;
+          ip_address?: string | null;
+          qr_id?: string;
+          scanned_at?: string | null;
+        };
+        Update: {
+          country?: string | null;
+          device_type?: string | null;
+          id?: string;
+          ip_address?: string | null;
+          qr_id?: string;
+          scanned_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'scans_qr_id_fkey';
+            columns: ['qr_id'];
+            isOneToOne: false;
+            referencedRelation: 'qr_code';
             referencedColumns: ['id'];
           },
         ];

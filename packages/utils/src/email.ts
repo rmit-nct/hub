@@ -27,8 +27,12 @@ export const checkIfUserExists = async ({ email }: { email: string }) => {
     .eq('email', email)
     .maybeSingle();
 
-  if (error) throw error.message;
-  return data?.id;
+  if (error) {
+    console.error('Error checking if user exists:', error);
+    return null;
+  }
+
+  return data?.id ?? null;
 };
 
 export const generateRandomPassword = () => {
