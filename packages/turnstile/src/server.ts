@@ -136,6 +136,9 @@ export async function verifyTurnstileToken(
   });
 
   if (!response.ok) {
+    console.error(
+      `Turnstile verification request failed with status ${response.status}`
+    );
     throw new TurnstileError(
       'verification_failed',
       'Turnstile verification failed'
@@ -144,6 +147,7 @@ export async function verifyTurnstileToken(
 
   const result = (await response.json()) as { success?: boolean };
   if (!result.success) {
+    console.error('Turnstile verification failed:', result);
     throw new TurnstileError(
       'verification_failed',
       'Turnstile verification failed'
