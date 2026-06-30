@@ -5,17 +5,16 @@ import { resolveTurnstileClientState } from '@ncthub/turnstile/client';
 import { Button } from '@ncthub/ui/button';
 import {
   Field,
-  FieldLabel,
   FieldDescription,
   FieldError,
+  FieldLabel,
 } from '@ncthub/ui/field';
-import { Controller } from '@ncthub/ui/hooks/use-form';
-import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/sonner';
+import { Controller, useForm } from '@ncthub/ui/hooks/use-form';
 import { Mail } from '@ncthub/ui/icons';
 import { Input } from '@ncthub/ui/input';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@ncthub/ui/input-otp';
 import { zodResolver } from '@ncthub/ui/resolvers';
+import { toast } from '@ncthub/ui/sonner';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
@@ -140,7 +139,7 @@ export default function LoginForm() {
 
     if (result.success) {
       const nextUrl = searchParams.get('nextUrl');
-      router.push(nextUrl ?? '/onboarding');
+      router.push(nextUrl ?? '/');
       router.refresh();
     } else {
       setLoading(false);
