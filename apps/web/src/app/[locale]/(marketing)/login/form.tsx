@@ -51,6 +51,7 @@ export default function LoginForm() {
   const [captchaToken, setCaptchaToken] = useState<string>();
   const [captchaError, setCaptchaError] = useState<string>();
   const captchaRef = useRef<TurnstileInstance>(null);
+  const inbucketWindowOpenedRef = useRef(false);
   const turnstileClientState = resolveTurnstileClientState({
     devMode: DEV_MODE,
   });
@@ -74,18 +75,6 @@ export default function LoginForm() {
   const [resendCooldown, setResendCooldown] = useState(0);
 
   const maxOTPLength = 6;
-
-  // Update resend cooldown OTP is sent
-  useEffect(() => {
-    if (otpSent) {
-      setResendCooldown(cooldown);
-
-      // if on DEV_MODE, auto-open inbucket
-      if (DEV_MODE) {
-        window.open('http://localhost:8004', '_blank');
-      }
-    }
-  }, [otpSent]);
 
   // Reduce cooldown by 1 every second
   useEffect(() => {
@@ -121,6 +110,12 @@ export default function LoginForm() {
 
       // Reset cooldown
       setResendCooldown(cooldown);
+
+      // if on DEV_MODE, auto-open inbucket once after the OTP is sent
+      if (DEV_MODE && !inbucketWindowOpenedRef.current) {
+        inbucketWindowOpenedRef.current = true;
+        window.open('http://localhost:8004', '_blank');
+      }
     } else {
       toast(t('failed'), { description: result.error || t('failed_to_send') });
     }
@@ -198,10 +193,11 @@ export default function LoginForm() {
             className={otpSent ? '' : 'hidden'}
           >
             <FieldLabel>{t('otp_code')}</FieldLabel>{' '}
-            <div className="flex flex-col gap-2 md:flex-row">
+            <div className="grid gap-2 sm:grid-cols-[minmax(13.5rem,1fr)_minmax(10rem,1fr)]">
               <InputOTP
                 maxLength={maxOTPLength}
                 aria-invalid={fieldState.invalid}
+                containerClassName="w-full"
                 {...field}
                 onChange={(value) => {
                   form.setValue('otp', value);
@@ -215,7 +211,7 @@ export default function LoginForm() {
                     <InputOTPSlot
                       key={index}
                       index={index}
-                      className="max-md:w-full"
+                      className="min-w-0 flex-1"
                     />
                   ))}
                 </InputOTPGroup>
@@ -228,7 +224,7 @@ export default function LoginForm() {
                   resendCooldown > 0 ||
                   (turnstileClientState.isRequired && !captchaToken)
                 }
-                className="md:w-full"
+                className="w-full"
                 variant="secondary"
                 type="button"
               >

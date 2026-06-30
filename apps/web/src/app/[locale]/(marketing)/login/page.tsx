@@ -1,3 +1,4 @@
+import { ArrowLeft } from '@ncthub/ui/icons';
 import { Separator } from '@ncthub/ui/separator';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -14,20 +15,7 @@ export default async function Login() {
         href="/"
         className="group absolute top-8 left-8 flex items-center rounded-md bg-btn-background px-4 py-2 text-foreground text-sm no-underline hover:bg-btn-background-hover"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1"
-        >
-          <polyline points="15 18 9 12 15 6" />
-        </svg>{' '}
+        <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
         {t('common.back')}
       </Link>
 
@@ -36,8 +24,8 @@ export default async function Login() {
           <h1 className="relative flex w-fit items-center gap-2">
             <Image
               src="/media/logos/transparent.png"
-              width={128}
-              height={128}
+              width={160}
+              height={142}
               alt="NCT Hub Logo"
             />
           </h1>
