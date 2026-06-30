@@ -2295,8 +2295,8 @@ export type Database = {
       };
       meet_together_plans: {
         Row: {
-          created_at: string;
-          creator_id: string;
+          created_at: string | null;
+          creator_id: string | null;
           dates: string[];
           description: string | null;
           end_time: string;
@@ -2306,8 +2306,8 @@ export type Database = {
           start_time: string;
         };
         Insert: {
-          created_at?: string;
-          creator_id?: string;
+          created_at?: string | null;
+          creator_id?: string | null;
           dates: string[];
           description?: string | null;
           end_time: string;
@@ -2317,8 +2317,8 @@ export type Database = {
           start_time: string;
         };
         Update: {
-          created_at?: string;
-          creator_id?: string;
+          created_at?: string | null;
+          creator_id?: string | null;
           dates?: string[];
           description?: string | null;
           end_time?: string;
