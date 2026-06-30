@@ -1,21 +1,39 @@
+'use client';
+
 import { Button } from '@ncthub/ui/button';
-import { useTranslations } from 'next-intl';
+import { toast } from '@ncthub/ui/sonner';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import { useState } from 'react';
+import { logoutFromClient } from '@/lib/client-logout';
 
 export default function LogoutButton() {
   const t = useTranslations('common');
   const router = useRouter();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const logout = async () => {
-    await fetch('/api/auth/logout', {
-      method: 'POST',
-    });
-    router.refresh();
+    if (isLoggingOut) return;
+
+    setIsLoggingOut(true);
+
+    try {
+      await logoutFromClient();
+      router.replace('/login');
+      router.refresh();
+    } catch (error) {
+      setIsLoggingOut(false);
+      toast(t('error'), {
+        description:
+          error instanceof Error ? error.message : 'Failed to log out.',
+      });
+    }
   };
 
   return (
     <Button
-      onClick={logout}
+      onClick={() => void logout()}
+      disabled={isLoggingOut}
       variant="destructive"
       className="font-semibold text-red-300 hover:text-red-200"
     >
