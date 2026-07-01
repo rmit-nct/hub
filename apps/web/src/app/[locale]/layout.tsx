@@ -126,6 +126,7 @@ export default async function RootLayout({ children, params }: Props) {
           font.className
         )}
       >
+        {/* Keep Vercel instrumentation mounted at the root layout. */}
         <VercelAnalytics />
         <VercelInsights />
         <Providers>{children}</Providers>
