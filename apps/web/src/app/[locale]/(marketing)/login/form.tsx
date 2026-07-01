@@ -193,7 +193,10 @@ export default function LoginForm() {
         control={form.control}
         name="otp"
         render={({ field, fieldState }) => (
-          <Field data-invalid={fieldState.invalid}>
+          <Field
+            data-invalid={fieldState.invalid}
+            className={otpSent ? '' : 'hidden'}
+          >
             <FieldLabel>{t('otp_code')}</FieldLabel>{' '}
             <div className="flex flex-col gap-3">
               <InputOTP
