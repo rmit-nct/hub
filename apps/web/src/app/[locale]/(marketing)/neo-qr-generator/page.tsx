@@ -2,7 +2,6 @@
 
 import { Button } from '@ncthub/ui/button';
 import { Checkbox } from '@ncthub/ui/checkbox';
-import { Dropzone, DropzoneEmptyState } from '@ncthub/ui/dropzone';
 import { Label } from '@ncthub/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@ncthub/ui/popover';
 import {
@@ -14,15 +13,18 @@ import {
 } from '@ncthub/ui/select';
 import { Slider } from '@ncthub/ui/slider';
 import { motion } from 'framer-motion';
-import QRCodeStyling, { type TypeNumber } from 'qr-code-styling';
+import QRCodeStyling from 'qr-code-styling';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ColorPicker } from 'react-color-pikr';
 import {
   createDynamicQRUrl,
+  type DynamicQRAnalytics,
   type DynamicQRMetadata,
-  updateDynamicQRUrl,
+  getDynamicQRAnalytics,
 } from '../neo-shortener/functions';
+import { AnalyticsStat } from './analytics-stat';
+import { DownloadModal } from './download-modal';
 import {
   type ErrorId,
   type QRError,
@@ -30,317 +32,26 @@ import {
   QRErrorToast,
 } from './error-alerts';
 import NeoGeneratorHero from './hero';
-
-// Type definitions
-interface QRTypeTab {
-  value: QrType;
-  label: string;
-  description: string;
-}
-
-type QrType =
-  | 'url'
-  | 'wifi'
-  | 'email'
-  | 'sms'
-  | 'vcard'
-  | 'facebook'
-  | 'appstores'
-  | 'images';
-type QrDownloadFormat = 'png' | 'jpeg' | 'svg' | 'eps';
-type QrErrorLevel = 'L' | 'M' | 'Q' | 'H';
-type QrDotShape = 'square' | 'rounded' | 'dots';
-
-function triggerDownload(blobOrUrl: Blob | string, fileName: string) {
-  const url =
-    typeof blobOrUrl === 'string' ? blobOrUrl : URL.createObjectURL(blobOrUrl);
-  const downloadLink = document.createElement('a');
-  downloadLink.href = url;
-  downloadLink.download = fileName;
-  document.body.appendChild(downloadLink);
-  downloadLink.click();
-  document.body.removeChild(downloadLink);
-  if (typeof blobOrUrl !== 'string') {
-    setTimeout(() => URL.revokeObjectURL(url), 5000);
-  }
-}
-
-function getExt(fileName: string) {
-  const idx = fileName.lastIndexOf('.');
-  return idx === -1 ? '' : fileName.slice(idx + 1).toLowerCase();
-}
-
-//QR code frame selection
-export type FrameStyle = 'none' | 'minimal' | 'rounded' | 'banner' | 'polaroid';
-export interface QRconfig {
-  value: string;
-  frame: FrameStyle;
-  color: string;
-}
-
-//Email validator
-function isEmailValid(email: string) {
-  if (!email.trim()) return true;
-  const emailRegex =
-    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-  return emailRegex.test(email);
-}
-function isUrlValid(url: string) {
-  if (!url.trim()) return true;
-  const urlRegex =
-    /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/;
-  return urlRegex.test(url);
-}
-function buildWifiPayload({
-  ssid,
-  password,
-  security,
-  hidden,
-}: {
-  ssid: string;
-  password: string;
-  security: 'WPA' | 'WEP' | 'nopass' | 'WPA2' | 'NONE';
-  hidden: boolean;
-}) {
-  const ssidEscaped = ssid.replace(/;/g, ':');
-  const passwordEscaped = password.replace(/;/g, ':');
-  const wifiType =
-    security === 'NONE'
-      ? 'nopass'
-      : security === 'nopass'
-        ? 'nopass'
-        : security;
-  const parts = [
-    `T:${wifiType}`,
-    `S:${ssidEscaped}`,
-    security === 'nopass' || security === 'NONE'
-      ? `P:`
-      : `P:${passwordEscaped}`,
-    `H:${hidden ? 'true' : 'false'}`,
-  ];
-  return `WIFI:${parts.join(';')};;`;
-}
-
-function buildEmailPayload({
-  to,
-  subject,
-  body,
-}: {
-  to: string;
-  subject: string;
-  body: string;
-}) {
-  const params = new URLSearchParams();
-  if (subject.trim()) params.set('subject', subject);
-  if (body.trim()) params.set('body', body);
-  const query = params.toString();
-  return `mailto:${to.trim()}${query ? `?${query}` : ''}`;
-}
-
-function buildSmsPayload({
-  number,
-  message,
-}: {
-  number: string;
-  message: string;
-}) {
-  return `SMSTO:${number.trim()}:${encodeURIComponent(message)}`;
-}
-
-function buildVCardPayload({
-  firstName,
-  lastName,
-  org,
-  title,
-  tel,
-  email,
-}: {
-  firstName: string;
-  lastName: string;
-  org: string;
-  title: string;
-  tel: string;
-  email: string;
-}) {
-  const fullName = `${firstName} ${lastName}`.trim();
-  const first = lastName ? firstName : firstName;
-  const last = lastName ? lastName : lastName;
-  return [
-    'BEGIN:VCARD',
-    'VERSION:3.0',
-    `N:${last};${first};;;`,
-    `FN:${fullName || `${firstName || ''} ${lastName || ''}`.trim()}`,
-    org.trim() ? `ORG:${org.trim()}` : '',
-    title.trim() ? `TITLE:${title.trim()}` : '',
-    tel.trim() ? `TEL:${tel.trim()}` : '',
-    email.trim() ? `EMAIL:${email.trim()}` : '',
-    'END:VCARD',
-  ]
-    .filter(Boolean)
-    .join('\n');
-}
-
-// Validate and sanitize dot types to prevent qr-code-styling crashes
-function sanitizeDotType(type: unknown): string {
-  const validTypes = [
-    'square',
-    'dots',
-    'rounded',
-    'extra-rounded',
-    'classy',
-    'classy-rounded',
-  ];
-  if (typeof type === 'string' && validTypes.includes(type)) {
-    return type;
-  }
-  return 'square'; // Safe fallback
-}
-
-function dotStyle(dotShape: QrDotShape) {
-  switch (dotShape) {
-    case 'rounded':
-      return {
-        shape: 'square' as const,
-        dots: 'rounded' as const,
-        cornerSquare: 'extra-rounded' as const,
-        cornerDot: 'dots' as const,
-      };
-    case 'dots':
-      return {
-        shape: 'square' as const,
-        dots: 'dots' as const,
-        cornerSquare: 'dots' as const,
-        cornerDot: 'dots' as const,
-      };
-    default:
-      return {
-        shape: 'square' as const,
-        dots: 'square' as const,
-        cornerSquare: 'square' as const,
-        cornerDot: 'square' as const,
-      };
-  }
-}
-
-// Build COMPLETE and VALID QR options object - BULLETPROOF VERSION
-// This prevents partial update crashes from undefined fields
-function buildQrOptions({
-  qrValue,
-  displaySize,
-  dotConfig,
-  fgColor,
-  bgColor,
-  margin,
-  errorLevel,
-}: {
-  qrValue: string;
-  displaySize: number;
-  dotConfig: ReturnType<typeof dotStyle>;
-  fgColor: string;
-  bgColor: string;
-  margin: number;
-  errorLevel: QrErrorLevel;
-}) {
-  // BULLETPROOF: Enforce minimum size of 180px
-  const safeSize = Math.max(180, Math.ceil(displaySize));
-
-  // BULLETPROOF: Default values for all colors
-  const safeFgColor =
-    fgColor && typeof fgColor === 'string' ? fgColor : '#000000';
-  const safeBgColor =
-    bgColor && typeof bgColor === 'string' ? bgColor : '#000000';
-
-  // BULLETPROOF: Sanitize all dot types - always have fallback
-  const safeDotType = sanitizeDotType(dotConfig?.dots) || 'square';
-  const safeCornerSquareType =
-    sanitizeDotType(dotConfig?.cornerSquare) || 'square';
-  const safeCornerDotType = sanitizeDotType(dotConfig?.cornerDot) || 'square';
-
-  // BULLETPROOF: Ensure shape exists
-  const safeShape = dotConfig?.shape || 'square';
-
-  // BULLETPROOF: Validate qrValue
-  const safeData =
-    qrValue && qrValue.trim().length > 0 ? qrValue : 'https://example.com';
-
-  // BULLETPROOF: Validate margin
-  const safeMargin = Number.isFinite(margin) ? Math.max(0, margin) : 0;
-
-  // Build options with ALL fields explicitly set
-  const options = {
-    type: 'svg' as const,
-    shape: safeShape,
-    width: safeSize,
-    height: safeSize,
-    margin: safeMargin,
-    data: safeData,
-    qrOptions: {
-      typeNumber: 0 as unknown as TypeNumber | undefined,
-      errorCorrectionLevel: errorLevel || 'H',
-    },
-    dotsOptions: {
-      type: safeDotType,
-      color: safeFgColor,
-      roundSize: false,
-    },
-    cornersSquareOptions: {
-      type: safeCornerSquareType,
-      color: safeFgColor,
-    },
-    cornersDotOptions: {
-      type: safeCornerDotType,
-      color: safeFgColor,
-    },
-    backgroundOptions: {
-      round: 0,
-      color: safeBgColor,
-    },
-  } as any;
-
-  // BULLETPROOF: Validate complete object before returning
-  if (
-    !options.dotsOptions?.type ||
-    !options.cornersSquareOptions?.type ||
-    !options.cornersDotOptions?.type ||
-    !options.backgroundOptions?.color
-  ) {
-    console.warn(
-      '[QR WARN] Options object has missing fields, using safe defaults'
-    );
-    // Return absolute fallback
-    return {
-      type: 'svg' as const,
-      shape: 'square',
-      width: 260,
-      height: 260,
-      margin: 0,
-      data: 'https://example.com',
-      qrOptions: {
-        typeNumber: 0 as unknown as TypeNumber | undefined,
-        errorCorrectionLevel: 'H',
-      },
-      dotsOptions: {
-        type: 'square',
-        color: '#000000',
-        roundSize: false,
-      },
-      cornersSquareOptions: {
-        type: 'square',
-        color: '#000000',
-      },
-      cornersDotOptions: {
-        type: 'square',
-        color: '#000000',
-      },
-      backgroundOptions: {
-        round: 0,
-        color: '#000000',
-      },
-    } as any;
-  }
-
-  return options;
-}
+import { OptionsModal } from './options-modal';
+import {
+  buildEmailPayload,
+  buildQrOptions,
+  buildSmsPayload,
+  buildVCardPayload,
+  buildWifiPayload,
+  dotStyle,
+  type FrameStyle,
+  formatShortDate,
+  getExt,
+  isEmailValid,
+  isUrlValid,
+  type QRTypeTab,
+  type QrDotShape,
+  type QrDownloadFormat,
+  type QrErrorLevel,
+  type QrType,
+  triggerDownload,
+} from './qr-utils';
 
 export default function NeoQrGeneratorPage() {
   // Initialize colors with safe defaults to avoid hydration mismatch
@@ -418,11 +129,10 @@ export default function NeoQrGeneratorPage() {
     useState<DynamicQRMetadata | null>(null);
   const [isCreatingShortLink, setIsCreatingShortLink] = useState(false);
   const [dynamicQRError, setDynamicQRError] = useState<string>('');
-  // Edit-destination flow: when user wants to change the URL after creation
-  const [isEditingDestination, setIsEditingDestination] = useState(false);
-  const [editDestinationInput, setEditDestinationInput] = useState('');
-  const [isUpdatingDestination, setIsUpdatingDestination] = useState(false);
-  const [updateDestinationError, setUpdateDestinationError] = useState('');
+  // Scan analytics for the current dynamic QR (created date, scans, device, location)
+  const [analytics, setAnalytics] = useState<DynamicQRAnalytics | null>(null);
+  const [isLoadingAnalytics, setIsLoadingAnalytics] = useState(false);
+  const [showAnalyticsDetails, setShowAnalyticsDetails] = useState(false);
 
   // Error handling state
   const [currentError, setCurrentError] = useState<QRError | null>(null);
@@ -628,6 +338,21 @@ export default function NeoQrGeneratorPage() {
     }
   }, [qrPayload, isDynamicMode]);
 
+  // Loads aggregated scan analytics for the current dynamic QR code.
+  // Called after creation and after a destination update. Failures are
+  // non-fatal — the QR still renders, we just skip the stats.
+  const fetchAnalytics = useCallback(async (slug: string) => {
+    setIsLoadingAnalytics(true);
+    try {
+      const data = await getDynamicQRAnalytics(slug);
+      setAnalytics(data);
+    } catch {
+      setAnalytics(null);
+    } finally {
+      setIsLoadingAnalytics(false);
+    }
+  }, []);
+
   // Handle dynamic QR URL creation when in dynamic mode.
   // Guard: only fires when isDynamicMode=true, qrType='url', and Generate was clicked.
   // Loop prevention: skips creation if metadata already exists for the same URL.
@@ -636,9 +361,8 @@ export default function NeoQrGeneratorPage() {
       // Only clear metadata when mode is fully off — not on every isGenerated=false tick
       setDynamicQRMetadata(null);
       setDynamicQRError('');
-      setIsEditingDestination(false);
-      setEditDestinationInput('');
-      setUpdateDestinationError('');
+      setAnalytics(null);
+      setShowAnalyticsDetails(false);
       return;
     }
 
@@ -663,6 +387,7 @@ export default function NeoQrGeneratorPage() {
       try {
         const metadata = await createDynamicQRUrl(urlInput);
         setDynamicQRMetadata(metadata);
+        void fetchAnalytics(metadata.slug);
         // Re-assert isGenerated so the QR renders and Download/Copy buttons enable.
         // qrPayload will update to shortUrl, and the qrPayload useEffect skips
         // resetting isGenerated because isDynamicMode is true.
@@ -702,40 +427,7 @@ export default function NeoQrGeneratorPage() {
     dynamicQRMetadata?.originalUrl,
     mapErrorToType,
     handleShowError,
-  ]);
-
-  // Handles updating the destination URL of an existing dynamic QR code.
-  // The QR image stays the same (still encodes the same short URL).
-  // Only the redirect target in the database changes — that's what makes it "dynamic".
-  const handleUpdateDestination = useCallback(async () => {
-    if (!dynamicQRMetadata?.slug || !editDestinationInput.trim()) return;
-    setIsUpdatingDestination(true);
-    setUpdateDestinationError('');
-    try {
-      await updateDynamicQRUrl(
-        dynamicQRMetadata.slug,
-        editDestinationInput.trim()
-      );
-      setDynamicQRMetadata((prev) =>
-        prev ? { ...prev, originalUrl: editDestinationInput.trim() } : prev
-      );
-      setIsEditingDestination(false);
-      setEditDestinationInput('');
-    } catch (error) {
-      const errorType = mapErrorToType(error as Error);
-      handleShowError(errorType);
-
-      const message =
-        error instanceof Error ? error.message : 'Failed to update destination';
-      setUpdateDestinationError(message);
-    } finally {
-      setIsUpdatingDestination(false);
-    }
-  }, [
-    dynamicQRMetadata,
-    editDestinationInput,
-    mapErrorToType,
-    handleShowError,
+    fetchAnalytics,
   ]);
 
   // Extract the actual QR update logic into a separate function for clarity
@@ -1504,6 +1196,21 @@ export default function NeoQrGeneratorPage() {
   }, []);
 
   const qrCanDownload = qrValue.trim().length > 0 && isGenerated;
+
+  // Derived labels for the dynamic-QR analytics strip.
+  const topDevice = analytics?.devices[0];
+  const topLocation = analytics?.locations[0];
+  const topDeviceLabel = topDevice
+    ? topDevice.type.charAt(0).toUpperCase() + topDevice.type.slice(1)
+    : '—';
+  const topLocationLabel = topLocation
+    ? [topLocation.city, topLocation.country].filter(Boolean).join(', ') || '—'
+    : '—';
+  const scansLabel = analytics
+    ? String(analytics.totalScans)
+    : isLoadingAnalytics
+      ? '…'
+      : '0';
 
   const download = useCallback(async () => {
     if (!qrRef.current || !qrCanDownload) return;
@@ -2619,6 +2326,71 @@ export default function NeoQrGeneratorPage() {
                 )}
               </div>
 
+              {/* Dynamic QR analytics — compact strip directly under the QR image */}
+              {isGenerated &&
+                isDynamicMode &&
+                dynamicQRMetadata &&
+                !isCreatingShortLink && (
+                  <div className="shrink-0 px-6 pt-4">
+                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                      <AnalyticsStat
+                        label="Created"
+                        value={formatShortDate(
+                          analytics?.createdAt ?? dynamicQRMetadata.createdAt
+                        )}
+                      />
+                      <AnalyticsStat label="Scans" value={scansLabel} />
+                      <AnalyticsStat
+                        label="Top device"
+                        value={topDeviceLabel}
+                      />
+                      <AnalyticsStat
+                        label="Top location"
+                        value={topLocationLabel}
+                      />
+                    </div>
+
+                    {analytics && analytics.recentScans.length > 0 && (
+                      <div className="mt-2">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setShowAnalyticsDetails((prev) => !prev)
+                          }
+                          className="text-slate-500 text-xs underline transition hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+                        >
+                          {showAnalyticsDetails
+                            ? 'Hide recent scans'
+                            : `View recent scans (${analytics.recentScans.length})`}
+                        </button>
+
+                        {showAnalyticsDetails && (
+                          <ul className="mt-2 max-h-40 space-y-1 overflow-y-auto rounded-lg border border-slate-200 bg-white p-2 dark:border-slate-700 dark:bg-slate-800">
+                            {analytics.recentScans.map((scan, index) => (
+                              <li
+                                key={`${scan.scannedAt}-${index}`}
+                                className="flex items-center justify-between gap-2 text-slate-600 text-xs dark:text-slate-300"
+                              >
+                                <span className="capitalize">
+                                  {scan.deviceType}
+                                </span>
+                                <span className="truncate text-slate-500 dark:text-slate-400">
+                                  {[scan.city, scan.country]
+                                    .filter(Boolean)
+                                    .join(', ') || 'Unknown'}
+                                </span>
+                                <span className="shrink-0 text-slate-400 dark:text-slate-500">
+                                  {formatShortDate(scan.scannedAt)}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+
               {/* Generate Button - If hidden, space is reserved */}
               <div
                 className="shrink-0"
@@ -2723,78 +2495,14 @@ export default function NeoQrGeneratorPage() {
                           </div>
 
                           {/* Current destination row */}
-                          {!isEditingDestination && (
-                            <div className="flex items-start justify-between gap-2">
-                              <div className="min-w-0 flex-1">
-                                <p className="text-green-600 text-xs dark:text-green-400">
-                                  Currently redirects to:
-                                </p>
-                                <p className="break-all text-green-700 text-xs dark:text-green-300">
-                                  {dynamicQRMetadata.originalUrl}
-                                </p>
-                              </div>
-                              {/* "Change destination" button — opens the edit panel */}
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setEditDestinationInput(
-                                    dynamicQRMetadata.originalUrl
-                                  );
-                                  setIsEditingDestination(true);
-                                  setUpdateDestinationError('');
-                                }}
-                                className="shrink-0 rounded-md border border-green-300 bg-white px-2 py-1 font-medium text-green-700 text-xs transition hover:bg-green-100 dark:border-green-700 dark:bg-green-900 dark:text-green-300 dark:hover:bg-green-800"
-                              >
-                                Change
-                              </button>
-                            </div>
-                          )}
-
-                          {/* Edit destination panel — calls updateDynamicQRUrl on save */}
-                          {isEditingDestination && (
-                            <div className="space-y-2">
-                              <p className="font-medium text-green-700 text-xs dark:text-green-300">
-                                New destination URL:
-                              </p>
-                              <input
-                                value={editDestinationInput}
-                                onChange={(e) =>
-                                  setEditDestinationInput(e.target.value)
-                                }
-                                placeholder="https://new-destination.com"
-                                className="w-full rounded-md border border-green-300 bg-white px-3 py-2 text-slate-900 text-sm focus:border-green-500 focus:outline-none dark:border-green-700 dark:bg-slate-800 dark:text-white"
-                              />
-                              {updateDestinationError && (
-                                <p className="text-red-600 text-xs dark:text-red-400">
-                                  {updateDestinationError}
-                                </p>
-                              )}
-                              <div className="flex gap-2">
-                                <button
-                                  type="button"
-                                  onClick={handleUpdateDestination}
-                                  disabled={
-                                    isUpdatingDestination ||
-                                    !editDestinationInput.trim()
-                                  }
-                                  className="flex-1 rounded-md bg-green-600 px-3 py-1.5 font-medium text-white text-xs transition hover:bg-green-700 disabled:opacity-50"
-                                >
-                                  {isUpdatingDestination ? 'Saving…' : 'Save'}
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setIsEditingDestination(false);
-                                    setEditDestinationInput('');
-                                    setUpdateDestinationError('');
-                                  }}
-                                  className="flex-1 rounded-md border border-green-300 bg-white px-3 py-1.5 font-medium text-green-700 text-xs transition hover:bg-green-100 dark:border-green-700 dark:bg-green-900 dark:text-green-300"
-                                >
-                                  Cancel
-                                </button>
-                              </div>
-                            </div>
-                          )}
+                          <div className="min-w-0">
+                            <p className="text-green-600 text-xs dark:text-green-400">
+                              Currently redirects to:
+                            </p>
+                            <p className="break-all text-green-700 text-xs dark:text-green-300">
+                              {dynamicQRMetadata.originalUrl}
+                            </p>
+                          </div>
                         </div>
                       )}
 
@@ -3001,432 +2709,6 @@ export default function NeoQrGeneratorPage() {
             )}
         </>
       )}
-    </div>
-  );
-}
-
-// Download Modal Component
-interface DownloadModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  downloadName: string;
-  setDownloadName: (name: string) => void;
-  downloadFormat: QrDownloadFormat;
-  setDownloadFormat: (format: QrDownloadFormat) => void;
-  onDownload: () => Promise<void>;
-}
-
-function DownloadModal({
-  isOpen,
-  onClose,
-  downloadName,
-  setDownloadName,
-  downloadFormat,
-  setDownloadFormat,
-  onDownload,
-}: DownloadModalProps) {
-  const [isDownloading, setIsDownloading] = useState(false);
-
-  const handleDownload = async () => {
-    setIsDownloading(true);
-    try {
-      await onDownload();
-      onClose();
-    } finally {
-      setIsDownloading(false);
-    }
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <div
-      className="fixed inset-0 z-50 flex animate-fadeIn items-center justify-center backdrop-blur-md"
-      style={{ backgroundColor: 'var(--background)' }}
-      onClick={onClose}
-    >
-      <div
-        className="mx-4 w-full max-w-sm rounded-xl border p-6 shadow-lg"
-        style={{
-          backgroundColor: 'var(--card)',
-          borderColor: 'var(--border)',
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h2
-          className="mb-4 font-semibold text-lg"
-          style={{ color: 'var(--foreground)' }}
-        >
-          Download QR Code
-        </h2>
-
-        <div className="space-y-4">
-          {/* File Name Input */}
-          <div className="space-y-2">
-            <label
-              className="font-medium text-sm"
-              style={{ color: 'var(--foreground)' }}
-            >
-              File Name
-            </label>
-            <input
-              type="text"
-              value={downloadName}
-              onChange={(e) => setDownloadName(e.target.value || 'qrcode')}
-              placeholder="qrcode"
-              className="w-full rounded-lg border px-4 py-2 text-sm transition-colors focus:outline-none"
-              style={{
-                borderColor: 'var(--border)',
-                backgroundColor: 'var(--background)',
-                color: 'var(--foreground)',
-              }}
-            />
-          </div>
-
-          {/* Format Selection */}
-          <div className="space-y-2">
-            <label
-              className="font-medium text-sm"
-              style={{ color: 'var(--foreground)' }}
-            >
-              Format
-            </label>
-            <Select
-              value={downloadFormat}
-              onValueChange={(v) => setDownloadFormat(v as QrDownloadFormat)}
-            >
-              <SelectTrigger
-                className="rounded-lg"
-                style={{
-                  borderColor: 'var(--border)',
-                  backgroundColor: 'var(--background)',
-                  color: 'var(--foreground)',
-                }}
-              >
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent
-                style={{
-                  borderColor: 'var(--border)',
-                  backgroundColor: 'var(--card)',
-                  color: 'var(--foreground)',
-                }}
-              >
-                <SelectItem value="png">PNG (Screen)</SelectItem>
-                <SelectItem value="jpeg">JPG (Screen)</SelectItem>
-                <SelectItem value="svg">SVG (Print Quality)</SelectItem>
-                <SelectItem value="eps">EPS (SVG Fallback)</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="mt-6 flex gap-3">
-          <Button
-            type="button"
-            onClick={handleDownload}
-            disabled={isDownloading}
-            className="flex-1 rounded-lg px-4 py-2 font-semibold text-white transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50"
-            style={{ backgroundColor: 'var(--primary)' }}
-          >
-            {isDownloading ? 'Downloading...' : 'Download'}
-          </Button>
-          <Button
-            type="button"
-            onClick={onClose}
-            variant="outline"
-            className="flex-1 rounded-lg border px-4 py-2 font-semibold transition-all duration-200 hover:scale-105 active:scale-95"
-            style={{
-              borderColor: 'var(--border)',
-              backgroundColor: 'var(--background)',
-              color: 'var(--foreground)',
-            }}
-          >
-            Cancel
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Options Modal Component
-interface OptionsModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  dotShape: QrDotShape;
-  setDotShape: (shape: QrDotShape) => void;
-  downloadName: string;
-  setDownloadName: (name: string) => void;
-  downloadFormat: QrDownloadFormat;
-  setDownloadFormat: (format: QrDownloadFormat) => void;
-  logoDataUrl: string;
-  setLogoDataUrl: (url: string) => void;
-  logoSize: number;
-  setLogoSize: (size: number) => void;
-  onDropLogo: (files: File[]) => void;
-  frameStyle: FrameStyle;
-  setFrameStyle: (style: FrameStyle) => void;
-  frameText: string;
-  setFrameText: (text: string) => void;
-}
-
-function OptionsModal({
-  isOpen,
-  onClose,
-  dotShape,
-  setDotShape,
-  downloadName,
-  setDownloadName,
-  downloadFormat,
-  setDownloadFormat,
-  logoDataUrl,
-  setLogoDataUrl,
-  logoSize,
-  setLogoSize,
-  onDropLogo,
-  frameStyle,
-  setFrameStyle,
-  frameText,
-  setFrameText,
-}: OptionsModalProps) {
-  const initialStateRef = useRef<{
-    dotShape: QrDotShape;
-    downloadName: string;
-    downloadFormat: QrDownloadFormat;
-    logoDataUrl: string;
-    logoSize: number;
-    frameStyle: FrameStyle;
-    frameText: string;
-  } | null>(null);
-
-  useEffect(() => {
-    if (!isOpen) {
-      initialStateRef.current = null;
-      return;
-    }
-
-    if (initialStateRef.current === null) {
-      initialStateRef.current = {
-        dotShape,
-        downloadName,
-        downloadFormat,
-        logoDataUrl,
-        logoSize,
-        frameStyle,
-        frameText,
-      };
-    }
-  }, [
-    dotShape,
-    downloadFormat,
-    downloadName,
-    isOpen,
-    logoDataUrl,
-    logoSize,
-    frameStyle,
-    frameText,
-  ]);
-
-  if (!isOpen) return null;
-
-  const handleCancel = () => {
-    const initial = initialStateRef.current;
-    if (initial) {
-      setDotShape(initial.dotShape);
-      setDownloadName(initial.downloadName);
-      setDownloadFormat(initial.downloadFormat);
-      setLogoDataUrl(initial.logoDataUrl);
-      setLogoSize(initial.logoSize);
-      setFrameStyle(initial.frameStyle);
-      setFrameText(initial.frameText);
-    }
-    onClose();
-  };
-
-  return (
-    <div
-      className="fixed inset-0 z-50 flex animate-fadeIn items-center justify-center bg-black/50 backdrop-blur-md"
-      onClick={onClose}
-    >
-      <div
-        className="max-h-[90vh] w-full max-w-md animate-slideUp overflow-y-auto rounded-xl border border-slate-300 bg-white p-6 shadow-2xl transition-all duration-300 dark:border-slate-700 dark:bg-slate-900"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="font-semibold text-lg text-slate-900 dark:text-white">
-            More Options
-          </h2>
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-slate-400 transition-all duration-200 hover:scale-110 hover:text-slate-900 active:scale-95 dark:hover:text-white"
-          >
-            ✕
-          </button>
-        </div>
-
-        <div className="space-y-4">
-          {/* Frame Section */}
-          <div className="space-y-4 border-slate-200 border-t pt-4 dark:border-slate-700">
-            <div className="space-y-2">
-              <Label className="font-medium text-slate-700 dark:text-slate-300">
-                Frame Style
-              </Label>
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
-                {[
-                  { value: 'none', label: 'None' },
-                  { value: 'minimal', label: 'Minimal' },
-                  { value: 'rounded', label: 'Rounded' },
-                  { value: 'banner', label: 'Banner' },
-                  { value: 'polaroid', label: 'Polaroid' },
-                ].map((f) => (
-                  <button
-                    key={f.value}
-                    type="button"
-                    onClick={() => setFrameStyle(f.value as FrameStyle)}
-                    className={`flex flex-col items-center justify-center rounded-xl border-2 p-3 transition-all ${
-                      frameStyle === f.value
-                        ? 'border-blue-500 bg-blue-50/50 dark:border-blue-500 dark:bg-blue-900/20'
-                        : 'border-slate-200 bg-white hover:border-slate-300 dark:border-slate-700 dark:bg-slate-800'
-                    }`}
-                  >
-                    <span className="font-medium text-slate-700 text-xs dark:text-slate-300">
-                      {f.label}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
-            {(frameStyle === 'banner' || frameStyle === 'polaroid') && (
-              <div className="space-y-2">
-                <Label className="font-medium text-slate-700 dark:text-slate-300">
-                  Frame Text
-                </Label>
-                <input
-                  value={frameText}
-                  onChange={(e) => setFrameText(e.target.value)}
-                  maxLength={20}
-                  className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2 text-slate-900 text-sm transition-colors focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-800 dark:text-white"
-                />
-              </div>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label className="font-medium text-slate-700 dark:text-slate-300">
-              Dot shape
-            </Label>
-            <Select
-              value={dotShape}
-              onValueChange={(v) => setDotShape(v as QrDotShape)}
-            >
-              <SelectTrigger className="rounded-lg border-slate-300 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="border-slate-300 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
-                <SelectItem value="square">Square</SelectItem>
-                <SelectItem value="rounded">Rounded</SelectItem>
-                <SelectItem value="dots">Dots</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Logo upload section */}
-          <div className="space-y-3 border-slate-200 border-t pt-4 dark:border-slate-700">
-            <div>
-              <p className="font-medium text-slate-900 text-sm dark:text-white">
-                Logo
-              </p>
-            </div>
-
-            {!logoDataUrl ? (
-              <Dropzone
-                onDrop={onDropLogo}
-                accept={{
-                  'image/png': ['.png'],
-                  'image/jpeg': ['.jpg', '.jpeg'],
-                  'image/webp': ['.webp'],
-                }}
-                maxFiles={1}
-                className="border-slate-300 bg-slate-50 text-slate-900 transition-all duration-200 hover:bg-slate-100 hover:shadow-md dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
-              >
-                <DropzoneEmptyState />
-              </Dropzone>
-            ) : null}
-
-            {logoDataUrl ? (
-              <div className="flex items-center justify-between">
-                <span className="font-medium text-slate-700 text-xs dark:text-slate-300">
-                  Logo uploaded
-                </span>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setLogoDataUrl('')}
-                  className="border-slate-300 bg-white text-slate-900 transition-all duration-200 hover:scale-105 hover:bg-slate-50 active:scale-95 dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
-                >
-                  Remove
-                </Button>
-              </div>
-            ) : null}
-          </div>
-
-          {/* Download options */}
-          <div className="space-y-3 border-slate-200 border-t pt-4 dark:border-slate-700">
-            <div className="space-y-2">
-              <Label className="font-medium text-slate-700 dark:text-slate-300">
-                File name
-              </Label>
-              <input
-                value={downloadName}
-                onChange={(e) => setDownloadName(e.target.value || 'qrcode')}
-                className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2 text-slate-900 text-sm placeholder-slate-400 transition-colors focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label className="font-medium text-slate-700 dark:text-slate-300">
-                Download format
-              </Label>
-              <Select
-                value={downloadFormat}
-                onValueChange={(v) => setDownloadFormat(v as QrDownloadFormat)}
-              >
-                <SelectTrigger className="rounded-lg border-slate-300 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="border-slate-300 bg-white text-slate-900 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
-                  <SelectItem value="png">PNG (screen)</SelectItem>
-                  <SelectItem value="jpeg">JPG (screen)</SelectItem>
-                  <SelectItem value="svg">SVG (print quality)</SelectItem>
-                  <SelectItem value="eps">EPS (SVG fallback)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-6 flex gap-3">
-          <Button
-            type="button"
-            onClick={onClose}
-            className="flex-1 rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white transition-all duration-200 hover:scale-105 hover:bg-blue-700 active:scale-95"
-          >
-            Done
-          </Button>
-          <Button
-            type="button"
-            onClick={handleCancel}
-            variant="outline"
-            className="flex-1 rounded-lg border border-slate-300 bg-white text-slate-900 transition-all duration-200 hover:scale-105 hover:bg-slate-50 active:scale-95 dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
-          >
-            Cancel
-          </Button>
-        </div>
-      </div>
     </div>
   );
 }
