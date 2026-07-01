@@ -1,6 +1,12 @@
 import type { NextConfig } from 'next';
 
 const isDev = process.env.NODE_ENV === 'development';
+const allowedOrigin = isDev
+  ? '*'
+  : (process.env.NEXT_PUBLIC_APP_URL || 'https://rmitnct.club').replace(
+      /\/$/,
+      ''
+    );
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -34,10 +40,9 @@ const nextConfig: NextConfig = {
         source: '/:path*',
         headers: [
           { key: 'Access-Control-Allow-Credentials', value: 'true' },
-          // Use wildcard in development, which is more permissive
           {
             key: 'Access-Control-Allow-Origin',
-            value: isDev ? '*' : 'https://nct.gg',
+            value: allowedOrigin,
           },
           {
             key: 'Access-Control-Allow-Methods',
@@ -59,10 +64,9 @@ const nextConfig: NextConfig = {
         source: '/api/:path*',
         headers: [
           { key: 'Access-Control-Allow-Credentials', value: 'true' },
-          // Use wildcard in development, which is more permissive
           {
             key: 'Access-Control-Allow-Origin',
-            value: isDev ? '*' : 'https://nct.gg',
+            value: allowedOrigin,
           },
           {
             key: 'Access-Control-Allow-Methods',
