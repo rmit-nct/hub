@@ -14,6 +14,13 @@ const generateSlug = customAlphabet(
 
 const SHORT_LINK_LIMIT = 30;
 const SHORTENER_PAGE_PATH = '/neo-shortener';
+const DEFAULT_SHORTENER_BASE_URL =
+  process.env.NODE_ENV === 'development'
+    ? 'http://localhost:3002'
+    : 'https://rmitnct.site';
+const SHORTENER_DEBUG_ENABLED =
+  process.env.NEO_SHORTENER_DEBUG === 'true' ||
+  process.env.SHORTENER_DEBUG === 'true';
 const RESERVED_SHORT_LINK_SLUGS = new Set([
   '_next',
   'api',
@@ -61,12 +68,24 @@ const SHORT_LINK_LIMIT_ERROR =
 export interface CreatedShortLink {
   createdAt: string;
   creatorId: string;
+  debug?: ShortLinkDebugReport;
   domain: string;
   id: string;
   isPasswordProtected: boolean;
   link: string;
   shortUrl: string;
   slug: string;
+}
+
+export interface ShortLinkDebugStep {
+  details?: Record<string, unknown>;
+  name: string;
+  status: 'error' | 'ok' | 'warning';
+}
+
+export interface ShortLinkDebugReport {
+  enabled: boolean;
+  steps: ShortLinkDebugStep[];
 }
 
 // Returned by createDynamicQRUrl and consumed by the QR generator frontend.
@@ -104,12 +123,27 @@ type ShortenedLinkRow = {
   slug: string;
 };
 
+function normalizeShortenerBaseUrl(value: string) {
+  let url: URL;
+
+  try {
+    url = new URL(value.trim());
+  } catch {
+    throw new Error('Shortener base URL is not configured correctly');
+  }
+
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+    throw new Error('Shortener base URL must use HTTP or HTTPS');
+  }
+
+  return url.toString().replace(/\/$/, '');
+}
+
 function resolveShortenerBaseUrl() {
-  return (
+  return normalizeShortenerBaseUrl(
     process.env.NEXT_PUBLIC_SHORTENER_URL ||
-    (process.env.NODE_ENV === 'development'
-      ? 'http://localhost:3002'
-      : 'https://nct.gg')
+      process.env.SHORTENER_APP_URL ||
+      DEFAULT_SHORTENER_BASE_URL
   );
 }
 
@@ -196,16 +230,100 @@ function getDomainFromShortenerBaseUrl() {
   try {
     return new URL(resolveShortenerBaseUrl()).host;
   } catch {
-    return process.env.NODE_ENV === 'development' ? 'localhost:3002' : 'nct.gg';
+    return new URL(DEFAULT_SHORTENER_BASE_URL).host;
   }
 }
 
-function mapShortenedLink(row: ShortenedLinkRow): CreatedShortLink {
+function logShortenerDebug(message: string, details?: Record<string, unknown>) {
+  if (!SHORTENER_DEBUG_ENABLED) return;
+
+  console.info('[neo-shortener-debug]', message, details ?? {});
+}
+
+function logShortenerDebugError(
+  message: string,
+  details?: Record<string, unknown>
+) {
+  if (!SHORTENER_DEBUG_ENABLED) return;
+
+  console.error('[neo-shortener-debug]', message, details ?? {});
+}
+
+async function checkShortLinkAccess(
+  shortUrl: string,
+  slug: string
+): Promise<ShortLinkDebugStep> {
+  const debugUrl = new URL(shortUrl);
+  debugUrl.searchParams.set('debug', '1');
+
+  try {
+    const response = await fetch(debugUrl.toString(), {
+      cache: 'no-store',
+      redirect: 'manual',
+      signal: AbortSignal.timeout(8000),
+    });
+
+    const location = response.headers.get('location');
+    const step: ShortLinkDebugStep = {
+      name: 'short_link_access_check',
+      status: response.ok || response.status < 400 ? 'ok' : 'warning',
+      details: {
+        location,
+        shortUrl,
+        slug,
+        status: response.status,
+        statusText: response.statusText,
+      },
+    };
+
+    if (step.status === 'warning') {
+      logShortenerDebugError('short link access check returned non-ok status', {
+        location,
+        shortUrl,
+        slug,
+        status: response.status,
+        statusText: response.statusText,
+      });
+    } else {
+      logShortenerDebug('short link access check passed', {
+        location,
+        shortUrl,
+        slug,
+        status: response.status,
+        statusText: response.statusText,
+      });
+    }
+
+    return step;
+  } catch (error) {
+    logShortenerDebugError('short link access check failed', {
+      error: error instanceof Error ? error.message : String(error),
+      shortUrl,
+      slug,
+    });
+
+    return {
+      name: 'short_link_access_check',
+      status: 'error',
+      details: {
+        error: error instanceof Error ? error.message : String(error),
+        shortUrl,
+        slug,
+      },
+    };
+  }
+}
+
+function mapShortenedLink(
+  row: ShortenedLinkRow,
+  debug?: ShortLinkDebugReport
+): CreatedShortLink {
   const shortenerBaseUrl = resolveShortenerBaseUrl();
 
   return {
     createdAt: row.created_at,
     creatorId: row.creator_id,
+    debug,
     domain: row.domain,
     id: row.id,
     isPasswordProtected: Boolean(row.password_hash),
@@ -362,6 +480,16 @@ export async function checkShortLinkSlugAvailability(
 export async function createShortLink(
   formData: FormData
 ): Promise<CreatedShortLink> {
+  const debugSteps: ShortLinkDebugStep[] = [
+    {
+      name: 'debug_flag',
+      status: 'ok',
+      details: {
+        enabled: SHORTENER_DEBUG_ENABLED,
+      },
+    },
+  ];
+
   const parsedValues = createShortLinkSchema.safeParse({
     url: formData.get('url'),
     customSlug: formData.get('customSlug') || '',
@@ -370,12 +498,32 @@ export async function createShortLink(
   });
 
   if (!parsedValues.success) {
+    logShortenerDebugError('short link form validation failed', {
+      issues: parsedValues.error.issues.map((issue) => ({
+        code: issue.code,
+        message: issue.message,
+        path: issue.path.join('.'),
+      })),
+    });
+
     throw new Error(
       parsedValues.error.issues[0]?.message || 'Invalid form data'
     );
   }
 
-  const normalizedUrl = parseHttpUrl(parsedValues.data.url);
+  let normalizedUrl: URL;
+
+  try {
+    normalizedUrl = parseHttpUrl(parsedValues.data.url);
+  } catch (error) {
+    logShortenerDebugError('destination URL parsing failed', {
+      error: error instanceof Error ? error.message : String(error),
+      input: parsedValues.data.url,
+    });
+
+    throw error;
+  }
+
   const requestedSlug = parsedValues.data.customSlug.trim();
   const requestedPassword = parsedValues.data.password;
   const passwordHint = parsedValues.data.passwordHint;
@@ -383,7 +531,27 @@ export async function createShortLink(
   const domain = getDomainFromShortenerBaseUrl();
   const parsedShortenerBaseUrl = new URL(shortenerBaseUrl);
 
+  debugSteps.push({
+    name: 'shortener_config',
+    status: 'ok',
+    details: {
+      destination: normalizedUrl.toString(),
+      domain,
+      shortenerBaseUrl,
+    },
+  });
+  logShortenerDebug('short link config resolved', {
+    destination: normalizedUrl.toString(),
+    domain,
+    shortenerBaseUrl,
+  });
+
   if (normalizedUrl.origin === parsedShortenerBaseUrl.origin) {
+    logShortenerDebugError('destination is already a shortener URL', {
+      destination: normalizedUrl.toString(),
+      shortenerOrigin: parsedShortenerBaseUrl.origin,
+    });
+
     throw new Error(
       'Please enter a destination URL, not an existing short link'
     );
@@ -393,6 +561,15 @@ export async function createShortLink(
     const parsedSlug = slugSchema.safeParse(requestedSlug);
 
     if (!parsedSlug.success) {
+      logShortenerDebugError('custom slug validation failed', {
+        issues: parsedSlug.error.issues.map((issue) => ({
+          code: issue.code,
+          message: issue.message,
+          path: issue.path.join('.'),
+        })),
+        slug: requestedSlug,
+      });
+
       throw new Error(
         parsedSlug.error.issues[0]?.message || 'Invalid custom slug'
       );
@@ -400,6 +577,10 @@ export async function createShortLink(
   }
 
   if (passwordHint && !requestedPassword) {
+    logShortenerDebugError('password hint provided without password', {
+      passwordHint,
+    });
+
     throw new Error('Add a password before adding a password hint');
   }
 
@@ -430,11 +611,53 @@ export async function createShortLink(
 
     if (!error && data) {
       const createdLink = mapShortenedLink(data as ShortenedLinkRow);
+
+      debugSteps.push({
+        name: 'database_insert',
+        status: 'ok',
+        details: {
+          id: createdLink.id,
+          shortUrl: createdLink.shortUrl,
+          slug: createdLink.slug,
+        },
+      });
+
+      if (SHORTENER_DEBUG_ENABLED) {
+        debugSteps.push(
+          await checkShortLinkAccess(createdLink.shortUrl, createdLink.slug)
+        );
+        createdLink.debug = {
+          enabled: true,
+          steps: debugSteps,
+        };
+        logShortenerDebug('short link created', {
+          debug: createdLink.debug,
+          shortUrl: createdLink.shortUrl,
+          slug: createdLink.slug,
+        });
+      }
+
       revalidatePath(SHORTENER_PAGE_PATH);
       return createdLink;
     }
 
     if (error?.code === '23505') {
+      debugSteps.push({
+        name: 'database_insert',
+        status: 'warning',
+        details: {
+          attempt: attempt + 1,
+          code: error.code,
+          message: error.message,
+          slug,
+        },
+      });
+      logShortenerDebug('short link slug collision', {
+        attempt: attempt + 1,
+        message: error.message,
+        slug,
+      });
+
       if (requestedSlug) {
         throw new Error('That custom slug is already taken');
       }
@@ -443,11 +666,36 @@ export async function createShortLink(
     }
 
     if (error?.message?.includes(SHORT_LINK_LIMIT_ERROR)) {
+      logShortenerDebugError('short link limit reached', {
+        message: error.message,
+        userId: user.id,
+      });
+
       throw new Error(SHORT_LINK_LIMIT_ERROR);
     }
 
+    debugSteps.push({
+      name: 'database_insert',
+      status: 'error',
+      details: {
+        attempt: attempt + 1,
+        code: error?.code,
+        message: error?.message,
+        slug,
+      },
+    });
+    logShortenerDebugError('short link insert failed', {
+      attempt: attempt + 1,
+      debugSteps,
+      error,
+      slug,
+    });
     console.error(error);
-    throw new Error('Failed to create short link');
+    throw new Error(
+      SHORTENER_DEBUG_ENABLED && error?.message
+        ? `Failed to create short link: ${error.message}`
+        : 'Failed to create short link'
+    );
   }
 
   throw new Error('Could not generate a unique short link after 10 attempts');
