@@ -9,20 +9,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@ncthub/ui/card';
-import { toast } from '@ncthub/ui/sonner';
-import {
-  AlertCircle,
-  Check,
-  Copy,
-  Eye,
-  EyeOff,
-  Link2,
-  Loader2,
-  Lock,
-  XCircle,
-} from '@ncthub/ui/icons';
+import { Check, Copy, Eye, EyeOff, Link2, Lock } from '@ncthub/ui/icons';
 import { Input } from '@ncthub/ui/input';
 import { Label } from '@ncthub/ui/label';
+import { toast } from '@ncthub/ui/sonner';
 import { Switch } from '@ncthub/ui/switch';
 import { Textarea } from '@ncthub/ui/textarea';
 import { cn } from '@ncthub/utils/format';
@@ -35,107 +25,19 @@ import {
   createShortLink,
   deleteShortLink,
   getMyShortLinksOverview,
-  type SlugAvailabilityResult,
 } from './functions';
 import NeoShortenerHero from './hero';
+import { formatCreatedAt, isLogoutRequest } from './shortener-utils';
+import {
+  SlugAvailabilityFeedback,
+  type SlugAvailabilityState,
+} from './slug-availability';
 
 const SHORT_LINK_LIMIT = 30;
 const SHORTENER_LOGIN_URL = `/login?nextUrl=${encodeURIComponent(
   '/neo-shortener'
 )}`;
 const SLUG_AVAILABILITY_DELAY = 500;
-
-type FetchInput = Parameters<typeof window.fetch>[0];
-type FetchInit = Parameters<typeof window.fetch>[1];
-type SlugAvailabilityState =
-  | SlugAvailabilityResult
-  | {
-      available: false;
-      message: string;
-      slug: string;
-      status: 'checking';
-    };
-
-function isLogoutRequest(input: FetchInput, init?: FetchInit) {
-  let rawUrl = '';
-  let method = init?.method;
-
-  if (typeof input === 'string' || input instanceof URL) {
-    rawUrl = String(input);
-  } else {
-    rawUrl = input.url;
-    method = method ?? input.method;
-  }
-
-  try {
-    const url = new URL(rawUrl, window.location.origin);
-    return (
-      url.pathname === '/api/auth/logout' &&
-      (method ?? 'GET').toUpperCase() === 'POST'
-    );
-  } catch {
-    return false;
-  }
-}
-
-function formatCreatedAt(value: string) {
-  return new Date(value).toLocaleString();
-}
-
-function getSlugAvailabilityClassName(status: SlugAvailabilityState['status']) {
-  return cn(
-    'flex items-center gap-1.5 text-sm',
-    status === 'available' && 'text-green-600 dark:text-green-400',
-    status === 'checking' && 'text-muted-foreground',
-    (status === 'invalid' || status === 'taken') && 'text-destructive',
-    status === 'error' && 'text-dynamic-light-yellow'
-  );
-}
-
-function SlugAvailabilityIcon({
-  status,
-}: {
-  status: SlugAvailabilityState['status'];
-}) {
-  if (status === 'checking') {
-    return <Loader2 className="h-4 w-4 animate-spin" />;
-  }
-
-  if (status === 'available') {
-    return <Check className="h-4 w-4" />;
-  }
-
-  if (status === 'taken') {
-    return <XCircle className="h-4 w-4" />;
-  }
-
-  return <AlertCircle className="h-4 w-4" />;
-}
-
-function SlugAvailabilityFeedback({
-  availability,
-}: {
-  availability: SlugAvailabilityState | null;
-}) {
-  if (!availability) {
-    return (
-      <p id="customSlug-status" className="text-muted-foreground text-sm">
-        Letters, numbers, hyphens, and underscores only.
-      </p>
-    );
-  }
-
-  return (
-    <p
-      id="customSlug-status"
-      className={getSlugAvailabilityClassName(availability.status)}
-      aria-live="polite"
-    >
-      <SlugAvailabilityIcon status={availability.status} />
-      {availability.message}
-    </p>
-  );
-}
 
 export default function NeoShortenerPage() {
   const [url, setUrl] = useState('');
