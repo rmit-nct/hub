@@ -18,14 +18,12 @@ export default async function ServerPage({
     process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY
   );
 
-  let shortenedLink:
-    | {
-        id: string;
-        link: string;
-        password_hash: string | null;
-        password_hint: string | null;
-      }
-    | null = null;
+  let shortenedLink: {
+    id: string;
+    link: string;
+    password_hash: string | null;
+    password_hint: string | null;
+  } | null = null;
 
   try {
     const sbAdmin = await createAdminClient();
