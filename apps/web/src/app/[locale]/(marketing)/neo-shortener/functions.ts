@@ -17,7 +17,7 @@ const SHORTENER_PAGE_PATH = '/neo-shortener';
 const DEFAULT_SHORTENER_BASE_URL =
   process.env.NODE_ENV === 'development'
     ? 'http://localhost:3002'
-    : 'https://nct.gg';
+    : 'https://rmitnct.site';
 const SHORTENER_DEBUG_ENABLED =
   process.env.NEO_SHORTENER_DEBUG === 'true' ||
   process.env.SHORTENER_DEBUG === 'true';

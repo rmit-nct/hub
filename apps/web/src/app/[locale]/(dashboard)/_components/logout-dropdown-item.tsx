@@ -2,22 +2,44 @@
 
 import { DropdownMenuItem } from '@ncthub/ui/dropdown-menu';
 import { LogOut } from '@ncthub/ui/icons';
-import { useTranslations } from 'next-intl';
+import { toast } from '@ncthub/ui/sonner';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import { useState } from 'react';
 
 export function LogoutDropdownItem() {
   const t = useTranslations('common');
   const router = useRouter();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const logout = async () => {
-    await fetch('/api/auth/logout', {
-      method: 'POST',
-    });
-    router.refresh();
+    if (isLoggingOut) return;
+
+    setIsLoggingOut(true);
+
+    try {
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+      });
+      router.replace('/login');
+    } catch (error) {
+      setIsLoggingOut(false);
+      toast(t('error'), {
+        description:
+          error instanceof Error ? error.message : 'Failed to log out.',
+      });
+    }
   };
 
   return (
-    <DropdownMenuItem onClick={logout} className="cursor-pointer">
+    <DropdownMenuItem
+      onSelect={(event) => {
+        event.preventDefault();
+        void logout();
+      }}
+      disabled={isLoggingOut}
+      className="cursor-pointer"
+    >
       <LogOut className="mr-2 h-4 w-4" />
       <span>{t('logout')}</span>
     </DropdownMenuItem>

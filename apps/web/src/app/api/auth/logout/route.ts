@@ -8,6 +8,9 @@ export async function POST() {
     scope: 'local',
   });
 
-  if (error) return NextResponse.json({ error }, { status: 500 });
+  if (error) {
+    return NextResponse.json({ error }, { status: 500 });
+  }
+
   return NextResponse.json({ success: true });
 }

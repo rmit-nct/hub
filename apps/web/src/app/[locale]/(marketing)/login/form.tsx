@@ -193,12 +193,9 @@ export default function LoginForm() {
         control={form.control}
         name="otp"
         render={({ field, fieldState }) => (
-          <Field
-            data-invalid={fieldState.invalid}
-            className={otpSent ? '' : 'hidden'}
-          >
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>{t('otp_code')}</FieldLabel>{' '}
-            <div className="flex flex-col gap-2 md:flex-row">
+            <div className="flex flex-col gap-3">
               <InputOTP
                 maxLength={maxOTPLength}
                 aria-invalid={fieldState.invalid}
@@ -212,11 +209,7 @@ export default function LoginForm() {
               >
                 <InputOTPGroup className="w-full justify-center">
                   {Array.from({ length: maxOTPLength }).map((_, index) => (
-                    <InputOTPSlot
-                      key={index}
-                      index={index}
-                      className="max-md:w-full"
-                    />
+                    <InputOTPSlot key={index} index={index} />
                   ))}
                 </InputOTPGroup>
               </InputOTP>
@@ -228,7 +221,7 @@ export default function LoginForm() {
                   resendCooldown > 0 ||
                   (turnstileClientState.isRequired && !captchaToken)
                 }
-                className="md:w-full"
+                className="w-full"
                 variant="secondary"
                 type="button"
               >
