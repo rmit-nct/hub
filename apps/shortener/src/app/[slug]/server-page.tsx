@@ -10,16 +10,49 @@ export default async function ServerPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const sbAdmin = await createAdminClient();
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  const supabaseHost = supabaseUrl
+    ? new URL(supabaseUrl).host
+    : 'missing-supabase-url';
+  const hasServiceKey = Boolean(
+    process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY
+  );
 
-  const { data: shortenedLink, error } = await sbAdmin
-    .from('shortened_links')
-    .select('id, link, password_hash, password_hint')
-    .eq('slug', slug)
-    .maybeSingle();
+  let shortenedLink:
+    | {
+        id: string;
+        link: string;
+        password_hash: string | null;
+        password_hint: string | null;
+      }
+    | null = null;
 
-  if (error) {
-    throw new Error(error.message || 'Failed to load short link');
+  try {
+    const sbAdmin = await createAdminClient();
+
+    const { data, error } = await sbAdmin
+      .from('shortened_links')
+      .select('id, link, password_hash, password_hint')
+      .eq('slug', slug)
+      .maybeSingle();
+
+    if (error) {
+      throw new Error(error.message || 'Failed to load short link');
+    }
+
+    shortenedLink = data;
+  } catch (error) {
+    console.error('Shortener lookup failed', {
+      error: error instanceof Error ? error.message : String(error),
+      cause:
+        error instanceof Error && 'cause' in error
+          ? String((error as Error & { cause?: unknown }).cause)
+          : null,
+      hasServiceKey,
+      slug,
+      supabaseHost,
+    });
+    throw error;
   }
 
   if (!shortenedLink) {
