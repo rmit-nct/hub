@@ -37,7 +37,7 @@ const nextConfig: NextConfig = {
           // Use wildcard in development, which is more permissive
           {
             key: 'Access-Control-Allow-Origin',
-            value: isDev ? '*' : 'https://nct.gg',
+            value: isDev ? '*' : 'https://rmitnct.site',
           },
           {
             key: 'Access-Control-Allow-Methods',
@@ -62,7 +62,7 @@ const nextConfig: NextConfig = {
           // Use wildcard in development, which is more permissive
           {
             key: 'Access-Control-Allow-Origin',
-            value: isDev ? '*' : 'https://nct.gg',
+            value: isDev ? '*' : 'https://rmitnct.site',
           },
           {
             key: 'Access-Control-Allow-Methods',
