@@ -6,7 +6,6 @@ import { toast } from '@ncthub/ui/sonner';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { logoutFromClient } from '@/lib/client-logout';
 
 export function LogoutDropdownItem() {
   const t = useTranslations('common');
@@ -19,9 +18,10 @@ export function LogoutDropdownItem() {
     setIsLoggingOut(true);
 
     try {
-      await logoutFromClient();
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+      });
       router.replace('/login');
-      router.refresh();
     } catch (error) {
       setIsLoggingOut(false);
       toast(t('error'), {

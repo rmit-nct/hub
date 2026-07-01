@@ -7,7 +7,6 @@ import { cn } from '@ncthub/utils/format';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { logoutFromClient } from '@/lib/client-logout';
 
 export function AuthButton({
   user,
@@ -27,10 +26,11 @@ export function AuthButton({
     setIsLoggingOut(true);
 
     try {
-      await logoutFromClient();
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+      });
       onClick?.();
       router.replace('/login');
-      router.refresh();
     } catch (error) {
       setIsLoggingOut(false);
       toast('Error', {
