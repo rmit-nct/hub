@@ -5,17 +5,16 @@ import { resolveTurnstileClientState } from '@ncthub/turnstile/client';
 import { Button } from '@ncthub/ui/button';
 import {
   Field,
-  FieldLabel,
   FieldDescription,
   FieldError,
+  FieldLabel,
 } from '@ncthub/ui/field';
-import { Controller } from '@ncthub/ui/hooks/use-form';
-import { useForm } from '@ncthub/ui/hooks/use-form';
-import { toast } from '@ncthub/ui/sonner';
+import { Controller, useForm } from '@ncthub/ui/hooks/use-form';
 import { Mail } from '@ncthub/ui/icons';
 import { Input } from '@ncthub/ui/input';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@ncthub/ui/input-otp';
 import { zodResolver } from '@ncthub/ui/resolvers';
+import { toast } from '@ncthub/ui/sonner';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
@@ -140,7 +139,7 @@ export default function LoginForm() {
 
     if (result.success) {
       const nextUrl = searchParams.get('nextUrl');
-      router.push(nextUrl ?? '/onboarding');
+      router.push(nextUrl ?? '/');
       router.refresh();
     } else {
       setLoading(false);
@@ -194,12 +193,9 @@ export default function LoginForm() {
         control={form.control}
         name="otp"
         render={({ field, fieldState }) => (
-          <Field
-            data-invalid={fieldState.invalid}
-            className={otpSent ? '' : 'hidden'}
-          >
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel>{t('otp_code')}</FieldLabel>{' '}
-            <div className="flex flex-col gap-2 md:flex-row">
+            <div className="flex flex-col gap-3">
               <InputOTP
                 maxLength={maxOTPLength}
                 aria-invalid={fieldState.invalid}
@@ -213,11 +209,7 @@ export default function LoginForm() {
               >
                 <InputOTPGroup className="w-full justify-center">
                   {Array.from({ length: maxOTPLength }).map((_, index) => (
-                    <InputOTPSlot
-                      key={index}
-                      index={index}
-                      className="max-md:w-full"
-                    />
+                    <InputOTPSlot key={index} index={index} />
                   ))}
                 </InputOTPGroup>
               </InputOTP>
@@ -229,7 +221,7 @@ export default function LoginForm() {
                   resendCooldown > 0 ||
                   (turnstileClientState.isRequired && !captchaToken)
                 }
-                className="md:w-full"
+                className="w-full"
                 variant="secondary"
                 type="button"
               >
