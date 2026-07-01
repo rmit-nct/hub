@@ -834,6 +834,141 @@ export async function getDynamicQRMetadata(
   };
 }
 
+// Aggregated scan analytics for a dynamic QR code, consumed by the QR
+// generator UI to render the compact stats strip under the QR image.
+export interface DynamicQRDeviceStat {
+  type: string;
+  count: number;
+}
+
+export interface DynamicQRLocationStat {
+  country: string;
+  city: string;
+  count: number;
+}
+
+export interface DynamicQRRecentScan {
+  scannedAt: string;
+  deviceType: string;
+  country: string;
+  city: string;
+}
+
+export interface DynamicQRAnalytics {
+  slug: string;
+  createdAt: string;
+  totalScans: number;
+  lastScanAt: string | null;
+  devices: DynamicQRDeviceStat[];
+  locations: DynamicQRLocationStat[];
+  recentScans: DynamicQRRecentScan[];
+}
+
+type LinkAnalyticsRow = {
+  created_at: string;
+  device_type: string | null;
+  country: string | null;
+  city: string | null;
+};
+
+/**
+ * Fetches aggregated scan analytics for a dynamic QR code by slug.
+ *
+ * Ownership is enforced twice: the shortened_links lookup filters on
+ * creator_id, and RLS on link_analytics restricts rows to the owner.
+ *
+ * @param slug - The slug returned by createDynamicQRUrl
+ */
+export async function getDynamicQRAnalytics(
+  slug: string
+): Promise<DynamicQRAnalytics> {
+  const parsedSlug = slugSchema.safeParse(slug);
+  if (!parsedSlug.success) {
+    throw new Error(parsedSlug.error.issues[0]?.message || 'Invalid slug');
+  }
+
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    throw new Error('Please sign in to view analytics for this link');
+  }
+
+  const { data: link, error: linkError } = await supabase
+    .from('shortened_links')
+    .select('id, slug, created_at')
+    .eq('slug', parsedSlug.data)
+    .eq('creator_id', user.id)
+    .single();
+
+  if (linkError || !link) {
+    throw new Error('Short link not found or you do not have access to it');
+  }
+
+  const { data: rows, error: analyticsError } = await supabase
+    .from('link_analytics')
+    .select('created_at, device_type, country, city')
+    .eq('link_id', link.id)
+    .order('created_at', { ascending: false });
+
+  if (analyticsError) {
+    console.error(analyticsError);
+    throw new Error('Failed to load analytics for this link');
+  }
+
+  const scans = (rows ?? []) as LinkAnalyticsRow[];
+
+  const deviceCounts = new Map<string, number>();
+  const locationCounts = new Map<
+    string,
+    { country: string; city: string; count: number }
+  >();
+
+  for (const scan of scans) {
+    const device = scan.device_type || 'unknown';
+    deviceCounts.set(device, (deviceCounts.get(device) ?? 0) + 1);
+
+    const country = scan.country || 'Unknown';
+    const city = scan.city || '';
+    const key = `${country}|${city}`;
+    const existing = locationCounts.get(key);
+    if (existing) {
+      existing.count += 1;
+    } else {
+      locationCounts.set(key, { country, city, count: 1 });
+    }
+  }
+
+  const devices = Array.from(deviceCounts.entries())
+    .map(([type, count]) => ({ type, count }))
+    .sort((a, b) => b.count - a.count);
+
+  const locations = Array.from(locationCounts.values())
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5);
+
+  const recentScans = scans.slice(0, 10).map((scan) => ({
+    scannedAt: scan.created_at,
+    deviceType: scan.device_type || 'unknown',
+    country: scan.country || 'Unknown',
+    city: scan.city || '',
+  }));
+
+  return {
+    slug: link.slug,
+    createdAt: link.created_at,
+    totalScans: scans.length,
+    lastScanAt: scans[0]?.created_at ?? null,
+    devices,
+    locations,
+    recentScans,
+  };
+}
+
 export async function deleteShortLink(shortLinkId: string) {
   const parsedId = deleteShortLinkSchema.safeParse(shortLinkId);
   if (!parsedId.success) {

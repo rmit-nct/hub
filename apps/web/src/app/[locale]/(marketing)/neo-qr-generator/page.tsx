@@ -20,8 +20,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ColorPicker } from 'react-color-pikr';
 import {
   createDynamicQRUrl,
+  type DynamicQRAnalytics,
   type DynamicQRMetadata,
-  updateDynamicQRUrl,
+  getDynamicQRAnalytics,
 } from '../neo-shortener/functions';
 import {
   type ErrorId,
@@ -68,6 +69,31 @@ function triggerDownload(blobOrUrl: Blob | string, fileName: string) {
 function getExt(fileName: string) {
   const idx = fileName.lastIndexOf('.');
   return idx === -1 ? '' : fileName.slice(idx + 1).toLowerCase();
+}
+
+function formatShortDate(value: string | null | undefined) {
+  if (!value) return '—';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '—';
+  return date.toLocaleDateString(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+}
+
+// A single compact stat cell for the dynamic-QR analytics strip.
+function AnalyticsStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-center dark:border-slate-700 dark:bg-slate-800">
+      <p className="truncate text-[11px] text-slate-500 uppercase tracking-wide dark:text-slate-400">
+        {label}
+      </p>
+      <p className="truncate font-semibold text-slate-900 text-sm dark:text-white">
+        {value}
+      </p>
+    </div>
+  );
 }
 
 //QR code frame selection
@@ -418,11 +444,10 @@ export default function NeoQrGeneratorPage() {
     useState<DynamicQRMetadata | null>(null);
   const [isCreatingShortLink, setIsCreatingShortLink] = useState(false);
   const [dynamicQRError, setDynamicQRError] = useState<string>('');
-  // Edit-destination flow: when user wants to change the URL after creation
-  const [isEditingDestination, setIsEditingDestination] = useState(false);
-  const [editDestinationInput, setEditDestinationInput] = useState('');
-  const [isUpdatingDestination, setIsUpdatingDestination] = useState(false);
-  const [updateDestinationError, setUpdateDestinationError] = useState('');
+  // Scan analytics for the current dynamic QR (created date, scans, device, location)
+  const [analytics, setAnalytics] = useState<DynamicQRAnalytics | null>(null);
+  const [isLoadingAnalytics, setIsLoadingAnalytics] = useState(false);
+  const [showAnalyticsDetails, setShowAnalyticsDetails] = useState(false);
 
   // Error handling state
   const [currentError, setCurrentError] = useState<QRError | null>(null);
@@ -628,6 +653,21 @@ export default function NeoQrGeneratorPage() {
     }
   }, [qrPayload, isDynamicMode]);
 
+  // Loads aggregated scan analytics for the current dynamic QR code.
+  // Called after creation and after a destination update. Failures are
+  // non-fatal — the QR still renders, we just skip the stats.
+  const fetchAnalytics = useCallback(async (slug: string) => {
+    setIsLoadingAnalytics(true);
+    try {
+      const data = await getDynamicQRAnalytics(slug);
+      setAnalytics(data);
+    } catch {
+      setAnalytics(null);
+    } finally {
+      setIsLoadingAnalytics(false);
+    }
+  }, []);
+
   // Handle dynamic QR URL creation when in dynamic mode.
   // Guard: only fires when isDynamicMode=true, qrType='url', and Generate was clicked.
   // Loop prevention: skips creation if metadata already exists for the same URL.
@@ -636,9 +676,8 @@ export default function NeoQrGeneratorPage() {
       // Only clear metadata when mode is fully off — not on every isGenerated=false tick
       setDynamicQRMetadata(null);
       setDynamicQRError('');
-      setIsEditingDestination(false);
-      setEditDestinationInput('');
-      setUpdateDestinationError('');
+      setAnalytics(null);
+      setShowAnalyticsDetails(false);
       return;
     }
 
@@ -663,6 +702,7 @@ export default function NeoQrGeneratorPage() {
       try {
         const metadata = await createDynamicQRUrl(urlInput);
         setDynamicQRMetadata(metadata);
+        void fetchAnalytics(metadata.slug);
         // Re-assert isGenerated so the QR renders and Download/Copy buttons enable.
         // qrPayload will update to shortUrl, and the qrPayload useEffect skips
         // resetting isGenerated because isDynamicMode is true.
@@ -702,40 +742,7 @@ export default function NeoQrGeneratorPage() {
     dynamicQRMetadata?.originalUrl,
     mapErrorToType,
     handleShowError,
-  ]);
-
-  // Handles updating the destination URL of an existing dynamic QR code.
-  // The QR image stays the same (still encodes the same short URL).
-  // Only the redirect target in the database changes — that's what makes it "dynamic".
-  const handleUpdateDestination = useCallback(async () => {
-    if (!dynamicQRMetadata?.slug || !editDestinationInput.trim()) return;
-    setIsUpdatingDestination(true);
-    setUpdateDestinationError('');
-    try {
-      await updateDynamicQRUrl(
-        dynamicQRMetadata.slug,
-        editDestinationInput.trim()
-      );
-      setDynamicQRMetadata((prev) =>
-        prev ? { ...prev, originalUrl: editDestinationInput.trim() } : prev
-      );
-      setIsEditingDestination(false);
-      setEditDestinationInput('');
-    } catch (error) {
-      const errorType = mapErrorToType(error as Error);
-      handleShowError(errorType);
-
-      const message =
-        error instanceof Error ? error.message : 'Failed to update destination';
-      setUpdateDestinationError(message);
-    } finally {
-      setIsUpdatingDestination(false);
-    }
-  }, [
-    dynamicQRMetadata,
-    editDestinationInput,
-    mapErrorToType,
-    handleShowError,
+    fetchAnalytics,
   ]);
 
   // Extract the actual QR update logic into a separate function for clarity
@@ -1504,6 +1511,21 @@ export default function NeoQrGeneratorPage() {
   }, []);
 
   const qrCanDownload = qrValue.trim().length > 0 && isGenerated;
+
+  // Derived labels for the dynamic-QR analytics strip.
+  const topDevice = analytics?.devices[0];
+  const topLocation = analytics?.locations[0];
+  const topDeviceLabel = topDevice
+    ? topDevice.type.charAt(0).toUpperCase() + topDevice.type.slice(1)
+    : '—';
+  const topLocationLabel = topLocation
+    ? [topLocation.city, topLocation.country].filter(Boolean).join(', ') || '—'
+    : '—';
+  const scansLabel = analytics
+    ? String(analytics.totalScans)
+    : isLoadingAnalytics
+      ? '…'
+      : '0';
 
   const download = useCallback(async () => {
     if (!qrRef.current || !qrCanDownload) return;
@@ -2619,6 +2641,71 @@ export default function NeoQrGeneratorPage() {
                 )}
               </div>
 
+              {/* Dynamic QR analytics — compact strip directly under the QR image */}
+              {isGenerated &&
+                isDynamicMode &&
+                dynamicQRMetadata &&
+                !isCreatingShortLink && (
+                  <div className="shrink-0 px-6 pt-4">
+                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                      <AnalyticsStat
+                        label="Created"
+                        value={formatShortDate(
+                          analytics?.createdAt ?? dynamicQRMetadata.createdAt
+                        )}
+                      />
+                      <AnalyticsStat label="Scans" value={scansLabel} />
+                      <AnalyticsStat
+                        label="Top device"
+                        value={topDeviceLabel}
+                      />
+                      <AnalyticsStat
+                        label="Top location"
+                        value={topLocationLabel}
+                      />
+                    </div>
+
+                    {analytics && analytics.recentScans.length > 0 && (
+                      <div className="mt-2">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setShowAnalyticsDetails((prev) => !prev)
+                          }
+                          className="text-slate-500 text-xs underline transition hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+                        >
+                          {showAnalyticsDetails
+                            ? 'Hide recent scans'
+                            : `View recent scans (${analytics.recentScans.length})`}
+                        </button>
+
+                        {showAnalyticsDetails && (
+                          <ul className="mt-2 max-h-40 space-y-1 overflow-y-auto rounded-lg border border-slate-200 bg-white p-2 dark:border-slate-700 dark:bg-slate-800">
+                            {analytics.recentScans.map((scan, index) => (
+                              <li
+                                key={`${scan.scannedAt}-${index}`}
+                                className="flex items-center justify-between gap-2 text-slate-600 text-xs dark:text-slate-300"
+                              >
+                                <span className="capitalize">
+                                  {scan.deviceType}
+                                </span>
+                                <span className="truncate text-slate-500 dark:text-slate-400">
+                                  {[scan.city, scan.country]
+                                    .filter(Boolean)
+                                    .join(', ') || 'Unknown'}
+                                </span>
+                                <span className="shrink-0 text-slate-400 dark:text-slate-500">
+                                  {formatShortDate(scan.scannedAt)}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+
               {/* Generate Button - If hidden, space is reserved */}
               <div
                 className="shrink-0"
@@ -2723,78 +2810,14 @@ export default function NeoQrGeneratorPage() {
                           </div>
 
                           {/* Current destination row */}
-                          {!isEditingDestination && (
-                            <div className="flex items-start justify-between gap-2">
-                              <div className="min-w-0 flex-1">
-                                <p className="text-green-600 text-xs dark:text-green-400">
-                                  Currently redirects to:
-                                </p>
-                                <p className="break-all text-green-700 text-xs dark:text-green-300">
-                                  {dynamicQRMetadata.originalUrl}
-                                </p>
-                              </div>
-                              {/* "Change destination" button — opens the edit panel */}
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setEditDestinationInput(
-                                    dynamicQRMetadata.originalUrl
-                                  );
-                                  setIsEditingDestination(true);
-                                  setUpdateDestinationError('');
-                                }}
-                                className="shrink-0 rounded-md border border-green-300 bg-white px-2 py-1 font-medium text-green-700 text-xs transition hover:bg-green-100 dark:border-green-700 dark:bg-green-900 dark:text-green-300 dark:hover:bg-green-800"
-                              >
-                                Change
-                              </button>
-                            </div>
-                          )}
-
-                          {/* Edit destination panel — calls updateDynamicQRUrl on save */}
-                          {isEditingDestination && (
-                            <div className="space-y-2">
-                              <p className="font-medium text-green-700 text-xs dark:text-green-300">
-                                New destination URL:
-                              </p>
-                              <input
-                                value={editDestinationInput}
-                                onChange={(e) =>
-                                  setEditDestinationInput(e.target.value)
-                                }
-                                placeholder="https://new-destination.com"
-                                className="w-full rounded-md border border-green-300 bg-white px-3 py-2 text-slate-900 text-sm focus:border-green-500 focus:outline-none dark:border-green-700 dark:bg-slate-800 dark:text-white"
-                              />
-                              {updateDestinationError && (
-                                <p className="text-red-600 text-xs dark:text-red-400">
-                                  {updateDestinationError}
-                                </p>
-                              )}
-                              <div className="flex gap-2">
-                                <button
-                                  type="button"
-                                  onClick={handleUpdateDestination}
-                                  disabled={
-                                    isUpdatingDestination ||
-                                    !editDestinationInput.trim()
-                                  }
-                                  className="flex-1 rounded-md bg-green-600 px-3 py-1.5 font-medium text-white text-xs transition hover:bg-green-700 disabled:opacity-50"
-                                >
-                                  {isUpdatingDestination ? 'Saving…' : 'Save'}
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setIsEditingDestination(false);
-                                    setEditDestinationInput('');
-                                    setUpdateDestinationError('');
-                                  }}
-                                  className="flex-1 rounded-md border border-green-300 bg-white px-3 py-1.5 font-medium text-green-700 text-xs transition hover:bg-green-100 dark:border-green-700 dark:bg-green-900 dark:text-green-300"
-                                >
-                                  Cancel
-                                </button>
-                              </div>
-                            </div>
-                          )}
+                          <div className="min-w-0">
+                            <p className="text-green-600 text-xs dark:text-green-400">
+                              Currently redirects to:
+                            </p>
+                            <p className="break-all text-green-700 text-xs dark:text-green-300">
+                              {dynamicQRMetadata.originalUrl}
+                            </p>
+                          </div>
                         </div>
                       )}
 
