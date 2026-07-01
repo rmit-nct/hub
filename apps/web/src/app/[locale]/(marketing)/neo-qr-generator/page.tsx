@@ -353,6 +353,37 @@ export default function NeoQrGeneratorPage() {
     }
   }, []);
 
+  // Keep the analytics strip live: scans are recorded server-side when someone
+  // opens the short link, so poll periodically and refresh whenever the tab
+  // regains focus. Without this, the strip would forever show the counts from
+  // the moment the QR was created (0 scans).
+  const activeAnalyticsSlug =
+    isDynamicMode && !isCreatingShortLink
+      ? (dynamicQRMetadata?.slug ?? null)
+      : null;
+
+  useEffect(() => {
+    if (!activeAnalyticsSlug) return;
+
+    const refresh = () => {
+      void fetchAnalytics(activeAnalyticsSlug);
+    };
+
+    const intervalId = window.setInterval(refresh, 15000);
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        refresh();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.clearInterval(intervalId);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [activeAnalyticsSlug, fetchAnalytics]);
+
   // Handle dynamic QR URL creation when in dynamic mode.
   // Guard: only fires when isDynamicMode=true, qrType='url', and Generate was clicked.
   // Loop prevention: skips creation if metadata already exists for the same URL.
@@ -2332,6 +2363,21 @@ export default function NeoQrGeneratorPage() {
                 dynamicQRMetadata &&
                 !isCreatingShortLink && (
                   <div className="shrink-0 px-6 pt-4">
+                    <div className="mb-2 flex items-center justify-between">
+                      <p className="font-medium text-slate-500 text-xs uppercase tracking-wide dark:text-slate-400">
+                        Scan analytics
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          void fetchAnalytics(dynamicQRMetadata.slug)
+                        }
+                        disabled={isLoadingAnalytics}
+                        className="text-slate-500 text-xs underline transition hover:text-slate-700 disabled:opacity-50 dark:text-slate-400 dark:hover:text-slate-200"
+                      >
+                        {isLoadingAnalytics ? 'Refreshing…' : 'Refresh'}
+                      </button>
+                    </div>
                     <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                       <AnalyticsStat
                         label="Created"
