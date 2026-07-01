@@ -2164,6 +2164,71 @@ export type Database = {
           },
         ];
       };
+      link_analytics: {
+        Row: {
+          city: string | null;
+          country: string | null;
+          country_region: string | null;
+          created_at: string;
+          device_type: string | null;
+          id: string;
+          ip_address: string | null;
+          latitude: number | null;
+          link_id: string;
+          longitude: number | null;
+          postal_code: string | null;
+          referrer: string | null;
+          timezone: string | null;
+          user_agent: string | null;
+          vercel_id: string | null;
+          vercel_region: string | null;
+        };
+        Insert: {
+          city?: string | null;
+          country?: string | null;
+          country_region?: string | null;
+          created_at?: string;
+          device_type?: string | null;
+          id?: string;
+          ip_address?: string | null;
+          latitude?: number | null;
+          link_id: string;
+          longitude?: number | null;
+          postal_code?: string | null;
+          referrer?: string | null;
+          timezone?: string | null;
+          user_agent?: string | null;
+          vercel_id?: string | null;
+          vercel_region?: string | null;
+        };
+        Update: {
+          city?: string | null;
+          country?: string | null;
+          country_region?: string | null;
+          created_at?: string;
+          device_type?: string | null;
+          id?: string;
+          ip_address?: string | null;
+          latitude?: number | null;
+          link_id?: string;
+          longitude?: number | null;
+          postal_code?: string | null;
+          referrer?: string | null;
+          timezone?: string | null;
+          user_agent?: string | null;
+          vercel_id?: string | null;
+          vercel_region?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'link_analytics_link_id_fkey';
+            columns: ['link_id'];
+            isOneToOne: false;
+            referencedRelation: 'shortened_links';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       media_uploads: {
         Row: {
           created_at: string;
@@ -2295,8 +2360,8 @@ export type Database = {
       };
       meet_together_plans: {
         Row: {
-          created_at: string | null;
-          creator_id: string | null;
+          created_at: string;
+          creator_id: string;
           dates: string[];
           description: string | null;
           end_time: string;
@@ -2306,8 +2371,8 @@ export type Database = {
           start_time: string;
         };
         Insert: {
-          created_at?: string | null;
-          creator_id?: string | null;
+          created_at?: string;
+          creator_id?: string;
           dates: string[];
           description?: string | null;
           end_time: string;
@@ -2317,8 +2382,8 @@ export type Database = {
           start_time: string;
         };
         Update: {
-          created_at?: string | null;
-          creator_id?: string | null;
+          created_at?: string;
+          creator_id?: string;
           dates?: string[];
           description?: string | null;
           end_time?: string;
