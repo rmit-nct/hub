@@ -31,7 +31,7 @@ const departmentCards: {
   {
     name: 'Marketing',
     bio: "Driving our club's visibility and engagement through strategic marketing initiatives.",
-    image: '/departments/marketing/test3.jpg',
+    image: ' /departments/marketing/test3.jpg',
     color: 'text-dynamic-orange border-dynamic-orange/30 bg-dynamic-orange/5',
     hoverColor: 'hover:border-dynamic-orange/50 hover:bg-dynamic-orange/10',
   },
