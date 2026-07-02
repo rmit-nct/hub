@@ -92,7 +92,7 @@ export default function HeroSection() {
           <div className="mb-12 flex flex-wrap gap-4">
             <Button size="lg" asChild>
               <Link
-                href="https://forms.office.com/r/csPz8V73ad"
+                href="https://rmitnct.site/recruitment"
                 target="_blank"
                 rel="noopener noreferrer"
               >
