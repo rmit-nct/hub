@@ -112,6 +112,8 @@ export default function BlogDetailClient({ blog }: { blog: BlogDetail }) {
               src={blog.image_url}
               alt={blog.title}
               fill
+              priority
+              sizes="(max-width: 1023px) 100vw, 896px"
               className="object-cover"
             />
           </motion.div>

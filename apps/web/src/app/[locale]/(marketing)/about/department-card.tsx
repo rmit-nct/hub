@@ -119,6 +119,7 @@ export function DepartmentCard({
               src={characteristics.image}
               fill
               alt={`${name} featured activity`}
+              sizes="(max-width: 1023px) 100vw, 50vw"
               className="object-cover transition duration-700 ease-out group-hover:scale-105"
             />
           </div>
@@ -186,6 +187,7 @@ export function DepartmentCard({
                   src={image}
                   fill
                   alt={`${name} activity ${index + 1}`}
+                  sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 25vw"
                   className="object-cover transition duration-500 ease-out group-hover/image:scale-105"
                 />
               </div>

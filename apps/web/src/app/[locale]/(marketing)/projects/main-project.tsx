@@ -79,6 +79,8 @@ export default function MainProject() {
                     src="/media/marketing/landing-page.jpg"
                     alt="NCT Landing Page v2 Screenshot"
                     fill
+                    priority
+                    sizes="(max-width: 1023px) 100vw, 50vw"
                     className="object-cover"
                   />
                   <div className="absolute inset-0 bg-linear-to-tr from-dynamic-blue/10 to-dynamic-purple/10"></div>

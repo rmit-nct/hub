@@ -18,7 +18,8 @@ import type { ReactNode } from 'react';
 
 const font = Noto_Sans({
   subsets: ['latin', 'vietnamese'],
-  display: 'block',
+  display: 'swap',
+  preload: false,
 });
 
 interface Props {
@@ -126,7 +127,6 @@ export default async function RootLayout({ children, params }: Props) {
           font.className
         )}
       >
-        {/* Keep Vercel instrumentation mounted at the root layout. */}
         <VercelAnalytics />
         <VercelInsights />
         <Providers>{children}</Providers>
