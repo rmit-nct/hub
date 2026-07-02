@@ -82,7 +82,7 @@ export default function PasswordFormFields({
       <div>
         <label
           htmlFor="password"
-          className="block font-medium text-foreground/80 text-sm"
+          className="block font-medium text-sm text-white/78"
         >
           Password
         </label>
@@ -92,7 +92,8 @@ export default function PasswordFormFields({
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="block h-10 w-full rounded-md border border-border px-3 pr-10 shadow-sm focus:border-dynamic-blue focus:outline-none focus:ring-2 focus:ring-dynamic-blue focus:ring-offset-2"
+            suppressHydrationWarning
+            className="block h-12 w-full rounded-2xl border border-white/10 bg-[#171a2b] px-4 pr-11 text-base text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.03)] placeholder:text-white/34 focus:border-brand-light-blue/45 focus:outline-none focus:ring-4 focus:ring-brand-light-blue/15"
             placeholder="Enter password"
             maxLength={256}
             required
@@ -101,7 +102,7 @@ export default function PasswordFormFields({
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute inset-y-0 right-0 flex h-10 w-10 items-center justify-center text-muted-foreground/60 hover:text-foreground/80"
+            className="absolute inset-y-0 right-0 flex h-12 w-12 items-center justify-center text-white/42 transition-colors hover:text-brand-light-blue"
             tabIndex={-1}
           >
             {showPassword ? (
@@ -114,23 +115,23 @@ export default function PasswordFormFields({
       </div>
 
       {hint && (
-        <div className="rounded-md bg-dynamic-blue/10 p-3">
-          <p className="text-dynamic-blue text-sm">
+        <div className="rounded-2xl border border-brand-light-blue/16 bg-brand-light-blue/10 p-3.5">
+          <p className="text-brand-light-blue/90 text-sm">
             <span className="font-medium">Hint:</span> {hint}
           </p>
         </div>
       )}
 
       {error && (
-        <div className="rounded-md bg-dynamic-red/10 p-3">
-          <p className="text-dynamic-red text-sm">{error}</p>
+        <div className="rounded-2xl border border-rose-500/18 bg-rose-500/10 p-3.5">
+          <p className="text-rose-200 text-sm">{error}</p>
         </div>
       )}
 
       <button
         type="submit"
         disabled={loading || !password}
-        className="flex h-10 w-full items-center justify-center rounded-md bg-dynamic-blue px-4 font-medium text-white transition-colors hover:bg-dynamic-blue/80 focus:outline-none focus:ring-2 focus:ring-dynamic-blue focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex h-12 w-full items-center justify-center rounded-2xl border border-brand-light-blue/10 bg-brand-light-blue px-4 font-semibold text-brand-dark-blue transition-all duration-200 hover:bg-[#9fe6ff] focus:outline-none focus:ring-4 focus:ring-brand-light-blue/20 disabled:cursor-not-allowed disabled:border-white/8 disabled:bg-white/12 disabled:text-white/45 disabled:opacity-100"
       >
         {loading ? (
           <span className="flex items-center gap-2">

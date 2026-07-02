@@ -133,7 +133,7 @@ export function DownloadModal({
             type="button"
             onClick={handleDownload}
             disabled={isDownloading}
-            className="flex-1 rounded-lg px-4 py-2 font-semibold text-white transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50"
+            className="flex-1 rounded-lg px-4 py-2 font-semibold text-black transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50"
             style={{ backgroundColor: 'var(--primary)' }}
           >
             {isDownloading ? 'Downloading...' : 'Download'}

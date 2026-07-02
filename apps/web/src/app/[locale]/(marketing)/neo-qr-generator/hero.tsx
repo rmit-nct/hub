@@ -24,7 +24,7 @@ export default function NeoGeneratorHero() {
           variant="outline"
           className="border-[#5FC6E5]/50 px-3 py-1 text-[#5FC6E5] text-sm"
         >
-          QR Generator
+          Neo QR Generator
         </Badge>
         <Sparkles className="h-5 w-5 text-[#FBC721]" />
       </motion.div>
