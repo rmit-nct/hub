@@ -32,6 +32,7 @@ export default function MemberCard({
             src={image}
             fill
             alt={name}
+            sizes="(max-width: 767px) 100vw, 384px"
             className="object-cover object-top"
           />
           <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/5 to-transparent" />

@@ -194,6 +194,7 @@ const PrimaryEventCard = ({ event }: { event: EventType }) => {
             alt={event.title}
             className="object-cover transition-transform duration-500 group-hover:scale-105"
             fill
+            sizes="(max-width: 767px) 100vw, 50vw"
           />
 
           {/* Overlay */}
@@ -243,6 +244,7 @@ const SecondaryEventCard = ({ event }: { event: EventType }) => {
             alt={event.title}
             className="object-cover transition-transform duration-300 group-hover:scale-105"
             fill
+            sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 25vw"
           />
 
           {/* Overlay */}

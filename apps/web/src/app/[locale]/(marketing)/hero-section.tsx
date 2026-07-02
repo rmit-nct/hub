@@ -54,6 +54,7 @@ export default function HeroSection() {
                 src="/media/logos/transparent.png"
                 alt="NCT Logo"
                 fill
+                sizes="56px"
                 className="object-contain p-1"
               />
             </div>
@@ -165,6 +166,8 @@ export default function HeroSection() {
               src="/club-day/sem-a-2026.jpg"
               alt="NCT Club Day"
               fill
+              priority
+              sizes="(max-width: 1023px) 100vw, 50vw"
               className="object-cover transition-transform duration-700 group-hover:scale-110"
             />
             <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
@@ -180,6 +183,7 @@ export default function HeroSection() {
                 src="/media/marketing/events/netcompany-tour.jpg"
                 alt="Company Tour"
                 fill
+                sizes="(max-width: 1023px) 50vw, 25vw"
                 className="object-cover transition-transform duration-700 group-hover:scale-110"
               />
               <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
@@ -194,6 +198,7 @@ export default function HeroSection() {
                 src="/media/marketing/workshops/cv-workshop.jpg"
                 alt="CV Workshop"
                 fill
+                sizes="(max-width: 1023px) 50vw, 25vw"
                 className="object-cover transition-transform duration-700 group-hover:scale-110"
               />
               <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
