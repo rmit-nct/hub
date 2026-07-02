@@ -110,7 +110,7 @@ export const useNavigation = (t: any): { categories: NavCategory[] } => {
       icon: <ScanLine />,
     },
     {
-      href: ' /neo-shortener',
+      href: '/neo-shortener',
       label: 'Neo Shortener',
       description: 'Shorten a long URL into a simpler version',
       icon: <Link2 />,
