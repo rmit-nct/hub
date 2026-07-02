@@ -367,7 +367,7 @@ export const departments: DepartmentData[] = [
       ],
       quote:
         'Marketing gives NEO a recognizable face by turning club energy into visuals, messages, and campaigns that people immediately remember.',
-      image: '/departments/marketing/nct-fanpage.png',
+      image: '/departments/marketing/nct-marketing.jpg',
     },
     activities: {
       bio: 'What Marketing does and no one else can do the same way.',
