@@ -53,6 +53,113 @@ import {
   triggerDownload,
 } from './qr-utils';
 
+const normalizePastedHttpUrl = (value: string) => {
+  const trimmed = value.trim();
+  if (!trimmed) return '';
+
+  return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+};
+
+const normalizeHexColor = (value: string): string | null => {
+  const hex = value.trim().replace(/^#/, '');
+
+  if (/^[0-9a-fA-F]{3}$/.test(hex)) {
+    return `#${hex
+      .split('')
+      .map((char) => `${char}${char}`)
+      .join('')
+      .toLowerCase()}`;
+  }
+
+  if (/^[0-9a-fA-F]{6}$/.test(hex)) {
+    return `#${hex.toLowerCase()}`;
+  }
+
+  return null;
+};
+
+const getPickerHexValue = (color: unknown): string | null => {
+  if (typeof color === 'string') return color;
+  if (
+    color &&
+    typeof color === 'object' &&
+    'hex' in color &&
+    typeof color.hex === 'string'
+  ) {
+    return color.hex;
+  }
+
+  return null;
+};
+
+interface HexColorInputProps {
+  id: string;
+  value: string;
+  currentColor: string;
+  onValueChange: (value: string) => void;
+  onCommit: (value: string) => void;
+}
+
+function HexColorInput({
+  id,
+  value,
+  currentColor,
+  onValueChange,
+  onCommit,
+}: HexColorInputProps) {
+  const normalizedValue = normalizeHexColor(value);
+  const hasInvalidValue = value.trim().length > 0 && !normalizedValue;
+
+  const commitIfValid = (nextValue: string) => {
+    const normalized = normalizeHexColor(nextValue);
+    if (normalized) {
+      onCommit(normalized);
+    }
+  };
+
+  return (
+    <div className="mt-3">
+      <Label htmlFor={id} className="mb-1.5 block font-medium text-xs">
+        Hex code
+      </Label>
+      <input
+        id={id}
+        type="text"
+        inputMode="text"
+        autoCapitalize="characters"
+        spellCheck={false}
+        value={value}
+        onChange={(event) => {
+          const nextValue = event.target.value;
+          onValueChange(nextValue);
+          commitIfValid(nextValue);
+        }}
+        onBlur={() => {
+          if (normalizedValue) {
+            onCommit(normalizedValue);
+          } else {
+            onValueChange(currentColor.toUpperCase());
+          }
+        }}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') {
+            commitIfValid(value);
+            event.currentTarget.blur();
+          }
+        }}
+        placeholder="#000000"
+        aria-invalid={hasInvalidValue}
+        className="w-full rounded-md border border-border bg-background px-3 py-2 font-mono text-foreground text-sm uppercase outline-none transition-colors placeholder:text-muted-foreground focus:border-primary"
+      />
+      {hasInvalidValue ? (
+        <p className="mt-1.5 px-1 text-destructive text-xs">
+          Enter a valid 3 or 6 digit hex color.
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
 export default function NeoQrGeneratorPage() {
   // Initialize colors with safe defaults to avoid hydration mismatch
   // Use a consistent default on both server and client, then update after hydration
@@ -102,6 +209,8 @@ export default function NeoQrGeneratorPage() {
   // Customize options - Use safe default to avoid hydration mismatch
   const [bgColor, setBgColor] = useState('#ffffff');
   const [fgColor, setFgColor] = useState('#000000');
+  const [bgColorInput, setBgColorInput] = useState('#FFFFFF');
+  const [fgColorInput, setFgColorInput] = useState('#000000');
   const [qrSize, setQrSize] = useState(260);
   const [displayScale, setDisplayScale] = useState(1);
   const [isDraggingSlider, setIsDraggingSlider] = useState(false);
@@ -151,6 +260,43 @@ export default function NeoQrGeneratorPage() {
     setFgColor(isDark ? '#ffffff' : '#000000');
     setBgColor(isDark ? '#000000' : '#ffffff');
   }, []);
+
+  useEffect(() => {
+    setFgColorInput(fgColor.toUpperCase());
+  }, [fgColor]);
+
+  useEffect(() => {
+    setBgColorInput(bgColor.toUpperCase());
+  }, [bgColor]);
+
+  const handleFgColorChange = useCallback((color: unknown) => {
+    const normalized = normalizeHexColor(getPickerHexValue(color) ?? '');
+    if (normalized) {
+      setFgColor(normalized);
+    }
+  }, []);
+
+  const handleBgColorChange = useCallback((color: unknown) => {
+    const normalized = normalizeHexColor(getPickerHexValue(color) ?? '');
+    if (normalized) {
+      setBgColor(normalized);
+    }
+  }, []);
+
+  const handleUrlPaste = useCallback(
+    (
+      event: React.ClipboardEvent<HTMLInputElement>,
+      setValue: (value: string) => void
+    ) => {
+      const pastedValue = event.clipboardData.getData('text');
+      const normalizedValue = normalizePastedHttpUrl(pastedValue);
+      if (!normalizedValue) return;
+
+      event.preventDefault();
+      setValue(normalizedValue);
+    },
+    []
+  );
 
   const isValidHttpUrl = (value: string) => {
     const v = value.trim();
@@ -1177,7 +1323,8 @@ export default function NeoQrGeneratorPage() {
     }
 
     const ext = getExt(file.name);
-    const ok = ['png', 'jpg', 'jpeg', 'webp'].includes(ext);
+    const isSvgLogo = ext === 'svg' || file.type === 'image/svg+xml';
+    const ok = isSvgLogo || ['png', 'jpg', 'jpeg', 'webp'].includes(ext);
     if (!ok) {
       setLogoDataUrl('');
       return;
@@ -1187,6 +1334,11 @@ export default function NeoQrGeneratorPage() {
     reader.onload = () => {
       const result = reader.result;
       if (typeof result === 'string') {
+        if (isSvgLogo) {
+          setLogoDataUrl(result);
+          return;
+        }
+
         // UPDATED: Explicitly typed Image creation
         const img = document.createElement('img') as HTMLImageElement;
         img.onload = () => {
@@ -1417,7 +1569,7 @@ export default function NeoQrGeneratorPage() {
             <div className="flex-1 border-slate-200 border-b p-6 sm:p-8 lg:border-r lg:border-b-0 lg:pr-8 dark:border-slate-700">
               {/* Navbar - Type Switcher */}
               <div className="mb-8">
-                <div className="relative flex flex-wrap justify-center gap-1.5 overflow-x-auto rounded-full border border-slate-200 bg-slate-100 p-2 transition-colors duration-300 dark:border-slate-700 dark:bg-slate-800">
+                <div className="relative flex flex-nowrap justify-start gap-1.5 overflow-x-auto rounded-full border border-slate-200 bg-slate-100 p-2 transition-colors duration-300 [scrollbar-width:none] dark:border-slate-700 dark:bg-slate-800 sm:flex-wrap sm:justify-center [&::-webkit-scrollbar]:hidden">
                   {qrTypeTabs.map((tab) => {
                     const isActive = tab.value === qrType;
                     return (
@@ -1431,7 +1583,7 @@ export default function NeoQrGeneratorPage() {
                             : {}
                         }
                         whileTap={{ scale: 0.95 }}
-                        className={`relative shrink-0 overflow-hidden whitespace-nowrap rounded-full px-4 py-2.5 font-medium text-sm transition-all duration-300 ${
+                        className={`relative shrink-0 overflow-hidden whitespace-nowrap rounded-full px-3 py-2.5 font-medium text-xs transition-all duration-300 sm:px-4 sm:text-sm ${
                           isActive
                             ? 'scale-100 text-white'
                             : 'text-slate-700 hover:text-slate-900 active:scale-95 dark:text-slate-400 dark:hover:text-slate-200'
@@ -1448,9 +1600,7 @@ export default function NeoQrGeneratorPage() {
                             className="absolute inset-0 -z-10 rounded-full bg-linear-to-r shadow-blue-500/50 shadow-lg"
                           />
                         ) : null}
-                        <span className="hidden text-center sm:inline">
-                          {tab.label}
-                        </span>
+                        <span className="block text-center">{tab.label}</span>
                       </motion.button>
                     );
                   })}
@@ -1483,6 +1633,7 @@ export default function NeoQrGeneratorPage() {
                         id="url-input"
                         value={urlInput}
                         onChange={(e) => setUrlInput(e.target.value)}
+                        onPaste={(e) => handleUrlPaste(e, setUrlInput)}
                         onFocus={(e) => e.currentTarget.select()}
                         placeholder="Enter URL"
                         className={`w-full rounded-lg border bg-white px-4 py-3 text-slate-900 placeholder-slate-400 transition-colors focus:outline-none dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400 ${
@@ -1516,6 +1667,7 @@ export default function NeoQrGeneratorPage() {
                         id="facebook-url"
                         value={facebookUrl}
                         onChange={(e) => setFacebookUrl(e.target.value)}
+                        onPaste={(e) => handleUrlPaste(e, setFacebookUrl)}
                         onFocus={(e) => e.currentTarget.select()}
                         placeholder="https://facebook.com/..."
                         className={`w-full rounded-lg border bg-white px-4 py-3 text-slate-900 placeholder-slate-400 transition-colors focus:outline-none dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400 ${
@@ -1894,10 +2046,22 @@ export default function NeoQrGeneratorPage() {
                             className="w-auto border-border bg-card p-2 shadow-xl"
                             align="start"
                           >
-                            <div className="w-full overflow-hidden **:border-border! **:text-foreground! [&>div]:w-full! [&>div]:min-w-0! [&>div]:bg-transparent! [&>div]:shadow-none! [&_button]:text-black! [&_input]:bg-background! [&_input]:text-foreground! [&_span]:text-black!">
-                              <ColorPicker
-                                value={fgColor}
-                                onChange={(c: any) => setFgColor(c.hex || c)}
+                            <div>
+                              <div
+                                className="[&_input]:hidden! w-full touch-none overflow-hidden overscroll-contain **:border-border! **:text-foreground! [&>div]:w-full! [&>div]:min-w-0! [&>div]:bg-transparent! [&>div]:shadow-none! [&_*]:touch-none [&_button]:text-black! [&_span]:text-black!"
+                                style={{ touchAction: 'none' }}
+                              >
+                                <ColorPicker
+                                  value={fgColor}
+                                  onChange={handleFgColorChange}
+                                />
+                              </div>
+                              <HexColorInput
+                                id="qr-fg-color-hex"
+                                value={fgColorInput}
+                                currentColor={fgColor}
+                                onValueChange={setFgColorInput}
+                                onCommit={setFgColor}
                               />
                             </div>
                           </PopoverContent>
@@ -1934,10 +2098,22 @@ export default function NeoQrGeneratorPage() {
                             className="w-auto border-border bg-card p-2 shadow-xl"
                             align="start"
                           >
-                            <div className="w-full overflow-hidden **:border-border! **:text-foreground! [&>div]:w-full! [&>div]:min-w-0! [&>div]:bg-transparent! [&>div]:shadow-none! [&_button]:text-black! [&_input]:bg-background! [&_input]:text-foreground! [&_span]:text-black!">
-                              <ColorPicker
-                                value={bgColor}
-                                onChange={(c: any) => setBgColor(c.hex || c)}
+                            <div>
+                              <div
+                                className="[&_input]:hidden! w-full touch-none overflow-hidden overscroll-contain **:border-border! **:text-foreground! [&>div]:w-full! [&>div]:min-w-0! [&>div]:bg-transparent! [&>div]:shadow-none! [&_*]:touch-none [&_button]:text-black! [&_span]:text-black!"
+                                style={{ touchAction: 'none' }}
+                              >
+                                <ColorPicker
+                                  value={bgColor}
+                                  onChange={handleBgColorChange}
+                                />
+                              </div>
+                              <HexColorInput
+                                id="qr-bg-color-hex"
+                                value={bgColorInput}
+                                currentColor={bgColor}
+                                onValueChange={setBgColorInput}
+                                onCommit={setBgColor}
                               />
                             </div>
                           </PopoverContent>
@@ -2071,7 +2247,7 @@ export default function NeoQrGeneratorPage() {
                     >
                       <input
                         type="file"
-                        accept="image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp"
+                        accept="image/png,image/jpeg,image/webp,image/svg+xml,.png,.jpg,.jpeg,.webp,.svg"
                         multiple={false}
                         onChange={(e) => {
                           const files = Array.from(e.currentTarget.files || []);
@@ -2118,7 +2294,7 @@ export default function NeoQrGeneratorPage() {
                           className="text-xs"
                           style={{ color: 'var(--muted-foreground)' }}
                         >
-                          PNG, JPG, or WebP (max 2MB)
+                          PNG, JPG, WebP, or SVG (max 2MB)
                         </p>
                       </div>
                     </div>
