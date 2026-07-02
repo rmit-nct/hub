@@ -210,6 +210,7 @@ export function OptionsModal({
                   'image/png': ['.png'],
                   'image/jpeg': ['.jpg', '.jpeg'],
                   'image/webp': ['.webp'],
+                  'image/svg+xml': ['.svg'],
                 }}
                 maxFiles={1}
                 className="border-slate-300 bg-slate-50 text-slate-900 transition-all duration-200 hover:bg-slate-100 hover:shadow-md dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
