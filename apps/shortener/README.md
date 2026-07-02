@@ -2,6 +2,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 This app serves the public NEO short link redirect and password-check flow.
 It relies on the production Supabase environment for link lookup and analytics.
+Production deploys are handled by the shortener Vercel workflow.
 
 ## Getting Started
 
