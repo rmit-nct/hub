@@ -1,5 +1,6 @@
 import { createAdminClient } from '@ncthub/supabase/next/server';
 import { notFound, redirect } from 'next/navigation';
+import { after } from 'next/server';
 import { trackLinkClick } from '@/lib/analytics';
 import { isValidUrl } from '@/lib/utils';
 import PasswordForm from './password-form';
@@ -124,8 +125,10 @@ export default async function ServerPage({
     );
   }
 
-  // Track click analytics (only for non-password-protected links)
-  await trackLinkClick(shortenedLink.id, slug);
+  // Schedule analytics after the response so redirects stay fast.
+  after(async () => {
+    await trackLinkClick(shortenedLink.id, slug);
+  });
 
   redirect(shortenedLink.link);
 }
