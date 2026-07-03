@@ -1569,7 +1569,7 @@ export default function NeoQrGeneratorPage() {
             <div className="flex-1 border-slate-200 border-b p-6 sm:p-8 lg:border-r lg:border-b-0 lg:pr-8 dark:border-slate-700">
               {/* Navbar - Type Switcher */}
               <div className="mb-8">
-                <div className="relative flex flex-nowrap justify-start gap-1.5 overflow-x-auto rounded-full border border-slate-200 bg-slate-100 p-2 transition-colors duration-300 [scrollbar-width:none] dark:border-slate-700 dark:bg-slate-800 sm:flex-wrap sm:justify-center [&::-webkit-scrollbar]:hidden">
+                <div className="relative flex w-full gap-1.5 rounded-full border border-slate-200 bg-slate-100 p-2 transition-colors duration-300 dark:border-slate-700 dark:bg-slate-800">
                   {qrTypeTabs.map((tab) => {
                     const isActive = tab.value === qrType;
                     return (
@@ -1583,7 +1583,7 @@ export default function NeoQrGeneratorPage() {
                             : {}
                         }
                         whileTap={{ scale: 0.95 }}
-                        className={`relative shrink-0 overflow-hidden whitespace-nowrap rounded-full px-3 py-2.5 font-medium text-xs transition-all duration-300 sm:px-4 sm:text-sm ${
+                        className={`relative flex-1 overflow-hidden whitespace-nowrap rounded-full px-2 py-2.5 font-medium text-xs transition-all duration-300 sm:px-4 sm:text-sm ${
                           isActive
                             ? 'scale-100 text-white'
                             : 'text-slate-700 hover:text-slate-900 active:scale-95 dark:text-slate-400 dark:hover:text-slate-200'
@@ -1597,7 +1597,7 @@ export default function NeoQrGeneratorPage() {
                               stiffness: 380,
                               damping: 35,
                             }}
-                            className="absolute inset-0 -z-10 rounded-full bg-linear-to-r shadow-blue-500/50 shadow-lg"
+                            className="absolute inset-0 -z-10 rounded-full bg-linear-to-r from-blue-500 to-blue-600 shadow-blue-500/50 shadow-lg"
                           />
                         ) : null}
                         <span className="block text-center">{tab.label}</span>
@@ -1634,10 +1634,13 @@ export default function NeoQrGeneratorPage() {
                         value={urlInput}
                         onChange={(e) => setUrlInput(e.target.value)}
                         onPaste={(e) => handleUrlPaste(e, setUrlInput)}
+                        onBlur={() =>
+                          setUrlInput((prev) => normalizePastedHttpUrl(prev))
+                        }
                         onFocus={(e) => e.currentTarget.select()}
                         placeholder="Enter URL"
                         className={`w-full rounded-lg border bg-white px-4 py-3 text-slate-900 placeholder-slate-400 transition-colors focus:outline-none dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400 ${
-                          urlInput.trim() && !urlInputValid
+                          urlInput.trim() && !urlValid
                             ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500/20'
                             : 'border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-600 dark:focus:border-blue-500'
                         }`}
@@ -1668,6 +1671,9 @@ export default function NeoQrGeneratorPage() {
                         value={facebookUrl}
                         onChange={(e) => setFacebookUrl(e.target.value)}
                         onPaste={(e) => handleUrlPaste(e, setFacebookUrl)}
+                        onBlur={() =>
+                          setFacebookUrl((prev) => normalizePastedHttpUrl(prev))
+                        }
                         onFocus={(e) => e.currentTarget.select()}
                         placeholder="https://facebook.com/..."
                         className={`w-full rounded-lg border bg-white px-4 py-3 text-slate-900 placeholder-slate-400 transition-colors focus:outline-none dark:bg-slate-700/50 dark:text-white dark:placeholder-slate-400 ${
@@ -2054,6 +2060,7 @@ export default function NeoQrGeneratorPage() {
                                 <ColorPicker
                                   value={fgColor}
                                   onChange={handleFgColorChange}
+                                  showColorFormat={false}
                                 />
                               </div>
                               <HexColorInput
@@ -2106,6 +2113,7 @@ export default function NeoQrGeneratorPage() {
                                 <ColorPicker
                                   value={bgColor}
                                   onChange={handleBgColorChange}
+                                  showColorFormat={false}
                                 />
                               </div>
                               <HexColorInput

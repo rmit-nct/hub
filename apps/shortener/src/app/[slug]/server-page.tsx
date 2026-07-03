@@ -39,6 +39,33 @@ export default async function ServerPage({
     }
 
     shortenedLink = data;
+
+    // Dynamic QR codes live in a separate table (they don't count against the
+    // shortener's link limit) but share the same slug namespace. If the slug
+    // wasn't a regular short link, fall back to the dynamic QR table. These
+    // never have password protection.
+    if (!shortenedLink) {
+      // `dynamic_qr_links` may not be in the generated Supabase types yet.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: qrData, error: qrError } = await (sbAdmin as any)
+        .from('dynamic_qr_links')
+        .select('id, link')
+        .eq('slug', slug)
+        .maybeSingle();
+
+      if (qrError) {
+        throw new Error(qrError.message || 'Failed to load dynamic QR link');
+      }
+
+      if (qrData) {
+        shortenedLink = {
+          id: qrData.id as string,
+          link: qrData.link as string,
+          password_hash: null,
+          password_hint: null,
+        };
+      }
+    }
   } catch (error) {
     console.error('Shortener lookup failed', {
       error: error instanceof Error ? error.message : String(error),

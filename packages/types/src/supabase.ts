@@ -1092,6 +1092,55 @@ export type Database = {
         };
         Relationships: [];
       };
+      dynamic_qr_links: {
+        Row: {
+          created_at: string;
+          creator_id: string;
+          domain: string;
+          id: string;
+          link: string;
+          slug: string;
+        };
+        Insert: {
+          created_at?: string;
+          creator_id: string;
+          domain: string;
+          id?: string;
+          link: string;
+          slug: string;
+        };
+        Update: {
+          created_at?: string;
+          creator_id?: string;
+          domain?: string;
+          id?: string;
+          link?: string;
+          slug?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'dynamic_qr_links_creator_id_fkey';
+            columns: ['creator_id'];
+            isOneToOne: false;
+            referencedRelation: 'nova_user_challenge_leaderboard';
+            referencedColumns: ['user_id'];
+          },
+          {
+            foreignKeyName: 'dynamic_qr_links_creator_id_fkey';
+            columns: ['creator_id'];
+            isOneToOne: false;
+            referencedRelation: 'nova_user_leaderboard';
+            referencedColumns: ['user_id'];
+          },
+          {
+            foreignKeyName: 'dynamic_qr_links_creator_id_fkey';
+            columns: ['creator_id'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       external_user_monthly_report_logs: {
         Row: {
           content: string;
@@ -2219,15 +2268,7 @@ export type Database = {
           vercel_id?: string | null;
           vercel_region?: string | null;
         };
-        Relationships: [
-          {
-            foreignKeyName: 'link_analytics_link_id_fkey';
-            columns: ['link_id'];
-            isOneToOne: false;
-            referencedRelation: 'shortened_links';
-            referencedColumns: ['id'];
-          },
-        ];
+        Relationships: [];
       };
       media_uploads: {
         Row: {

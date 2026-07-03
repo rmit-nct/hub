@@ -425,17 +425,65 @@ export async function createShortLink(
 export async function createDynamicQRUrl(
   url: string
 ): Promise<DynamicQRMetadata> {
-  const formData = new FormData();
-  formData.set('url', url);
-  // Let any error from createShortLink bubble up as-is so the frontend
-  // can distinguish auth errors from validation errors.
-  const result = await createShortLink(formData);
-  return {
-    shortUrl: result.shortUrl,
-    slug: result.slug,
-    createdAt: result.createdAt,
-    originalUrl: result.link,
-  };
+  // Dynamic QR destinations are stored in their own `dynamic_qr_links` table
+  // so they do NOT count against the shortener's per-user 30-link limit. The
+  // slug namespace is shared with `shortened_links` (a DB trigger enforces
+  // cross-table uniqueness), so collisions still surface as errcode 23505 and
+  // are retried below. Unlike short links, dynamic QR links have no limit,
+  // custom slug, or password.
+  const normalizedUrl = parseHttpUrl(url);
+
+  const shortenerBaseUrl = resolveShortenerBaseUrl();
+  const domain = getDomainFromShortenerBaseUrl();
+  const parsedShortenerBaseUrl = new URL(shortenerBaseUrl);
+
+  if (normalizedUrl.origin === parsedShortenerBaseUrl.origin) {
+    throw new Error(
+      'Please enter a destination URL, not an existing short link'
+    );
+  }
+
+  const { supabase, user } = await requireAuthenticatedUser();
+
+  for (let attempt = 0; attempt < 10; attempt++) {
+    const slug = generateSlug();
+
+    // `dynamic_qr_links` may not be in the generated Supabase types yet.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (supabase as any)
+      .from('dynamic_qr_links')
+      .insert([
+        {
+          creator_id: user.id,
+          domain,
+          link: normalizedUrl.toString(),
+          slug,
+        },
+      ])
+      .select('id, link, slug, domain, creator_id, created_at')
+      .single();
+
+    if (!error && data) {
+      return {
+        shortUrl: `${shortenerBaseUrl}/${data.slug}`,
+        slug: data.slug,
+        createdAt: data.created_at,
+        originalUrl: data.link,
+      };
+    }
+
+    // Slug collision within either table — try a new slug.
+    if (error?.code === '23505') {
+      continue;
+    }
+
+    console.error(error);
+    throw new Error(error?.message || 'Failed to create dynamic QR link');
+  }
+
+  throw new Error(
+    'Could not generate a unique dynamic QR link after 10 attempts'
+  );
 }
 
 /**
@@ -485,7 +533,7 @@ export async function updateDynamicQRUrl(
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabase as any)
-    .from('shortened_links')
+    .from('dynamic_qr_links')
     .update({ link: normalizedUrl.toString() })
     .eq('slug', slug)
     .eq('creator_id', user.id); // security: only the owner can update
@@ -525,7 +573,7 @@ export async function getDynamicQRMetadata(
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, error } = await (supabase as any)
-    .from('shortened_links')
+    .from('dynamic_qr_links')
     .select('link, slug, created_at')
     .eq('slug', slug)
     .eq('creator_id', user.id)
@@ -572,8 +620,9 @@ export async function getDynamicQRAnalytics(
     throw new Error('Please sign in to view analytics for this link');
   }
 
-  const { data: link, error: linkError } = await supabase
-    .from('shortened_links')
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: link, error: linkError } = await (supabase as any)
+    .from('dynamic_qr_links')
     .select('id, slug, created_at')
     .eq('slug', parsedSlug.data)
     .eq('creator_id', user.id)
