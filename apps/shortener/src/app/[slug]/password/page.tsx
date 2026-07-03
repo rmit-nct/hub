@@ -4,6 +4,8 @@ import InvalidLinkPage from '../invalid-link-page';
 import PasswordForm from '../password-form';
 import { loadShortLinkBySlug } from '../short-link';
 
+export const preferredRegion = 'sin1';
+
 export default async function PasswordPage({
   params,
 }: {

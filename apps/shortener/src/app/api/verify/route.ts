@@ -5,6 +5,8 @@ import { z } from 'zod';
 import { trackLinkClick } from '@/lib/analytics';
 import { isValidUrl } from '@/lib/utils';
 
+export const preferredRegion = 'sin1';
+
 const verifySchema = z.object({
   linkId: z.string().uuid(),
   password: z.string().min(1).max(256),
