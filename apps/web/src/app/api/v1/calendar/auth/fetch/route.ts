@@ -1,5 +1,4 @@
 import { createClient } from '@ncthub/supabase/next/server';
-import { OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
 import { NextResponse } from 'next/server';
 
@@ -7,7 +6,7 @@ const getGoogleAuthClient = (tokens: {
   access_token: string;
   refresh_token?: string;
 }) => {
-  const oauth2Client = new OAuth2Client({
+  const oauth2Client = new google.auth.OAuth2({
     clientId: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     redirectUri: process.env.GOOGLE_REDIRECT_URI,
