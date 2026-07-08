@@ -21,7 +21,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@ncthub/ui/card';
-import { toast } from '@ncthub/ui/sonner';
 import {
   Camera,
   Clock,
@@ -34,6 +33,7 @@ import {
   Users,
 } from '@ncthub/ui/icons';
 import { Separator } from '@ncthub/ui/separator';
+import { toast } from '@ncthub/ui/sonner';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { v4 as UUIDv4 } from 'uuid';
@@ -321,8 +321,8 @@ export default function ScannerPage() {
 
           {/* Desktop stats (grid) */}
           <div className="hidden gap-6 md:grid md:grid-cols-4">
-            <Card className="border-0 bg-linear-to-br from-dynamic-blue to-brand-light-blue text-primary-foreground shadow-lg">
-              <CardContent className="h-full p-6">
+            <Card className="border-0 bg-linear-to-br from-dynamic-blue to-dynamic-light-blue text-primary-foreground shadow-lg">
+              <CardContent className="h-full">
                 <div className="flex h-full flex-col justify-between gap-2">
                   <p className="font-medium text-sm">Total Students</p>
                   <div className="flex justify-between">
@@ -333,8 +333,8 @@ export default function ScannerPage() {
               </CardContent>
             </Card>
 
-            <Card className="border-0 bg-linear-to-br from-dynamic-green to-dynamic-light-green text-primary shadow-lg">
-              <CardContent className="h-full p-6">
+            <Card className="border-0 bg-linear-to-br from-dynamic-green to-dynamic-light-green text-primary-foreground shadow-lg">
+              <CardContent className="h-full">
                 <div className="flex h-full flex-col justify-between gap-2">
                   <p className="font-medium text-sm">Today</p>
                   <div className="flex justify-between">
@@ -346,7 +346,7 @@ export default function ScannerPage() {
             </Card>
 
             <Card className="border-0 bg-linear-to-br from-dynamic-purple to-dynamic-light-purple text-primary-foreground shadow-lg">
-              <CardContent className="h-full p-6">
+              <CardContent className="h-full">
                 <div className="flex h-full flex-col justify-between gap-2">
                   <p className="font-medium text-sm">This Week</p>
                   <div className="flex justify-between">
@@ -357,8 +357,8 @@ export default function ScannerPage() {
               </CardContent>
             </Card>
 
-            <Card className="border-0 bg-linear-to-br from-dynamic-orange to-brand-light-yellow text-primary shadow-lg">
-              <CardContent className="h-full p-6">
+            <Card className="border-0 bg-linear-to-br from-dynamic-orange to-dynamic-light-orange text-primary-foreground shadow-lg">
+              <CardContent className="h-full">
                 <div className="flex h-full flex-col justify-between gap-2">
                   <p className="font-medium text-sm">Pending Upload</p>
                   <div className="flex justify-between">
@@ -375,7 +375,7 @@ export default function ScannerPage() {
         <div className="space-y-8">
           {/* Student Input Section */}
           <Card className="border-border shadow-xl">
-            <CardContent className="grid grid-cols-1 gap-16 px-8 py-6 lg:grid-cols-2">
+            <CardContent className="grid grid-cols-1 gap-16 px-8 lg:grid-cols-2">
               {/* Scanner Section */}
               <div className="flex flex-col gap-8">
                 <div className="flex items-center gap-3">
@@ -398,7 +398,7 @@ export default function ScannerPage() {
               <div className="flex flex-col gap-8">
                 <div className="flex items-center gap-3">
                   <div className="rounded-lg bg-linear-to-br from-dynamic-green to-dynamic-light-green p-2">
-                    <FileText className="h-5 w-5 text-primary" />
+                    <FileText className="h-5 w-5 text-primary-foreground" />
                   </div>
                   <div>
                     <CardTitle className="text-xl">
@@ -436,10 +436,10 @@ export default function ScannerPage() {
 
           {/* Student List Section */}
           <Card className="border-border shadow-xl">
-            <CardHeader className="pb-4">
+            <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="rounded-lg bg-linear-to-br from-dynamic-indigo to-dynamic-purple p-2">
+                  <div className="rounded-lg bg-linear-to-br from-dynamic-cyan to-dynamic-light-cyan p-2">
                     <Users className="h-5 w-5 text-primary-foreground" />
                   </div>
                   <div>
