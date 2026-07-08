@@ -1,10 +1,26 @@
-// import { createAdminClient } from '@ncthub/supabase/next/server';
+import { createAdminClient } from '@ncthub/supabase/next/server';
 import { headers } from 'next/headers';
 import { DEV_MODE } from '@/constants/common';
 
+// Coarse device classification from a User-Agent string.
+// Kept intentionally simple (no dependency) — good enough for analytics buckets.
+function parseDeviceType(
+  userAgent: string
+): 'mobile' | 'tablet' | 'desktop' | 'unknown' {
+  const ua = userAgent.toLowerCase();
+  if (!ua) return 'unknown';
+  if (/ipad|tablet|(android(?!.*mobile))|playbook|silk|kindle/.test(ua)) {
+    return 'tablet';
+  }
+  if (/mobi|iphone|ipod|android|blackberry|iemobile|opera mini/.test(ua)) {
+    return 'mobile';
+  }
+  return 'desktop';
+}
+
 export async function trackLinkClick(linkId: string, slug: string) {
   try {
-    // const sbAdmin = await createAdminClient();
+    const sbAdmin = await createAdminClient();
     const headersList = await headers();
 
     // Standard headers
@@ -42,6 +58,7 @@ export async function trackLinkClick(linkId: string, slug: string) {
       link_id: linkId,
       ip_address: ipAddress || null,
       user_agent: userAgent || null,
+      device_type: parseDeviceType(userAgent),
       referrer: referrer || null,
       country: country || null,
       country_region: countryRegion || null,
@@ -54,9 +71,15 @@ export async function trackLinkClick(linkId: string, slug: string) {
       vercel_id: vercelId || null,
     };
 
-    // Track the click
-    console.log('Tracking link click analytics:', analyticsData);
-    // await sbAdmin.from('link_analytics').insert(analyticsData);
+    // Track the click. Failures here are swallowed by the outer try/catch so
+    // analytics never block the redirect.
+    const { error: insertError } = await sbAdmin
+      .from('link_analytics')
+      .insert(analyticsData);
+
+    if (insertError) {
+      console.error('Failed to insert link analytics:', insertError);
+    }
 
     // Log successful tracking for debugging (only in development)
     if (DEV_MODE) {

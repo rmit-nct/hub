@@ -1,5 +1,15 @@
 'use client';
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@ncthub/ui/alert-dialog';
 import { Badge } from '@ncthub/ui/badge';
 import { Button } from '@ncthub/ui/button';
 import {
@@ -9,20 +19,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@ncthub/ui/card';
-import { toast } from '@ncthub/ui/sonner';
-import {
-  AlertCircle,
-  Check,
-  Copy,
-  Eye,
-  EyeOff,
-  Link2,
-  Loader2,
-  Lock,
-  XCircle,
-} from '@ncthub/ui/icons';
+import { Eye, EyeOff, Link2, Lock, Trash2 } from '@ncthub/ui/icons';
 import { Input } from '@ncthub/ui/input';
 import { Label } from '@ncthub/ui/label';
+import { toast } from '@ncthub/ui/sonner';
 import { Switch } from '@ncthub/ui/switch';
 import { Textarea } from '@ncthub/ui/textarea';
 import { cn } from '@ncthub/utils/format';
@@ -35,107 +35,27 @@ import {
   createShortLink,
   deleteShortLink,
   getMyShortLinksOverview,
-  type SlugAvailabilityResult,
 } from './functions';
 import NeoShortenerHero from './hero';
+import ShortLinkListCard from './short-link-list-card';
+import ShortLinkResultCard from './short-link-result-card';
+import { isLogoutRequest } from './shortener-utils';
+import {
+  SlugAvailabilityFeedback,
+  type SlugAvailabilityState,
+} from './slug-availability';
 
 const SHORT_LINK_LIMIT = 30;
 const SHORTENER_LOGIN_URL = `/login?nextUrl=${encodeURIComponent(
   '/neo-shortener'
 )}`;
 const SLUG_AVAILABILITY_DELAY = 500;
-
-type FetchInput = Parameters<typeof window.fetch>[0];
-type FetchInit = Parameters<typeof window.fetch>[1];
-type SlugAvailabilityState =
-  | SlugAvailabilityResult
-  | {
-      available: false;
-      message: string;
-      slug: string;
-      status: 'checking';
-    };
-
-function isLogoutRequest(input: FetchInput, init?: FetchInit) {
-  let rawUrl = '';
-  let method = init?.method;
-
-  if (typeof input === 'string' || input instanceof URL) {
-    rawUrl = String(input);
-  } else {
-    rawUrl = input.url;
-    method = method ?? input.method;
-  }
-
-  try {
-    const url = new URL(rawUrl, window.location.origin);
-    return (
-      url.pathname === '/api/auth/logout' &&
-      (method ?? 'GET').toUpperCase() === 'POST'
-    );
-  } catch {
-    return false;
-  }
-}
-
-function formatCreatedAt(value: string) {
-  return new Date(value).toLocaleString();
-}
-
-function getSlugAvailabilityClassName(status: SlugAvailabilityState['status']) {
-  return cn(
-    'flex items-center gap-1.5 text-sm',
-    status === 'available' && 'text-green-600 dark:text-green-400',
-    status === 'checking' && 'text-muted-foreground',
-    (status === 'invalid' || status === 'taken') && 'text-destructive',
-    status === 'error' && 'text-dynamic-light-yellow'
-  );
-}
-
-function SlugAvailabilityIcon({
-  status,
-}: {
-  status: SlugAvailabilityState['status'];
-}) {
-  if (status === 'checking') {
-    return <Loader2 className="h-4 w-4 animate-spin" />;
-  }
-
-  if (status === 'available') {
-    return <Check className="h-4 w-4" />;
-  }
-
-  if (status === 'taken') {
-    return <XCircle className="h-4 w-4" />;
-  }
-
-  return <AlertCircle className="h-4 w-4" />;
-}
-
-function SlugAvailabilityFeedback({
-  availability,
-}: {
-  availability: SlugAvailabilityState | null;
-}) {
-  if (!availability) {
-    return (
-      <p id="customSlug-status" className="text-muted-foreground text-sm">
-        Letters, numbers, hyphens, and underscores only.
-      </p>
-    );
-  }
-
-  return (
-    <p
-      id="customSlug-status"
-      className={getSlugAvailabilityClassName(availability.status)}
-      aria-live="polite"
-    >
-      <SlugAvailabilityIcon status={availability.status} />
-      {availability.message}
-    </p>
-  );
-}
+const SHORTENER_DELETE_BUTTON_STYLES =
+  'border border-rose-500/35 bg-rose-500/85 text-white hover:border-rose-400/45 hover:bg-rose-500 active:bg-rose-600 focus-visible:ring-rose-300/35';
+const SHORTENER_DELETE_CONFIRM_STYLES =
+  'border border-rose-500/24 bg-rose-500/18 text-rose-50 hover:border-rose-500/32 hover:bg-rose-500/24 active:bg-rose-500/30 focus-visible:ring-rose-300/25';
+const SHORTENER_DANGER_ACCENT_STYLES =
+  'border-rose-500/25 bg-rose-500/12 text-rose-600';
 
 export default function NeoShortenerPage() {
   const [url, setUrl] = useState('');
@@ -151,6 +71,9 @@ export default function NeoShortenerPage() {
   const [isLoadingLinks, setIsLoadingLinks] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const [linkToDelete, setLinkToDelete] = useState<CreatedShortLink | null>(
+    null
+  );
   const [slugAvailability, setSlugAvailability] =
     useState<SlugAvailabilityState | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -342,14 +265,6 @@ export default function NeoShortenerPage() {
   };
 
   const handleDelete = async (shortLink: CreatedShortLink) => {
-    const confirmed = window.confirm(
-      `Delete short link "${shortLink.slug}"? This action cannot be undone.`
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
     setError(null);
     setPendingDeleteId(shortLink.id);
 
@@ -366,6 +281,9 @@ export default function NeoShortenerPage() {
       );
     } finally {
       setPendingDeleteId(null);
+      setLinkToDelete((current) =>
+        current?.id === shortLink.id ? null : current
+      );
     }
   };
 
@@ -612,7 +530,12 @@ export default function NeoShortenerPage() {
                   </form>
 
                   {error ? (
-                    <div className="rounded-[1.25rem] border border-destructive/20 bg-destructive/10 px-4 py-3 text-destructive text-sm">
+                    <div
+                      className={cn(
+                        'rounded-[1.25rem] px-4 py-3 text-sm',
+                        SHORTENER_DANGER_ACCENT_STYLES
+                      )}
+                    >
                       {error}
                     </div>
                   ) : null}
@@ -623,95 +546,11 @@ export default function NeoShortenerPage() {
                       animate={{ opacity: 1, scale: 1, y: 0 }}
                       transition={{ duration: 0.25 }}
                     >
-                      <Card className="rounded-3xl border border-brand-light-blue/20 bg-brand-light-blue/5 shadow-none">
-                        <CardHeader className="pb-4">
-                          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                            <div>
-                              <CardTitle className="text-base text-foreground">
-                                Short link ready
-                              </CardTitle>
-                              <CardDescription className="mt-1">
-                                Stored under domain {result.domain} with slug{' '}
-                                {result.slug}.
-                              </CardDescription>
-                            </div>
-
-                            <div className="flex flex-wrap gap-2">
-                              {result.isPasswordProtected ? (
-                                <Badge className="w-fit rounded-full border border-dynamic-light-yellow/20 bg-dynamic-light-yellow/10 text-dynamic-light-yellow hover:bg-dynamic-light-yellow/10">
-                                  Password protected
-                                </Badge>
-                              ) : null}
-
-                              <Badge className="w-fit rounded-full border border-brand-light-blue/15 bg-brand-light-blue/10 text-brand-light-blue hover:bg-brand-light-blue/10">
-                                Saved
-                              </Badge>
-                            </div>
-                          </div>
-                        </CardHeader>
-
-                        <CardContent className="space-y-4">
-                          <div className="rounded-[1.25rem] border border-border/60 bg-background/80 p-4">
-                            <p className="mb-2 font-medium text-muted-foreground text-xs uppercase tracking-[0.18em]">
-                              Short URL
-                            </p>
-                            <a
-                              href={result.shortUrl}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="break-all font-semibold text-brand-light-blue hover:underline"
-                            >
-                              {result.shortUrl}
-                            </a>
-
-                            <p className="mt-4 mb-2 font-medium text-muted-foreground text-xs uppercase tracking-[0.18em]">
-                              Destination
-                            </p>
-                            <p className="break-all text-foreground text-sm">
-                              {result.link}
-                            </p>
-                          </div>
-
-                          <div className="flex flex-wrap gap-2">
-                            <Button
-                              type="button"
-                              variant="outline"
-                              className={cn(
-                                'rounded-xl border-border bg-background',
-                                copiedValue === result.shortUrl &&
-                                  'border-brand-light-blue/20 bg-brand-light-blue/10 text-brand-light-blue'
-                              )}
-                              onClick={() => handleCopy(result.shortUrl)}
-                            >
-                              {copiedValue === result.shortUrl ? (
-                                <>
-                                  <Check className="mr-2 h-4 w-4" />
-                                  Copied
-                                </>
-                              ) : (
-                                <>
-                                  <Copy className="mr-2 h-4 w-4" />
-                                  Copy short URL
-                                </>
-                              )}
-                            </Button>
-
-                            <Button
-                              type="button"
-                              asChild
-                              className="rounded-xl bg-brand-light-blue text-brand-dark-blue hover:bg-brand-light-blue/90"
-                            >
-                              <a
-                                href={result.shortUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                              >
-                                Open short link
-                              </a>
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
+                      <ShortLinkResultCard
+                        result={result}
+                        copiedValue={copiedValue}
+                        onCopy={handleCopy}
+                      />
                     </motion.div>
                   ) : null}
                 </CardContent>
@@ -763,7 +602,6 @@ export default function NeoShortenerPage() {
                   ) : (
                     <div className="grid gap-4">
                       {links.map((shortLink, index) => {
-                        const isCopied = copiedValue === shortLink.shortUrl;
                         const isDeleting = pendingDeleteId === shortLink.id;
 
                         return (
@@ -777,102 +615,17 @@ export default function NeoShortenerPage() {
                             }}
                             whileHover={{ y: -2 }}
                           >
-                            <Card className="rounded-3xl border-border/60 bg-muted/25 shadow-sm transition-shadow hover:shadow-md">
-                              <CardContent className="p-5">
-                                <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                                  <div className="min-w-0 flex-1 space-y-4">
-                                    <div className="flex flex-wrap items-center gap-2">
-                                      <Badge className="rounded-full border border-brand-light-blue/15 bg-brand-light-blue/10 text-brand-light-blue hover:bg-brand-light-blue/10">
-                                        {shortLink.slug}
-                                      </Badge>
-                                      {shortLink.isPasswordProtected ? (
-                                        <Badge className="rounded-full border border-dynamic-light-yellow/20 bg-dynamic-light-yellow/10 text-dynamic-light-yellow hover:bg-dynamic-light-yellow/10">
-                                          Protected
-                                        </Badge>
-                                      ) : null}
-                                      <span className="text-muted-foreground text-xs">
-                                        Created{' '}
-                                        {formatCreatedAt(shortLink.createdAt)}
-                                      </span>
-                                    </div>
-
-                                    <div className="rounded-2xl border border-border/60 bg-background p-3">
-                                      <p className="mb-1 font-medium text-muted-foreground text-xs uppercase tracking-[0.18em]">
-                                        Short URL
-                                      </p>
-                                      <a
-                                        href={shortLink.shortUrl}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        className="break-all font-semibold text-brand-light-blue hover:underline"
-                                      >
-                                        {shortLink.shortUrl}
-                                      </a>
-                                    </div>
-
-                                    <div className="rounded-2xl border border-border/60 bg-background p-3">
-                                      <p className="mb-1 font-medium text-muted-foreground text-xs uppercase tracking-[0.18em]">
-                                        Destination
-                                      </p>
-                                      <p className="break-all text-foreground text-sm">
-                                        {shortLink.link}
-                                      </p>
-                                    </div>
-                                  </div>
-
-                                  <div className="flex flex-wrap gap-2 lg:w-67.5 lg:justify-end">
-                                    <Button
-                                      type="button"
-                                      variant="outline"
-                                      className={cn(
-                                        'rounded-xl border-border bg-background',
-                                        isCopied &&
-                                          'border-brand-light-blue/20 bg-brand-light-blue/10 text-brand-light-blue'
-                                      )}
-                                      onClick={() =>
-                                        handleCopy(shortLink.shortUrl)
-                                      }
-                                      disabled={isDeleting || isPending}
-                                    >
-                                      {isCopied ? (
-                                        <>
-                                          <Check className="mr-2 h-4 w-4" />
-                                          Copied
-                                        </>
-                                      ) : (
-                                        <>
-                                          <Copy className="mr-2 h-4 w-4" />
-                                          Copy
-                                        </>
-                                      )}
-                                    </Button>
-
-                                    <Button
-                                      type="button"
-                                      asChild
-                                      className="rounded-xl bg-brand-light-blue text-brand-dark-blue hover:bg-brand-light-blue/90"
-                                    >
-                                      <a
-                                        href={shortLink.shortUrl}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                      >
-                                        Open
-                                      </a>
-                                    </Button>
-                                    <Button
-                                      type="button"
-                                      variant="destructive"
-                                      className="rounded-xl shadow-none"
-                                      onClick={() => handleDelete(shortLink)}
-                                      disabled={isDeleting || isPending}
-                                    >
-                                      {isDeleting ? 'Deleting...' : 'Delete'}
-                                    </Button>
-                                  </div>
-                                </div>
-                              </CardContent>
-                            </Card>
+                            <ShortLinkListCard
+                              shortLink={shortLink}
+                              copiedValue={copiedValue}
+                              isDeleting={isDeleting}
+                              isPending={isPending}
+                              onCopy={handleCopy}
+                              onDeleteClick={setLinkToDelete}
+                              deleteButtonStyles={
+                                SHORTENER_DELETE_BUTTON_STYLES
+                              }
+                            />
                           </motion.div>
                         );
                       })}
@@ -884,6 +637,40 @@ export default function NeoShortenerPage() {
           </div>
         </div>
       </div>
+      <AlertDialog
+        open={Boolean(linkToDelete)}
+        onOpenChange={(open) => {
+          if (!open && !pendingDeleteId) {
+            setLinkToDelete(null);
+          }
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <Trash2 className="h-5 w-5 text-rose-400" />
+              Delete short link
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {linkToDelete
+                ? `Delete "${linkToDelete.slug}" permanently? This will remove the short URL and its access history from your dashboard.`
+                : 'Delete this short link permanently?'}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={Boolean(pendingDeleteId)}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => linkToDelete && handleDelete(linkToDelete)}
+              disabled={!linkToDelete || Boolean(pendingDeleteId)}
+              className={SHORTENER_DELETE_CONFIRM_STYLES}
+            >
+              {pendingDeleteId ? 'Deleting...' : 'Delete link'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </main>
   );
 }

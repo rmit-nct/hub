@@ -7,13 +7,14 @@ import {
   Calendar,
   Gamepad2,
   GitBranch,
+  Link2,
   MessagesSquare,
   NotebookPen,
   Paintbrush,
   Puzzle,
+  QrCode,
   ScanLine,
   Sparkles,
-  QrCode,
 } from '@ncthub/ui/icons';
 import type { ReactNode } from 'react';
 
@@ -117,10 +118,10 @@ export const useNavigation = (t: any): { categories: NavCategory[] } => {
       icon: <ScanLine />,
     },
     {
-      href: '/neo-shortener',
-      label: 'Shortener',
+      href: ' /neo-shortener',
+      label: 'Neo Shortener',
       description: 'Shorten a long URL into a simpler version',
-      icon: <ScanLine />,
+      icon: <Link2 />,
     },
     {
       href: '/neo-qr-generator',

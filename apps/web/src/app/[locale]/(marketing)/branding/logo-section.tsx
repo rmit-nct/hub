@@ -125,6 +125,7 @@ function LogoCard({
             src={image.src}
             alt={image.alt}
             fill
+            sizes="(max-width: 767px) 100vw, 50vw"
             className="object-contain drop-shadow-lg"
           />
         </motion.div>

@@ -24,11 +24,14 @@ export default function FooterCTA() {
             choice for technology enthusiasts
           </p>
           <Button
+            asChild
             size="lg"
             className="bg-linear-to-r from-yellow-400 to-yellow-600 text-black hover:from-yellow-500 hover:to-yellow-700"
           >
-            Get Started Today
-            <ArrowRight className="ml-2 h-5 w-5" />
+            <a href="https://rmitnct.club/login">
+              Get Started Today
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </a>
           </Button>
         </CardContent>
       </Card>

@@ -76,7 +76,7 @@ const eventImages: EventType[] = [
 
 export default function Events() {
   return (
-    <motion.div
+    <motion.section
       id="events"
       className="relative w-full py-8"
       initial={{ opacity: 0 }}
@@ -176,7 +176,7 @@ export default function Events() {
         <div className="absolute top-1/4 left-1/4 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
         <div className="absolute right-1/4 bottom-1/4 h-64 w-64 rounded-full bg-secondary/10 blur-3xl" />
       </div>
-    </motion.div>
+    </motion.section>
   );
 }
 
@@ -194,6 +194,7 @@ const PrimaryEventCard = ({ event }: { event: EventType }) => {
             alt={event.title}
             className="object-cover transition-transform duration-500 group-hover:scale-105"
             fill
+            sizes="(max-width: 767px) 100vw, 50vw"
           />
 
           {/* Overlay */}
@@ -243,6 +244,7 @@ const SecondaryEventCard = ({ event }: { event: EventType }) => {
             alt={event.title}
             className="object-cover transition-transform duration-300 group-hover:scale-105"
             fill
+            sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 25vw"
           />
 
           {/* Overlay */}

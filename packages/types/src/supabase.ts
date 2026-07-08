@@ -1092,6 +1092,55 @@ export type Database = {
         };
         Relationships: [];
       };
+      dynamic_qr_links: {
+        Row: {
+          created_at: string;
+          creator_id: string;
+          domain: string;
+          id: string;
+          link: string;
+          slug: string;
+        };
+        Insert: {
+          created_at?: string;
+          creator_id: string;
+          domain: string;
+          id?: string;
+          link: string;
+          slug: string;
+        };
+        Update: {
+          created_at?: string;
+          creator_id?: string;
+          domain?: string;
+          id?: string;
+          link?: string;
+          slug?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'dynamic_qr_links_creator_id_fkey';
+            columns: ['creator_id'];
+            isOneToOne: false;
+            referencedRelation: 'nova_user_challenge_leaderboard';
+            referencedColumns: ['user_id'];
+          },
+          {
+            foreignKeyName: 'dynamic_qr_links_creator_id_fkey';
+            columns: ['creator_id'];
+            isOneToOne: false;
+            referencedRelation: 'nova_user_leaderboard';
+            referencedColumns: ['user_id'];
+          },
+          {
+            foreignKeyName: 'dynamic_qr_links_creator_id_fkey';
+            columns: ['creator_id'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       external_user_monthly_report_logs: {
         Row: {
           content: string;
@@ -2164,6 +2213,63 @@ export type Database = {
           },
         ];
       };
+      link_analytics: {
+        Row: {
+          city: string | null;
+          country: string | null;
+          country_region: string | null;
+          created_at: string;
+          device_type: string | null;
+          id: string;
+          ip_address: string | null;
+          latitude: number | null;
+          link_id: string;
+          longitude: number | null;
+          postal_code: string | null;
+          referrer: string | null;
+          timezone: string | null;
+          user_agent: string | null;
+          vercel_id: string | null;
+          vercel_region: string | null;
+        };
+        Insert: {
+          city?: string | null;
+          country?: string | null;
+          country_region?: string | null;
+          created_at?: string;
+          device_type?: string | null;
+          id?: string;
+          ip_address?: string | null;
+          latitude?: number | null;
+          link_id: string;
+          longitude?: number | null;
+          postal_code?: string | null;
+          referrer?: string | null;
+          timezone?: string | null;
+          user_agent?: string | null;
+          vercel_id?: string | null;
+          vercel_region?: string | null;
+        };
+        Update: {
+          city?: string | null;
+          country?: string | null;
+          country_region?: string | null;
+          created_at?: string;
+          device_type?: string | null;
+          id?: string;
+          ip_address?: string | null;
+          latitude?: number | null;
+          link_id?: string;
+          longitude?: number | null;
+          postal_code?: string | null;
+          referrer?: string | null;
+          timezone?: string | null;
+          user_agent?: string | null;
+          vercel_id?: string | null;
+          vercel_region?: string | null;
+        };
+        Relationships: [];
+      };
       media_uploads: {
         Row: {
           created_at: string;
@@ -2295,8 +2401,8 @@ export type Database = {
       };
       meet_together_plans: {
         Row: {
-          created_at: string | null;
-          creator_id: string | null;
+          created_at: string;
+          creator_id: string;
           dates: string[];
           description: string | null;
           end_time: string;
@@ -2306,8 +2412,8 @@ export type Database = {
           start_time: string;
         };
         Insert: {
-          created_at?: string | null;
-          creator_id?: string | null;
+          created_at?: string;
+          creator_id?: string;
           dates: string[];
           description?: string | null;
           end_time: string;
@@ -2317,8 +2423,8 @@ export type Database = {
           start_time: string;
         };
         Update: {
-          created_at?: string | null;
-          creator_id?: string | null;
+          created_at?: string;
+          creator_id?: string;
           dates?: string[];
           description?: string | null;
           end_time?: string;

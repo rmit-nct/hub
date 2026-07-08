@@ -151,6 +151,8 @@ function SpecialAchievementCard({ achievement }: { achievement: Achievement }) {
             src={achievement.image}
             alt={achievement.name}
             fill
+            priority
+            sizes="(max-width: 767px) 100vw, 896px"
             className="object-cover transition-transform duration-200 group-hover:scale-105"
             onError={() => setImageError(true)}
           />
@@ -209,6 +211,7 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
               src={achievement.image}
               alt={achievement.name}
               fill
+              sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
               className="object-cover transition-transform duration-200 group-hover:scale-105"
               onError={() => setImageError(true)}
             />

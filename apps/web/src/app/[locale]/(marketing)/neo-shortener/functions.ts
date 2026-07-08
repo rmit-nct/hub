@@ -2,336 +2,47 @@
 
 import { createAdminClient, createClient } from '@ncthub/supabase/next/server';
 import bcrypt from 'bcrypt';
-import { customAlphabet } from 'nanoid';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { z } from 'zod';
+import {
+  buildDynamicQRAnalytics,
+  type CreatedShortLink,
+  checkShortLinkAccess,
+  createShortLinkSchema,
+  type DynamicQRAnalytics,
+  type DynamicQRMetadata,
+  deleteShortLinkSchema,
+  generateSlug,
+  getDomainFromShortenerBaseUrl,
+  type LinkAnalyticsRow,
+  logShortenerDebug,
+  logShortenerDebugError,
+  mapShortenedLink,
+  parseHttpUrl,
+  resolveShortenerBaseUrl,
+  SHORT_LINK_LIMIT,
+  SHORT_LINK_LIMIT_ERROR,
+  SHORTENER_DEBUG_ENABLED,
+  SHORTENER_PAGE_PATH,
+  type ShortenedLinkRow,
+  type ShortLinkDebugStep,
+  type ShortLinksOverview,
+  type SlugAvailabilityResult,
+  slugSchema,
+} from './shortener-server-utils';
 
-const generateSlug = customAlphabet(
-  '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
-  6
-);
-
-const SHORT_LINK_LIMIT = 30;
-const SHORTENER_PAGE_PATH = '/neo-shortener';
-const DEFAULT_SHORTENER_BASE_URL =
-  process.env.NODE_ENV === 'development'
-    ? 'http://localhost:3002'
-    : 'https://rmitnct.site';
-const SHORTENER_DEBUG_ENABLED =
-  process.env.NEO_SHORTENER_DEBUG === 'true' ||
-  process.env.SHORTENER_DEBUG === 'true';
-const RESERVED_SHORT_LINK_SLUGS = new Set([
-  '_next',
-  'api',
-  'assets',
-  'favicon',
-  'robots',
-  'sitemap',
-]);
-
-const slugSchema = z
-  .string()
-  .trim()
-  .min(3, 'Custom slug must be at least 3 characters')
-  .max(32, 'Custom slug must be 32 characters or fewer')
-  .regex(
-    /^[a-zA-Z0-9\-_]+$/,
-    'Custom slug can only contain letters, numbers, hyphens, and underscores'
-  )
-  .refine(
-    (slug) => !RESERVED_SHORT_LINK_SLUGS.has(slug.toLowerCase()),
-    'This custom slug is reserved'
-  );
-
-const createShortLinkSchema = z.object({
-  url: z.string().trim().min(1, 'URL is required'),
-  customSlug: z.string().optional().default(''),
-  password: z
-    .string()
-    .max(256, 'Password must be 256 characters or fewer')
-    .optional()
-    .default(''),
-  passwordHint: z
-    .string()
-    .trim()
-    .max(200, 'Password hint must be 200 characters or fewer')
-    .optional()
-    .default(''),
-});
-
-const deleteShortLinkSchema = z.string().uuid('Invalid short link id');
-
-const SHORT_LINK_LIMIT_ERROR =
-  'You have reached the 30-link limit for your account';
-
-export interface CreatedShortLink {
-  createdAt: string;
-  creatorId: string;
-  debug?: ShortLinkDebugReport;
-  domain: string;
-  id: string;
-  isPasswordProtected: boolean;
-  link: string;
-  shortUrl: string;
-  slug: string;
-}
-
-export interface ShortLinkDebugStep {
-  details?: Record<string, unknown>;
-  name: string;
-  status: 'error' | 'ok' | 'warning';
-}
-
-export interface ShortLinkDebugReport {
-  enabled: boolean;
-  steps: ShortLinkDebugStep[];
-}
-
-// Returned by createDynamicQRUrl and consumed by the QR generator frontend.
-// Carries everything the UI needs: the short URL to encode, the slug for
-// future updates, the creation timestamp, and the original destination.
-export interface DynamicQRMetadata {
-  shortUrl: string;
-  slug: string;
-  createdAt: string;
-  originalUrl: string;
-}
-
-export interface ShortLinksOverview {
-  isAuthenticated: boolean;
-  limit: number;
-  remainingCount: number;
-  usedCount: number;
-  links: CreatedShortLink[];
-}
-
-export interface SlugAvailabilityResult {
-  available: boolean;
-  message: string;
-  slug: string;
-  status: 'available' | 'empty' | 'error' | 'invalid' | 'taken';
-}
-
-type ShortenedLinkRow = {
-  created_at: string;
-  creator_id: string;
-  domain: string;
-  id: string;
-  link: string;
-  password_hash: string | null;
-  slug: string;
-};
-
-function normalizeShortenerBaseUrl(value: string) {
-  let url: URL;
-
-  try {
-    url = new URL(value.trim());
-  } catch {
-    throw new Error('Shortener base URL is not configured correctly');
-  }
-
-  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
-    throw new Error('Shortener base URL must use HTTP or HTTPS');
-  }
-
-  return url.toString().replace(/\/$/, '');
-}
-
-function resolveShortenerBaseUrl() {
-  return normalizeShortenerBaseUrl(
-    process.env.NEXT_PUBLIC_SHORTENER_URL ||
-      process.env.SHORTENER_APP_URL ||
-      DEFAULT_SHORTENER_BASE_URL
-  );
-}
-
-function hasExplicitScheme(value: string) {
-  return /^[a-zA-Z][a-zA-Z\d+.-]*:/.test(value);
-}
-
-function parseHttpUrl(value: string) {
-  const trimmed = value.trim();
-  const candidate = hasExplicitScheme(trimmed) ? trimmed : `https://${trimmed}`;
-
-  let url: URL;
-
-  try {
-    url = new URL(candidate);
-  } catch {
-    throw new Error('Please enter a valid URL');
-  }
-
-  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
-    throw new Error('Please enter a valid URL');
-  }
-
-  if (isBlockedDestinationHost(url.hostname)) {
-    throw new Error('Local or private URLs cannot be shortened');
-  }
-
-  return url;
-}
-
-function isBlockedDestinationHost(hostname: string) {
-  if (process.env.NODE_ENV === 'development') {
-    return false;
-  }
-
-  const normalizedHostname = hostname
-    .toLowerCase()
-    .replace(/^\[|\]$/g, '')
-    .replace(/\.$/, '');
-
-  if (
-    normalizedHostname === 'localhost' ||
-    normalizedHostname.endsWith('.localhost') ||
-    normalizedHostname.endsWith('.local')
-  ) {
-    return true;
-  }
-
-  const isIpv6Address = normalizedHostname.includes(':');
-
-  if (
-    isIpv6Address &&
-    (normalizedHostname === '::1' ||
-      normalizedHostname.startsWith('fc') ||
-      normalizedHostname.startsWith('fd') ||
-      normalizedHostname.startsWith('fe80:'))
-  ) {
-    return true;
-  }
-
-  const ipv4Parts = normalizedHostname.split('.').map(Number);
-
-  if (
-    ipv4Parts.length !== 4 ||
-    ipv4Parts.some((part) => !Number.isInteger(part) || part < 0 || part > 255)
-  ) {
-    return false;
-  }
-
-  const first = ipv4Parts[0] ?? -1;
-  const second = ipv4Parts[1] ?? -1;
-
-  return (
-    first === 0 ||
-    first === 10 ||
-    first === 127 ||
-    (first === 169 && second === 254) ||
-    (first === 172 && second >= 16 && second <= 31) ||
-    (first === 192 && second === 168)
-  );
-}
-
-function getDomainFromShortenerBaseUrl() {
-  try {
-    return new URL(resolveShortenerBaseUrl()).host;
-  } catch {
-    return new URL(DEFAULT_SHORTENER_BASE_URL).host;
-  }
-}
-
-function logShortenerDebug(message: string, details?: Record<string, unknown>) {
-  if (!SHORTENER_DEBUG_ENABLED) return;
-
-  console.info('[neo-shortener-debug]', message, details ?? {});
-}
-
-function logShortenerDebugError(
-  message: string,
-  details?: Record<string, unknown>
-) {
-  if (!SHORTENER_DEBUG_ENABLED) return;
-
-  console.error('[neo-shortener-debug]', message, details ?? {});
-}
-
-async function checkShortLinkAccess(
-  shortUrl: string,
-  slug: string
-): Promise<ShortLinkDebugStep> {
-  const debugUrl = new URL(shortUrl);
-  debugUrl.searchParams.set('debug', '1');
-
-  try {
-    const response = await fetch(debugUrl.toString(), {
-      cache: 'no-store',
-      redirect: 'manual',
-      signal: AbortSignal.timeout(8000),
-    });
-
-    const location = response.headers.get('location');
-    const step: ShortLinkDebugStep = {
-      name: 'short_link_access_check',
-      status: response.ok || response.status < 400 ? 'ok' : 'warning',
-      details: {
-        location,
-        shortUrl,
-        slug,
-        status: response.status,
-        statusText: response.statusText,
-      },
-    };
-
-    if (step.status === 'warning') {
-      logShortenerDebugError('short link access check returned non-ok status', {
-        location,
-        shortUrl,
-        slug,
-        status: response.status,
-        statusText: response.statusText,
-      });
-    } else {
-      logShortenerDebug('short link access check passed', {
-        location,
-        shortUrl,
-        slug,
-        status: response.status,
-        statusText: response.statusText,
-      });
-    }
-
-    return step;
-  } catch (error) {
-    logShortenerDebugError('short link access check failed', {
-      error: error instanceof Error ? error.message : String(error),
-      shortUrl,
-      slug,
-    });
-
-    return {
-      name: 'short_link_access_check',
-      status: 'error',
-      details: {
-        error: error instanceof Error ? error.message : String(error),
-        shortUrl,
-        slug,
-      },
-    };
-  }
-}
-
-function mapShortenedLink(
-  row: ShortenedLinkRow,
-  debug?: ShortLinkDebugReport
-): CreatedShortLink {
-  const shortenerBaseUrl = resolveShortenerBaseUrl();
-
-  return {
-    createdAt: row.created_at,
-    creatorId: row.creator_id,
-    debug,
-    domain: row.domain,
-    id: row.id,
-    isPasswordProtected: Boolean(row.password_hash),
-    link: row.link,
-    shortUrl: `${shortenerBaseUrl}/${row.slug}`,
-    slug: row.slug,
-  };
-}
+export type {
+  CreatedShortLink,
+  DynamicQRAnalytics,
+  DynamicQRDeviceStat,
+  DynamicQRLocationStat,
+  DynamicQRMetadata,
+  DynamicQRRecentScan,
+  ShortLinkDebugReport,
+  ShortLinkDebugStep,
+  ShortLinksOverview,
+  SlugAvailabilityResult,
+} from './shortener-server-utils';
 
 async function getAuthState() {
   const supabase = await createClient();
@@ -714,17 +425,65 @@ export async function createShortLink(
 export async function createDynamicQRUrl(
   url: string
 ): Promise<DynamicQRMetadata> {
-  const formData = new FormData();
-  formData.set('url', url);
-  // Let any error from createShortLink bubble up as-is so the frontend
-  // can distinguish auth errors from validation errors.
-  const result = await createShortLink(formData);
-  return {
-    shortUrl: result.shortUrl,
-    slug: result.slug,
-    createdAt: result.createdAt,
-    originalUrl: result.link,
-  };
+  // Dynamic QR destinations are stored in their own `dynamic_qr_links` table
+  // so they do NOT count against the shortener's per-user 30-link limit. The
+  // slug namespace is shared with `shortened_links` (a DB trigger enforces
+  // cross-table uniqueness), so collisions still surface as errcode 23505 and
+  // are retried below. Unlike short links, dynamic QR links have no limit,
+  // custom slug, or password.
+  const normalizedUrl = parseHttpUrl(url);
+
+  const shortenerBaseUrl = resolveShortenerBaseUrl();
+  const domain = getDomainFromShortenerBaseUrl();
+  const parsedShortenerBaseUrl = new URL(shortenerBaseUrl);
+
+  if (normalizedUrl.origin === parsedShortenerBaseUrl.origin) {
+    throw new Error(
+      'Please enter a destination URL, not an existing short link'
+    );
+  }
+
+  const { supabase, user } = await requireAuthenticatedUser();
+
+  for (let attempt = 0; attempt < 10; attempt++) {
+    const slug = generateSlug();
+
+    // `dynamic_qr_links` may not be in the generated Supabase types yet.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (supabase as any)
+      .from('dynamic_qr_links')
+      .insert([
+        {
+          creator_id: user.id,
+          domain,
+          link: normalizedUrl.toString(),
+          slug,
+        },
+      ])
+      .select('id, link, slug, domain, creator_id, created_at')
+      .single();
+
+    if (!error && data) {
+      return {
+        shortUrl: `${shortenerBaseUrl}/${data.slug}`,
+        slug: data.slug,
+        createdAt: data.created_at,
+        originalUrl: data.link,
+      };
+    }
+
+    // Slug collision within either table — try a new slug.
+    if (error?.code === '23505') {
+      continue;
+    }
+
+    console.error(error);
+    throw new Error(error?.message || 'Failed to create dynamic QR link');
+  }
+
+  throw new Error(
+    'Could not generate a unique dynamic QR link after 10 attempts'
+  );
 }
 
 /**
@@ -774,7 +533,7 @@ export async function updateDynamicQRUrl(
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabase as any)
-    .from('shortened_links')
+    .from('dynamic_qr_links')
     .update({ link: normalizedUrl.toString() })
     .eq('slug', slug)
     .eq('creator_id', user.id); // security: only the owner can update
@@ -814,7 +573,7 @@ export async function getDynamicQRMetadata(
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, error } = await (supabase as any)
-    .from('shortened_links')
+    .from('dynamic_qr_links')
     .select('link, slug, created_at')
     .eq('slug', slug)
     .eq('creator_id', user.id)
@@ -832,6 +591,65 @@ export async function getDynamicQRMetadata(
     createdAt: data.created_at,
     originalUrl: data.link,
   };
+}
+
+/**
+ * Fetches aggregated scan analytics for a dynamic QR code by slug.
+ *
+ * Ownership is enforced twice: the shortened_links lookup filters on
+ * creator_id, and RLS on link_analytics restricts rows to the owner.
+ *
+ * @param slug - The slug returned by createDynamicQRUrl
+ */
+export async function getDynamicQRAnalytics(
+  slug: string
+): Promise<DynamicQRAnalytics> {
+  const parsedSlug = slugSchema.safeParse(slug);
+  if (!parsedSlug.success) {
+    throw new Error(parsedSlug.error.issues[0]?.message || 'Invalid slug');
+  }
+
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    throw new Error('Please sign in to view analytics for this link');
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: link, error: linkError } = await (supabase as any)
+    .from('dynamic_qr_links')
+    .select('id, slug, created_at')
+    .eq('slug', parsedSlug.data)
+    .eq('creator_id', user.id)
+    .single();
+
+  if (linkError || !link) {
+    throw new Error('Short link not found or you do not have access to it');
+  }
+
+  const { data: rows, error: analyticsError } = await supabase
+    .from('link_analytics')
+    .select('created_at, device_type, country, city')
+    .eq('link_id', link.id)
+    .order('created_at', { ascending: false });
+
+  if (analyticsError) {
+    console.error(analyticsError);
+    throw new Error('Failed to load analytics for this link');
+  }
+
+  const scans = (rows ?? []) as LinkAnalyticsRow[];
+
+  return buildDynamicQRAnalytics({
+    slug: link.slug,
+    createdAt: link.created_at,
+    rows: scans,
+  });
 }
 
 export async function deleteShortLink(shortLinkId: string) {

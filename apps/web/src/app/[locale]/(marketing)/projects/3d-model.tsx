@@ -50,6 +50,7 @@ export function GLBViewerCanvas({
         alt=""
         fill
         priority
+        sizes="100vw"
         className="pointer-events-none z-0 select-none object-contain object-center opacity-40"
       />
 
