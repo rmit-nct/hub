@@ -1016,18 +1016,18 @@ export default function NeoQrGeneratorPage() {
         ctx.fillStyle = bgColor;
         ctx.beginPath();
         if (ctx.roundRect) {
-          ctx.roundRect(logoX - 4, logoY - 4, logoSize + 8, logoSize + 8, 6);
+          ctx.roundRect(logoX - 8, logoY - 8, logoSize + 16, logoSize + 16, 8);
         } else {
-          ctx.rect(logoX - 4, logoY - 4, logoSize + 8, logoSize + 8);
+          ctx.rect(logoX - 8, logoY - 8, logoSize + 16, logoSize + 16);
         }
         ctx.fill();
 
         ctx.fillStyle = 'white';
         ctx.beginPath();
         if (ctx.roundRect) {
-          ctx.roundRect(logoX - 2, logoY - 2, logoSize + 4, logoSize + 4, 4);
+          ctx.roundRect(logoX - 6, logoY - 6, logoSize + 12, logoSize + 12, 6);
         } else {
-          ctx.rect(logoX - 2, logoY - 2, logoSize + 4, logoSize + 4);
+          ctx.rect(logoX - 6, logoY - 6, logoSize + 12, logoSize + 12);
         }
         ctx.fill();
 
@@ -1185,24 +1185,24 @@ export default function NeoQrGeneratorPage() {
         'http://www.w3.org/2000/svg',
         'rect'
       );
-      borderOuter.setAttribute('x', `${logoX - 4}`);
-      borderOuter.setAttribute('y', `${logoY - 4}`);
-      borderOuter.setAttribute('width', `${logoSize + 8}`);
-      borderOuter.setAttribute('height', `${logoSize + 8}`);
+      borderOuter.setAttribute('x', `${logoX - 8}`);
+      borderOuter.setAttribute('y', `${logoY - 8}`);
+      borderOuter.setAttribute('width', `${logoSize + 16}`);
+      borderOuter.setAttribute('height', `${logoSize + 16}`);
       borderOuter.setAttribute('fill', bgColor);
-      borderOuter.setAttribute('rx', '6');
+      borderOuter.setAttribute('rx', '8');
       svgElement.appendChild(borderOuter);
 
       const borderInner = svgDoc.createElementNS(
         'http://www.w3.org/2000/svg',
         'rect'
       );
-      borderInner.setAttribute('x', `${logoX - 2}`);
-      borderInner.setAttribute('y', `${logoY - 2}`);
-      borderInner.setAttribute('width', `${logoSize + 4}`);
-      borderInner.setAttribute('height', `${logoSize + 4}`);
+      borderInner.setAttribute('x', `${logoX - 6}`);
+      borderInner.setAttribute('y', `${logoY - 6}`);
+      borderInner.setAttribute('width', `${logoSize + 12}`);
+      borderInner.setAttribute('height', `${logoSize + 12}`);
       borderInner.setAttribute('fill', 'white');
-      borderInner.setAttribute('rx', '4');
+      borderInner.setAttribute('rx', '6');
       svgElement.appendChild(borderInner);
 
       const imageElement = svgDoc.createElementNS(
@@ -2503,18 +2503,22 @@ export default function NeoQrGeneratorPage() {
                                 left: '50%',
                                 top: '50%',
                                 transform: 'translate(-50%, -50%)',
-                                width: logoSize,
-                                height: logoSize,
+                                width: logoSize + 12,
+                                height: logoSize + 12,
                               }}
                             >
                               <div
                                 style={{
-                                  height: logoSize,
-                                  width: logoSize,
+                                  height: logoSize + 12,
+                                  width: logoSize + 12,
+                                  padding: 6,
+                                  boxSizing: 'border-box',
+                                  backgroundColor: 'white',
                                   backgroundImage: `url('${logoDataUrl}')`,
                                   backgroundSize: 'contain',
                                   backgroundRepeat: 'no-repeat',
                                   backgroundPosition: 'center',
+                                  backgroundOrigin: 'content-box',
                                 }}
                                 className="rounded-md border-2 border-white shadow-lg dark:border-slate-600"
                               />
