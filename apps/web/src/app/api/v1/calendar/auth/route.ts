@@ -1,4 +1,4 @@
-import { OAuth2Client } from 'google-auth-library';
+import { google } from 'googleapis';
 import { type NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'wsId is required' }, { status: 400 });
   }
 
-  const auth = new OAuth2Client({
+  const auth = new google.auth.OAuth2({
     clientId: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     redirectUri: process.env.GOOGLE_REDIRECT_URI,

@@ -1,9 +1,11 @@
 import { createAdminClient } from '@ncthub/supabase/next/server';
 import bcrypt from 'bcrypt';
-import { type NextRequest, NextResponse } from 'next/server';
+import { after, type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { trackLinkClick } from '@/lib/analytics';
 import { isValidUrl } from '@/lib/utils';
+
+export const preferredRegion = 'sin1';
 
 const verifySchema = z.object({
   linkId: z.string().uuid(),
@@ -85,7 +87,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    await trackLinkClick(link.id, link.slug);
+    after(async () => {
+      await trackLinkClick(link.id, link.slug);
+    });
 
     return NextResponse.json({ url: link.link, success: true });
   } catch (error) {

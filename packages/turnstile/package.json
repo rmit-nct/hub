@@ -15,11 +15,11 @@
     "test": "vitest run",
     "test:watch": "vitest"
   },
-  "packageManager": "bun@1.3.13",
+  "packageManager": "bun@1.3.14",
   "devDependencies": {
     "@ncthub/typescript-config": "workspace:*",
-    "@types/node": "^25.7.0",
+    "@types/node": "^26.1.0",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.6"
+    "vitest": "^4.1.10"
   }
 }

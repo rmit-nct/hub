@@ -8,7 +8,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@ncthub/ui/dropdown-menu';
-import { toast } from '@ncthub/ui/sonner';
 import {
   AlertCircle,
   Camera,
@@ -18,6 +17,7 @@ import {
   Video,
   Zap,
 } from '@ncthub/ui/icons';
+import { toast } from '@ncthub/ui/sonner';
 import { cn } from '@ncthub/utils/format';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -367,10 +367,10 @@ export default function VideoCapture({ onNewStudent }: VideoCaptureProps) {
           size="lg"
           variant={cameraOn ? 'destructive' : 'default'}
           className={cn(
-            'h-14 w-full font-medium text-base transition-all duration-200',
+            'h-14 flex-1 font-medium text-base transition-all duration-200',
             cameraOn
-              ? 'bg-destructive shadow-destructive/25 shadow-lg hover:bg-destructive/90'
-              : 'bg-dynamic-blue text-primary-foreground shadow-dynamic-blue/25 shadow-lg hover:bg-dynamic-blue/90'
+              ? 'bg-destructive shadow-lg hover:bg-destructive/90'
+              : 'bg-dynamic-blue text-primary-foreground shadow-lg hover:bg-dynamic-blue/90'
           )}
         >
           {cameraOn ? (
@@ -391,8 +391,8 @@ export default function VideoCapture({ onNewStudent }: VideoCaptureProps) {
           size="lg"
           disabled={!cameraOn || capturing || !isReady}
           className={cn(
-            'h-14 w-full font-medium text-base transition-all duration-200',
-            'bg-linear-to-r from-dynamic-purple to-dynamic-indigo text-primary-foreground shadow-lg hover:opacity-90'
+            'h-14 flex-1 font-medium text-base transition-all duration-200',
+            'bg-dynamic-purple text-primary-foreground shadow-lg hover:bg-dynamic-purple/90'
           )}
         >
           {capturing ? (
