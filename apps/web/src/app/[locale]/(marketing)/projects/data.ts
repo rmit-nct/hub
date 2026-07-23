@@ -730,35 +730,6 @@ export const projects: Project[] = [
     githubUrl: 'https://github.com/rmit-nct/neo-flood-fill.git',
   },
   {
-    name: 'Neo Messenger Clone',
-    description: 'TBA',
-    type: 'web',
-    techStack: ['React', 'Vite', 'Typescript'],
-    status: 'planning',
-    semester: 'B/2026',
-    manager: 'TBA',
-    members: [
-      {
-        name: 'Duong Chan Phong',
-        role: 'Leader, Tester',
-      },
-      {
-        name: 'Nguyen Dang Quoc An',
-        role: 'Developer',
-      },
-      {
-        name: 'Tran Minh Nghia',
-        role: 'Developer',
-      },
-      {
-        name: 'Nguyen Don Gia Phat',
-        role: 'Developer',
-      },
-    ],
-    purpose: 'TBA',
-    githubUrl: 'https://github.com/rmit-nct',
-  },
-  {
     name: 'Neo Meeting Summarizer',
     description:
       'The project aims to build a web-based application that allows users to upload or record a meeting (audio/video), automatically transcribe it, and generate a concise, AI-powered summary of the discussion',
