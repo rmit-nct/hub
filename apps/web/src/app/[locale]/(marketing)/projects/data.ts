@@ -39,6 +39,10 @@ export const projects: Project[] = [
         name: 'Cu Dinh Bach',
         role: 'Developer',
       },
+      {
+        name: 'Dang Trung Dung',
+        role: 'Developer',
+      },
     ],
     purpose:
       'The purpose of this project is to introduce members to embedded development for drones using the ESP32 platform. By working with ESP-IDF 5.0, PowerShell, and the ESP-Drone app, members gain practical experience in firmware development, wireless control systems, and real-time hardware interaction. The project helps bridge the gap between IoT, robotics, and aerospace applications by demonstrating how microcontrollers can be used to build and control flying systems.',
