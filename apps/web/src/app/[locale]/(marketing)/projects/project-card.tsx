@@ -1,12 +1,5 @@
 import { Card, CardContent, CardFooter, CardHeader } from '@ncthub/ui/card';
-import {
-  Globe,
-  Monitor,
-  Play,
-  TbBrandGithub,
-  Users,
-  Wrench,
-} from '@ncthub/ui/icons';
+import { Monitor, Play, TbBrandGithub, Users, Wrench } from '@ncthub/ui/icons';
 import { cn } from '@ncthub/utils/format';
 import { motion } from 'framer-motion';
 import type { Project } from './data';
@@ -29,10 +22,10 @@ const STATUS_COLORS = {
 // Enhanced type configurations with icons and colors
 const TYPE_CONFIG = {
   web: {
-    label: 'Web Development',
-    icon: Globe,
-    gradient: 'from-dynamic-purple to-dynamic-pink',
-    bgGradient: 'from-dynamic-purple/10 to-dynamic-pink/10',
+    label: 'Software',
+    icon: Monitor,
+    gradient: 'from-dynamic-blue to-dynamic-cyan',
+    bgGradient: 'from-dynamic-blue/10 to-dynamic-cyan/10',
   },
   software: {
     label: 'Software',
@@ -57,10 +50,13 @@ export default function ProjectCard({
 }: ProjectCardProps) {
   // Determine if this card should be highlighted based on current filters
   const getHighlightStatus = () => {
+    const projectFilterType =
+      project.type === 'hardware' ? 'hardware' : 'software';
+
     if (type && status) {
-      return type === project.type && status === project.status;
+      return type === projectFilterType && status === project.status;
     } else if (type) {
-      return type === project.type;
+      return type === projectFilterType;
     } else if (status) {
       return status === project.status;
     }
@@ -71,22 +67,22 @@ export default function ProjectCard({
   const typeConfig = TYPE_CONFIG[project.type];
   const TypeIcon = typeConfig.icon;
 
-  // Enhanced card container styles with modern glassmorphism
+  // Keep card feedback lightweight so the project grid stays responsive.
   const getCardContainerStyles = () => {
     const baseStyles = `
-      relative h-full min-h-[480px] text-left transition-all duration-500
-      backdrop-blur-md overflow-hidden group flex flex-col p-0 cursor-pointer
+      relative h-full min-h-[480px] text-left transition-colors duration-200
+      overflow-hidden group flex flex-col p-0 cursor-pointer
     `;
 
     const centerStyles = isSelected
-      ? 'border-dynamic-cyan/30 shadow-2xl shadow-dynamic-cyan/20'
+      ? 'border-dynamic-cyan/30 shadow-lg shadow-dynamic-cyan/10'
       : '';
 
     const highlightStyles = isHighlighted
-      ? `bg-gradient-to-br ${typeConfig.bgGradient} border-dynamic-cyan/50 shadow-xl shadow-dynamic-cyan/25`
+      ? `bg-gradient-to-br ${typeConfig.bgGradient} border-dynamic-cyan/50 shadow-md shadow-dynamic-cyan/10`
       : isSelected
         ? 'bg-card/80 hover:bg-card'
-        : 'bg-card/40 hover:bg-card/60 hover:border-border hover:shadow-lg';
+        : 'bg-card/60 hover:bg-card/80 hover:border-border';
 
     return `${baseStyles} ${centerStyles} ${highlightStyles}`;
   };
@@ -106,21 +102,24 @@ export default function ProjectCard({
     >
       <div
         className={cn(
-          'absolute inset-0 z-10 transition-all duration-500',
+          'pointer-events-none absolute inset-0 z-10 transition-colors duration-200',
           isSelected ? 'bg-transparent' : 'bg-muted/60'
         )}
       />
       <CardHeader className="flex flex-col gap-6 p-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center gap-2">
           <div
-            className={`rounded-full bg-linear-to-r px-3 py-1 font-bold text-primary-foreground text-xs shadow-lg backdrop-blur-sm ${STATUS_COLORS[project.status as keyof typeof STATUS_COLORS]} `}
+            className={`rounded-full bg-linear-to-r px-3 py-1 font-bold text-primary-foreground text-xs shadow-sm ${STATUS_COLORS[project.status as keyof typeof STATUS_COLORS]} `}
           >
-            {project.status.charAt(0).toUpperCase() + project.status.slice(1)} -{' '}
+            {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
+          </div>
+
+          <div className="rounded-full border border-border/60 bg-background px-3 py-1 font-medium text-foreground text-xs shadow-sm">
             {project.semester}
           </div>
 
           <div
-            className={`flex items-center gap-2 rounded-full bg-linear-to-r px-3 py-1 font-medium text-primary-foreground text-xs ${typeConfig.gradient}`}
+            className={`ml-auto flex items-center gap-2 rounded-full bg-linear-to-r px-3 py-1 font-medium text-primary-foreground text-xs ${typeConfig.gradient}`}
           >
             <TypeIcon className="h-3 w-3" />
             <span>{typeConfig.label}</span>
@@ -182,7 +181,7 @@ export default function ProjectCard({
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: index * 0.1 }}
-                  className={`rounded-lg border border-border bg-muted/50 px-3 py-1 font-medium text-foreground backdrop-blur-sm ${isSelected ? 'text-sm' : 'text-xs'} `}
+                  className={`rounded-lg border border-border bg-muted/70 px-3 py-1 font-medium text-foreground ${isSelected ? 'text-sm' : 'text-xs'} `}
                 >
                   {tech}
                 </motion.span>
@@ -211,9 +210,9 @@ export default function ProjectCard({
           <div className="flex gap-2">
             {project.githubUrl && (
               <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className="rounded-lg bg-muted/50 p-2 text-muted-foreground backdrop-blur-sm transition-colors hover:bg-muted hover:text-foreground"
+                whileHover={{ y: -1 }}
+                whileTap={{ scale: 0.97 }}
+                className="rounded-lg bg-muted/70 p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                 onClick={(e) => {
                   e.stopPropagation();
                   window.open(project.githubUrl, '_blank');
@@ -224,9 +223,9 @@ export default function ProjectCard({
             )}
             {project.demoUrl && (
               <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className="rounded-lg bg-muted/50 p-2 text-muted-foreground backdrop-blur-sm transition-colors hover:bg-muted hover:text-foreground"
+                whileHover={{ y: -1 }}
+                whileTap={{ scale: 0.97 }}
+                className="rounded-lg bg-muted/70 p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                 onClick={(e) => {
                   e.stopPropagation();
                   window.open(project.demoUrl, '_blank');
@@ -239,7 +238,7 @@ export default function ProjectCard({
             {/* Team Size Indicator with enhanced design */}
             {project.members && project.members.length > 0 && (
               <div
-                className={`flex items-center gap-2 rounded-lg bg-muted/50 px-3 py-1 text-muted-foreground backdrop-blur-sm ${isSelected ? 'text-sm' : 'text-xs'}`}
+                className={`flex items-center gap-2 rounded-lg bg-muted/70 px-3 py-1 text-muted-foreground ${isSelected ? 'text-sm' : 'text-xs'}`}
               >
                 <Users className="h-4 w-4" />
                 <span>
@@ -251,23 +250,6 @@ export default function ProjectCard({
           </div>
         </div>
       </CardFooter>
-
-      {/* Visual Effects */}
-      {/* Animated background gradient */}
-      <div className="pointer-events-none absolute inset-0 rounded-xl opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-        <div
-          className={`absolute inset-0 rounded-xl bg-linear-to-br ${typeConfig.bgGradient}`}
-        />
-        <div className="absolute inset-0 rounded-xl bg-linear-to-br from-brand-light-yellow/5 to-dynamic-cyan/5" />
-      </div>
-
-      {/* Shimmer effect on hover */}
-      <div className="pointer-events-none absolute inset-0 -translate-x-full rounded-xl bg-linear-to-r from-transparent via-primary-foreground/10 to-transparent opacity-0 transition-all duration-1000 group-hover:translate-x-full group-hover:opacity-100" />
-
-      {/* Border glow effect for center cards */}
-      {isSelected && (
-        <div className="pointer-events-none absolute inset-0 rounded-xl bg-linear-to-br from-brand-light-yellow/20 to-dynamic-cyan/20 opacity-50 blur-xl" />
-      )}
     </Card>
   );
 }
