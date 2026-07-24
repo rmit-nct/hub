@@ -34,7 +34,7 @@ const STATUS_CONFIG = {
 } as const;
 
 const TYPE_LABELS = {
-  web: 'Web Development',
+  web: 'Software',
   software: 'Software',
   hardware: 'Hardware',
 } as const;
@@ -84,7 +84,7 @@ export default function ProjectDetail({ onClose, data }: ProjectDetailProps) {
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/60 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
       initial="hidden"
       animate="visible"
       exit="exit"
@@ -92,13 +92,14 @@ export default function ProjectDetail({ onClose, data }: ProjectDetailProps) {
       onClick={handleBackdropClick}
     >
       <motion.div
-        className="relative max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-3xl border border-border bg-background/95 shadow-2xl backdrop-blur-lg"
+        className="relative max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-3xl border border-brand-light-blue/20 bg-linear-to-br from-background via-card to-brand-light-blue/10 shadow-2xl shadow-brand-light-blue/10"
         variants={MODAL_VARIANTS}
         transition={{ type: 'spring', stiffness: 300, damping: 25 }}
         onClick={handleModalClick}
       >
+        <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-brand-light-yellow/5 via-transparent to-dynamic-cyan/10" />
         {/* Header */}
-        <div className="relative p-8">
+        <div className="relative z-10 p-8">
           <button
             type="button"
             onClick={onClose}
@@ -190,7 +191,7 @@ export default function ProjectDetail({ onClose, data }: ProjectDetailProps) {
         </div>
 
         {/* Content */}
-        <div className="space-y-8 px-8 pb-8">
+        <div className="relative z-10 space-y-8 px-8 pb-8">
           {/* 3D Model Viewer */}
           <AnimatePresence initial={false} mode="popLayout">
             {is3DViewOpen && modelFile && (

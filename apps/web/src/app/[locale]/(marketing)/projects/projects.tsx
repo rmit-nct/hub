@@ -1,7 +1,5 @@
 'use client';
 
-import { Badge } from '@ncthub/ui/badge';
-import { Sparkles } from '@ncthub/ui/icons';
 import { cn } from '@ncthub/utils/format';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
@@ -10,8 +8,13 @@ import EmptyState from './empty-state';
 import ProjectCard from './project-card';
 import ProjectDetail from './project-detail';
 
-type ProjectType = 'web' | 'software' | 'hardware' | undefined;
+type ProjectType = 'software' | 'hardware' | undefined;
 type ProjectStatus = 'planning' | 'ongoing' | 'completed' | undefined;
+
+const getProjectFilterType = (
+  project: Project
+): Exclude<ProjectType, undefined> =>
+  project.type === 'hardware' ? 'hardware' : 'software';
 
 export default function Projects() {
   const [type, setType] = useState<ProjectType>(undefined);
@@ -25,7 +28,7 @@ export default function Projects() {
   const filteredProjects = useMemo(
     () =>
       projects.filter((project) => {
-        const matchesType = !type || project.type === type;
+        const matchesType = !type || getProjectFilterType(project) === type;
         const matchesStatus = !status || project.status === status;
         return matchesType && matchesStatus;
       }),
@@ -63,23 +66,12 @@ export default function Projects() {
         viewport={{ once: true }}
         transition={{ duration: 0.6, delay: 0.2 }}
       >
-        <div className="mb-6 inline-flex items-center gap-2">
-          <Sparkles className="h-6 w-6 text-brand-light-yellow" />
-          <Badge
-            variant="outline"
-            className="border-brand-light-blue/50 px-4 py-2 text-base text-brand-light-blue"
-          >
-            Our Projects
-          </Badge>
-          <Sparkles className="h-6 w-6 text-brand-light-yellow" />
-        </div>
-
         <p className="font-extrabold text-2xl leading-normal md:text-3xl lg:text-4xl">
-          <span className="text-foreground">Don't miss our</span>{' '}
+          <span className="text-foreground">EXPLORE</span>{' '}
           <span className="whitespace-nowrap border-brand-light-yellow border-b-4 text-brand-light-blue">
-            other projects
+            MORE PROJECTS
           </span>
-          <span className="text-foreground">!</span>
+          <span className="text-foreground"> !</span>
         </p>
 
         <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
@@ -92,21 +84,13 @@ export default function Projects() {
               <motion.div
                 className="absolute inset-y-1 rounded-xl bg-linear-to-r from-brand-light-blue to-dynamic-cyan shadow-sm"
                 animate={{
-                  x:
-                    type === 'web'
-                      ? 0
-                      : type === 'software'
-                        ? 112
-                        : type === 'hardware'
-                          ? 224
-                          : 0,
+                  x: type === 'software' ? 0 : type === 'hardware' ? 112 : 0,
                   width: type ? 112 : 0,
                   opacity: type ? 1 : 0,
                 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 35 }}
               />
               {[
-                { key: 'web', label: 'Web' },
                 { key: 'software', label: 'Software' },
                 { key: 'hardware', label: 'Hardware' },
               ].map((p) => (
@@ -117,7 +101,7 @@ export default function Projects() {
                   className={`relative z-10 w-28 px-5 py-3 font-bold text-base transition-all duration-200 ${
                     p.key === type
                       ? 'text-primary-foreground shadow-sm'
-                      : 'text-muted-foreground hover:scale-105 hover:text-foreground'
+                      : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   {p.label}
@@ -158,7 +142,7 @@ export default function Projects() {
                   } ${
                     p.key === status
                       ? 'text-primary-foreground shadow-sm'
-                      : 'text-muted-foreground hover:scale-105 hover:text-foreground'
+                      : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   {p.label}
@@ -185,11 +169,10 @@ export default function Projects() {
                   stiffness: 100,
                 }}
                 whileHover={{
-                  scale: 1.05,
-                  y: -5,
-                  transition: { duration: 0.2 },
+                  y: -2,
+                  transition: { duration: 0.15 },
                 }}
-                whileTap={{ scale: 0.95 }}
+                whileTap={{ scale: 0.98 }}
                 className={cn('group relative h-full w-full cursor-pointer')}
               >
                 <ProjectCard
