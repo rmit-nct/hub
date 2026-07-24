@@ -1,6 +1,7 @@
 'use client';
 
-import { Bot } from '@ncthub/ui/icons';
+import { Badge } from '@ncthub/ui/badge';
+import { Bot, Sparkles } from '@ncthub/ui/icons';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 
@@ -8,11 +9,21 @@ export default function MainProject() {
   return (
     <>
       <motion.div
-        className="relative mt-4 flex flex-col items-center text-center md:mt-28"
+        className="relative mt-4 flex flex-col items-center text-center md:mt-16"
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}
       >
+        <div className="mb-4 inline-flex items-center gap-2">
+          <Sparkles className="h-5 w-5 text-brand-light-yellow" />
+          <Badge
+            variant="outline"
+            className="border-brand-light-blue/50 px-3 py-1 text-brand-light-blue text-sm"
+          >
+            Our Projects
+          </Badge>
+          <Sparkles className="h-5 w-5 text-brand-light-yellow" />
+        </div>
         <div className="flex flex-col items-center text-center">
           <div className="font-extrabold text-4xl leading-normal md:text-5xl lg:text-6xl">
             <span className="text-foreground">NEO Culture</span>{' '}
@@ -50,14 +61,6 @@ export default function MainProject() {
         viewport={{ once: true }}
         transition={{ duration: 0.8, delay: 0.2 }}
       >
-        <p className="font-extrabold text-2xl leading-normal md:text-3xl lg:text-4xl">
-          <span className="text-foreground">Our</span>{' '}
-          <span className="whitespace-nowrap border-brand-light-yellow border-b-4 text-brand-light-blue">
-            Flagship
-          </span>{' '}
-          <span className="text-foreground">Project</span>
-        </p>
-
         <motion.div
           className="mx-auto mt-12 max-w-6xl px-4 md:px-6 lg:px-8"
           initial={{ opacity: 0, y: 30 }}

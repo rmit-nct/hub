@@ -25,26 +25,22 @@ export const projects: Project[] = [
     techStack: ['ESP32', 'C++', 'Dabble', 'Bluetooth Module'],
     status: 'ongoing',
     semester: 'B/2025',
-    manager: 'Truong Duc Qui',
+    manager: 'Truong Minh Phu',
     members: [
       {
-        name: 'Truong Duc Qui',
+        name: 'Truong Minh Phu',
         role: 'Leader, Developer',
       },
       {
-        name: 'Vinh Pham',
+        name: 'Phung Cong Khang',
         role: 'Developer',
       },
       {
-        name: 'Nguyen Do Tuong Van',
+        name: 'Cu Dinh Bach',
         role: 'Developer',
       },
       {
-        name: 'Nguyen Ngoc Thien Ngan',
-        role: 'Developer',
-      },
-      {
-        name: 'Nguyen Quoc Thinh',
+        name: 'Dang Trung Dung',
         role: 'Developer',
       },
     ],
@@ -604,5 +600,346 @@ export const projects: Project[] = [
         ? 'http://localhost:7803/'
         : 'https://rmitnct.club/',
     image: '/media/marketing/nct-hub-dashboard.jpg',
+  },
+  {
+    name: 'Neo Movie Hub',
+    description:
+      'A movie streaming platform using React, React Router DOM, Tailwind CSS, and a The Movie Database API to display real-time movie updates.',
+    type: 'web',
+    techStack: ['React', 'Vite', 'Tailwind CSS', 'TMDB API'],
+    status: 'completed',
+    semester: 'A/2026',
+    manager: 'Nguyen Tuan Kiet',
+    members: [
+      {
+        name: 'Nguyen Tuan Kiet',
+        role: 'Leader, Developer',
+      },
+      {
+        name: 'Vo Hoang Hung',
+        role: 'Developer',
+      },
+      {
+        name: 'Nguyen Nhat Bang Anh',
+        role: 'Developer',
+      },
+      {
+        name: 'Mai Ho Tuan Anh',
+        role: 'Developer',
+      },
+      {
+        name: 'Dang Hoang Gia Khanh',
+        role: 'Developer',
+      },
+    ],
+    purpose:
+      'The purpose of this project is our club members can browse movies and TV shows, watch trailers, explore cast information, read reviews, and discover similar content with a cinematic UI experience.',
+    githubUrl: 'https://github.com/rmit-nct/neo-movie-hub-2.git',
+  },
+  {
+    name: 'Neo Tic Tac Toe',
+    description:
+      'A python-based implementation of the classic Tic-Tac-Toe, evolved through three distinct stages of development featuring both Player vs Player and Player vs AI modes',
+    type: 'software',
+    techStack: ['Python'],
+    status: 'completed',
+    semester: 'C/2025',
+    manager: 'Dang Hoang Gia Khanh',
+    members: [
+      {
+        name: 'Dang Hoang Gia Khanh',
+        role: 'Leader, Tester',
+      },
+      {
+        name: 'Mai Ho Tuan Anh',
+        role: 'Developer',
+      },
+      {
+        name: 'Tran Hong Bao Ngoc',
+        role: 'Developer',
+      },
+    ],
+    purpose:
+      'The purpose of this project is to help members learn Python that a console transitions from a command-line interface logic engine to a fully interactive graphical application powered by Pygame.',
+    githubUrl: 'https://github.com/rmit-nct/NEOTicTacToe.git',
+  },
+  {
+    name: 'Neo Flappy Bird',
+    description:
+      'A Flappy Bird game controlled by real-time arm movement via webcam, built with Pygame, OpenCV, and MediaPipe Pose Detection.',
+    type: 'software',
+    techStack: ['Python', 'Pygame'],
+    status: 'completed',
+    semester: 'A/2026',
+    manager: 'Tran Vinh Trong',
+    members: [
+      {
+        name: 'Tran Vinh Trong',
+        role: 'Leader, Tester',
+      },
+      {
+        name: 'Tran Hoang Minh',
+        role: 'Developer',
+      },
+      {
+        name: 'Nguyen Don Gia Phat',
+        role: 'Developer',
+      },
+      {
+        name: 'Nguyen Quoc Khanh',
+        role: 'Developer',
+      },
+      {
+        name: 'Tran Nhat Tien',
+        role: 'Developer',
+      },
+    ],
+    purpose:
+      'The purpose of this project is to help members learn Python and build a gesture and motion capture through webcam that differ from the normal mouse click control',
+    githubUrl: 'https://github.com/rmit-nct/neo-flappy-bird.git',
+  },
+  {
+    name: 'Neo FloodFill',
+    description:
+      'A Python research project implementing, testing, and visualizing two Flood Fill algorithms — Recursive and Queue-based (BFS) — with an interactive Pygame GUI for BFS pathfinding.',
+    type: 'software',
+    techStack: ['Python'],
+    status: 'completed',
+    semester: 'A/2026',
+    manager: 'Vo Minh Triet',
+    members: [
+      {
+        name: 'Vo Minh Triet',
+        role: 'Leader, Tester',
+      },
+      {
+        name: 'Nguyen Hong My Ngoc',
+        role: 'Developer',
+      },
+      {
+        name: 'Nguyen Gia Phuc',
+        role: 'Developer',
+      },
+      {
+        name: 'Ngo Nguyen Quoc Anh',
+        role: 'Developer',
+      },
+    ],
+    purpose:
+      'This project researches and implements Flood Fill from scratch in Python, comparing two different approaches: Recursive & Queue-based, Beyond just filling, we extend the BFS approach to find the shortest path between two points on a grid — visualized step-by-step in both the console and a Pygame GUI',
+    githubUrl: 'https://github.com/rmit-nct/neo-flood-fill.git',
+  },
+  {
+    name: 'Neo Meeting Summarizer',
+    description:
+      'The project aims to build a web-based application that allows users to upload or record a meeting (audio/video), automatically transcribe it, and generate a concise, AI-powered summary of the discussion',
+    type: 'web',
+    techStack: ['React', 'Javascript', 'Typescript', 'Nodejs'],
+    status: 'planning',
+    semester: 'B/2026',
+    manager: 'TBA',
+    members: [
+      {
+        name: 'Dang Minh Tam',
+        role: 'Leader, Tester',
+      },
+      {
+        name: 'Nguyen Tuan Kiet',
+        role: 'Developer',
+      },
+      {
+        name: 'Nguyen Quoc Khanh',
+        role: 'Developer',
+      },
+      {
+        name: 'Tran Hoang Minh',
+        role: 'Developer',
+      },
+      {
+        name: 'Mai Dang Khoa',
+        role: 'Developer',
+      },
+    ],
+    purpose:
+      'The motivation is to save time and reduce information loss in team and club meetings by turning raw recordings into fast, scannable takeaways. ',
+    githubUrl: 'https://github.com/rmit-nct',
+  },
+  {
+    name: 'Neo DrawAI',
+    description:
+      'NEO DrawAI is a real-time collaborative drawing web application where users can interact with this website by using gestures to draw through webcams',
+    type: 'web',
+    techStack: ['React', 'Nextjs', 'Tailwind/Bootstrap', 'Gemini API'],
+    status: 'planning',
+    semester: 'B/2026',
+    manager: 'TBA',
+    members: [
+      {
+        name: 'Tran Duc Khang',
+        role: 'Leader, Tester',
+      },
+      {
+        name: 'Tram Anh Tuan',
+        role: 'Developer',
+      },
+      {
+        name: 'Mai Ho Tuan Anh',
+        role: 'Developer',
+      },
+      {
+        name: 'Tran Vinh Trong',
+        role: 'Developer',
+      },
+    ],
+    purpose:
+      'The website is inspired by the idea of quick doodle recognition games such as Google Quick, Draw!, but NEO DrawAI will focus, AI-assisted guessing and real-time gesture interactions.',
+    githubUrl: 'https://github.com/rmit-nct',
+  },
+  {
+    name: 'Neo Recipe website',
+    description:
+      'NEO Recipe is a full-stack recipe sharing platform where users can discover top-rated recipes and post their own recipe to share it to the community',
+    type: 'web',
+    techStack: ['React', 'Vite', 'Typescript', 'Expressjs', 'Postman'],
+    status: 'planning',
+    semester: 'B/2026',
+    manager: 'TBA',
+    members: [
+      {
+        name: 'Dang Hoang Gia Khanh',
+        role: 'Leader, Tester',
+      },
+      {
+        name: 'Nguyen Gia Phuc',
+        role: 'Developer',
+      },
+      {
+        name: 'Nguyen Huynh Minh Khoa',
+        role: 'Developer',
+      },
+      {
+        name: 'Vo Minh Triet',
+        role: 'Developer',
+      },
+    ],
+    purpose:
+      'The goal is to implement and build an interactive website that allows users to post, share and comment about the food and bakery recipes, all presented in a clean and responsive UI.   ',
+    githubUrl: 'https://github.com/rmit-nct',
+  },
+  {
+    name: 'Neo To-Do List',
+    description: 'TBA',
+    type: 'web',
+    techStack: ['React', 'Vite', 'Typescript'],
+    status: 'planning',
+    semester: 'B/2026',
+    manager: 'TBA',
+    members: [
+      {
+        name: 'Tran Thi Ha Phuong',
+        role: 'Leader, Tester',
+      },
+      {
+        name: 'Nguyen Hong My Ngoc',
+        role: 'Developer',
+      },
+      {
+        name: 'Tran Hong Bao Ngoc',
+        role: 'Developer',
+      },
+      {
+        name: 'Ngo Yen Thy',
+        role: 'Developer',
+      },
+    ],
+    purpose: 'TBA',
+    githubUrl: 'https://github.com/rmit-nct',
+  },
+  {
+    name: 'Neo Messenger Clone',
+    description: 'TBA',
+    type: 'web',
+    techStack: ['React', 'Vite', 'Typescript'],
+    status: 'planning',
+    semester: 'B/2026',
+    manager: 'TBA',
+    members: [
+      {
+        name: 'Duong Chan Phong',
+        role: 'Leader, Tester',
+      },
+      {
+        name: 'Nguyen Dang Quoc An',
+        role: 'Developer',
+      },
+      {
+        name: 'Tran Minh Nghia',
+        role: 'Developer',
+      },
+      {
+        name: 'Nguyen Don Gia Phat',
+        role: 'Developer',
+      },
+    ],
+    purpose: 'TBA',
+    githubUrl: 'https://github.com/rmit-nct',
+  },
+  {
+    name: 'Neo Book Finder',
+    description:
+      'Book Finder is a frontend-only web application that lets users search for books by title, author, or keyword and browse the results — covers, authors, publish years — pulled live from the free, key-less Open Library API',
+    type: 'web',
+    techStack: ['HTML/CSS', 'Javascript', 'REST API'],
+    status: 'planning',
+    semester: 'B/2026',
+    manager: 'TBA',
+    members: [
+      {
+        name: 'Vo Hoang Hung',
+        role: 'Developer',
+      },
+      {
+        name: 'Nguyen Ngoc Quang Dang',
+        role: 'Developer',
+      },
+      {
+        name: 'Nguyen Trong Giap',
+        role: 'Developer',
+      },
+      {
+        name: 'Nguyen Khanh Nguyen',
+        role: 'Developer',
+      },
+    ],
+    purpose:
+      'This is intentionally simple to start (a single search box and a results grid) but leaves clear, natural directions to extend for students who want to go further',
+    githubUrl: 'https://github.com/rmit-nct',
+  },
+  {
+    name: 'React2Shell',
+    description:
+      'This project is an academic deep-dive into CVE-2025-55182, publicly known as “React2Shell” — a critical (CVSS 10.0), unauthenticated remote code execution vulnerability affecting React Server Components and frameworks built on top of them, most notably Next.js (tracked separately as CVE-2025-66478)',
+    type: 'web',
+    techStack: ['Python'],
+    status: 'planning',
+    semester: 'B/2026',
+    manager: 'TBA',
+    members: [
+      {
+        name: 'Nguyen Le Hien Thu',
+        role: 'Developer',
+      },
+      {
+        name: 'Ngo Nguyen Quoc Anh',
+        role: 'Developer',
+      },
+      {
+        name: 'Luong Quoc Viet',
+        role: 'Developer',
+      },
+    ],
+    purpose:
+      'The goal is purely defensive and educational: to understand how the vulnerability class works conceptually, how it has been exploited in real-world campaigns according to public vendor threat intelligence, how to detect exposure to it, and how to mitigate or remediate it',
+    githubUrl: 'https://github.com/rmit-nct',
   },
 ];
