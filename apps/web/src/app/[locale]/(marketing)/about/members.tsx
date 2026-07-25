@@ -29,12 +29,21 @@ const memberDepartments: { name: DepartmentName; color: string }[] = [
   { name: 'Marketing', color: 'text-dynamic-orange' },
 ];
 
+type Generation = 6 | 7 | 8;
+
+const currentGeneration: Generation = 8;
+const availableGenerations: Generation[] = [8, 7, 6];
+
+const getGenerationStatus = (generation: Generation) =>
+  generation === currentGeneration ? 'Current' : 'Legacy';
+
 export default function Members() {
   const [hoveredDepartment, setHoveredDepartment] =
     useState<DepartmentName | null>(null);
   const [lockedDepartment, setLockedDepartment] =
     useState<DepartmentName | null>(null);
-  const [selectedGeneration, setSelectedGeneration] = useState<6 | 7>(7);
+  const [selectedGeneration, setSelectedGeneration] =
+    useState<Generation>(currentGeneration);
 
   const activeDepartment = lockedDepartment || hoveredDepartment;
 
@@ -42,6 +51,10 @@ export default function Members() {
   const currentMembers = members.filter(
     (member) => member.generation === selectedGeneration
   );
+  const visibleDepartments =
+    selectedGeneration === currentGeneration
+      ? memberDepartments.filter((department) => department.name !== 'FinLog')
+      : memberDepartments;
 
   const isHidden = (memberDepartments: DepartmentName[]) => {
     if (!activeDepartment) return false;
@@ -82,7 +95,17 @@ export default function Members() {
       </motion.h1>
 
       <div className="relative mx-auto mt-4 mb-8 max-w-4xl rounded-lg border border-border bg-card p-4 text-center text-base text-foreground/80 tracking-wide md:p-6 md:text-lg">
-        {selectedGeneration === 7 ? (
+        {selectedGeneration === currentGeneration ? (
+          <>
+            Meet the{' '}
+            <span className="font-bold text-brand-light-yellow">
+              Generation {currentGeneration}
+            </span>{' '}
+            team currently leading NEO Culture Tech. This generation carries the
+            club forward through technical events, workshops, trainings, and
+            community programs for SSET students.
+          </>
+        ) : selectedGeneration === 7 ? (
           <>
             RMIT Neo Culture Tech Club mostly operates technical events,
             workshops, trainings, etc… related to technology. Our target
@@ -104,8 +127,8 @@ export default function Members() {
 
       <div className="my-4">
         <div className="w-full px-2 text-center font-medium text-base text-muted-foreground md:px-40 md:text-lg">
-          Our club has 4 core teams:{' '}
-          {memberDepartments.map((department, index) => (
+          Our club has {visibleDepartments.length} core teams:{' '}
+          {visibleDepartments.map((department, index) => (
             <span key={department.name}>
               <span
                 className={`font-semibold ${department.color} cursor-pointer transition-all duration-200 hover:underline ${
@@ -119,7 +142,7 @@ export default function Members() {
               >
                 {department.name}
               </span>
-              {index < memberDepartments.length - 1 && ', '}
+              {index < visibleDepartments.length - 1 && ', '}
             </span>
           ))}
           , with a dedicated{' '}
@@ -151,7 +174,7 @@ export default function Members() {
           {currentMembers.length === 6 ? (
             // Layout for 6 members
             <motion.div
-              className="mt-8 grid grid-cols-1 justify-items-center gap-8 px-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3"
+              className="mx-auto mt-6 grid w-fit grid-cols-1 justify-items-center gap-5 px-4 sm:grid-cols-2 lg:grid-cols-3"
               initial="hidden"
               animate="visible"
               variants={{
@@ -192,7 +215,7 @@ export default function Members() {
             <>
               {/* First row - 4 members */}
               <motion.div
-                className="mt-8 grid grid-cols-1 justify-items-center gap-8 px-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4"
+                className="mx-auto mt-6 grid w-fit grid-cols-1 justify-items-center gap-5 px-4 sm:grid-cols-2 lg:grid-cols-4"
                 initial="hidden"
                 animate="visible"
                 variants={{
@@ -232,7 +255,7 @@ export default function Members() {
               {/* Second row - remaining members centered */}
               {currentMembers.length > 4 && (
                 <motion.div
-                  className="mt-8 grid grid-cols-1 justify-items-center gap-8 px-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3"
+                  className="mx-auto mt-5 grid w-fit grid-cols-1 justify-items-center gap-5 px-4 sm:grid-cols-2 lg:grid-cols-4"
                   initial="hidden"
                   animate="visible"
                   variants={{
@@ -287,38 +310,40 @@ export default function Members() {
             <Select
               value={selectedGeneration.toString()}
               onValueChange={(value) =>
-                setSelectedGeneration(Number(value) as 6 | 7)
+                setSelectedGeneration(Number(value) as Generation)
               }
             >
               <SelectTrigger className="h-10 w-52 border-border bg-card transition-colors hover:bg-muted">
                 <SelectValue placeholder="Select generation..." />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="7" className="focus:bg-brand-light-blue/10">
-                  <div className="flex w-full cursor-pointer items-center gap-2">
-                    <span className="font-medium">Generation 7</span>
-                    <Badge
-                      variant="outline"
-                      className="ml-auto border-brand-light-blue text-brand-light-blue text-xs"
+                {availableGenerations.map((generation) => {
+                  const status = getGenerationStatus(generation);
+
+                  return (
+                    <SelectItem
+                      key={generation}
+                      value={generation.toString()}
+                      className="focus:bg-brand-light-blue/10"
                     >
-                      Current
-                    </Badge>
-                  </div>
-                </SelectItem>
-                <SelectItem
-                  value="6"
-                  className="focus:bg-brand-light-yellow/10"
-                >
-                  <div className="flex w-full cursor-pointer items-center gap-2">
-                    <span className="font-medium">Generation 6</span>
-                    <Badge
-                      variant="outline"
-                      className="ml-auto border-brand-light-yellow text-brand-light-yellow text-xs"
-                    >
-                      Legacy
-                    </Badge>
-                  </div>
-                </SelectItem>
+                      <div className="flex w-full cursor-pointer items-center gap-2">
+                        <span className="font-medium">
+                          Generation {generation}
+                        </span>
+                        <Badge
+                          variant="outline"
+                          className={
+                            status === 'Current'
+                              ? 'ml-auto border-brand-light-blue text-brand-light-blue text-xs'
+                              : 'ml-auto border-brand-light-yellow text-brand-light-yellow text-xs'
+                          }
+                        >
+                          {status}
+                        </Badge>
+                      </div>
+                    </SelectItem>
+                  );
+                })}
               </SelectContent>
             </Select>
           </div>
