@@ -832,7 +832,8 @@ export const projects: Project[] = [
   },
   {
     name: 'Neo To-Do List',
-    description: 'TBA',
+    description:
+      'The product should help a team convert weekly goals into assigned, trackable tasks without becoming a fullproject-management platform',
     type: 'web',
     techStack: ['React', 'Vite', 'Typescript'],
     status: 'planning',
@@ -856,12 +857,14 @@ export const projects: Project[] = [
         role: 'Developer',
       },
     ],
-    purpose: 'TBA',
+    purpose:
+      'The app solves this by centering the experience on a shared weekly sprint board and a personal Today view',
     githubUrl: 'https://github.com/rmit-nct',
   },
   {
     name: 'Neo Messenger Clone',
-    description: 'TBA',
+    description:
+      'The product combines persistent direct and small-group conversations with photo stories that automatically expire after 24 hours',
     type: 'web',
     techStack: ['React', 'Vite', 'Typescript'],
     status: 'planning',
@@ -885,7 +888,8 @@ export const projects: Project[] = [
         role: 'Developer',
       },
     ],
-    purpose: 'TBA',
+    purpose:
+      'The app separates permanent conversation from short-lived visual updates: chat is used for coordination, while stories show what is happening now',
     githubUrl: 'https://github.com/rmit-nct',
   },
   {
