@@ -32,6 +32,10 @@ export const projects: Project[] = [
         role: 'Leader, Developer',
       },
       {
+        name: 'Nguyen Le Vinh Quang',
+        role: ' Developer',
+      },
+      {
         name: 'Phung Cong Khang',
         role: 'Developer',
       },
@@ -916,14 +920,14 @@ export const projects: Project[] = [
     githubUrl: 'https://github.com/rmit-nct',
   },
   {
-    name: 'React2Shell',
+    name: 'Neo React2Shell',
     description:
       'This project is an academic deep-dive into CVE-2025-55182, publicly known as “React2Shell” — a critical (CVSS 10.0), unauthenticated remote code execution vulnerability affecting React Server Components and frameworks built on top of them, most notably Next.js (tracked separately as CVE-2025-66478)',
     type: 'web',
     techStack: ['Python'],
     status: 'planning',
     semester: 'B/2026',
-    manager: 'TBA',
+    manager: 'Nguyen Le Hien Thu',
     members: [
       {
         name: 'Nguyen Le Hien Thu',
@@ -940,6 +944,37 @@ export const projects: Project[] = [
     ],
     purpose:
       'The goal is purely defensive and educational: to understand how the vulnerability class works conceptually, how it has been exploited in real-world campaigns according to public vendor threat intelligence, how to detect exposure to it, and how to mitigate or remediate it',
+    githubUrl: 'https://github.com/rmit-nct',
+  },
+  {
+    name: 'Neo Weather',
+    description:
+      'The device is driven by an ESP32, controlling a set of environmental sensors, streaming temperature, humidity, and pressure data in realtime to a web-based dashboard',
+    type: 'hardware',
+    techStack: ['ESP32'],
+    status: 'planning',
+    semester: 'B/2026',
+    manager: 'TBA',
+    members: [
+      {
+        name: 'Vu Anh Duc',
+        role: 'Developer',
+      },
+      {
+        name: 'Nguyen Phi Hung',
+        role: 'Developer',
+      },
+      {
+        name: 'Lai Huy Vu',
+        role: 'Developer',
+      },
+      {
+        name: 'Nguyen Dinh Song Phuong',
+        role: 'Developer',
+      },
+    ],
+    purpose:
+      'To build a modular platform that allows for the addition of advanced sensors/features',
     githubUrl: 'https://github.com/rmit-nct',
   },
 ];
