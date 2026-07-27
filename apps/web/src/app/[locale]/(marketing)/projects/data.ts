@@ -32,6 +32,10 @@ export const projects: Project[] = [
         role: 'Leader, Developer',
       },
       {
+        name: 'Nguyen Le Vinh Quang',
+        role: ' Developer',
+      },
+      {
         name: 'Phung Cong Khang',
         role: 'Developer',
       },
