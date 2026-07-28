@@ -84,7 +84,7 @@ export default function ProjectDetail({ onClose, data }: ProjectDetailProps) {
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-2 backdrop-blur-sm sm:p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
       initial="hidden"
       animate="visible"
       exit="exit"
@@ -92,7 +92,7 @@ export default function ProjectDetail({ onClose, data }: ProjectDetailProps) {
       onClick={handleBackdropClick}
     >
       <motion.div
-        className="relative max-h-[calc(100vh-1rem)] w-full max-w-4xl overflow-y-auto rounded-2xl border border-brand-light-blue/20 bg-linear-to-br from-background via-card to-brand-light-blue/10 shadow-2xl shadow-brand-light-blue/10 sm:max-h-[90vh] sm:rounded-3xl"
+        className="relative max-h-[calc(100dvh-2rem)] w-full max-w-[22rem] overflow-y-auto rounded-xl border border-brand-light-blue/20 bg-linear-to-br from-background via-card to-brand-light-blue/10 shadow-2xl shadow-brand-light-blue/10 sm:max-h-[90vh] sm:max-w-4xl sm:rounded-3xl"
         variants={MODAL_VARIANTS}
         transition={{ type: 'spring', stiffness: 300, damping: 25 }}
         onClick={handleModalClick}
@@ -108,7 +108,7 @@ export default function ProjectDetail({ onClose, data }: ProjectDetailProps) {
             <X size={20} />
           </button>
 
-          <div className="relative mb-6 h-44 w-full overflow-hidden rounded-xl bg-linear-to-br from-brand-light-yellow/20 to-dynamic-cyan/20 sm:mb-8 sm:h-48 sm:rounded-2xl">
+          <div className="relative mb-5 h-36 w-full overflow-hidden rounded-xl bg-linear-to-br from-brand-light-yellow/20 to-dynamic-cyan/20 sm:mb-8 sm:h-48 sm:rounded-2xl">
             <Image
               src={image || '/media/background/demo.jpg'}
               fill
@@ -133,7 +133,7 @@ export default function ProjectDetail({ onClose, data }: ProjectDetailProps) {
           </div>
 
           <div className="text-center">
-            <h1 className="mb-2 break-words bg-linear-to-r from-brand-light-yellow to-dynamic-cyan bg-clip-text py-2 font-bold text-3xl text-transparent leading-tight sm:text-4xl md:text-5xl md:leading-tight">
+            <h1 className="mb-2 break-words bg-linear-to-r from-brand-light-yellow to-dynamic-cyan bg-clip-text py-1 font-bold text-2xl text-transparent leading-tight sm:py-2 sm:text-4xl md:text-5xl md:leading-tight">
               {name}
             </h1>
             {manager && (
@@ -247,15 +247,17 @@ export default function ProjectDetail({ onClose, data }: ProjectDetailProps) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="min-w-0 rounded-xl border border-border bg-muted/50 p-3 text-center sm:p-4"
+                className="min-w-0 rounded-xl border border-border bg-muted/50 p-2.5 text-center sm:p-4"
               >
                 <div className="mb-2 flex justify-center">
-                  <stat.icon className="h-6 w-6 text-dynamic-cyan" />
+                  <stat.icon className="h-5 w-5 text-dynamic-cyan sm:h-6 sm:w-6" />
                 </div>
-                <p className="break-words font-bold text-foreground text-xl sm:text-2xl">
+                <p className="break-words font-bold text-foreground text-lg sm:text-2xl">
                   {stat.value}
                 </p>
-                <p className="text-muted-foreground text-sm">{stat.label}</p>
+                <p className="text-muted-foreground text-xs sm:text-sm">
+                  {stat.label}
+                </p>
               </motion.div>
             ))}
           </div>
