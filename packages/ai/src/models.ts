@@ -7,11 +7,11 @@ export const models: {
   disabled?: boolean;
 }[] = [
   {
-    value: 'gemini-2.5-pro-preview-05-06',
-    label: 'gemini-2.5-pro-preview-05-06',
+    value: 'gemini-3.1-pro-preview',
+    label: 'gemini-3.1-pro-preview',
     provider: 'Google',
     description:
-      'Gemini 2.5 Pro Preview 05-06 is a multimodal model that supports up to 1 million tokens and excels at long-context tasks.',
+      'Gemini 3.1 Pro Preview is a multimodal reasoning model optimized for software engineering, agentic workflows, precise tool use, and complex multi-step tasks.',
     context: 1024 * 1024,
   },
   {
@@ -31,28 +31,28 @@ export const models: {
     context: 1024 * 1024,
   },
   {
-    value: 'gemini-2.0-flash-001',
-    label: 'gemini-2.0-flash',
+    value: 'gemini-3.6-flash',
+    label: 'gemini-3.6-flash',
     provider: 'Google',
     description:
-      'Gemini 2.0 Flash delivers next-gen features and improved capabilities, including superior speed, native tool use, multimodal generation, and a 1M token context window.',
-    context: 1000000,
+      'Gemini 3.6 Flash is Google’s latest workhorse multimodal model that balances speed and intelligence. It excels at agentic workflows, coding, multimodal reasoning, and long-context tasks with a 1M token context window and improved token efficiency.',
+    context: 1024 * 1024,
   },
   {
-    value: 'gemini-2.0-flash-thinking-exp-01-21',
-    label: 'gemini-2.0-flash-thinking-exp-01-21',
+    value: 'gemini-3.5-flash',
+    label: 'gemini-3.5-flash',
     provider: 'Google',
     description:
-      'Gemini 2.0 Flash Thinking Exp 01-21 is a multimodal model that supports up to 1 million tokens and excels at long-context tasks.',
-    context: 1000000,
+      'Gemini 3.5 Flash is a multimodal model optimized for agentic execution, coding, long-horizon tasks, and complex workflows. It supports thinking and a 1M token context window.',
+    context: 1024 * 1024,
   },
   {
-    value: 'gemini-2.0-flash-lite-preview-02-05',
-    label: 'gemini-2.0-flash-lite-preview-02-05',
+    value: 'gemini-3.1-flash-lite',
+    label: 'gemini-3.1-flash-lite',
     provider: 'Google',
     description:
-      'Gemini 2.0 Flash Lite Preview 02-05 is a multimodal model that supports up to 1 million tokens and excels at long-context tasks.',
-    context: 1000000,
+      'Gemini 3.1 Flash-Lite is a low-latency, cost-effective multimodal model optimized for high-frequency lightweight tasks, data extraction, and high-volume workflows.',
+    context: 1024 * 1024,
   },
 
   {
@@ -72,73 +72,73 @@ export const models: {
     disabled: true,
   },
   {
-    value: 'gemini-2.0-pro-exp-02-05',
-    label: 'gemini-2.0-pro-exp-02-05',
-    provider: 'Google Vertex',
+    value: 'qwen/qwen3.7-plus',
+    label: 'Qwen 3.7 Plus',
+    provider: 'Alibaba',
     description:
-      'Gemini 2.0 Pro Exp 02-05 is a multimodal model that supports up to 1 million tokens and excels at long-context tasks.',
-    context: 2000000,
-  },
-  {
-    value: 'gemini-2.0-flash-001',
-    label: 'gemini-2.0-flash',
-    provider: 'Google Vertex',
-    description:
-      'Gemini 2.0 Flash delivers next-gen features and improved capabilities, including superior speed, native tool use, multimodal generation, and a 1M token context window.',
+      'Qwen 3.7 Plus is a cost-effective multimodal model from Alibaba that supports text and image input. It excels at agentic workflows, coding, tool use, GUI interaction, and productivity tasks with a 1M token context window.',
     context: 1000000,
   },
   {
-    value: 'gemini-2.0-flash-thinking-exp-01-21',
-    label: 'gemini-2.0-flash-thinking-exp-01-21',
-    provider: 'Google Vertex',
+    value: 'XiaomiMiMo/MiMo-V2.5-Pro',
+    label: 'Mimo V2.5 Pro',
+    provider: 'Xiaomi',
     description:
-      'Gemini 2.0 Flash Thinking Exp 01-21 is a multimodal model that supports up to 1 million tokens and excels at long-context tasks.',
-    context: 1000000,
+      'MiMo V2.5 Pro is Xiaomi’s flagship 1.02T-parameter Mixture-of-Experts model (42B active) designed for demanding agentic workflows, complex software engineering, and long-horizon tasks spanning thousands of tool calls, with a 1M token context window.',
+    context: 1024 * 1024,
   },
   {
-    value: 'gemini-2.0-flash-lite-preview-02-05',
-    label: 'gemini-2.0-flash-lite-preview-02-05',
+    value: 'google/gemma-4-31B-it',
+    label: 'gemma-4-31b',
     provider: 'Google Vertex',
     description:
-      'Gemini 2.0 Flash Lite Preview 02-05 is a multimodal model that supports up to 1 million tokens and excels at long-context tasks.',
+      'Gemma 4 31B is Google’s open-weight multimodal model that handles text and image input with configurable thinking modes, native function-calling, native system prompt support, and a 256K token context window.',
+    context: 256 * 1024,
+  },
+  {
+    value: 'deepseek-ai/DeepSeek-V4-Pro',
+    label: 'Deepseek V4 Pro',
+    provider: 'Deepseek',
+    description:
+      'DeepSeek V4 Pro is a 1.6T-parameter (49B active) Mixture-of-Experts model designed for advanced reasoning, coding, and long-horizon agentic workflows. It features a hybrid attention architecture with three configurable reasoning modes (Non-think, Think High, Think Max) and a 1M token context window.',
     context: 1000000,
   },
 
   {
-    value: 'claude-3-5-sonnet-latest',
-    label: 'claude-3.5-sonnet (latest)',
+    value: 'claude-sonnet-5',
+    label: 'claude-5-sonnet (latest)',
     provider: 'Anthropic',
     description:
-      'Claude 3.5 Sonnet strikes the ideal balance between intelligence and speed—particularly for enterprise workloads. It delivers strong performance at a lower cost compared to its peers, and is engineered for high endurance in large-scale AI deployments.',
-    context: 200000,
+      'Claude 5 Sonnet strikes the ideal balance between intelligence and speed—particularly for enterprise workloads. It delivers strong performance at a lower cost compared to its peers, and is engineered for high endurance in large-scale AI deployments.',
+    context: 1000000,
     disabled: true,
   },
   {
-    value: 'claude-3-5-haiku-latest',
-    label: 'claude-3.5-haiku (latest)',
+    value: 'claude-haiku-4-5',
+    label: 'claude-4.5-haiku',
     provider: 'Anthropic',
     description:
-      'Claude 3.5 Haiku is a high-performance model that excels at generating high-quality text. It is ideal for tasks that require a high level of creativity and language understanding.',
+      'Claude 4.5 Haiku is a high-performance model that excels at generating high-quality text. It is ideal for tasks that require a high level of creativity and language understanding.',
     context: 200000,
     disabled: true,
   },
 
   {
-    value: 'llama-3-8b-instruct',
-    label: 'llama-3-8b-instruct',
+    value: 'meta-llama/llama-4-scout-17b-16e-instruct',
+    label: 'llama-4-scout',
     provider: 'Meta',
     description:
-      'Llama is a 8 billion parameter open source model by Meta fine-tuned for instruction following purposes served by Perplexity.',
-    context: 8192,
+      'Llama 4 Scout is a natively multimodal 17B active parameter open-weight model by Meta with 16 experts, an industry-leading 10M token context window, and support for multilingual tasks, coding, tool-calling, and agentic workflows.',
+    context: 10 * 1000 * 1000,
     disabled: true,
   },
   {
-    value: 'llama-3-70b-instruct',
-    label: 'llama-3-70b-instruct',
+    value: 'meta-llama/llama-4-maverick-17b-128e-instruct',
+    label: 'llama-4-maverick',
     provider: 'Meta',
     description:
-      'Llama is a 70 billion parameter open source model by Meta fine-tuned for instruction following purposes served by Perplexity.',
-    context: 8192,
+      'Llama 4 Maverick is a natively multimodal 17B active parameter open-weight model by Meta with 128 experts and 400B total parameters, excelling at reasoning, coding, image understanding, and agentic tasks with a 1M token context window.',
+    context: 1000000,
     disabled: true,
   },
 
@@ -152,13 +152,13 @@ export const models: {
     disabled: true,
   },
   {
-    value: 'mistral-medium',
-    label: 'mistral-medium',
+    value: 'mistral-medium-3-5',
+    label: 'mistral-medium-3.5',
     provider: 'Mistral',
     description:
-      'Mistral Medium is the ideal for intermediate tasks that require moderate reasoning - like Data extraction, Summarizing a Document, Writing a Job Description, or Writing Product Descriptions. Mistral Medium strikes a balance between performance and capability, making it suitable for a wide range of tasks that only require language transformation.',
-    context: 32000,
-    disabled: true,
+      'Mistral Medium 3.5 is a frontier-class multimodal model optimized for agentic and coding use cases.',
+    context: 256 * 1024,
+
   },
   {
     value: 'mistral-large',
@@ -180,21 +180,21 @@ export const models: {
   },
 
   {
-    value: 'gpt-4o',
-    label: 'gpt-4o',
+    value: 'gpt-oss-120b',
+    label: 'gpt-oss-120b',
     provider: 'OpenAI',
     description:
-      'GPT-4o from OpenAI has broad general knowledge and domain expertise allowing it to follow complex instructions in natural language and solve difficult problems accurately. It matches GPT-4 Turbo performance with a faster and cheaper API.',
-    context: 128000,
+      'GPT-OSS 120B is OpenAI’s most powerful open-weight reasoning model, featuring 117 billion total parameters, 5.1 billion active parameters, configurable reasoning effort, tool use, and structured output support.',
+    context: 128 * 1024,
     disabled: true,
   },
   {
-    value: 'gpt-4o-mini',
-    label: 'gpt-4o-mini',
-    provider: 'OpenAI',
+    value: 'hy3',
+    label: 'Tencent Hy3',
+    provider: 'Tencent',
     description:
-      'GPT-4o mini from OpenAI is their most advanced and cost-efficient small model. It is multi-modal (accepting text or image inputs and outputting text) and has higher intelligence than gpt-3.5-turbo but is just as fast.',
-    context: 128000,
+      'Tencent Hy3 is a hybrid fast-and-slow-thinking Mixture-of-Experts model designed for reasoning, coding, long-context tasks, tool use, and agentic workflows.',
+    context: 256 * 1024,
     disabled: true,
   },
 ].sort(
@@ -211,7 +211,7 @@ const fallbackModel = models.find((model) => !model.disabled);
 export const defaultModel: Model | undefined =
   models.find(
     (model) =>
-      model.value === 'gemini-2.0-flash-001' && model.provider === 'Google'
+      model.value === 'gemini-3.1-pro-preview' && model.provider === 'Google'
   ) || fallbackModel;
 
 export const providers: Provider[] = models.reduce((acc, model) => {
