@@ -158,7 +158,6 @@ export const models: {
     description:
       'Mistral Medium 3.5 is a frontier-class multimodal model optimized for agentic and coding use cases.',
     context: 256 * 1024,
-
   },
   {
     value: 'mistral-large',
