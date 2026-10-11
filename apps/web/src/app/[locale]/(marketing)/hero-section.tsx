@@ -1,7 +1,6 @@
 'use client';
 
 import { Button } from '@ncthub/ui/button';
-import { Building2, Code, Users } from '@ncthub/ui/icons';
 import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
@@ -13,19 +12,14 @@ interface SlotImage {
   caption: string;
 }
 
-// Each collage slot slowly crossfades through its own set of photos.
+// Four bento tiles, each crossfading through its own set of photos.
 // NOTE: photo paths are placeholders using existing images — swap to
 // /media/marketing/landing-page/hero/* once those files are added.
-const slotLarge: SlotImage[] = [
+const slotA: SlotImage[] = [
   {
     src: '/club-day/sem-a-2026.jpg',
     alt: 'NCT Club Day 2026',
     caption: 'Club Day',
-  },
-  {
-    src: '/media/marketing/events/netcompany-talk-show.jpg',
-    alt: 'Neo Connect x Netcompany',
-    caption: 'Neo Connect',
   },
   {
     src: '/media/marketing/neo-league/neo-league-2025.png',
@@ -34,7 +28,7 @@ const slotLarge: SlotImage[] = [
   },
 ];
 
-const slotSmallA: SlotImage[] = [
+const slotB: SlotImage[] = [
   {
     src: '/media/marketing/events/netcompany-tour.jpg',
     alt: 'Netcompany company tour',
@@ -47,12 +41,20 @@ const slotSmallA: SlotImage[] = [
   },
 ];
 
-const slotSmallB: SlotImage[] = [
+const slotC: SlotImage[] = [
+  {
+    src: '/media/marketing/events/netcompany-talk-show.jpg',
+    alt: 'Neo Connect x Netcompany',
+    caption: 'Neo Connect',
+  },
   {
     src: '/media/marketing/workshops/cv-workshop.jpg',
     alt: 'CV workshop',
     caption: 'CV Workshop',
   },
+];
+
+const slotD: SlotImage[] = [
   {
     src: '/club-day/sem-c-2025.png',
     alt: 'NCT Club Day 2025',
@@ -118,31 +120,7 @@ function RotatingImage({
   );
 }
 
-const stats = [
-  {
-    number: '70+',
-    content: 'Active Members',
-    icon: Users,
-    gradient: 'from-blue-500 to-cyan-500',
-    description: 'Passionate tech enthusiasts',
-  },
-  {
-    number: '30+',
-    content: 'Student Projects',
-    icon: Code,
-    gradient: 'from-purple-500 to-pink-500',
-    description: 'Innovation driven solutions',
-  },
-  {
-    number: '20+',
-    content: 'Industry Partners',
-    icon: Building2,
-    gradient: 'from-green-500 to-emerald-500',
-    description: 'Leading tech companies',
-  },
-];
-
-// Hard on/off "machine" blink for the recruitment status text.
+// Hard on/off "machine" blink for the recruitment status.
 const BLINK_CSS = `
 @keyframes nct-blink {
   0%, 50% { opacity: 1; }
@@ -157,164 +135,131 @@ const BLINK_CSS = `
 export default function HeroSection() {
   return (
     <motion.section
-      className="my-4 md:my-16"
+      className="flex min-h-[calc(100svh-4rem)] w-full items-center py-10"
       initial={{ opacity: 0, y: 50 }}
       transition={{ duration: 1 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
     >
       <style>{BLINK_CSS}</style>
-      <div className="grid items-start gap-12 lg:grid-cols-2 lg:gap-20">
-        {/* Left Column */}
-        <motion.div
-          initial={{ opacity: 0, x: -30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          viewport={{ once: true }}
-        >
-          {/* Logo */}
-          <div className="mb-6 flex items-center gap-3">
-            <div className="relative h-14 w-14 flex-none overflow-hidden rounded-xl border-2 border-brand-light-blue/20 bg-brand-light-blue/10 p-2 shadow-lg backdrop-blur-sm">
-              <Image
-                src="/media/logos/transparent.png"
-                alt="NCT Logo"
-                fill
-                sizes="56px"
-                className="object-contain p-1"
+      <div className="container mx-auto px-8">
+        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+          {/* Left Column */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            viewport={{ once: true }}
+          >
+            {/* Logo */}
+            <div className="mb-6 flex items-center gap-3">
+              <div className="relative h-14 w-14 flex-none overflow-hidden rounded-xl border-2 border-brand-light-blue/20 bg-brand-light-blue/10 p-2 shadow-lg backdrop-blur-sm">
+                <Image
+                  src="/media/logos/transparent.png"
+                  alt="NCT Logo"
+                  fill
+                  sizes="56px"
+                  className="object-contain p-1"
+                />
+              </div>
+            </div>
+
+            {/* Decorative Title */}
+            <div className="mb-4">
+              <p className="mb-2 font-semibold text-brand-light-blue text-sm uppercase tracking-[0.25em]">
+                Who We Are
+              </p>
+              <h1 className="font-black text-4xl leading-tight tracking-normal md:text-5xl">
+                <span className="text-brand-dark-blue underline decoration-4 decoration-brand-light-yellow underline-offset-8 dark:text-brand-white">
+                  NEO CULTURE
+                </span>
+                <br />
+                <span className="text-brand-light-blue">TECH</span>
+              </h1>
+            </div>
+
+            {/* Description */}
+            <p className="mb-4 font-medium text-foreground text-lg leading-relaxed md:max-w-lg">
+              Founded in 2020, we are the best club for{' '}
+              <span className="border-brand-light-yellow border-b-2 text-brand-light-blue">
+                SSET students
+              </span>{' '}
+              to explore the world of technology at RMIT University.
+            </p>
+
+            {/* Recruitment status */}
+            <div className="mb-8 flex items-center gap-2 font-semibold text-brand-light-blue text-sm">
+              <span className="nct-blink inline-block h-2 w-2 rounded-full bg-green-500" />
+              <span className="nct-blink">
+                Recruitment now for Semester C - 2026
+              </span>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex flex-wrap gap-4">
+              <Button size="lg" asChild>
+                <Link
+                  href="https://rmitnct.site/recruitment"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Join Now
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild>
+                <Link href="/about">Learn More</Link>
+              </Button>
+            </div>
+          </motion.div>
+
+          {/* Right Column — full-height bento of rotating photos */}
+          {/* Height knob: tweak `h-[60vh]` (mobile) / `lg:h-[calc(100svh-9rem)]`
+              (desktop = viewport − navbar − section padding). */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            viewport={{ once: true }}
+            className="grid h-[60vh] grid-cols-2 grid-rows-3 gap-4 lg:h-[calc(100svh-9rem)]"
+          >
+            {/* Tile A — tall (col 1, rows 1–2) */}
+            <div className="group relative col-start-1 row-span-2 row-start-1 overflow-hidden rounded-2xl shadow-xl transition-all duration-500 hover:shadow-2xl">
+              <RotatingImage
+                images={slotA}
+                sizes="(max-width: 1023px) 50vw, 25vw"
+                intervalMs={5000}
+                priority
               />
             </div>
-          </div>
 
-          {/* Decorative Title */}
-          <div className="mb-4">
-            <p className="mb-2 font-semibold text-brand-light-blue text-sm uppercase tracking-[0.25em]">
-              Who We Are
-            </p>
-            <h1 className="font-black text-4xl leading-tight tracking-normal md:text-5xl">
-              <span className="text-brand-dark-blue underline decoration-4 decoration-brand-light-yellow underline-offset-8 dark:text-brand-white">
-                NEO CULTURE
-              </span>
-              <br />
-              <span className="text-brand-light-blue">TECH</span>
-            </h1>
-          </div>
-
-          {/* Description */}
-          <p className="mb-8 font-medium text-foreground text-lg leading-relaxed md:max-w-lg">
-            Founded in 2020, we are the best club for{' '}
-            <span className="border-brand-light-yellow border-b-2 text-brand-light-blue">
-              SSET students
-            </span>{' '}
-            to explore the world of technology at RMIT University.
-          </p>
-
-          {/* Recruitment status */}
-          <div className="mb-3 flex items-center gap-2 font-semibold text-brand-light-blue text-sm">
-            <span className="nct-blink inline-block h-2 w-2 rounded-full bg-green-500" />
-            <span className="nct-blink">
-              Recruitment now for Semester C - 2026
-            </span>
-          </div>
-
-          {/* Buttons */}
-          <div className="mb-12 flex flex-wrap gap-4">
-            <Button size="lg" asChild>
-              <Link
-                href="https://rmitnct.site/recruitment"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Join Us
-              </Link>
-            </Button>
-            <Button size="lg" variant="outline" asChild>
-              <Link href="/about">Learn More</Link>
-            </Button>
-          </div>
-
-          {/* Stats */}
-          <div className="grid grid-cols-3 gap-4">
-            {stats.map((item, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.5 + index * 0.15 }}
-                viewport={{ once: true }}
-                className="group relative flex flex-col items-center gap-2 overflow-hidden rounded-xl border border-border/50 bg-background/50 px-4 py-3 backdrop-blur-sm transition-all duration-300 hover:border-primary/30"
-              >
-                {/* Background gradient effect */}
-                <div
-                  className={`absolute inset-0 bg-linear-to-br ${item.gradient} opacity-0 transition-opacity duration-300 group-hover:opacity-10`}
-                />
-
-                {/* Icon */}
-                <div
-                  className={`h-10 w-10 flex-none rounded-full bg-linear-to-r ${item.gradient} p-0.5`}
-                >
-                  <div className="flex h-full w-full items-center justify-center rounded-full bg-background">
-                    <item.icon className="h-5 w-5 text-foreground" />
-                  </div>
-                </div>
-
-                {/* Number + label */}
-                <h3
-                  className={`bg-linear-to-r font-extrabold text-3xl ${item.gradient} bg-clip-text text-transparent`}
-                >
-                  {item.number}
-                </h3>
-                <div className="flex flex-col items-center gap-1 text-center">
-                  <span className="truncate font-semibold text-sm">
-                    {item.content}
-                  </span>
-                  <p className="text-muted-foreground text-xs">
-                    {item.description}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Right Column — 3 Images with glow */}
-        <motion.div
-          initial={{ opacity: 0, x: 30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          viewport={{ once: true }}
-          className="relative"
-        >
-          {/* Rounded glow behind images */}
-          <div className="-translate-1/2 absolute inset-1/2 -z-10 aspect-square h-full rounded-full bg-brand-light-blue/20 blur-2xl" />
-
-          {/* Large top image */}
-          <div className="group relative aspect-4/3 overflow-hidden rounded-2xl shadow-2xl transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
-            <RotatingImage
-              images={slotLarge}
-              sizes="(max-width: 1023px) 100vw, 50vw"
-              intervalMs={5000}
-              priority
-            />
-          </div>
-
-          {/* Two sub-images, staggered */}
-          <div className="mt-4 grid grid-cols-2 gap-4 pt-10">
-            <div className="group relative aspect-3/2 -translate-y-8 overflow-hidden rounded-xl shadow-xl transition-all duration-500 hover:-translate-y-10 hover:shadow-2xl">
+            {/* Tile B — short (col 2, row 1) */}
+            <div className="group relative col-start-2 row-start-1 overflow-hidden rounded-2xl shadow-xl transition-all duration-500 hover:shadow-2xl">
               <RotatingImage
-                images={slotSmallA}
+                images={slotB}
                 sizes="(max-width: 1023px) 50vw, 25vw"
                 intervalMs={6000}
               />
             </div>
-            <div className="group relative aspect-3/2 translate-y-2 overflow-hidden rounded-xl shadow-xl transition-all duration-500 hover:translate-y-0 hover:shadow-2xl">
+
+            {/* Tile C — tall (col 2, rows 2–3) */}
+            <div className="group relative col-start-2 row-span-2 row-start-2 overflow-hidden rounded-2xl shadow-xl transition-all duration-500 hover:shadow-2xl">
               <RotatingImage
-                images={slotSmallB}
+                images={slotC}
                 sizes="(max-width: 1023px) 50vw, 25vw"
                 intervalMs={5500}
               />
             </div>
-          </div>
-        </motion.div>
+
+            {/* Tile D — short (col 1, row 3) */}
+            <div className="group relative col-start-1 row-start-3 overflow-hidden rounded-2xl shadow-xl transition-all duration-500 hover:shadow-2xl">
+              <RotatingImage
+                images={slotD}
+                sizes="(max-width: 1023px) 50vw, 25vw"
+                intervalMs={6500}
+              />
+            </div>
+          </motion.div>
+        </div>
       </div>
     </motion.section>
   );
