@@ -1,7 +1,8 @@
 'use client';
 
 import { Button } from '@ncthub/ui/button';
-import { motion, useReducedMotion } from 'framer-motion';
+import { cn } from '@ncthub/utils/format';
+import { LayoutGroup, motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { Link } from '@/i18n/routing';
@@ -12,10 +13,10 @@ interface SlotImage {
   caption: string;
 }
 
-// Four bento tiles, each crossfading through its own set of photos.
+// Three gallery tiles, each crossfading through its own set of photos.
 // NOTE: photo paths are placeholders using existing images — swap to
 // /media/marketing/landing-page/hero/* once those files are added.
-const slotA: SlotImage[] = [
+const slot1: SlotImage[] = [
   {
     src: '/club-day/sem-a-2026.jpg',
     alt: 'NCT Club Day 2026',
@@ -26,13 +27,23 @@ const slotA: SlotImage[] = [
     alt: 'NEO League',
     caption: 'NEO League',
   },
+  {
+    src: '/media/marketing/events/netcompany-talk-show.jpg',
+    alt: 'Neo Connect x Netcompany',
+    caption: 'Neo Connect',
+  },
 ];
 
-const slotB: SlotImage[] = [
+const slot2: SlotImage[] = [
   {
     src: '/media/marketing/events/netcompany-tour.jpg',
     alt: 'Netcompany company tour',
     caption: 'Company Tour',
+  },
+  {
+    src: '/media/marketing/workshops/cv-workshop.jpg',
+    alt: 'CV workshop',
+    caption: 'CV Workshop',
   },
   {
     src: '/media/marketing/neo-league/neo-league-2026.png',
@@ -41,20 +52,7 @@ const slotB: SlotImage[] = [
   },
 ];
 
-const slotC: SlotImage[] = [
-  {
-    src: '/media/marketing/events/netcompany-talk-show.jpg',
-    alt: 'Neo Connect x Netcompany',
-    caption: 'Neo Connect',
-  },
-  {
-    src: '/media/marketing/workshops/cv-workshop.jpg',
-    alt: 'CV workshop',
-    caption: 'CV Workshop',
-  },
-];
-
-const slotD: SlotImage[] = [
+const slot3: SlotImage[] = [
   {
     src: '/club-day/sem-c-2025.png',
     alt: 'NCT Club Day 2025',
@@ -65,6 +63,12 @@ const slotD: SlotImage[] = [
     alt: 'NCT Club Day 2024',
     caption: 'Club Day',
   },
+];
+
+const GALLERY = [
+  { id: 'a', images: slot1, intervalMs: 5000 },
+  { id: 'b', images: slot2, intervalMs: 6000 },
+  { id: 'c', images: slot3, intervalMs: 5500 },
 ];
 
 function RotatingImage({
@@ -120,6 +124,95 @@ function RotatingImage({
   );
 }
 
+// Click-to-expand gallery: two tiles share a row; the third spans a full row.
+// Clicking a tile expands it and swaps a neighbour to the other row.
+function ExpandingPhotoGrid() {
+  const [layout, setLayout] = useState(() => ({
+    row1: GALLERY.slice(0, 2).map((s) => s.id),
+    row2: GALLERY.slice(2).map((s) => s.id),
+  }));
+
+  const handleExpand = (id: string) => {
+    const inRow1 = layout.row1.includes(id);
+    const inRow2 = layout.row2.includes(id);
+    if (
+      (inRow1 && layout.row1.length === 1) ||
+      (inRow2 && layout.row2.length === 1)
+    )
+      return;
+
+    if (inRow1) {
+      const neighbor = layout.row1.find((i) => i !== id);
+      if (!neighbor) return;
+      setLayout({
+        row1: [id],
+        row2: [neighbor, ...layout.row2.filter((i) => i !== neighbor)].slice(
+          0,
+          2
+        ),
+      });
+    } else {
+      const neighbor = layout.row2.find((i) => i !== id);
+      if (!neighbor) return;
+      setLayout({
+        row1: [neighbor, ...layout.row1.filter((i) => i !== neighbor)].slice(
+          0,
+          2
+        ),
+        row2: [id],
+      });
+    }
+  };
+
+  return (
+    <LayoutGroup id="hero-gallery">
+      <motion.div
+        layout
+        className="grid h-[60vh] grid-cols-2 grid-rows-2 gap-4 lg:h-[calc(100svh-9rem)]"
+      >
+        {GALLERY.map((slot) => {
+          const isRow1 = layout.row1.includes(slot.id);
+          const rowArr = isRow1 ? layout.row1 : layout.row2;
+          const isSelected = rowArr.length === 1 && rowArr[0] === slot.id;
+          const gridRow = isRow1 ? 1 : 2;
+          let gridColumn = '2';
+          if (isSelected) gridColumn = '1 / span 2';
+          else if (isRow1) {
+            gridColumn = layout.row1.indexOf(slot.id) === 0 ? '1' : '2';
+          } else {
+            gridColumn = layout.row2.indexOf(slot.id) === 0 ? '1' : '2';
+          }
+
+          return (
+            <motion.button
+              key={slot.id}
+              type="button"
+              layoutId={`hero-gallery-${slot.id}`}
+              onClick={() => handleExpand(slot.id)}
+              style={{ gridRow, gridColumn }}
+              className={cn(
+                'group relative h-full w-full cursor-pointer overflow-hidden rounded-2xl shadow-xl transition-shadow duration-500 hover:shadow-2xl',
+                isSelected ? 'z-30' : 'z-10'
+              )}
+              transition={{
+                layout: { type: 'spring', stiffness: 100, damping: 25 },
+              }}
+              aria-label={`Expand ${slot.images[0]?.caption ?? 'photo'}`}
+            >
+              <RotatingImage
+                images={slot.images}
+                sizes="(max-width: 1023px) 50vw, 25vw"
+                intervalMs={slot.intervalMs}
+                priority={slot.id === 'a'}
+              />
+            </motion.button>
+          );
+        })}
+      </motion.div>
+    </LayoutGroup>
+  );
+}
+
 // Hard on/off "machine" blink for the recruitment status.
 const BLINK_CSS = `
 @keyframes nct-blink {
@@ -143,7 +236,7 @@ export default function HeroSection() {
     >
       <style>{BLINK_CSS}</style>
       <div className="container mx-auto px-8">
-        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-10">
           {/* Left Column */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -166,10 +259,10 @@ export default function HeroSection() {
 
             {/* Decorative Title */}
             <div className="mb-4">
-              <p className="mb-2 font-semibold text-brand-light-blue text-sm uppercase tracking-[0.25em]">
+              <p className="mb-2 font-semibold text-brand-light-blue text-md uppercase tracking-[0.25em]">
                 Who We Are
               </p>
-              <h1 className="font-black text-4xl leading-tight tracking-normal md:text-5xl">
+              <h1 className="font-black text-4xl leading-tight tracking-normal md:text-6xl">
                 <span className="text-brand-dark-blue underline decoration-4 decoration-brand-light-yellow underline-offset-8 dark:text-brand-white">
                   NEO CULTURE
                 </span>
@@ -212,52 +305,16 @@ export default function HeroSection() {
             </div>
           </motion.div>
 
-          {/* Right Column — full-height bento of rotating photos */}
+          {/* Right Column — click-to-expand gallery of rotating photos */}
           {/* Height knob: tweak `h-[60vh]` (mobile) / `lg:h-[calc(100svh-9rem)]`
-              (desktop = viewport − navbar − section padding). */}
+              inside ExpandingPhotoGrid. */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
             viewport={{ once: true }}
-            className="grid h-[60vh] grid-cols-2 grid-rows-3 gap-4 lg:h-[calc(100svh-9rem)]"
           >
-            {/* Tile A — tall (col 1, rows 1–2) */}
-            <div className="group relative col-start-1 row-span-2 row-start-1 overflow-hidden rounded-2xl shadow-xl transition-all duration-500 hover:shadow-2xl">
-              <RotatingImage
-                images={slotA}
-                sizes="(max-width: 1023px) 50vw, 25vw"
-                intervalMs={5000}
-                priority
-              />
-            </div>
-
-            {/* Tile B — short (col 2, row 1) */}
-            <div className="group relative col-start-2 row-start-1 overflow-hidden rounded-2xl shadow-xl transition-all duration-500 hover:shadow-2xl">
-              <RotatingImage
-                images={slotB}
-                sizes="(max-width: 1023px) 50vw, 25vw"
-                intervalMs={6000}
-              />
-            </div>
-
-            {/* Tile C — tall (col 2, rows 2–3) */}
-            <div className="group relative col-start-2 row-span-2 row-start-2 overflow-hidden rounded-2xl shadow-xl transition-all duration-500 hover:shadow-2xl">
-              <RotatingImage
-                images={slotC}
-                sizes="(max-width: 1023px) 50vw, 25vw"
-                intervalMs={5500}
-              />
-            </div>
-
-            {/* Tile D — short (col 1, row 3) */}
-            <div className="group relative col-start-1 row-start-3 overflow-hidden rounded-2xl shadow-xl transition-all duration-500 hover:shadow-2xl">
-              <RotatingImage
-                images={slotD}
-                sizes="(max-width: 1023px) 50vw, 25vw"
-                intervalMs={6500}
-              />
-            </div>
+            <ExpandingPhotoGrid />
           </motion.div>
         </div>
       </div>
