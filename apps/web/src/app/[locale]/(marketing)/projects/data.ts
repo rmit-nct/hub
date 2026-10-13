@@ -23,7 +23,7 @@ export const projects: Project[] = [
       'A drone project powered by the ESP32 microcontroller and programmed with ESP-IDF 5.0. The drone is controlled remotely using the ESP-Drone mobile app (Android), leveraging Wi-Fi communication for real-time flight control and navigation.',
     type: 'hardware',
     techStack: ['ESP32', 'C++', 'Dabble', 'Bluetooth Module'],
-    status: 'ongoing',
+    status: 'completed',
     semester: 'B/2025',
     manager: 'Truong Minh Phu',
     members: [
@@ -58,7 +58,7 @@ export const projects: Project[] = [
       'A robotics project using an ESP32 microcontroller, Bluetooth module, and the Dabble mobile app to remotely control a spider-like robot. The system allows wireless movement control and interactive commands through a smartphone interface.',
     type: 'hardware',
     techStack: ['ESP32', 'C++', 'Dabble', 'Bluetooth Module'],
-    status: 'ongoing',
+    status: 'completed',
     semester: 'B/2025',
     manager: 'Tran Viet Duc',
     members: [
@@ -739,9 +739,9 @@ export const projects: Project[] = [
       'The project aims to build a web-based application that allows users to upload or record a meeting (audio/video), automatically transcribe it, and generate a concise, AI-powered summary of the discussion',
     type: 'web',
     techStack: ['React', 'Javascript', 'Typescript', 'Nodejs'],
-    status: 'planning',
+    status: 'completed',
     semester: 'B/2026',
-    manager: 'TBA',
+    manager: 'Tran Hoang Minh',
     members: [
       {
         name: 'Dang Minh Tam',
@@ -766,7 +766,7 @@ export const projects: Project[] = [
     ],
     purpose:
       'The motivation is to save time and reduce information loss in team and club meetings by turning raw recordings into fast, scannable takeaways. ',
-    githubUrl: 'https://github.com/rmit-nct',
+    githubUrl: 'https://github.com/rmit-nct/Meeting-Summarizer.git',
   },
   {
     name: 'Neo DrawAI',
@@ -774,9 +774,9 @@ export const projects: Project[] = [
       'NEO DrawAI is a real-time collaborative drawing web application where users can interact with this website by using gestures to draw through webcams',
     type: 'web',
     techStack: ['React', 'Nextjs', 'Tailwind/Bootstrap', 'Gemini API'],
-    status: 'planning',
+    status: 'completed',
     semester: 'B/2026',
-    manager: 'TBA',
+    manager: 'Tran Vinh Trong',
     members: [
       {
         name: 'Tran Duc Khang',
@@ -797,7 +797,7 @@ export const projects: Project[] = [
     ],
     purpose:
       'The website is inspired by the idea of quick doodle recognition games such as Google Quick, Draw!, but NEO DrawAI will focus, AI-assisted guessing and real-time gesture interactions.',
-    githubUrl: 'https://github.com/rmit-nct',
+    githubUrl: 'https://github.com/rmit-nct/DrawAI.git',
   },
   {
     name: 'Neo Recipe website',
@@ -805,9 +805,9 @@ export const projects: Project[] = [
       'NEO Recipe is a full-stack recipe sharing platform where users can discover top-rated recipes and post their own recipe to share it to the community',
     type: 'web',
     techStack: ['React', 'Vite', 'Typescript', 'Expressjs', 'Postman'],
-    status: 'planning',
+    status: 'completed',
     semester: 'B/2026',
-    manager: 'TBA',
+    manager: 'Dang Hoang Gia Khanh',
     members: [
       {
         name: 'Dang Hoang Gia Khanh',
@@ -828,7 +828,7 @@ export const projects: Project[] = [
     ],
     purpose:
       'The goal is to implement and build an interactive website that allows users to post, share and comment about the food and bakery recipes, all presented in a clean and responsive UI.   ',
-    githubUrl: 'https://github.com/rmit-nct',
+    githubUrl: 'https://github.com/rmit-nct/Recipe-Website.git',
   },
   {
     name: 'Neo To-Do List',
@@ -836,9 +836,9 @@ export const projects: Project[] = [
       'The product should help a team convert weekly goals into assigned, trackable tasks without becoming a fullproject-management platform',
     type: 'web',
     techStack: ['React', 'Vite', 'Typescript'],
-    status: 'planning',
+    status: 'completed',
     semester: 'B/2026',
-    manager: 'TBA',
+    manager: 'Tran Hong Bao Ngoc',
     members: [
       {
         name: 'Tran Thi Ha Phuong',
@@ -859,7 +859,7 @@ export const projects: Project[] = [
     ],
     purpose:
       'The app solves this by centering the experience on a shared weekly sprint board and a personal Today view',
-    githubUrl: 'https://github.com/rmit-nct',
+    githubUrl: 'https://github.com/rmit-nct/ToDo-List.git',
   },
   {
     name: 'Neo Messenger Clone',
@@ -867,9 +867,9 @@ export const projects: Project[] = [
       'The product combines persistent direct and small-group conversations with photo stories that automatically expire after 24 hours',
     type: 'web',
     techStack: ['React', 'Vite', 'Typescript'],
-    status: 'planning',
+    status: 'completed',
     semester: 'B/2026',
-    manager: 'TBA',
+    manager: 'Tran Nhat Tien',
     members: [
       {
         name: 'Duong Chan Phong',
@@ -887,6 +887,10 @@ export const projects: Project[] = [
         name: 'Nguyen Don Gia Phat',
         role: 'Developer',
       },
+      {
+        name: 'Tran Nhat Tien',
+        role: 'Developer',
+      },
     ],
     purpose:
       'The app separates permanent conversation from short-lived visual updates: chat is used for coordination, while stories show what is happening now',
@@ -898,9 +902,9 @@ export const projects: Project[] = [
       'Book Finder is a frontend-only web application that lets users search for books by title, author, or keyword and browse the results — covers, authors, publish years — pulled live from the free, key-less Open Library API',
     type: 'web',
     techStack: ['HTML/CSS', 'Javascript', 'REST API'],
-    status: 'planning',
+    status: 'ongoing',
     semester: 'B/2026',
-    manager: 'TBA',
+    manager: 'Vo Hoang Hung',
     members: [
       {
         name: 'Vo Hoang Hung',
@@ -921,7 +925,7 @@ export const projects: Project[] = [
     ],
     purpose:
       'This is intentionally simple to start (a single search box and a results grid) but leaves clear, natural directions to extend for students who want to go further',
-    githubUrl: 'https://github.com/rmit-nct',
+    githubUrl: 'https://github.com/rmit-nct/Book-Finder.git',
   },
   {
     name: 'Neo React2Shell',
@@ -929,7 +933,7 @@ export const projects: Project[] = [
       'This project is an academic deep-dive into CVE-2025-55182, publicly known as “React2Shell” — a critical (CVSS 10.0), unauthenticated remote code execution vulnerability affecting React Server Components and frameworks built on top of them, most notably Next.js (tracked separately as CVE-2025-66478)',
     type: 'web',
     techStack: ['Python'],
-    status: 'planning',
+    status: 'completed',
     semester: 'B/2026',
     manager: 'Nguyen Le Hien Thu',
     members: [
@@ -948,7 +952,7 @@ export const projects: Project[] = [
     ],
     purpose:
       'The goal is purely defensive and educational: to understand how the vulnerability class works conceptually, how it has been exploited in real-world campaigns according to public vendor threat intelligence, how to detect exposure to it, and how to mitigate or remediate it',
-    githubUrl: 'https://github.com/rmit-nct',
+    githubUrl: 'https://github.com/rmit-nct/React2Shell.git',
   },
   {
     name: 'Neo Weather',
@@ -956,9 +960,9 @@ export const projects: Project[] = [
       'The device is driven by an ESP32, controlling a set of environmental sensors, streaming temperature, humidity, and pressure data in realtime to a web-based dashboard',
     type: 'hardware',
     techStack: ['ESP32'],
-    status: 'planning',
+    status: 'completed',
     semester: 'B/2026',
-    manager: 'TBA',
+    manager: 'Vu Anh Duc',
     members: [
       {
         name: 'Vu Anh Duc',
@@ -979,6 +983,6 @@ export const projects: Project[] = [
     ],
     purpose:
       'To build a modular platform that allows for the addition of advanced sensors/features',
-    githubUrl: 'https://github.com/rmit-nct',
+    githubUrl: 'https://github.com/rmit-nct/NeoWeather.git',
   },
 ];
