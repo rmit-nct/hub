@@ -259,9 +259,6 @@ export default function HeroSection() {
 
             {/* Decorative Title */}
             <div className="mb-4">
-              <p className="mb-2 font-semibold text-brand-light-blue text-md uppercase tracking-[0.25em]">
-                Who We Are
-              </p>
               <h1 className="font-black text-4xl leading-tight tracking-normal md:text-6xl">
                 <span className="text-brand-dark-blue underline decoration-4 decoration-brand-light-yellow underline-offset-8 dark:text-brand-white">
                   NEO CULTURE
