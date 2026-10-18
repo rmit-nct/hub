@@ -1,6 +1,7 @@
 'use client';
 
-import { Code, Users } from '@ncthub/ui/icons';
+import { Badge } from '@ncthub/ui/badge';
+import { Building2, Code, Rocket, Sparkles, Users } from '@ncthub/ui/icons';
 import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
@@ -38,6 +39,31 @@ const techPhotos: Photo[] = [
 // Logo variants: bright full-color for the light box, neon for the dark box.
 const LOGO_LIGHT = '/media/logos/transparent/light-logo-only-transparent.png';
 const LOGO_DARK = '/media/logos/transparent/dark-logo-only-transparent.png';
+
+// Quick stats shown beside the slogan — each with its own gradient + icon.
+const aboutStats = [
+  {
+    number: '70+',
+    label: 'Active Members',
+    gradient: 'from-cyan-400 to-blue-500',
+    icon: Users,
+    iconColor: 'text-cyan-400',
+  },
+  {
+    number: '30+',
+    label: 'Student Projects',
+    gradient: 'from-violet-400 to-purple-500',
+    icon: Rocket,
+    iconColor: 'text-violet-400',
+  },
+  {
+    number: '20+',
+    label: 'Industry Partners',
+    gradient: 'from-emerald-400 to-green-500',
+    icon: Building2,
+    iconColor: 'text-emerald-400',
+  },
+];
 
 function PolaroidCard({
   photo,
@@ -80,14 +106,95 @@ function PolaroidStack({ photos }: { photos: Photo[] }) {
   );
 }
 
-// Reusable section eyebrow: short line + — LABEL (standard for every section).
-function SectionEyebrow({ label }: { label: string }) {
+// Auto-scrolling "wall of moments" strip under the two divisions.
+const stripPhotos: { src: string; alt: string; caption: string }[] = [
+  { src: '/club-day/sem-a-2026.jpg', alt: 'NCT Club Day', caption: 'Club Day' },
+  {
+    src: '/media/marketing/events/netcompany-tour.jpg',
+    alt: 'Company tour',
+    caption: 'Company Tour',
+  },
+  {
+    src: '/media/marketing/neo-league/neo-league-2025.png',
+    alt: 'NEO League',
+    caption: 'NEO League',
+  },
+  {
+    src: '/media/marketing/workshops/cv-workshop.jpg',
+    alt: 'CV workshop',
+    caption: 'CV Workshop',
+  },
+  { src: '/club-day/sem-b-2024.jpg', alt: 'NCT Club Day', caption: 'Club Day' },
+  {
+    src: '/media/marketing/events/netcompany-talk-show.jpg',
+    alt: 'Neo Connect',
+    caption: 'Neo Connect',
+  },
+  { src: '/club-day/sem-c-2025.png', alt: 'NCT Club Day', caption: 'Club Day' },
+  {
+    src: '/media/marketing/neo-league/neo-league-2026.png',
+    alt: 'NEO League',
+    caption: 'NEO League',
+  },
+];
+
+const MARQUEE_CSS = `
+@keyframes nct-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.nct-marquee-track { animation: nct-marquee 45s linear infinite; }
+.nct-marquee-track-rev { animation: nct-marquee 45s linear infinite reverse; }
+.nct-marquee:hover .nct-marquee-track,
+.nct-marquee:hover .nct-marquee-track-rev { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .nct-marquee-track, .nct-marquee-track-rev { animation: none; }
+}
+`;
+
+function MarqueeRow({
+  photos,
+  reverse = false,
+}: {
+  photos: typeof stripPhotos;
+  reverse?: boolean;
+}) {
+  const tiles = [...photos, ...photos];
   return (
-    <div className="flex items-center justify-center gap-3">
-      <span className="h-px w-8 bg-brand-light-blue" />
-      <span className="font-semibold text-brand-light-blue text-sm uppercase tracking-[0.25em]">
-        {label}
-      </span>
+    <div className="nct-marquee w-full overflow-hidden [-webkit-mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)] [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
+      <div
+        className={`flex w-max ${reverse ? 'nct-marquee-track-rev' : 'nct-marquee-track'}`}
+      >
+        {tiles.map((photo, i) => (
+          <div
+            key={`${photo.src}-${i}`}
+            className="group relative mr-4 h-32 w-48 shrink-0 overflow-hidden rounded-xl shadow-md sm:h-40 sm:w-60"
+          >
+            <Image
+              src={photo.src}
+              alt={photo.alt}
+              fill
+              sizes="240px"
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+            {/* hover caption */}
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+            <span className="pointer-events-none absolute bottom-2 left-3 font-semibold text-sm text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+              {photo.caption}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function PhotoStrip() {
+  return (
+    <div className="mt-8 flex flex-col gap-4">
+      <style>{MARQUEE_CSS}</style>
+      <MarqueeRow photos={stripPhotos} />
+      <MarqueeRow photos={[...stripPhotos].reverse()} reverse />
     </div>
   );
 }
@@ -101,10 +208,6 @@ export default function WhoWeAre() {
 
   const isDark = mounted && resolvedTheme?.includes('dark');
   const logoSrc = isDark ? LOGO_DARK : LOGO_LIGHT;
-  // Light theme → bright white box; dark theme → subtle dark box.
-  const boxClass = isDark
-    ? 'border-white/15 bg-white/5 ring-1 ring-brand-light-blue/30 shadow-2xl'
-    : 'border-brand-light-blue/20 bg-white ring-2 ring-brand-light-yellow/60 shadow-[0_12px_50px_-12px_rgba(0,0,0,0.55)]';
   const neoClass = isDark ? 'text-brand-white' : 'text-brand-dark-blue';
 
   const reveal = (delay = 0) =>
@@ -119,75 +222,85 @@ export default function WhoWeAre() {
 
   return (
     <section className="container mx-auto p-6 sm:px-8">
-      <div className="rounded-[2rem] bg-brand-dark-blue px-6 py-10 text-white sm:px-10 sm:py-20 md:rounded-[2.5rem] md:px-0 md:py-18">
-        {/* Header + description — centered */}
-        <motion.div {...reveal()}>
-          <SectionEyebrow label="Who We Are" />
-          <p className="mx-auto mt-5 max-w-5xl text-center font-medium text-base text-white/70 leading-relaxed sm:text-lg">
-            A student-run community at RMIT for anyone who loves both the{' '}
-            <span className="font-semibold text-amber-400">culture</span> and
-            the{' '}
-            <span className="font-semibold text-brand-light-blue">
-              craft of technology
-            </span>
-            . Since 2020 we've grown into{' '}
-            <span className="font-semibold text-white">one club</span> with two
-            passions — people and projects — where members learn, build, and
-            belong, side by side.
-          </p>
+      {/* Header + subheadline (above the panel, on the page background) */}
+      <div className="mb-10 text-center">
+        <motion.div
+          initial={reduceMotion ? false : { opacity: 0, scale: 0.8 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          viewport={{ once: true }}
+          className="mb-6 inline-flex items-center gap-2"
+        >
+          <Sparkles className="h-6 w-6 text-brand-light-yellow" />
+          <Badge
+            variant="outline"
+            className="border-brand-light-blue/50 px-4 py-2 text-base text-brand-light-blue"
+          >
+            About the Club
+          </Badge>
+          <Sparkles className="h-6 w-6 text-brand-light-yellow" />
         </motion.div>
 
+        <h2 className="mb-4 pb-4 font-bold text-4xl md:text-6xl lg:text-8xl">
+          Who{' '}
+          <span className="whitespace-nowrap border-brand-light-yellow border-b-4 text-brand-light-blue">
+            We Are
+          </span>
+        </h2>
+
+        <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+          A tech community to connect, create, and grow together
+        </p>
+      </div>
+
+      {/* Panel (matches the Memorable Moments card bg) — logo brand + split */}
+      <div className="rounded-3xl border border-border/50 bg-background/60 px-6 py-16 shadow-2xl backdrop-blur-xl sm:px-10 sm:py-20 md:p-10">
         {/* Identity — centered, flanked by the two division icons */}
         <motion.div
           {...reveal(0.06)}
-          className="mt-12 flex items-center justify-center gap-4 sm:gap-8"
+          className="flex items-center justify-center gap-3 sm:gap-4 md:gap-6"
         >
-          <Users
-            aria-hidden="true"
-            className="hidden h-8 w-8 flex-none text-amber-400 sm:block md:h-10 md:w-10"
-          />
-          <div
-            className={`flex items-center gap-3 rounded-2xl border px-5 py-4 backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] sm:gap-4 sm:px-6 sm:py-5 md:gap-3 ${boxClass}`}
-          >
-            <div className="relative h-20 w-20 flex-none sm:h-24 sm:w-24 md:h-28 md:w-28">
-              <Image
-                src={logoSrc}
-                alt="Neo Culture Tech logo"
-                fill
-                sizes="112px"
-                className="object-contain"
-              />
-            </div>
-            <div className="whitespace-nowrap text-left font-black text-2xl leading-none tracking-tight sm:text-3xl md:text-5xl">
-              <span
-                className={`underline decoration-4 decoration-brand-light-yellow underline-offset-8 ${neoClass}`}
-              >
-                NEO CULTURE
-              </span>{' '}
-              <span className="text-brand-light-blue">TECH</span>
-            </div>
+          <div className="relative h-20 w-20 flex-none sm:h-24 sm:w-24 md:h-28 md:w-28">
+            <Image
+              src={logoSrc}
+              alt="Neo Culture Tech logo"
+              fill
+              sizes="112px"
+              className="object-contain"
+            />
           </div>
-          <Code
-            aria-hidden="true"
-            className="hidden h-8 w-8 flex-none text-brand-light-blue sm:block md:h-10 md:w-10"
-          />
+          <div className="whitespace-nowrap text-left font-black text-2xl leading-none tracking-tight sm:text-3xl md:text-5xl">
+            <span
+              className={`underline decoration-4 decoration-brand-light-yellow underline-offset-8 ${neoClass}`}
+            >
+              NEO CULTURE
+            </span>{' '}
+            <span className="text-brand-light-blue">TECH</span>
+          </div>
         </motion.div>
 
         {/* Culture | Tech — center-divider split with stacked polaroids */}
-        <div className="mt-10 grid gap-16 md:grid-cols-[1fr_1fr] md:gap-0">
+        <div className="mt-12 grid gap-16 md:grid-cols-[1fr_1fr] md:gap-0">
           {/* Culture */}
           <motion.div {...reveal(0.1)} className="md:px-4">
-            <h3 className="text-center font-black text-3xl text-amber-400">
+            <h3 className="flex items-center justify-center gap-2 font-black text-3xl text-amber-400">
+              <Users aria-hidden="true" className="h-7 w-7" />
               Culture
             </h3>
-            <p className="mx-auto mt-3 max-w-lg text-center text-white/70 leading-relaxed">
-              The <span className="font-semibold text-amber-400">people</span>,{' '}
-              <span className="font-semibold text-amber-400">events</span>, and
-              shared moments that make NEO a{' '}
-              <span className="font-semibold text-amber-400">community</span> —
-              club days, socials, and the{' '}
-              <span className="font-semibold text-amber-400">friendships</span>{' '}
-              built along the way.
+            <p className="mx-auto mt-3 max-w-lg text-center text-muted-foreground leading-relaxed">
+              We create opportunities for students to{' '}
+              <span className="font-semibold text-amber-400">connect</span>,
+              exchange perspectives, and{' '}
+              <span className="font-semibold text-amber-400">
+                grow together
+              </span>
+              . Through events and shared experiences, Culture builds the{' '}
+              <span className="font-semibold text-amber-400">
+                relationships
+              </span>{' '}
+              that make our{' '}
+              <span className="font-semibold text-amber-400">community</span>{' '}
+              stronger.
             </p>
             <div className="mt-8">
               <PolaroidStack photos={culturePhotos} />
@@ -197,25 +310,29 @@ export default function WhoWeAre() {
           {/* Tech */}
           <motion.div
             {...reveal(0.2)}
-            className="md:border-white/15 md:border-l md:px-8"
+            className="md:border-border md:border-l md:px-8"
           >
-            <h3 className="text-center font-black text-3xl text-brand-light-blue">
+            <h3 className="flex items-center justify-center gap-2 font-black text-3xl text-brand-light-blue">
+              <Code aria-hidden="true" className="h-7 w-7" />
               Tech
             </h3>
-            <p className="mx-auto mt-3 max-w-lg text-center text-white/70 leading-relaxed">
+            <p className="mx-auto mt-3 max-w-lg text-center text-muted-foreground leading-relaxed">
+              We turn curiosity into capability through{' '}
               <span className="font-semibold text-brand-light-blue">
-                Software projects
+                collaborative projects
               </span>
               ,{' '}
               <span className="font-semibold text-brand-light-blue">
-                workshops
+                practical workshops
               </span>
-              , and{' '}
+              , and hands-on experimentation. Tech is where members challenge
+              themselves, develop their{' '}
+              <span className="font-semibold text-brand-light-blue">craft</span>
+              , and create{' '}
               <span className="font-semibold text-brand-light-blue">
-                engineering
-              </span>{' '}
-              — where members build real things, sharpen their craft, and push
-              what they can make.
+                meaningful solutions
+              </span>
+              .
             </p>
             <div className="mt-8">
               <PolaroidStack photos={techPhotos} />
@@ -223,16 +340,49 @@ export default function WhoWeAre() {
           </motion.div>
         </div>
 
-        {/* Unify (slogan placeholder — final treatment pending real slogan) */}
-        <motion.div {...reveal(0.1)} className="mt-20 text-center">
-          <div className="mx-auto mb-6 h-1 w-24 rounded-full bg-gradient-to-r from-brand-light-yellow to-brand-light-blue" />
-          <p className="font-black text-4xl text-white tracking-tight sm:text-5xl md:text-6xl">
-            Different passions.{' '}
-            <span className="bg-gradient-to-r from-brand-light-blue to-brand-light-yellow bg-clip-text text-transparent">
-              One NEO.
+        {/* Slogan + stats row, above the photo strip */}
+        <motion.div
+          {...reveal(0.1)}
+          className="mt-16 flex flex-col items-center justify-between gap-10 md:flex-row md:items-end"
+        >
+          {/* Slogan — staggered, two weights */}
+          <div className="w-fit">
+            <span className="mb-3 block font-semibold text-brand-light-blue text-sm uppercase tracking-[0.25em]">
+              Our Moments
             </span>
-          </p>
+            <span className="block font-medium text-4xl text-foreground/80 uppercase leading-none tracking-tight sm:text-5xl">
+              Stronger
+            </span>
+            <span className="mt-1 block translate-x-8 bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text font-bold text-5xl text-transparent uppercase leading-none tracking-tight [filter:drop-shadow(0_0_18px_rgba(34,211,238,0.45))] sm:translate-x-16 sm:text-7xl">
+              Together
+            </span>
+          </div>
+
+          {/* Stats cluster */}
+          <div className="flex gap-8 sm:gap-12">
+            {aboutStats.map((stat) => (
+              <div key={stat.label} className="text-center md:text-right">
+                <div className="flex items-center justify-center gap-2 md:justify-end">
+                  <stat.icon
+                    aria-hidden="true"
+                    className={`h-5 w-5 sm:h-6 sm:w-6 ${stat.iconColor}`}
+                  />
+                  <div
+                    className={`bg-gradient-to-r bg-clip-text font-black text-4xl text-transparent sm:text-5xl ${stat.gradient}`}
+                  >
+                    {stat.number}
+                  </div>
+                </div>
+                <div className="mt-1 text-muted-foreground text-xs uppercase tracking-wide sm:text-sm">
+                  {stat.label}
+                </div>
+              </div>
+            ))}
+          </div>
         </motion.div>
+
+        {/* Auto-scrolling wall of moments */}
+        <PhotoStrip />
       </div>
     </section>
   );

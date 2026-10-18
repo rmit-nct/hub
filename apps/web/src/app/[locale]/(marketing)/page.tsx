@@ -13,8 +13,8 @@ export default function MarketingPage() {
       <WhoWeAre />
       <div className="container mx-auto flex flex-col items-center gap-6 px-8 py-16">
         <Events />
-        <WhyUs />
         <SummarizedDepartments />
+        <WhyUs />
       </div>
     </>
   );

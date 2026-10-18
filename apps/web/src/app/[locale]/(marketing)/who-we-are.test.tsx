@@ -37,7 +37,8 @@ afterEach(() => {
 describe('WhoWeAre', () => {
   it('renders the section heading', () => {
     render(<WhoWeAre />);
-    expect(screen.queryByText('Who We Are')).toBeTruthy();
+    const h2 = screen.getByRole('heading', { level: 2 });
+    expect(h2.textContent).toContain('Who We Are');
   });
 
   it('renders the NEO identity wordmark', () => {
@@ -50,13 +51,6 @@ describe('WhoWeAre', () => {
     render(<WhoWeAre />);
     expect(screen.queryByText('Culture')).toBeTruthy();
     expect(screen.getAllByText('Tech').length).toBeGreaterThan(0);
-  });
-
-  it('renders the unifying statement', () => {
-    render(<WhoWeAre />);
-    // Phrase is split across a <p> and a colored <span>.
-    expect(screen.queryByText(/Different passions\./i)).toBeTruthy();
-    expect(screen.queryByText(/One NEO\./i)).toBeTruthy();
   });
 
   it('renders club photos for both divisions', () => {
