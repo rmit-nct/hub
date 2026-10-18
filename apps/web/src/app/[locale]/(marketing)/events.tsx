@@ -2,16 +2,9 @@
 
 import { Badge } from '@ncthub/ui/badge';
 import { Button } from '@ncthub/ui/button';
-import { Card, CardContent } from '@ncthub/ui/card';
-import {
-  ArrowRight,
-  Calendar,
-  Camera,
-  MapPin,
-  Sparkles,
-  Users,
-} from '@ncthub/ui/icons';
-import { motion } from 'framer-motion';
+import { ArrowRight, Calendar, Clock, MapPin } from '@ncthub/ui/icons';
+import { cn } from '@ncthub/utils/format';
+import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -20,254 +13,317 @@ type EventType = {
   title: string;
   description: string;
   date: string;
-  attendees: string;
   location: string;
-  link?: string;
+  type: string; // event category — drives the color-coded badge
+  href?: string; // present => renders a "See details" button (past events)
 };
 
-const eventImages: EventType[] = [
+const FACEBOOK_PAGE = 'https://www.facebook.com/rmit.nct';
+
+// Each event category gets its own badge color.
+const TYPE_STYLES: Record<string, string> = {
+  Competition: 'bg-amber-500/90 text-white hover:bg-amber-500',
+  Networking: 'bg-violet-500/90 text-white hover:bg-violet-500',
+  Workshop: 'bg-sky-500/90 text-white hover:bg-sky-500',
+  'Company Tour': 'bg-emerald-500/90 text-white hover:bg-emerald-500',
+};
+
+const DEFAULT_TYPE_STYLE =
+  'bg-brand-light-blue/90 text-white hover:bg-brand-light-blue';
+
+// Dot colors for the scrolling type ticker (mirrors the badge colors).
+const EVENT_TYPES = [
+  { label: 'Competition', dot: 'bg-amber-500' },
+  { label: 'Networking', dot: 'bg-violet-500' },
+  { label: 'Workshop', dot: 'bg-sky-500' },
+  { label: 'Company Tour', dot: 'bg-emerald-500' },
+  { label: 'Social', dot: 'bg-pink-500' },
+];
+
+const TICKER_CSS = `
+@keyframes evt-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.evt-marquee-track { animation: evt-marquee 30s linear infinite; }
+.evt-marquee:hover .evt-marquee-track { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .evt-marquee-track { animation: none; }
+}
+`;
+
+function TypeTicker() {
+  // Repeat enough to fill wide screens, then duplicate for a seamless -50% loop.
+  const base = [...EVENT_TYPES, ...EVENT_TYPES, ...EVENT_TYPES];
+  const track = [...base, ...base];
+  return (
+    <div className="evt-marquee overflow-hidden [-webkit-mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)] [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
+      <style>{TICKER_CSS}</style>
+      <div className="evt-marquee-track flex w-max items-center">
+        {track.map((t, i) => (
+          <span key={`${t.label}-${i}`} className="flex items-center">
+            <span className="flex shrink-0 items-center gap-2 px-5 font-medium text-muted-foreground text-sm uppercase tracking-wider">
+              <span
+                aria-hidden="true"
+                className={cn('h-2 w-2 rounded-full', t.dot)}
+              />
+              {t.label}
+            </span>
+            <span aria-hidden="true" className="text-muted-foreground/30">
+              ·
+            </span>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Upcoming: teaser only — all meta is TBA, "Coming Soon" CTA, no link.
+const upcomingEvents: EventType[] = [
   {
     src: '/media/marketing/neo-league/neo-league-2026.png',
-    title: 'Neo League Season 2 - Innovation Humanity Challenge',
+    title: 'Neo League Season 2',
     description:
-      'Innovation competition where innovators utilize hardware & IOT solutions to address UN Sustainable Development Goals (SDG)',
-    date: 'March - May 2026',
-    attendees: '70+',
-    location: 'RMIT Campus',
-    link: 'https://rmitneoleague.com',
+      'Our flagship innovation challenge returns — bigger, bolder, and open to new builders.',
+    date: 'TBA',
+    location: 'TBA',
+    type: 'Competition',
+  },
+  {
+    src: '/media/marketing/events/netcompany-talk-show.jpg',
+    title: 'Neo Connect',
+    description: 'Industry talks and networking with our partners.',
+    date: 'TBA',
+    location: 'TBA',
+    type: 'Networking',
   },
   {
     src: '/media/marketing/workshops/cv-workshop.jpg',
-    title: 'Internal Training: CV Workshop',
-    description: 'Internal Training for Neo Culture Tech members',
-    date: 'September 2025',
-    attendees: '20+',
+    title: 'Member Workshops',
+    description: 'Hands-on sessions to sharpen your craft.',
+    date: 'TBA',
+    location: 'TBA',
+    type: 'Workshop',
+  },
+];
+
+// Past: full info card, each links to its own Facebook post.
+const pastEvents: EventType[] = [
+  {
+    src: '/media/marketing/neo-league/neo-league-2025.png',
+    title: 'Neo League - Prompt The Future 2025',
+    description: 'Our AI prompt-engineering competition drew 170+ innovators.',
+    date: '05/2025',
     location: 'RMIT Campus',
-    link: 'https://www.facebook.com/share/p/1aLwzokR2b/',
+    type: 'Competition',
+    href: FACEBOOK_PAGE,
   },
   {
     src: '/media/marketing/events/netcompany-tour.jpg',
     title: 'Netcompany Tour',
-    description: 'Guided company tour with demos and networking for members',
-    date: 'August 2025',
-    attendees: '50+',
+    description: 'A guided company tour with demos and networking for members.',
+    date: '08/2025',
     location: 'Netcompany Campus',
-    link: 'https://www.facebook.com/share/p/16J9j3s46A/',
+    type: 'Company Tour',
+    href: 'https://www.facebook.com/share/p/16J9j3s46A/',
   },
   {
-    src: '/media/marketing/events/netcompany-talk-show.jpg',
-    title: 'Neo Connect x Netcompany',
-    description: 'Networking session with Netcompany',
-    date: 'August 2025',
-    attendees: '40+',
+    src: '/media/marketing/workshops/cv-workshop.jpg',
+    title: 'CV Workshop',
+    description: 'Internal training to help members land their next role.',
+    date: '09/2025',
     location: 'RMIT Campus',
-    link: 'https://www.facebook.com/share/p/17LGGx4tzH/',
-  },
-  {
-    src: '/media/marketing/neo-league/neo-league-2025.png',
-    title: 'Neo League - Prompt The Future 2025',
-    description: 'AI prompt engineering competition',
-    date: 'March - May 2025',
-    attendees: '170+',
-    location: 'RMIT Campus',
-    link: 'https://nova.ai.vn',
+    type: 'Workshop',
+    href: 'https://www.facebook.com/share/p/1aLwzokR2b/',
   },
 ];
 
-export default function Events() {
+function EventCard({
+  event,
+  variant,
+}: {
+  event: EventType;
+  variant: 'featured' | 'compact';
+}) {
+  const featured = variant === 'featured';
   return (
-    <motion.section
-      id="events"
-      className="relative w-full py-8"
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      transition={{ duration: 1 }}
-      viewport={{ once: true }}
+    <div
+      className={cn(
+        'group relative flex h-full flex-col overflow-hidden rounded-3xl border border-border/50 shadow-xl transition-all duration-500 hover:shadow-2xl',
+        featured ? 'min-h-[22rem] md:min-h-[32rem]' : 'min-h-[18rem]'
+      )}
     >
-      {/* Section Header */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        viewport={{ once: true }}
-        className="mb-12 text-center"
-      >
-        <div className="mb-4 inline-flex items-center gap-2">
-          <Camera className="h-6 w-6 text-primary" />
-          <Badge variant="outline" className="px-3 py-1 text-sm">
-            Our Events
-          </Badge>
-          <Camera className="h-6 w-6 text-primary" />
-        </div>
+      <Image
+        src={event.src}
+        alt={event.title}
+        fill
+        sizes={
+          featured
+            ? '(max-width: 767px) 100vw, 60vw'
+            : '(max-width: 767px) 100vw, 30vw'
+        }
+        className="object-cover transition-transform duration-500 group-hover:scale-105"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
 
-        <h2 className="mb-4 font-bold text-3xl md:text-4xl lg:text-5xl">
-          Memorable Moments
+      {/* Type pill — color-coded per category */}
+      <div className="relative p-5">
+        <Badge className={TYPE_STYLES[event.type] ?? DEFAULT_TYPE_STYLE}>
+          {event.type}
+        </Badge>
+      </div>
+
+      {/* Content */}
+      <div className="relative mt-auto p-5 text-white sm:p-6">
+        <h3
+          className={cn(
+            'font-bold leading-tight',
+            featured ? 'text-2xl sm:text-3xl' : 'text-lg'
+          )}
+        >
+          {event.title}
+        </h3>
+        <p
+          className={cn(
+            'mt-2 text-white/80',
+            featured ? 'text-sm sm:text-base' : 'text-sm'
+          )}
+        >
+          {event.description}
+        </p>
+        <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-white/90">
+          <span className="flex items-center gap-1.5">
+            <Calendar className="h-4 w-4" />
+            {event.date}
+          </span>
+          <span className="flex items-center gap-1.5">
+            <MapPin className="h-4 w-4" />
+            {event.location}
+          </span>
+        </div>
+        {event.href ? (
+          <Link
+            href={event.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 inline-block"
+          >
+            <Button
+              size="sm"
+              variant="secondary"
+              className="bg-white/90 text-black hover:bg-white"
+            >
+              See details
+              <ArrowRight className="ml-1.5 h-4 w-4" />
+            </Button>
+          </Link>
+        ) : (
+          <Button
+            size="sm"
+            variant="secondary"
+            disabled
+            className="mt-4 bg-white/20 text-white disabled:opacity-100"
+          >
+            <Clock className="mr-1.5 h-4 w-4" />
+            Coming Soon
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default function Events() {
+  const reduceMotion = useReducedMotion();
+
+  const reveal = (delay = 0) =>
+    reduceMotion
+      ? {}
+      : {
+          initial: { opacity: 0, y: 30 },
+          whileInView: { opacity: 1, y: 0 },
+          transition: { duration: 0.6, delay },
+          viewport: { once: true },
+        };
+
+  return (
+    <section id="events" className="container mx-auto p-6 sm:px-8">
+      {/* Header */}
+      <div className="mb-10 text-center">
+        <motion.div
+          {...reveal(0.1)}
+          className="mb-6 inline-flex items-center gap-2"
+        >
+          <Calendar className="h-6 w-6 text-brand-light-yellow" />
+          <Badge
+            variant="outline"
+            className="border-brand-light-blue/50 px-4 py-2 text-base text-brand-light-blue"
+          >
+            Introducing Club Events
+          </Badge>
+          <Calendar className="h-6 w-6 text-brand-light-yellow" />
+        </motion.div>
+
+        <h2 className="mb-4 pb-4 font-bold text-4xl md:text-6xl lg:text-8xl">
+          Upcoming{' '}
+          <span className="whitespace-nowrap border-brand-light-yellow border-b-4 text-brand-light-blue">
+            Events
+          </span>
         </h2>
 
         <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-          Experience the highlights of our vibrant community through these
-          unforgettable events
+          Don't miss what's coming up this semester
         </p>
+      </div>
+
+      {/* Running line of all event types */}
+      <motion.div {...reveal(0.1)} className="mb-10">
+        <TypeTicker />
       </motion.div>
 
-      {/* Events Grid */}
-      <div className="rounded-3xl border border-border/50 bg-background/60 p-6 shadow-2xl backdrop-blur-xl md:p-8">
-        <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {/* Primary Event Card */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="md:col-span-2 md:row-span-2 lg:col-span-2"
-          >
-            <PrimaryEventCard event={eventImages[0]!} />
-          </motion.div>
+      {/* Upcoming bento (no panel) */}
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-5">
+        <motion.div {...reveal(0.05)} className="md:col-span-3">
+          <EventCard event={upcomingEvents[0]!} variant="featured" />
+        </motion.div>
+        <div className="flex flex-col gap-6 md:col-span-2">
+          {upcomingEvents.slice(1).map((event, i) => (
+            <motion.div key={event.title} {...reveal(0.1 + i * 0.1)}>
+              <EventCard event={event} variant="compact" />
+            </motion.div>
+          ))}
+        </div>
+      </div>
 
-          {/* Secondary Event Cards */}
-          {eventImages.slice(1).map((event, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: (index + 1) * 0.1 }}
-              viewport={{ once: true }}
-            >
-              <SecondaryEventCard event={event} />
+      {/* Past highlights */}
+      <div className="mt-16">
+        <motion.div {...reveal(0.05)} className="mb-6">
+          <span className="font-semibold text-brand-light-blue text-sm uppercase tracking-[0.25em]">
+            — Past Events
+          </span>
+          <h3 className="mt-1 font-bold text-2xl md:text-3xl">
+            Past Highlights
+          </h3>
+        </motion.div>
+
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {pastEvents.map((event, i) => (
+            <motion.div key={event.title} {...reveal(0.1 + i * 0.1)}>
+              <EventCard event={event} variant="compact" />
             </motion.div>
           ))}
         </div>
 
-        {/* Call to Action */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
-          viewport={{ once: true }}
-          className="text-center"
-        >
-          <Card className="mx-auto max-w-md border-primary/20 bg-linear-to-r from-primary/5 to-secondary/5">
-            <CardContent className="p-6">
-              <Sparkles className="mx-auto mb-3 h-8 w-8 text-primary" />
-              <h3 className="mb-2 font-semibold text-xl">
-                Join Our Next Event
-              </h3>
-              <p className="mb-4 text-muted-foreground text-sm">
-                Don't miss out on our upcoming activities and networking
-                opportunities
-              </p>
-              <Link
-                href={'https://www.facebook.com/rmit.nct'}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Button className="w-full">
-                  View All Events
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
+        <motion.div {...reveal(0.2)} className="mt-10 text-center">
+          <Link href={FACEBOOK_PAGE} target="_blank" rel="noopener noreferrer">
+            <Button size="lg">
+              See all events on Facebook
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
         </motion.div>
       </div>
-
-      {/* Background Elements */}
-      <div className="absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
-        <div className="absolute right-1/4 bottom-1/4 h-64 w-64 rounded-full bg-secondary/10 blur-3xl" />
-      </div>
-    </motion.section>
+    </section>
   );
 }
-
-const PrimaryEventCard = ({ event }: { event: EventType }) => {
-  return (
-    <Link
-      href={event.link ?? '#'}
-      target={event.link ? '_blank' : undefined}
-      rel={event.link ? 'noopener noreferrer' : undefined}
-    >
-      <Card className="group relative h-full min-h-100 overflow-hidden border-2 py-0 transition-all duration-500 hover:border-primary/50 hover:shadow-2xl">
-        <div className="relative h-full">
-          <Image
-            src={event.src}
-            alt={event.title}
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-            fill
-            sizes="(max-width: 767px) 100vw, 50vw"
-          />
-
-          {/* Overlay */}
-          <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
-
-          {/* Content */}
-          <div className="absolute right-0 bottom-0 left-0 p-6 text-white">
-            <Badge className="mb-3 bg-primary/90 hover:bg-primary">
-              Featured Event
-            </Badge>
-
-            <h3 className="mb-2 font-bold text-2xl">{event.title}</h3>
-            <p className="mb-4 text-sm text-white/80">{event.description}</p>
-
-            <div className="flex flex-wrap gap-4 text-sm">
-              <div className="flex items-center gap-1">
-                <Calendar className="h-4 w-4" />
-                <span>{event.date}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Users className="h-4 w-4" />
-                <span>{event.attendees}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <MapPin className="h-4 w-4" />
-                <span>{event.location}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Card>
-    </Link>
-  );
-};
-
-const SecondaryEventCard = ({ event }: { event: EventType }) => {
-  return (
-    <Link
-      href={event.link ?? '#'}
-      target={event.link ? '_blank' : undefined}
-      rel={event.link ? 'noopener noreferrer' : undefined}
-    >
-      <Card className="group relative h-48 overflow-hidden py-0 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl">
-        <div className="relative h-full">
-          <Image
-            src={event.src}
-            alt={event.title}
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
-            fill
-            sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 25vw"
-          />
-
-          {/* Overlay */}
-          <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent" />
-
-          {/* Content */}
-          <div className="absolute right-0 bottom-0 left-0 p-4 text-white">
-            <h4 className="mb-1 font-semibold text-sm">{event.title}</h4>
-            <p className="mb-2 text-white/70 text-xs">{event.description}</p>
-
-            <div className="flex items-center justify-between text-xs">
-              <div className="flex items-center gap-1">
-                <Calendar className="h-3 w-3" />
-                <span>{event.date}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Users className="h-3 w-3" />
-                <span>{event.attendees}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Card>
-    </Link>
-  );
-};
