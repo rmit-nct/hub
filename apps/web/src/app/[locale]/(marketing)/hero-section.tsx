@@ -20,6 +20,34 @@ const BLINK_CSS = `
 const LOGO = '/media/logos/transparent/light-logo-only-transparent.png';
 const RECRUITMENT_URL = 'https://rmitnct.site/recruitment';
 
+// A rectangular polaroid-style photo card (white frame, no caption),
+// stretches to the full width of its column.
+function Polaroid({
+  src,
+  alt,
+  className = '',
+}: {
+  src: string;
+  alt: string;
+  className?: string;
+}) {
+  return (
+    <figure
+      className={`w-full bg-white p-2.5 shadow-xl transition-transform duration-300 hover:rotate-0 ${className}`}
+    >
+      <div className="relative aspect-[4/3] w-full overflow-hidden">
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          sizes="400px"
+          className="object-cover"
+        />
+      </div>
+    </figure>
+  );
+}
+
 export default function HeroSection() {
   const reduceMotion = useReducedMotion();
 
@@ -39,7 +67,7 @@ export default function HeroSection() {
 
       {/* Glass panel — matches Who We Are / Departments; overflow-visible so the
           big N can spill past the panel edges. */}
-      <div className="relative flex h-[85svh] flex-col justify-center overflow-visible rounded-3xl border border-border/50 bg-background/60 px-6 shadow-2xl backdrop-blur-xl sm:px-10 md:px-16">
+      <div className="relative flex h-[85svh] flex-col justify-center overflow-visible rounded-3xl border border-border/50 bg-gradient-to-br from-brand-light-blue/15 via-background/60 to-brand-light-yellow/10 px-6 shadow-2xl backdrop-blur-xl sm:px-10 md:px-16">
         {/* Wordmark — centerpiece, ~80% width */}
         <motion.h1
           initial={reduceMotion ? false : { opacity: 0, y: 30 }}
@@ -54,18 +82,25 @@ export default function HeroSection() {
         </motion.h1>
 
         {/* Row under the wordmark: tagline | N logo | status + CTAs */}
-        <div className="mt-8 grid items-center gap-8 md:mt-6 md:grid-cols-[1fr_auto_1fr] md:gap-6">
+        <div className="mt-8 grid items-center gap-8 md:mt-0 md:grid-cols-[1fr_auto_1fr] md:gap-6">
           {/* Left — tagline */}
-          <motion.p
+          <motion.div
             {...reveal(0.15)}
-            className="max-w-sm text-center text-base text-muted-foreground leading-relaxed md:justify-self-end md:text-right"
+            className="flex w-full max-w-sm flex-col items-center gap-5 md:-translate-y-28 md:items-end md:justify-self-end"
           >
-            Founded in 2020, the best club for{' '}
-            <span className="border-brand-light-yellow border-b-2 font-semibold text-foreground">
-              SSET students
-            </span>{' '}
-            to explore technology at RMIT University.
-          </motion.p>
+            <Polaroid
+              src="/club-day/sem-a-2026.jpg"
+              alt="NCT Club Day"
+              className="-rotate-3"
+            />
+            <p className="text-center text-base text-muted-foreground leading-relaxed md:text-right">
+              Founded in 2020, the best club for{' '}
+              <span className="border-brand-light-yellow border-b-2 font-semibold text-foreground">
+                SSET students
+              </span>{' '}
+              to explore technology at RMIT University.
+            </p>
+          </motion.div>
 
           {/* Center — N logo (large focal mark that overflows the panel).
               Size knob: md:h-[..]/md:w-[..]. Bleed knob: md:-my-[..]. */}
@@ -86,8 +121,13 @@ export default function HeroSection() {
           {/* Right — recruitment status + CTAs */}
           <motion.div
             {...reveal(0.2)}
-            className="flex flex-col items-center gap-4 md:items-start"
+            className="flex w-full max-w-sm flex-col items-center gap-5 md:-translate-y-28 md:items-start md:justify-self-start"
           >
+            <Polaroid
+              src="/media/marketing/events/netcompany-talk-show.jpg"
+              alt="Neo Connect talk show"
+              className="rotate-3"
+            />
             <div className="flex items-center gap-2 font-semibold text-brand-light-blue text-sm">
               <span className="nct-blink inline-block h-2 w-2 rounded-full bg-green-500" />
               <span className="nct-blink">

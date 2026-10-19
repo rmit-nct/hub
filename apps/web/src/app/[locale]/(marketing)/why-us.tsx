@@ -26,7 +26,7 @@ const reasons = [
     title: 'HANDS-ON EXPERIENCE',
     icon: Rocket,
     description:
-      'Learn by solving and building. Work on real projects, join technical workshops, and compete in challenges like Neo League that turn curiosity into real capability.',
+      'Learn by solving and building problems. Work on real projects, join technical workshops, and compete in challenges like Neo League that turn curiosity into real capability.',
     gradient: 'from-yellow-400 to-orange-500',
     features: [
       'Real Club Projects',

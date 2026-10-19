@@ -84,6 +84,6 @@ describe('HeroSection', () => {
 
   it('renders the N logo image', () => {
     render(<HeroSection />);
-    expect(screen.getByRole('img')).toBeTruthy();
+    expect(screen.getByAltText('Neo Culture Tech logo')).toBeTruthy();
   });
 });
