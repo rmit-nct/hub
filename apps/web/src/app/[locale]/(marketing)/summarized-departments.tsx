@@ -92,10 +92,10 @@ export default function SummarizedDepartments() {
   return (
     <section id="about-departments" className="container mx-auto p-6 sm:px-8">
       {/* Header */}
-      <div className="mb-10 text-center">
+      <div className="mb-8 text-center">
         <motion.div
           {...reveal(0.1)}
-          className="mb-6 inline-flex items-center gap-2"
+          className="mb-4 inline-flex items-center gap-2"
         >
           <Network className="h-6 w-6 text-brand-light-yellow" />
           <Badge
@@ -107,7 +107,7 @@ export default function SummarizedDepartments() {
           <Network className="h-6 w-6 text-brand-light-yellow" />
         </motion.div>
 
-        <h2 className="mb-4 pb-4 font-bold text-4xl md:text-6xl lg:text-8xl">
+        <h2 className="mb-3 pb-2 font-bold text-3xl md:text-5xl lg:text-6xl">
           Our{' '}
           <span className="whitespace-nowrap border-brand-light-yellow border-b-4 text-brand-light-blue">
             Departments
@@ -120,7 +120,7 @@ export default function SummarizedDepartments() {
       </div>
 
       {/* Panel */}
-      <div className="rounded-3xl border border-border/50 bg-background/60 p-6 shadow-2xl backdrop-blur-xl sm:p-8 md:p-10">
+      <div className="rounded-3xl border border-border/50 bg-background/60 p-5 shadow-2xl backdrop-blur-xl sm:p-7 md:p-8">
         <div className="grid gap-6 md:grid-cols-3">
           {deptCards.map((dept, index) => (
             <motion.div key={dept.name} {...reveal(index * 0.12)}>
@@ -215,7 +215,7 @@ export default function SummarizedDepartments() {
         {/* Closing collaboration line */}
         <motion.p
           {...reveal(0.2)}
-          className="mt-10 border-border/50 border-t pt-8 text-center font-medium text-base text-muted-foreground sm:text-lg"
+          className="mt-8 border-border/50 border-t pt-6 text-center font-medium text-base text-muted-foreground sm:text-lg"
         >
           <span className="font-bold text-dynamic-blue">Technology</span> builds
           it, <span className="font-bold text-dynamic-orange">Marketing</span>{' '}

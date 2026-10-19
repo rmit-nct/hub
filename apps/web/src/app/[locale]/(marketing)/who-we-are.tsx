@@ -168,7 +168,7 @@ function MarqueeRow({
         {tiles.map((photo, i) => (
           <div
             key={`${photo.src}-${i}`}
-            className="group relative mr-4 h-32 w-48 shrink-0 overflow-hidden rounded-xl shadow-md sm:h-40 sm:w-60"
+            className="group relative mr-4 h-28 w-44 shrink-0 overflow-hidden rounded-xl shadow-md sm:h-36 sm:w-56"
           >
             <Image
               src={photo.src}
@@ -191,7 +191,7 @@ function MarqueeRow({
 
 function PhotoStrip() {
   return (
-    <div className="mt-8 flex flex-col gap-4">
+    <div className="mt-6 flex flex-col gap-3">
       <style>{MARQUEE_CSS}</style>
       <MarqueeRow photos={stripPhotos} />
       <MarqueeRow photos={[...stripPhotos].reverse()} reverse />
@@ -223,13 +223,13 @@ export default function WhoWeAre() {
   return (
     <section className="container mx-auto p-6 sm:px-8">
       {/* Header + subheadline (above the panel, on the page background) */}
-      <div className="mb-10 text-center">
+      <div className="mb-8 text-center">
         <motion.div
           initial={reduceMotion ? false : { opacity: 0, scale: 0.8 }}
           whileInView={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.2 }}
           viewport={{ once: true }}
-          className="mb-6 inline-flex items-center gap-2"
+          className="mb-4 inline-flex items-center gap-2"
         >
           <Sparkles className="h-6 w-6 text-brand-light-yellow" />
           <Badge
@@ -241,7 +241,7 @@ export default function WhoWeAre() {
           <Sparkles className="h-6 w-6 text-brand-light-yellow" />
         </motion.div>
 
-        <h2 className="mb-4 pb-4 font-bold text-4xl md:text-6xl lg:text-8xl">
+        <h2 className="mb-3 pb-2 font-bold text-3xl md:text-5xl lg:text-6xl">
           Who{' '}
           <span className="whitespace-nowrap border-brand-light-yellow border-b-4 text-brand-light-blue">
             We Are
@@ -254,7 +254,7 @@ export default function WhoWeAre() {
       </div>
 
       {/* Panel (matches the Memorable Moments card bg) — logo brand + split */}
-      <div className="rounded-3xl border border-border/50 bg-background/60 px-6 py-16 shadow-2xl backdrop-blur-xl sm:px-10 sm:py-20 md:p-10">
+      <div className="rounded-3xl border border-border/50 bg-background/60 px-6 py-10 shadow-2xl backdrop-blur-xl sm:px-10 sm:py-12 md:p-8">
         {/* Identity — centered, flanked by the two division icons */}
         <motion.div
           {...reveal(0.06)}
@@ -280,11 +280,11 @@ export default function WhoWeAre() {
         </motion.div>
 
         {/* Culture | Tech — center-divider split with stacked polaroids */}
-        <div className="mt-12 grid gap-16 md:grid-cols-[1fr_1fr] md:gap-0">
+        <div className="mt-8 grid gap-10 md:grid-cols-[1fr_1fr] md:gap-0">
           {/* Culture */}
           <motion.div {...reveal(0.1)} className="md:px-4">
-            <h3 className="flex items-center justify-center gap-2 font-black text-3xl text-amber-400">
-              <Users aria-hidden="true" className="h-7 w-7" />
+            <h3 className="flex items-center justify-center gap-2 font-black text-2xl text-amber-400">
+              <Users aria-hidden="true" className="h-6 w-6" />
               Culture
             </h3>
             <p className="mx-auto mt-3 max-w-lg text-center text-muted-foreground leading-relaxed">
@@ -302,7 +302,7 @@ export default function WhoWeAre() {
               <span className="font-semibold text-amber-400">community</span>{' '}
               stronger.
             </p>
-            <div className="mt-8">
+            <div className="mt-6">
               <PolaroidStack photos={culturePhotos} />
             </div>
           </motion.div>
@@ -312,8 +312,8 @@ export default function WhoWeAre() {
             {...reveal(0.2)}
             className="md:border-border md:border-l md:px-8"
           >
-            <h3 className="flex items-center justify-center gap-2 font-black text-3xl text-brand-light-blue">
-              <Code aria-hidden="true" className="h-7 w-7" />
+            <h3 className="flex items-center justify-center gap-2 font-black text-2xl text-brand-light-blue">
+              <Code aria-hidden="true" className="h-6 w-6" />
               Tech
             </h3>
             <p className="mx-auto mt-3 max-w-lg text-center text-muted-foreground leading-relaxed">
@@ -334,7 +334,7 @@ export default function WhoWeAre() {
               </span>
               .
             </p>
-            <div className="mt-8">
+            <div className="mt-6">
               <PolaroidStack photos={techPhotos} />
             </div>
           </motion.div>
@@ -343,17 +343,17 @@ export default function WhoWeAre() {
         {/* Slogan + stats row, above the photo strip */}
         <motion.div
           {...reveal(0.1)}
-          className="mt-16 flex flex-col items-center justify-between gap-10 md:flex-row md:items-end"
+          className="mt-10 flex flex-col items-center justify-between gap-8 md:flex-row md:items-end"
         >
           {/* Slogan — staggered, two weights */}
           <div className="w-fit">
             <span className="mb-3 block font-semibold text-brand-light-blue text-sm uppercase tracking-[0.25em]">
               Our Moments
             </span>
-            <span className="block font-medium text-4xl text-foreground/80 uppercase leading-none tracking-tight sm:text-5xl">
+            <span className="block font-medium text-3xl text-foreground/80 uppercase leading-none tracking-tight sm:text-4xl">
               Stronger
             </span>
-            <span className="mt-1 block translate-x-8 bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text font-bold text-5xl text-transparent uppercase leading-none tracking-tight [filter:drop-shadow(0_0_18px_rgba(34,211,238,0.45))] sm:translate-x-16 sm:text-7xl">
+            <span className="mt-1 block translate-x-8 bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text font-bold text-4xl text-transparent uppercase leading-none tracking-tight [filter:drop-shadow(0_0_18px_rgba(34,211,238,0.45))] sm:translate-x-16 sm:text-6xl">
               Together
             </span>
           </div>
@@ -368,7 +368,7 @@ export default function WhoWeAre() {
                     className={`h-5 w-5 sm:h-6 sm:w-6 ${stat.iconColor}`}
                   />
                   <div
-                    className={`bg-gradient-to-r bg-clip-text font-black text-4xl text-transparent sm:text-5xl ${stat.gradient}`}
+                    className={`bg-gradient-to-r bg-clip-text font-black text-3xl text-transparent sm:text-4xl ${stat.gradient}`}
                   >
                     {stat.number}
                   </div>

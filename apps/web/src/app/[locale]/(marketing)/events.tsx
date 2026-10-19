@@ -151,7 +151,7 @@ function EventCard({
     <div
       className={cn(
         'group relative flex h-full flex-col overflow-hidden rounded-3xl border border-border/50 shadow-xl transition-all duration-500 hover:shadow-2xl',
-        featured ? 'min-h-[22rem] md:min-h-[32rem]' : 'min-h-[18rem]'
+        featured ? 'min-h-[18rem] md:min-h-[26rem]' : 'min-h-[15rem]'
       )}
     >
       <Image
@@ -250,10 +250,10 @@ export default function Events() {
   return (
     <section id="events" className="container mx-auto p-6 sm:px-8">
       {/* Header */}
-      <div className="mb-10 text-center">
+      <div className="mb-8 text-center">
         <motion.div
           {...reveal(0.1)}
-          className="mb-6 inline-flex items-center gap-2"
+          className="mb-4 inline-flex items-center gap-2"
         >
           <Calendar className="h-6 w-6 text-brand-light-yellow" />
           <Badge
@@ -265,7 +265,7 @@ export default function Events() {
           <Calendar className="h-6 w-6 text-brand-light-yellow" />
         </motion.div>
 
-        <h2 className="mb-4 pb-4 font-bold text-4xl md:text-6xl lg:text-8xl">
+        <h2 className="mb-3 pb-2 font-bold text-3xl md:text-5xl lg:text-6xl">
           Upcoming{' '}
           <span className="whitespace-nowrap border-brand-light-yellow border-b-4 text-brand-light-blue">
             Events
@@ -278,7 +278,7 @@ export default function Events() {
       </div>
 
       {/* Running line of all event types */}
-      <motion.div {...reveal(0.1)} className="mb-10">
+      <motion.div {...reveal(0.1)} className="mb-8">
         <TypeTicker />
       </motion.div>
 
@@ -297,7 +297,7 @@ export default function Events() {
       </div>
 
       {/* Past highlights */}
-      <div className="mt-16">
+      <div className="mt-12">
         <motion.div {...reveal(0.05)} className="mb-6">
           <span className="font-semibold text-brand-light-blue text-sm uppercase tracking-[0.25em]">
             — Past Events
@@ -315,7 +315,7 @@ export default function Events() {
           ))}
         </div>
 
-        <motion.div {...reveal(0.2)} className="mt-10 text-center">
+        <motion.div {...reveal(0.2)} className="mt-8 text-center">
           <Link href={FACEBOOK_PAGE} target="_blank" rel="noopener noreferrer">
             <Button size="lg">
               See all events on Facebook

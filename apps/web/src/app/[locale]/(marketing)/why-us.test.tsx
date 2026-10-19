@@ -53,16 +53,6 @@ describe('WhyUs', () => {
     expect(screen.queryByText('CLUB DEPARTMENTS')).toBeNull();
   });
 
-  it('renders the climax JD Booklet CTA', () => {
-    render(<WhyUs />);
-    const links = screen.getAllByRole('link');
-    expect(
-      links.some((l) =>
-        l.getAttribute('href')?.includes('rmitnct.site/jdbooklet')
-      )
-    ).toBe(true);
-  });
-
   it('renders the recruitment link', () => {
     render(<WhyUs />);
     const links = screen.getAllByRole('link');

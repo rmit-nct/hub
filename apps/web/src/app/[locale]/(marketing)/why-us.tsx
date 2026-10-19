@@ -75,8 +75,6 @@ const reasons = [
   },
 ];
 
-const JD_BOOKLET = 'https://rmitnct.site/jdbooklet';
-
 export default function WhyUs() {
   return (
     <motion.section
@@ -88,13 +86,13 @@ export default function WhyUs() {
       viewport={{ once: true }}
     >
       {/* Header */}
-      <div className="mb-10 text-center">
+      <div className="mb-8 text-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           whileInView={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.2 }}
           viewport={{ once: true }}
-          className="mb-6 inline-flex items-center gap-2"
+          className="mb-4 inline-flex items-center gap-2"
         >
           <Sparkles className="h-6 w-6 text-brand-light-yellow" />
           <Badge
@@ -106,7 +104,7 @@ export default function WhyUs() {
           <Sparkles className="h-6 w-6 text-brand-light-yellow" />
         </motion.div>
 
-        <h2 className="mb-4 pb-4 font-bold text-4xl md:text-6xl lg:text-8xl">
+        <h2 className="mb-3 pb-2 font-bold text-3xl md:text-5xl lg:text-6xl">
           Why{' '}
           <span className="whitespace-nowrap border-brand-light-yellow border-b-4 text-brand-light-blue">
             Us?
@@ -120,7 +118,7 @@ export default function WhyUs() {
       </div>
 
       {/* Cards Grid (no panel) */}
-      <div className="grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {reasons.map((reason, index) => (
           <motion.div
             key={reason.title}
