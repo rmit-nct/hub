@@ -248,7 +248,7 @@ export default function Events() {
         };
 
   return (
-    <section id="events" className="container mx-auto p-6 sm:px-8">
+    <section id="events" className="container mx-auto mt-12 p-6 sm:px-8">
       {/* Header */}
       <div className="mb-8 text-center">
         <motion.div
@@ -265,7 +265,7 @@ export default function Events() {
           <Calendar className="h-6 w-6 text-brand-light-yellow" />
         </motion.div>
 
-        <h2 className="mb-3 pb-2 font-bold text-3xl md:text-5xl lg:text-6xl">
+        <h2 className="mb-3 pb-2 font-bold text-3xl md:text-6xl lg:text-7xl">
           Upcoming{' '}
           <span className="whitespace-nowrap border-brand-light-yellow border-b-4 text-brand-light-blue">
             Events

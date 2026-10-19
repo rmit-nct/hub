@@ -221,7 +221,7 @@ export default function WhoWeAre() {
         };
 
   return (
-    <section className="container mx-auto p-6 sm:px-8">
+    <section className="container mx-auto mt-12 p-6 sm:px-8">
       {/* Header + subheadline (above the panel, on the page background) */}
       <div className="mb-8 text-center">
         <motion.div
@@ -241,7 +241,7 @@ export default function WhoWeAre() {
           <Sparkles className="h-6 w-6 text-brand-light-yellow" />
         </motion.div>
 
-        <h2 className="mb-3 pb-2 font-bold text-3xl md:text-5xl lg:text-6xl">
+        <h2 className="mb-3 pb-2 font-bold text-3xl md:text-6xl lg:text-7xl">
           Who{' '}
           <span className="whitespace-nowrap border-brand-light-yellow border-b-4 text-brand-light-blue">
             We Are

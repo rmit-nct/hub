@@ -79,7 +79,7 @@ export default function WhyUs() {
   return (
     <motion.section
       id="why-us"
-      className="container mx-auto flex flex-col p-6 sm:px-8"
+      className="container mx-auto mt-12 flex flex-col p-6 sm:px-8"
       initial={{ opacity: 0, y: 50 }}
       transition={{ duration: 1 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -104,7 +104,7 @@ export default function WhyUs() {
           <Sparkles className="h-6 w-6 text-brand-light-yellow" />
         </motion.div>
 
-        <h2 className="mb-3 pb-2 font-bold text-3xl md:text-5xl lg:text-6xl">
+        <h2 className="mb-3 pb-2 font-bold text-3xl md:text-6xl lg:text-7xl">
           Why{' '}
           <span className="whitespace-nowrap border-brand-light-yellow border-b-4 text-brand-light-blue">
             Us?
