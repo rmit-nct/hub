@@ -2,8 +2,12 @@
 
 import { Button } from '@ncthub/ui/button';
 import { motion, useReducedMotion } from 'framer-motion';
+import { Anton } from 'next/font/google';
 import Image from 'next/image';
 import { Link } from '@/i18n/routing';
+
+// Wordmark font — Anton (ultra-condensed display), a free stand-in for Agrandir Tight.
+const anton = Anton({ subsets: ['latin'], weight: ['400'] });
 
 // Hard on/off "machine" blink for the recruitment status.
 const BLINK_CSS = `
@@ -73,12 +77,12 @@ export default function HeroSection() {
           initial={reduceMotion ? false : { opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="mt-16 text-center font-black text-6xl uppercase leading-[0.95] tracking-tight sm:text-8xl lg:text-[9rem]"
+          className={`${anton.className} mt-1 -translate-y-4 whitespace-nowrap text-center font-black text-6xl uppercase leading-[0.95] tracking-tight sm:text-8xl lg:text-[13rem]`}
         >
-          <span className="inline-block border-brand-light-yellow border-b-4 pb-3 text-brand-dark-blue dark:text-brand-white">
+          <span className="relative inline-block pb-3 text-brand-dark-blue after:absolute after:inset-x-0 after:bottom-0 after:h-[10px] after:bg-brand-light-yellow dark:text-brand-white">
             Neo Culture
-          </span>
-          <span className="mt-6 block text-brand-light-blue">Tech</span>
+          </span>{' '}
+          <span className="text-brand-light-blue">Tech</span>
         </motion.h1>
 
         {/* Row under the wordmark: tagline | N logo | status + CTAs */}
@@ -86,7 +90,7 @@ export default function HeroSection() {
           {/* Left — tagline */}
           <motion.div
             {...reveal(0.15)}
-            className="flex w-full max-w-sm flex-col items-center gap-5 md:-translate-y-28 md:items-end md:justify-self-end"
+            className="flex w-full max-w-sm flex-col items-center gap-5 md:translate-y-7 md:items-end md:justify-self-end"
           >
             <Polaroid
               src="/club-day/sem-a-2026.jpg"
@@ -106,7 +110,7 @@ export default function HeroSection() {
               Size knob: md:h-[..]/md:w-[..]. Bleed knob: md:-my-[..]. */}
           <motion.div
             {...reveal(0.1)}
-            className="relative mx-auto h-72 w-72 flex-none sm:h-96 sm:w-96 md:-my-48 md:h-[700px] md:w-[700px] md:translate-y-24 md:scale-[1.45]"
+            className="relative mx-auto h-72 w-72 flex-none sm:h-96 sm:w-96 md:-my-48 md:h-[700px] md:w-[700px] md:translate-y-44 md:scale-[1.6]"
           >
             <Image
               src={LOGO}
@@ -121,7 +125,7 @@ export default function HeroSection() {
           {/* Right — recruitment status + CTAs */}
           <motion.div
             {...reveal(0.2)}
-            className="flex w-full max-w-sm flex-col items-center gap-5 md:-translate-y-28 md:items-start md:justify-self-start"
+            className="flex w-full max-w-sm flex-col items-center gap-5 md:translate-y-7 md:items-start md:justify-self-start"
           >
             <Polaroid
               src="/media/marketing/events/netcompany-talk-show.jpg"

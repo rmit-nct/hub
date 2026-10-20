@@ -2,6 +2,10 @@ import { cleanup, render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+vi.mock('next/font/google', () => ({
+  Anton: () => ({ className: 'font-anton' }),
+}));
+
 vi.mock('@/i18n/routing', () => ({
   Link: ({
     href,
