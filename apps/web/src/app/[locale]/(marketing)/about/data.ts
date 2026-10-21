@@ -112,7 +112,8 @@ export const members: {
     objectPosition: 'center 58%',
     socials: {
       facebook: 'https://www.facebook.com/share/1C7sc4SY7L/?mibextid=wwXIfr',
-      linkedin: 'https://www.linkedin.com/in/kim-huỳnh-1629a7387?utm_source=share_via&utm_content=profile&utm_medium=member_ios',
+      linkedin:
+        'https://www.linkedin.com/in/kim-huỳnh-1629a7387?utm_source=share_via&utm_content=profile&utm_medium=member_ios',
     },
   },
   {
@@ -184,7 +185,8 @@ export const members: {
     generation: 8,
     socials: {
       facebook: 'https://www.facebook.com/share/18kbiokL1Q/?mibextid=wwXIfr',
-      linkedin: 'https://www.linkedin.com/in/tấn-phúc-huỳnh-82b708244?utm_source=share_via&utm_content=profile&utm_medium=member_ioshttps://www.linkedin.com/in/t%E1%BA%A5n-ph%C3%BAc-hu%E1%BB%B3nh-82b708244/',
+      linkedin:
+        'https://www.linkedin.com/in/tấn-phúc-huỳnh-82b708244?utm_source=share_via&utm_content=profile&utm_medium=member_ioshttps://www.linkedin.com/in/t%E1%BA%A5n-ph%C3%BAc-hu%E1%BB%B3nh-82b708244/',
     },
   },
   {
