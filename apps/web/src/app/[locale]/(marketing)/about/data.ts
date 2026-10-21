@@ -107,7 +107,7 @@ export const members: {
     departments: ['Executive Board', 'Human Resources'],
     image: '/members/gen8/kim.jpg',
     bio: 'People-focused leader dedicated to building inclusive communities and fostering personal growth. Tam creates opportunities for members to develop both technical and soft skills.',
-    quote: 'Imagine. Innovate. Inspire.',
+    quote: `What you want most is what you most can't have. And what you most can't have is what you already had, and lost`,
     generation: 8,
     objectPosition: 'center 58%',
     socials: {
@@ -121,7 +121,7 @@ export const members: {
     role: 'Technical Vice President - Head of Technology',
     departments: ['Executive Board', 'Technology'],
     image: '/members/gen8/dung.jpg',
-    bio: 'Technology department leader with expertise in both software and hardware domains. Tai manages and navigates the entire tech department, bridging development teams and ensuring seamless integration across all technical initiatives.',
+    bio: 'Head of Technology who sets the direction for every project the club builds. Dung connects the software and hardware teams, turns ideas into shipped products, and makes sure knowledge is shared across the department.',
     quote: 'Sharing is caring',
     generation: 8,
     objectPosition: 'center 15%',
@@ -180,7 +180,7 @@ export const members: {
     departments: ['Technology'],
     image: '/members/gen8/phuc.jpg',
     objectPosition: 'center 25%',
-    bio: 'Hardware enthusiast and Embedded specialist who brings ideas to life through circuits and code. Duong leads our hardware projects and workshops, from Arduino basics to advanced robotics.',
+    bio: 'Software manager who builds products people actually use. Phuc leads our web and full-stack projects, shares modern tooling through hands-on workshops, and helps members take an idea from first commit to live release.',
     quote: 'An investment in knowledge pays the best interest',
     generation: 8,
     socials: {
@@ -195,8 +195,9 @@ export const members: {
     departments: ['Technology'],
     image: '/members/gen8/dat.jpg',
     objectPosition: 'center 34%',
-    bio: 'Software architect and algorithm enthusiast who transforms complex problems into elegant solutions. Khoa leads our development teams and champions best practices in modern software engineering.',
-    quote: 'Code is poetry written for machines but read by humans.',
+    bio: 'Software manager with a sharp eye for cyber security, who turns complex problems into clean, secure code. Dat is a CTF competitor who guides our development projects and teaches members to think like an attacker so they can build like a defender.',
+    quote:
+      'Never settle for borrowed answers. Learn to question, to discover, and to understand for yourself.',
     generation: 8,
     socials: {
       facebook: 'https://www.facebook.com/kyle.mai261/',
