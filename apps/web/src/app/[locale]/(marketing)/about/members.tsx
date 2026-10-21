@@ -34,7 +34,7 @@ export default function Members() {
     useState<DepartmentName | null>(null);
   const [lockedDepartment, setLockedDepartment] =
     useState<DepartmentName | null>(null);
-  const [selectedGeneration, setSelectedGeneration] = useState<6 | 7>(7);
+  const [selectedGeneration, setSelectedGeneration] = useState<number>(8);
 
   const activeDepartment = lockedDepartment || hoveredDepartment;
 
@@ -82,7 +82,17 @@ export default function Members() {
       </motion.h1>
 
       <div className="relative mx-auto mt-4 mb-8 max-w-4xl rounded-lg border border-border bg-card p-4 text-center text-base text-foreground/80 tracking-wide md:p-6 md:text-lg">
-        {selectedGeneration === 7 ? (
+        {selectedGeneration === 8 ? (
+          <>
+            Meet{' '}
+            <span className="font-bold text-brand-light-blue">
+              Generation 8
+            </span>
+            , the current team leading NEO Culture Tech forward — driving our
+            technical events, workshops, and projects for the house of{' '}
+            <span className="font-bold text-brand-light-blue">SSET</span>.
+          </>
+        ) : selectedGeneration === 7 ? (
           <>
             RMIT Neo Culture Tech Club mostly operates technical events,
             workshops, trainings, etc… related to technology. Our target
@@ -148,7 +158,47 @@ export default function Members() {
           transition={{ duration: 0.5 }}
           className="w-full"
         >
-          {currentMembers.length === 6 ? (
+          {currentMembers.length === 8 ? (
+            // Layout for 8 members — two even rows of four
+            <motion.div
+              className="mt-8 grid grid-cols-1 justify-items-center gap-8 px-4 sm:grid-cols-2 lg:grid-cols-4"
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: {},
+                visible: {
+                  transition: {
+                    staggerChildren: 0.15,
+                  },
+                },
+              }}
+            >
+              {currentMembers.map((p) => (
+                <motion.div
+                  key={p.name}
+                  className={`relative flex justify-center transition-all duration-300 ${
+                    isHidden(p.departments)
+                      ? 'scale-95 opacity-20'
+                      : 'scale-100 opacity-100'
+                  }`}
+                  variants={cardVariants}
+                >
+                  {isHidden(p.departments) && (
+                    <div className="absolute inset-0 z-10 rounded-lg bg-foreground/20 backdrop-blur-[1px]" />
+                  )}
+                  <MemberCard
+                    name={p.name}
+                    role={p.role}
+                    image={p.image}
+                    bio={p.bio}
+                    quote={p.quote}
+                    objectPosition={p.objectPosition}
+                    socials={p.socials}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+          ) : currentMembers.length === 6 ? (
             // Layout for 6 members
             <motion.div
               className="mt-8 grid grid-cols-1 justify-items-center gap-8 px-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3"
@@ -182,6 +232,7 @@ export default function Members() {
                     image={p.image}
                     bio={p.bio}
                     quote={p.quote}
+                    objectPosition={p.objectPosition}
                     socials={p.socials}
                   />
                 </motion.div>
@@ -273,57 +324,65 @@ export default function Members() {
             </>
           )}
         </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="mt-6 mb-4 flex flex-col items-center gap-3"
-        >
-          <div className="flex items-center gap-3">
-            <span className="font-medium text-muted-foreground text-sm">
-              Generation:
-            </span>
-            <Select
-              value={selectedGeneration.toString()}
-              onValueChange={(value) =>
-                setSelectedGeneration(Number(value) as 6 | 7)
-              }
-            >
-              <SelectTrigger className="h-10 w-52 border-border bg-card transition-colors hover:bg-muted">
-                <SelectValue placeholder="Select generation..." />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="7" className="focus:bg-brand-light-blue/10">
-                  <div className="flex w-full cursor-pointer items-center gap-2">
-                    <span className="font-medium">Generation 7</span>
-                    <Badge
-                      variant="outline"
-                      className="ml-auto border-brand-light-blue text-brand-light-blue text-xs"
-                    >
-                      Current
-                    </Badge>
-                  </div>
-                </SelectItem>
-                <SelectItem
-                  value="6"
-                  className="focus:bg-brand-light-yellow/10"
-                >
-                  <div className="flex w-full cursor-pointer items-center gap-2">
-                    <span className="font-medium">Generation 6</span>
-                    <Badge
-                      variant="outline"
-                      className="ml-auto border-brand-light-yellow text-brand-light-yellow text-xs"
-                    >
-                      Legacy
-                    </Badge>
-                  </div>
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </motion.div>
       </AnimatePresence>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="mt-6 mb-4 flex flex-col items-center gap-3"
+      >
+        <div className="flex items-center gap-3">
+          <span className="font-medium text-muted-foreground text-sm">
+            Generation:
+          </span>
+          <Select
+            value={selectedGeneration.toString()}
+            onValueChange={(value) =>
+              setSelectedGeneration(Number(value) as number)
+            }
+          >
+            <SelectTrigger className="h-10 w-52 border-border bg-card transition-colors hover:bg-muted">
+              <SelectValue placeholder="Select generation..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="8" className="focus:bg-brand-light-blue/10">
+                <div className="flex w-full cursor-pointer items-center gap-2">
+                  <span className="font-medium">Generation 8</span>
+                  <Badge
+                    variant="outline"
+                    className="ml-auto border-brand-light-blue text-brand-light-blue text-xs"
+                  >
+                    Current
+                  </Badge>
+                </div>
+              </SelectItem>
+              <SelectItem value="7" className="focus:bg-brand-light-blue/10">
+                <div className="flex w-full cursor-pointer items-center gap-2">
+                  <span className="font-medium">Generation 7</span>
+                  <Badge
+                    variant="outline"
+                    className="ml-auto border-brand-light-yellow text-brand-light-yellow text-xs"
+                  >
+                    Legacy
+                  </Badge>
+                </div>
+              </SelectItem>
+              <SelectItem value="6" className="focus:bg-brand-light-yellow/10">
+                <div className="flex w-full cursor-pointer items-center gap-2">
+                  <span className="font-medium">Generation 6</span>
+                  <Badge
+                    variant="outline"
+                    className="ml-auto border-brand-light-yellow text-brand-light-yellow text-xs"
+                  >
+                    Legacy
+                  </Badge>
+                </div>
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </motion.div>
     </section>
   );
 }

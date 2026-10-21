@@ -39,7 +39,7 @@ function Polaroid({
     <figure
       className={`w-full bg-white p-2.5 shadow-xl transition-transform duration-300 hover:rotate-0 ${className}`}
     >
-      <div className="relative aspect-[4/3] w-full overflow-hidden">
+      <div className="relative aspect-4/3 w-full overflow-hidden">
         <Image
           src={src}
           alt={alt}
@@ -71,7 +71,7 @@ export default function HeroSection() {
 
       {/* Glass panel — matches Who We Are / Departments; overflow-visible so the
           big N can spill past the panel edges. */}
-      <div className="relative flex h-[85svh] flex-col justify-center overflow-visible rounded-3xl border border-border/50 bg-gradient-to-br from-brand-light-blue/15 via-background/60 to-brand-light-yellow/10 px-6 shadow-2xl backdrop-blur-xl sm:px-10 md:px-16">
+      <div className="relative flex h-[85svh] flex-col justify-center overflow-visible rounded-3xl border border-border/50 bg-linear-to-br from-brand-light-blue/15 via-background/60 to-brand-light-yellow/10 px-6 shadow-2xl backdrop-blur-xl sm:px-10 md:px-16">
         {/* Wordmark — centerpiece, ~80% width */}
         <motion.h1
           initial={reduceMotion ? false : { opacity: 0, y: 30 }}
@@ -79,7 +79,7 @@ export default function HeroSection() {
           transition={{ duration: 0.8 }}
           className={`${anton.className} mt-1 -translate-y-4 whitespace-nowrap text-center font-black text-6xl uppercase leading-[0.95] tracking-tight sm:text-8xl lg:text-[13rem]`}
         >
-          <span className="relative inline-block pb-3 text-brand-dark-blue after:absolute after:inset-x-0 after:bottom-0 after:h-[10px] after:bg-brand-light-yellow dark:text-brand-white">
+          <span className="relative inline-block pb-3 text-brand-dark-blue after:absolute after:inset-x-0 after:bottom-0 after:h-2.5 after:bg-brand-light-yellow dark:text-brand-white">
             Neo Culture
           </span>{' '}
           <span className="text-brand-light-blue">Tech</span>
@@ -110,7 +110,7 @@ export default function HeroSection() {
               Size knob: md:h-[..]/md:w-[..]. Bleed knob: md:-my-[..]. */}
           <motion.div
             {...reveal(0.1)}
-            className="relative mx-auto h-72 w-72 flex-none sm:h-96 sm:w-96 md:-my-48 md:h-[700px] md:w-[700px] md:translate-y-44 md:scale-[1.6]"
+            className="relative mx-auto h-72 w-72 flex-none sm:h-96 sm:w-96 md:-my-48 md:h-175 md:w-175 md:translate-y-44 md:scale-[1.6]"
           >
             <Image
               src={LOGO}
@@ -118,7 +118,7 @@ export default function HeroSection() {
               fill
               priority
               sizes="900px"
-              className="object-contain [filter:drop-shadow(22px_22px_0_rgba(0,0,0,0.4))]"
+              className="filter-[drop-shadow(22px_22px_0_rgba(0,0,0,0.4))] object-contain"
             />
           </motion.div>
 

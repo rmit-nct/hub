@@ -178,7 +178,7 @@ function MarqueeRow({
               className="object-cover transition-transform duration-500 group-hover:scale-105"
             />
             {/* hover caption */}
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+            <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/70 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
             <span className="pointer-events-none absolute bottom-2 left-3 font-semibold text-sm text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
               {photo.caption}
             </span>
@@ -265,6 +265,7 @@ export default function WhoWeAre() {
               src={logoSrc}
               alt="Neo Culture Tech logo"
               fill
+              priority
               sizes="112px"
               className="object-contain"
             />
@@ -353,7 +354,7 @@ export default function WhoWeAre() {
             <span className="block font-medium text-3xl text-foreground/80 uppercase leading-none tracking-tight sm:text-4xl">
               Stronger
             </span>
-            <span className="mt-1 block translate-x-8 bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text font-bold text-4xl text-transparent uppercase leading-none tracking-tight [filter:drop-shadow(0_0_18px_rgba(34,211,238,0.45))] sm:translate-x-16 sm:text-6xl">
+            <span className="filter-[drop-shadow(0_0_18px_rgba(34,211,238,0.45))] mt-1 block translate-x-8 bg-linear-to-r from-cyan-400 to-blue-500 bg-clip-text font-bold text-4xl text-transparent uppercase leading-none tracking-tight sm:translate-x-16 sm:text-6xl">
               Together
             </span>
           </div>
@@ -368,7 +369,7 @@ export default function WhoWeAre() {
                     className={`h-5 w-5 sm:h-6 sm:w-6 ${stat.iconColor}`}
                   />
                   <div
-                    className={`bg-gradient-to-r bg-clip-text font-black text-3xl text-transparent sm:text-4xl ${stat.gradient}`}
+                    className={`bg-linear-to-r bg-clip-text font-black text-3xl text-transparent sm:text-4xl ${stat.gradient}`}
                   >
                     {stat.number}
                   </div>

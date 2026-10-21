@@ -10,6 +10,7 @@ interface MemberCardProps {
   bio: string;
   quote: string;
   generation?: number;
+  objectPosition?: string;
   socials: {
     facebook?: string;
     linkedin?: string;
@@ -22,6 +23,7 @@ export default function MemberCard({
   image,
   bio,
   quote,
+  objectPosition = 'top',
   socials,
 }: MemberCardProps) {
   return (
@@ -33,7 +35,8 @@ export default function MemberCard({
             fill
             alt={name}
             sizes="(max-width: 767px) 100vw, 384px"
-            className="object-cover object-top"
+            className="object-cover"
+            style={{ objectPosition }}
           />
           <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/5 to-transparent" />
           <div className="absolute bottom-0 w-full p-4">

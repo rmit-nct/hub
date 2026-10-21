@@ -80,14 +80,131 @@ export const members: {
   bio: string;
   quote: string;
   generation: number;
+  // Optional CSS object-position for the card photo (default 'top').
+  objectPosition?: string;
   socials: {
     facebook?: string;
     linkedin?: string;
   };
 }[] = [
   {
+    name: 'Lam Vi Tin',
+    role: 'President',
+    departments: ['Executive Board', 'Technology'],
+    image: '/members/gen8/tin.jpg',
+    bio: 'Visionary leader bridging technology and community. Duc drives our strategic direction while maintaining our core values of innovation, collaboration, and excellence in everything we do.',
+    quote: 'The solution begins when you change your perspective',
+    generation: 8,
+    objectPosition: 'center 18%',
+    socials: {
+      facebook: 'https://www.facebook.com/share/14pyhnvvEbx/?mibextid=wwXIfr',
+      linkedin: 'https://www.linkedin.com/in/tin-lam-hws',
+    },
+  },
+  {
+    name: 'Huynh Tran Mai Kim',
+    role: 'Liaison Vice President - Head of Human Resources',
+    departments: ['Executive Board', 'Human Resources'],
+    image: '/members/gen8/kim.jpg',
+    bio: 'People-focused leader dedicated to building inclusive communities and fostering personal growth. Tam creates opportunities for members to develop both technical and soft skills.',
+    quote: 'Imagine. Innovate. Inspire.',
+    generation: 8,
+    objectPosition: 'center 58%',
+    socials: {
+      facebook: 'https://www.facebook.com/share/1C7sc4SY7L/?mibextid=wwXIfr',
+      linkedin: 'https://www.linkedin.com/in/kim-huỳnh-1629a7387?utm_source=share_via&utm_content=profile&utm_medium=member_ios',
+    },
+  },
+  {
+    name: 'Dao Tien Dung',
+    role: 'Technical Vice President - Head of Technology',
+    departments: ['Executive Board', 'Technology'],
+    image: '/members/gen8/dung.jpg',
+    bio: 'Technology department leader with expertise in both software and hardware domains. Tai manages and navigates the entire tech department, bridging development teams and ensuring seamless integration across all technical initiatives.',
+    quote: 'Sharing is caring',
+    generation: 8,
+    objectPosition: 'center 15%',
+    socials: {
+      facebook: 'https://www.facebook.com/van.tai.461142/',
+      linkedin: 'https://www.linkedin.com/in/taivanngo',
+    },
+  },
+  {
+    name: 'Truong Tan Quang',
+    role: 'Chief Financial Officer',
+    departments: ['Executive Board', 'FinLog'],
+    image: '/members/gen8/quang.jpg',
+    bio: 'Financial strategist with a passion for sustainable growth and fiscal responsibility. Kim ensures our club operates efficiently while investing in innovative projects that benefit our members.',
+    quote: 'The best way to predict the future is to create it.',
+    generation: 8,
+    objectPosition: 'center 27%',
+    socials: {
+      facebook: 'https://www.facebook.com/share/1A1d7YDkBA/?mibextid=wwXIfr',
+      linkedin: 'https://www.linkedin.com/in/carolpham14042006',
+    },
+  },
+  {
+    name: 'Cao Phuong Linh',
+    role: 'Head of Marcom',
+    departments: ['Executive Board', 'Marketing'],
+    image: '/members/gen8/linh.jpg',
+    objectPosition: 'center 23%',
+    bio: 'Creative storyteller and brand strategist who amplifies our voice in the tech community. Nhat crafts compelling narratives that showcase our impact and attract like-minded innovators.',
+    quote:
+      'It is only with the heart that one can see rightly; what is essential is invisible to the eye',
+    generation: 8,
+    socials: {
+      facebook: 'https://www.facebook.com/votrnminhn',
+      linkedin: 'https://www.linkedin.com/in/sun-vo/',
+    },
+  },
+  {
+    name: 'Tran Duy Khanh',
+    role: 'Learning and Development Manager',
+    departments: ['Human Resources'],
+    image: '/members/gen8/khanh.jpg',
+    objectPosition: 'center 23%',
+    bio: 'Software architect and algorithm enthusiast who transforms complex problems into elegant solutions. Khoa leads our development teams and champions best practices in modern software engineering.',
+    quote:
+      "Loyalty is a two-way street. If I'm asking for it from you, then you're getting it from me",
+    generation: 8,
+    socials: {
+      facebook: 'https://www.facebook.com/kyle.mai261/',
+      linkedin: 'https://www.linkedin.com/in/kylemai261',
+    },
+  },
+  {
+    name: 'Huynh Tan Phuc',
+    role: 'Technology Manager',
+    departments: ['Technology'],
+    image: '/members/gen8/phuc.jpg',
+    objectPosition: 'center 25%',
+    bio: 'Hardware enthusiast and Embedded specialist who brings ideas to life through circuits and code. Duong leads our hardware projects and workshops, from Arduino basics to advanced robotics.',
+    quote: 'An investment in knowledge pays the best interest',
+    generation: 8,
+    socials: {
+      facebook: 'https://www.facebook.com/share/18kbiokL1Q/?mibextid=wwXIfr',
+      linkedin: 'https://www.linkedin.com/in/tấn-phúc-huỳnh-82b708244?utm_source=share_via&utm_content=profile&utm_medium=member_ioshttps://www.linkedin.com/in/t%E1%BA%A5n-ph%C3%BAc-hu%E1%BB%B3nh-82b708244/',
+    },
+  },
+  {
+    name: 'Pham Minh Dat',
+    role: 'Technology Manager',
+    departments: ['Technology'],
+    image: '/members/gen8/dat.jpg',
+    objectPosition: 'center 34%',
+    bio: 'Software architect and algorithm enthusiast who transforms complex problems into elegant solutions. Khoa leads our development teams and champions best practices in modern software engineering.',
+    quote: 'Code is poetry written for machines but read by humans.',
+    generation: 8,
+    socials: {
+      facebook: 'https://www.facebook.com/kyle.mai261/',
+      linkedin: 'https://www.linkedin.com/in/kylemai261',
+    },
+  },
+  // Generation 7
+  {
     name: 'Pham Ngoc Thien Kim',
-    role: 'CFO',
+    role: 'Chief Financial Officer',
     departments: ['Executive Board', 'FinLog'],
     image: '/members/gen7/kim.png',
     bio: 'Financial strategist with a passion for sustainable growth and fiscal responsibility. Kim ensures our club operates efficiently while investing in innovative projects that benefit our members.',
@@ -100,7 +217,7 @@ export const members: {
   },
   {
     name: 'Nguyen Ha Gia Tam',
-    role: 'Head of HR & Liaison Officer',
+    role: 'Liaison Vice President - Head of Human Resources',
     departments: ['Executive Board', 'Human Resources'],
     image: '/members/gen7/tam.png',
     bio: 'People-focused leader dedicated to building inclusive communities and fostering personal growth. Tam creates opportunities for members to develop both technical and soft skills.',
@@ -152,7 +269,7 @@ export const members: {
   },
   {
     name: 'Ngo Van Tai',
-    role: 'Head of Technology',
+    role: 'Technical Vice President - Head of Technology',
     departments: ['Executive Board', 'Technology'],
     image: '/members/gen7/tai.png',
     bio: 'Technology department leader with expertise in both software and hardware domains. Tai manages and navigates the entire tech department, bridging development teams and ensuring seamless integration across all technical initiatives.',
@@ -179,7 +296,7 @@ export const members: {
   // Generation 6
   {
     name: 'Vo Khanh Quynh',
-    role: 'Head of HR & Liaison Officer',
+    role: 'Liaison Vice President - Head of Human Resources',
     departments: ['Executive Board', 'Human Resources'],
     image: '/members/gen6/quynh.png',
     bio: 'Former HR leader who established the foundation of our people-centric culture. Quynh pioneered inclusive recruitment practices and created the mentorship programs that continue to develop our members today.',
@@ -219,7 +336,7 @@ export const members: {
   },
   {
     name: 'Huynh Tan Phat',
-    role: 'CFO',
+    role: 'Chief Financial Officer',
     departments: ['Executive Board', 'FinLog'],
     image: '/members/gen6/phat.png',
     bio: "Former financial leader who implemented transparent budgeting systems and secured funding for major initiatives. Phat's financial stewardship enabled sustainable growth and long-term investment in our community.",
