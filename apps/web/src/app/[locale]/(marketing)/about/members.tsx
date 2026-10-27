@@ -63,12 +63,12 @@ export default function Members() {
       className="flex flex-col items-center px-2 py-4"
     >
       <motion.h1
-        className="mt-4 mb-8 text-center font-extrabold text-6xl"
+        className="mt-4 mb-8 text-center font-extrabold text-4xl md:text-6xl"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <span className="border-brand-light-blue border-b-4 pb-2">
+        <span className="inline-block border-brand-light-blue border-b-4 pb-2">
           Meet Our Team
         </span>
         <motion.div
