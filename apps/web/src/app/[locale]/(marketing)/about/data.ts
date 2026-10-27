@@ -109,7 +109,7 @@ export const members: {
     bio: 'People-focused leader dedicated to building inclusive communities and fostering personal growth. Kim creates opportunities for members to develop both technical and soft skills.',
     quote: `Imagine. Innovate. Inspire.`,
     generation: 8,
-    objectPosition: 'center 58%',
+    objectPosition: 'center 30%',
     socials: {
       facebook: 'https://www.facebook.com/share/1C7sc4SY7L/?mibextid=wwXIfr',
       linkedin:
@@ -194,7 +194,7 @@ export const members: {
     role: 'Technology Manager',
     departments: ['Technology'],
     image: '/members/gen8/dat.jpg',
-    objectPosition: 'center 34%',
+    objectPosition: 'center 15%',
     bio: 'Technology manager with a sharp eye for cyber security, who turns complex problems into clean, secure code. Dat is a CTF competitor who guides our development projects and teaches members to think like an attacker so they can build like a defender.',
     quote:
       'Never settle for borrowed answers. Learn to question, to discover, and to understand for yourself.',

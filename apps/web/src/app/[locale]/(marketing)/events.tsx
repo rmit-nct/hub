@@ -18,8 +18,7 @@ type EventType = {
   href?: string; // present => renders a "See details" button (past events)
 };
 
-const FACEBOOK_PAGE = 'https://www.facebook.com/rmit.nct';
-
+const FACEBOOK_PAGE =  `https://www.facebook.com/rmit.nct`;
 // Each event category gets its own badge color.
 const TYPE_STYLES: Record<string, string> = {
   Competition: 'bg-amber-500/90 text-white hover:bg-amber-500',
@@ -82,26 +81,26 @@ function TypeTicker() {
 // Upcoming: teaser only — all meta is TBA, "Coming Soon" CTA, no link.
 const upcomingEvents: EventType[] = [
   {
-    src: '/media/marketing/neo-league/neo-league-2026.png',
-    title: 'Neo League Season 2',
+    src: '/media/logos/og-image.png',
+    title: 'Neo League Season 3',
     description:
-      'Our flagship innovation challenge returns — bigger, bolder, and open to new builders.',
+      'Our flagship innovation challenge returns — bigger, bolder, and open to new builders.', // phải sửa 
     date: 'TBA',
     location: 'TBA',
     type: 'Competition',
   },
   {
-    src: '/media/marketing/events/netcompany-talk-show.jpg',
-    title: 'Neo Connect',
+    src: '/media/logos/og-image.png',
+    title: 'NCT x SSET Net Company Tour',
     description: 'Industry talks and networking with our partners.',
     date: 'TBA',
     location: 'TBA',
-    type: 'Networking',
+    type: 'Company Tour',
   },
   {
-    src: '/media/marketing/workshops/cv-workshop.jpg',
-    title: 'Member Workshops',
-    description: 'Hands-on sessions to sharpen your craft.',
+    src: '/media/logos/og-image.png',
+    title: 'AI Prompting Workshops',
+    description: 'Hands-on sessions to learn to prompt AI ',
     date: 'TBA',
     location: 'TBA',
     type: 'Workshop',
@@ -111,31 +110,31 @@ const upcomingEvents: EventType[] = [
 // Past: full info card, each links to its own Facebook post.
 const pastEvents: EventType[] = [
   {
-    src: '/media/marketing/neo-league/neo-league-2025.png',
-    title: 'Neo League - Prompt The Future 2025',
-    description: 'Our AI prompt-engineering competition drew 170+ innovators.',
-    date: '05/2025',
+    src: '/media/marketing/landing-page/event/neo_league_season2_end.jpg',
+    title: 'Neo League Season 2 - Innovation Humanity Challenge',
+    description: 'Our competition about innovation solving and building IOT.',
+    date: '03/2026',
     location: 'RMIT Campus',
     type: 'Competition',
-    href: FACEBOOK_PAGE,
+    href: "https://www.facebook.com/rmit.neoleague",
   },
   {
-    src: '/media/marketing/events/netcompany-tour.jpg',
-    title: 'Netcompany Tour',
+    src: '/media/marketing/landing-page/event/nab_company.jpeg',
+    title: 'NAB Company Tour',
     description: 'A guided company tour with demos and networking for members.',
-    date: '08/2025',
-    location: 'Netcompany Campus',
+    date: '10/2025',
+    location: 'NAB Company Campus',
     type: 'Company Tour',
-    href: 'https://www.facebook.com/share/p/16J9j3s46A/',
+    href: 'https://www.facebook.com/share/p/19rxE1dLpX/',
   },
   {
-    src: '/media/marketing/workshops/cv-workshop.jpg',
-    title: 'CV Workshop',
-    description: 'Internal training to help members land their next role.',
-    date: '09/2025',
+    src: '/media/marketing/landing-page/event/hr_ws.jpg',
+    title: 'Communication Workshop',
+    description: 'Break the barriers, build the connections!',
+    date: '08/2026',
     location: 'RMIT Campus',
     type: 'Workshop',
-    href: 'https://www.facebook.com/share/p/1aLwzokR2b/',
+    href: 'https://www.facebook.com/share/p/1EWRpLa5P6/',
   },
 ];
 

@@ -37,7 +37,7 @@ const ACCENTS: Record<CoreDepartmentName, Accent> = {
     button: 'bg-dynamic-blue text-white hover:bg-dynamic-blue/90',
     cardAccent:
       'border-dynamic-blue/30 bg-dynamic-blue/5 hover:border-dynamic-blue/50 hover:bg-dynamic-blue/10',
-    image: '/departments/technology/competitive-programming-workshop.jpg',
+    image: '/departments/technology/tech_department.jpg',
   },
   'Human Resources': {
     icon: Users,
@@ -46,7 +46,7 @@ const ACCENTS: Record<CoreDepartmentName, Accent> = {
     button: 'bg-dynamic-purple text-white hover:bg-dynamic-purple/90',
     cardAccent:
       'border-dynamic-purple/30 bg-dynamic-purple/5 hover:border-dynamic-purple/50 hover:bg-dynamic-purple/10',
-    image: '/departments/human-resources/secret-santa-c-2025.jpg',
+    image: '/departments/human-resources/neo-award-2025c.jpg',
   },
   Marketing: {
     icon: Megaphone,

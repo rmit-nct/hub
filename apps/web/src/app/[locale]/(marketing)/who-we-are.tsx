@@ -13,27 +13,17 @@ interface Photo {
   caption: string;
 }
 
-// Placeholder photos — swap to /media/marketing/landing-page/about/* later.
+const ABOUT = '/media/marketing/landing-page/about';
+
+// The two Culture / Tech polaroids.
 const culturePhotos: Photo[] = [
-  { src: '/club-day/sem-a-2026.jpg', alt: 'NCT Club Day', caption: 'Club Day' },
-  {
-    src: '/media/marketing/events/netcompany-talk-show.jpg',
-    alt: 'Neo Connect talk show',
-    caption: 'Neo Connect',
-  },
+  { src: `${ABOUT}/culture1.jpg`, alt: 'NCT culture', caption: 'Culture' },
+  { src: `${ABOUT}/culture2.jpeg`, alt: 'NCT culture', caption: 'Culture' },
 ];
 
 const techPhotos: Photo[] = [
-  {
-    src: '/media/marketing/workshops/cv-workshop.jpg',
-    alt: 'CV workshop',
-    caption: 'CV Workshop',
-  },
-  {
-    src: '/media/marketing/neo-league/neo-league-2025.png',
-    alt: 'NEO League',
-    caption: 'NEO League',
-  },
+  { src: `${ABOUT}/tech1.jpg`, alt: 'NCT tech', caption: 'Tech' },
+  { src: `${ABOUT}/tech2.jpg`, alt: 'NCT tech', caption: 'Tech' },
 ];
 
 // Logo variants: bright full-color for the light box, neon for the dark box.
@@ -107,36 +97,45 @@ function PolaroidStack({ photos }: { photos: Photo[] }) {
 }
 
 // Auto-scrolling "wall of moments" strip under the two divisions.
+// Title comes from each photo's file name.
 const stripPhotos: { src: string; alt: string; caption: string }[] = [
-  { src: '/club-day/sem-a-2026.jpg', alt: 'NCT Club Day', caption: 'Club Day' },
+  { src: `${ABOUT}/welcome_day.jpg`, caption: 'Welcome Day' },
+  { src: `${ABOUT}/welcome_day_1.jpg`, caption: 'Welcome Day' },
+  { src: `${ABOUT}/welcome_day-2.jpg`, caption: 'Welcome Day' },
+  { src: `${ABOUT}/Induction_day_sem_A_2026.jpeg`, caption: 'Induction Day' },
+  { src: `${ABOUT}/carnival_2025.jpeg`, caption: 'Carnival 2025' },
+  { src: `${ABOUT}/neo_award_sem_B_2025.jpeg`, caption: 'Neo Award' },
+  { src: `${ABOUT}/NCT_band.jpeg`, caption: 'NCT Band' },
+  { src: `${ABOUT}/neo_band.jpg`, caption: 'Neo Band' },
   {
-    src: '/media/marketing/events/netcompany-tour.jpg',
-    alt: 'Company tour',
-    caption: 'Company Tour',
+    src: `${ABOUT}/neo_league_season_2_rehearsal.jpeg`,
+    caption: 'Neo League Rehearsal',
   },
+  { src: `${ABOUT}/neo_leauge_season2_end.jpg`, caption: 'Neo League Finale' },
+  { src: `${ABOUT}/NCTxFTC_7v7_tourament.jpeg`, caption: 'NCT x FTC 7v7' },
   {
-    src: '/media/marketing/neo-league/neo-league-2025.png',
-    alt: 'NEO League',
-    caption: 'NEO League',
+    src: `${ABOUT}/NCT_badmintion_touramnet.jpeg`,
+    caption: 'Badminton Tournament',
   },
-  {
-    src: '/media/marketing/workshops/cv-workshop.jpg',
-    alt: 'CV workshop',
-    caption: 'CV Workshop',
-  },
-  { src: '/club-day/sem-b-2024.jpg', alt: 'NCT Club Day', caption: 'Club Day' },
-  {
-    src: '/media/marketing/events/netcompany-talk-show.jpg',
-    alt: 'Neo Connect',
-    caption: 'Neo Connect',
-  },
-  { src: '/club-day/sem-c-2025.png', alt: 'NCT Club Day', caption: 'Club Day' },
-  {
-    src: '/media/marketing/neo-league/neo-league-2026.png',
-    alt: 'NEO League',
-    caption: 'NEO League',
-  },
-];
+  { src: `${ABOUT}/sport_day_semC.jpg`, caption: 'Sports Day' },
+  { src: `${ABOUT}/netcompany-tour.jpg`, caption: 'Netcompany Tour' },
+  { src: `${ABOUT}/netcompany-talk-show.jpg`, caption: 'Netcompany Talk Show' },
+  { src: `${ABOUT}/NAB_company_tour.jpeg`, caption: 'NAB Company Tour' },
+  { src: `${ABOUT}/vng_company_tour.jpeg`, caption: 'VNG Company Tour' },
+  { src: `${ABOUT}/marketing_ws.jpg`, caption: 'Marketing Workshop' },
+  { src: `${ABOUT}/tech_ws.jpg`, caption: 'Tech Workshop' },
+  { src: `${ABOUT}/hr_department.jpg`, caption: 'HR Department' },
+  { src: `${ABOUT}/tech_department.jpg`, caption: 'Tech Department' },
+  { src: `${ABOUT}/da_lat_trip.jpeg`, caption: 'Da Lat Trip' },
+  { src: `${ABOUT}/phan_thiet_trip.jpeg`, caption: 'Phan Thiet Trip' },
+  { src: `${ABOUT}/club_day_sem_B_1.jpg`, caption: 'Club Day sem B' },
+  { src: `${ABOUT}/club_day_sem_B_2.jpg`, caption: 'Club Day sem B' },
+  { src: `${ABOUT}/club_day_sem_B.jpg`, caption: 'Club Day sem B' },
+  { src: `${ABOUT}/hobby_horizon.jpg`, caption: 'Hobby Verse 2026' },
+  { src: `${ABOUT}/NCTxFTC_7v7_award.jpg`, caption: 'Hobby Verse 2026' },
+  { src: `${ABOUT}/phan_thiet_trip_1.jpeg`, caption: 'Hobby Verse 2026' },
+  { src: `${ABOUT}/phan_thiet_trip_2.jpeg`, caption: 'Hobby Verse 2026' },
+].map((p) => ({ ...p, alt: p.caption }));
 
 const MARQUEE_CSS = `
 @keyframes nct-marquee {
