@@ -136,7 +136,7 @@ export const members: {
     departments: ['Executive Board', 'FinLog'],
     image: '/members/gen8/quang.jpg',
     bio: 'Financial strategist with a passion for sustainable growth and fiscal responsibility. Quang ensures our club operates efficiently while investing in innovative projects that benefit our members.',
-    quote: 'The best way to predict the future is to create it.',
+    quote: `It's not about how much we have, but how wisely we make it count.`,
     generation: 8,
     objectPosition: 'center 27%',
     socials: {
@@ -201,7 +201,8 @@ export const members: {
     generation: 8,
     socials: {
       facebook: 'https://www.facebook.com/minh.at.339907',
-      linkedin: 'https://www.linkedin.com/in/dat-pham-7a54653b8?fbclid=IwY2xjawVNGUZleHRuA2FlbQIxMABwZG9mBWJyaWQRMUlDZGJsdE91bHFOakxqZjdzcnRjBmFwcF9pZBAyMjIwMzkxNzg4MjAwODkyAAEeA3cxyL5BWiZ6bfqYkP3e_j45rx_5GiJ64jPXm7vWyeiqcoLidg14inIbSVY_aem_8PW4Yr_yxxi3PDFuaVkadg',
+      linkedin:
+        'https://www.linkedin.com/in/dat-pham-7a54653b8?fbclid=IwY2xjawVNGUZleHRuA2FlbQIxMABwZG9mBWJyaWQRMUlDZGJsdE91bHFOakxqZjdzcnRjBmFwcF9pZBAyMjIwMzkxNzg4MjAwODkyAAEeA3cxyL5BWiZ6bfqYkP3e_j45rx_5GiJ64jPXm7vWyeiqcoLidg14inIbSVY_aem_8PW4Yr_yxxi3PDFuaVkadg',
     },
   },
   // Generation 7
