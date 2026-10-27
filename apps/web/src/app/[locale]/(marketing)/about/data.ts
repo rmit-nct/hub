@@ -92,7 +92,7 @@ export const members: {
     role: 'President',
     departments: ['Executive Board', 'Technology'],
     image: '/members/gen8/tin.jpg',
-    bio: 'Visionary leader bridging technology and community. Duc drives our strategic direction while maintaining our core values of innovation, collaboration, and excellence in everything we do.',
+    bio: 'Visionary leader bridging technology and community. Tin drives our strategic direction while maintaining our core values of innovation, collaboration, and excellence in everything we do.',
     quote: 'The solution begins when you change your perspective',
     generation: 8,
     objectPosition: 'center 18%',
@@ -106,8 +106,8 @@ export const members: {
     role: 'Liaison Vice President - Head of Human Resources',
     departments: ['Executive Board', 'Human Resources'],
     image: '/members/gen8/kim.jpg',
-    bio: 'People-focused leader dedicated to building inclusive communities and fostering personal growth. Tam creates opportunities for members to develop both technical and soft skills.',
-    quote: `What you want most is what you most can't have. And what you most can't have is what you already had, and lost`,
+    bio: 'People-focused leader dedicated to building inclusive communities and fostering personal growth. Kim creates opportunities for members to develop both technical and soft skills.',
+    quote: `Imagine. Innovate. Inspire.`,
     generation: 8,
     objectPosition: 'center 58%',
     socials: {
@@ -126,8 +126,8 @@ export const members: {
     generation: 8,
     objectPosition: 'center 15%',
     socials: {
-      facebook: 'https://www.facebook.com/van.tai.461142/',
-      linkedin: 'https://www.linkedin.com/in/taivanngo',
+      facebook: 'https://www.facebook.com/aotiendung.986613',
+      linkedin: 'https://www.linkedin.com/in/tien-dung-dao-a2281a370',
     },
   },
   {
@@ -135,12 +135,12 @@ export const members: {
     role: 'Chief Financial Officer',
     departments: ['Executive Board', 'FinLog'],
     image: '/members/gen8/quang.jpg',
-    bio: 'Financial strategist with a passion for sustainable growth and fiscal responsibility. Kim ensures our club operates efficiently while investing in innovative projects that benefit our members.',
+    bio: 'Financial strategist with a passion for sustainable growth and fiscal responsibility. Quang ensures our club operates efficiently while investing in innovative projects that benefit our members.',
     quote: 'The best way to predict the future is to create it.',
     generation: 8,
     objectPosition: 'center 27%',
     socials: {
-      facebook: 'https://www.facebook.com/share/1A1d7YDkBA/?mibextid=wwXIfr',
+      facebook: 'https://www.facebook.com/tan.quang.92380',
       linkedin: 'https://www.linkedin.com/in/carolpham14042006',
     },
   },
@@ -150,12 +150,12 @@ export const members: {
     departments: ['Executive Board', 'Marketing'],
     image: '/members/gen8/linh.jpg',
     objectPosition: 'center 23%',
-    bio: 'Creative storyteller and brand strategist who amplifies our voice in the tech community. Nhat crafts compelling narratives that showcase our impact and attract like-minded innovators.',
+    bio: 'Creative storyteller and brand strategist who amplifies our voice in the tech community. Linh crafts compelling narratives that showcase our impact and attract like-minded innovators.',
     quote:
       'It is only with the heart that one can see rightly; what is essential is invisible to the eye',
     generation: 8,
     socials: {
-      facebook: 'https://www.facebook.com/votrnminhn',
+      facebook: 'https://www.facebook.com/caophuong.linh.163985',
       linkedin: 'https://www.linkedin.com/in/sun-vo/',
     },
   },
@@ -165,13 +165,13 @@ export const members: {
     departments: ['Human Resources'],
     image: '/members/gen8/khanh.jpg',
     objectPosition: 'center 23%',
-    bio: 'Software architect and algorithm enthusiast who transforms complex problems into elegant solutions. Khoa leads our development teams and champions best practices in modern software engineering.',
+    bio: `Besides managing workshop activities, Khanh is responsible for identifying members' development needs and designing, coordinating, and evaluating learning initiatives that enhance members' skills, performance, and personal development throughout their club journey.`,
     quote:
       "Loyalty is a two-way street. If I'm asking for it from you, then you're getting it from me",
     generation: 8,
     socials: {
-      facebook: 'https://www.facebook.com/kyle.mai261/',
-      linkedin: 'https://www.linkedin.com/in/kylemai261',
+      facebook: 'https://www.facebook.com/duykhanh.tran.3139',
+      linkedin: 'https://www.linkedin.com/in/khanh-tran-71979a393/',
     },
   },
   {
@@ -180,7 +180,7 @@ export const members: {
     departments: ['Technology'],
     image: '/members/gen8/phuc.jpg',
     objectPosition: 'center 25%',
-    bio: 'Software manager who builds products people actually use. Phuc leads our web and full-stack projects, shares modern tooling through hands-on workshops, and helps members take an idea from first commit to live release.',
+    bio: 'Technology manager who builds products people actually use. Phuc leads our web and full-stack projects, shares modern tooling through hands-on workshops, and helps members take an idea from first commit to live release.',
     quote: 'An investment in knowledge pays the best interest',
     generation: 8,
     socials: {
@@ -195,13 +195,13 @@ export const members: {
     departments: ['Technology'],
     image: '/members/gen8/dat.jpg',
     objectPosition: 'center 34%',
-    bio: 'Software manager with a sharp eye for cyber security, who turns complex problems into clean, secure code. Dat is a CTF competitor who guides our development projects and teaches members to think like an attacker so they can build like a defender.',
+    bio: 'Technology manager with a sharp eye for cyber security, who turns complex problems into clean, secure code. Dat is a CTF competitor who guides our development projects and teaches members to think like an attacker so they can build like a defender.',
     quote:
       'Never settle for borrowed answers. Learn to question, to discover, and to understand for yourself.',
     generation: 8,
     socials: {
-      facebook: 'https://www.facebook.com/kyle.mai261/',
-      linkedin: 'https://www.linkedin.com/in/kylemai261',
+      facebook: 'https://www.facebook.com/minh.at.339907',
+      linkedin: 'https://www.linkedin.com/in/dat-pham-7a54653b8?fbclid=IwY2xjawVNGUZleHRuA2FlbQIxMABwZG9mBWJyaWQRMUlDZGJsdE91bHFOakxqZjdzcnRjBmFwcF9pZBAyMjIwMzkxNzg4MjAwODkyAAEeA3cxyL5BWiZ6bfqYkP3e_j45rx_5GiJ64jPXm7vWyeiqcoLidg14inIbSVY_aem_8PW4Yr_yxxi3PDFuaVkadg',
     },
   },
   // Generation 7
