@@ -15,6 +15,7 @@ export const APP_PUBLIC_PATHS = [
   '/neo-chess',
   '/blogs',
   '/neo-pacman',
+  '/neo-draw-ai',
   '/neo-qr-generator',
 ].reduce((acc: string[], path) => {
   // Add the original path
