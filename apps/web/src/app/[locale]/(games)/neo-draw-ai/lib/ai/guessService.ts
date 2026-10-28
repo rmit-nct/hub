@@ -84,10 +84,9 @@ export async function requestGuess({
     if (!res.ok || !data) {
       const message = data?.error ?? `AI request failed (HTTP ${res.status}).`;
       // Falling back keeps the round playable; the panel still says it's a mock.
-      const fallback = await getMockGuess({
-        prompt,
-        strokeCount: strokes.length,
-      });
+      // No prompt: a fallback that knows the answer would "win" the round for
+      // a few random lines whenever Gemini errors (429s, timeouts).
+      const fallback = await getMockGuess({ strokeCount: strokes.length });
       return {
         ...fallback,
         error: `${message} Showing mock predictions instead.`,
@@ -101,10 +100,7 @@ export async function requestGuess({
     };
   } catch (err) {
     if (err instanceof DOMException && err.name === 'AbortError') throw err;
-    const fallback = await getMockGuess({
-      prompt,
-      strokeCount: strokes.length,
-    });
+    const fallback = await getMockGuess({ strokeCount: strokes.length });
     return {
       ...fallback,
       error: `Could not reach the AI endpoint (${

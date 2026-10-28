@@ -14,9 +14,9 @@ import { type AIGuessResult, normalizeGuesses } from '../normalize-guesses';
  * client turns into a mock-guess fallback instead of a broken round.
  */
 
-// Flash-Lite: a rough doodle needs speed, not deliberation. 2.5-flash-lite 404s
-// for newly created keys, so 3.5 is the floor.
-const MODEL_NAME = 'gemini-3.5-flash-lite';
+// 2.5 models 404 for newly created keys. 3.5-flash-lite measured 8-18s per call
+// (over the deadline); 3.5-flash with minimal thinking answers in ~1-2s.
+const MODEL_NAME = 'gemini-3.5-flash';
 // A round is 30s and scoring waits on this call, so fail fast.
 const REQUEST_TIMEOUT_MS = 8_000;
 // Just under the proxy guard's 200KB body cap; a 512px line drawing is far smaller.
@@ -88,6 +88,10 @@ export async function POST(req: Request) {
       model: google(MODEL_NAME),
       output: Output.object({ schema: guessSchema }),
       temperature: 0.2,
+      // Thinking time is most of the latency, and a doodle doesn't need it.
+      providerOptions: {
+        google: { thinkingConfig: { thinkingLevel: 'minimal' } },
+      },
       // Retries would blow the deadline and burn quota on 429s.
       maxRetries: 0,
       abortSignal,
