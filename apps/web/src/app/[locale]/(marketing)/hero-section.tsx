@@ -24,7 +24,7 @@ const BLINK_CSS = `
 
 const LOGO = '/media/logos/transparent/light-logo-only-transparent.png';
 const LOGO_DARK = '/media/logos/transparent/dark-logo-only-transparent.png';
-const RECRUITMENT_URL = 'https://rmitnct.site/recruitment';
+const RECRUITMENT_URL = 'https://www.rmitnct.site/registrationformsemc2026';
 
 const heroStats = [
   {
@@ -78,13 +78,13 @@ export default function HeroSection() {
 
       {/* Glass panel — matches Who We Are / Departments; overflow-visible so the
           big N can spill past the panel edges. min-h so it grows on mobile. */}
-      <div className="relative flex min-h-[85svh] flex-col justify-center overflow-visible rounded-3xl border border-border/50 bg-linear-to-br from-brand-light-blue/15 via-background/60 to-brand-light-yellow/10 px-6 py-12 shadow-2xl backdrop-blur-xl sm:px-10 md:px-16 lg:py-0">
-        {/* Wordmark — centerpiece, ~80% width */}
+      <div className="@container relative flex min-h-[85svh] flex-col justify-center overflow-visible rounded-3xl border border-border/50 bg-linear-to-br from-brand-light-blue/15 via-background/60 to-brand-light-yellow/10 px-6 py-12 shadow-2xl backdrop-blur-xl sm:px-10 md:px-16 lg:py-0">
+        {/* Wordmark — sized off the panel width so it always fits on one line */}
         <motion.h1
           initial={reduceMotion ? false : { opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className={`${anton.className} mt-1 -translate-y-3 whitespace-nowrap text-center font-black text-5xl uppercase leading-[0.95] tracking-tight sm:text-7xl md:text-8xl lg:text-9xl xl:text-[13rem]`}
+          className={`${anton.className} mt-1 -translate-y-3 whitespace-nowrap text-center font-black text-[15.5cqw] uppercase leading-[0.95] tracking-tight`}
         >
           <span className="relative inline-block pb-3 text-brand-dark-blue after:absolute after:inset-x-0 after:bottom-0 after:h-2.5 after:bg-brand-light-yellow dark:text-brand-white">
             Neo Culture
@@ -93,7 +93,7 @@ export default function HeroSection() {
         </motion.h1>
 
         {/* Row under the wordmark: who-we-are | N logo | join + stats */}
-        <div className="mt-10 grid items-center gap-10 lg:mt-0 lg:grid-cols-[1fr_auto_1fr] lg:gap-6">
+        <div className="mt-10 grid items-center gap-10 lg:mt-0 lg:grid-cols-[minmax(14rem,1fr)_minmax(0,1.5fr)_minmax(16rem,1fr)] lg:gap-6">
           {/* Left — identity block */}
           <motion.div
             {...reveal(0.15)}
@@ -112,11 +112,23 @@ export default function HeroSection() {
               </div>
 
               {/* Brand footer band */}
-              <div className="relative bg-linear-to-br from-brand-dark-blue to-brand-light-blue p-5 text-white">
-                {/* floating NCT seal straddling the seam — spins on hover */}
+              <div className="flex items-start justify-between gap-3 bg-linear-to-br from-brand-dark-blue to-brand-light-blue p-5 text-white">
+                <div className="min-w-0">
+                  <span className="font-semibold text-brand-light-yellow text-xs uppercase tracking-[0.25em]">
+                    Est. 2020
+                  </span>
+                  <p className="mt-1 font-black text-2xl leading-[1.1] sm:text-3xl">
+                    Best club for{' '}
+                    <span className="whitespace-nowrap border-brand-light-yellow border-b-4">
+                      SSET
+                    </span>
+                  </p>
+                </div>
+
+                {/* NCT seal, in flow beside the text — spins on hover */}
                 <div
                   id="hero-n-seal"
-                  className="absolute -top-6 right-5 h-14 w-14 overflow-hidden rounded-full bg-brand-dark-blue shadow-lg ring-4 ring-background transition-transform duration-700 ease-out group-hover:rotate-[360deg]"
+                  className="h-12 w-12 flex-none overflow-hidden rounded-full bg-brand-dark-blue shadow-lg transition-transform duration-700 ease-out group-hover:rotate-[360deg]"
                 >
                   <div className="relative h-full w-full">
                     <Image
@@ -128,25 +140,16 @@ export default function HeroSection() {
                     />
                   </div>
                 </div>
-
-                <span className="font-semibold text-brand-light-yellow text-xs uppercase tracking-[0.25em]">
-                  Est. 2020
-                </span>
-                <p className="mt-1 font-black text-2xl leading-[1.1] sm:text-3xl">
-                  Best club for{' '}
-                  <span className="whitespace-nowrap border-brand-light-yellow border-b-4">
-                    SSET
-                  </span>
-                </p>
               </div>
             </div>
           </motion.div>
 
           {/* Center — N logo (large focal mark that overflows the panel).
-              Size knob: md:h-[..]/md:w-[..]. Bleed knob: md:-my-[..]. */}
+              Fits its grid column so it can't squeeze the side cards; -my-[50%]
+              keeps it from adding row height. Size knob: lg:scale-[..]. */}
           <motion.div
             {...reveal(0.1)}
-            className="relative mx-auto h-72 w-72 flex-none sm:h-96 sm:w-96 md:h-112 md:w-112 lg:-my-48 lg:h-175 lg:w-175 lg:translate-y-36 lg:scale-[1.6]"
+            className="relative mx-auto aspect-square w-72 flex-none sm:w-96 md:w-112 lg:-my-[50%] lg:w-full lg:translate-y-[20%] lg:scale-[1.6]"
           >
             <Image
               src={LOGO}

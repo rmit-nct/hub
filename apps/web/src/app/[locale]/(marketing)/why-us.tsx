@@ -69,7 +69,7 @@ const reasons = [
       'Continuous Skill Development',
     ],
     buttonText: 'Join Neo Culture Tech',
-    link: 'https://rmitnct.site/recruitment',
+    link: 'https://www.rmitnct.site/registrationformsemc2026',
     isExternal: true,
     badgeText: 'Inclusive Community',
   },
