@@ -7,6 +7,36 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* NCT brand palette, used by NEO DrawAI (apps/web (games)/neo-draw-ai). */
+@theme static {
+  --color-nct-navy: #1f2844;
+  --color-nct-steel: #5095aa;
+  --color-nct-amber: #f8b73a;
+
+  --color-nct-900: #0b1120;
+  --color-nct-850: #101a2e;
+  --color-nct-800: #16223a;
+  --color-nct-700: #1f2844;
+  --color-nct-600: #2b3757;
+  --color-nct-500: #3d4c72;
+
+  --color-nct-steel-light: #7fb6c7;
+  --color-nct-steel-dark: #3d7288;
+
+  --color-nct-amber-light: #ffd177;
+  --color-nct-amber-dark: #d99b22;
+
+  --color-nct-ink: #eaf2f7;
+  --color-nct-muted: #9fb3c8;
+  --color-nct-success: #4ec9a5;
+  --color-nct-danger: #e5645f;
+}
+
+/* inline: --font-permanent-marker is only set on the DrawAI layout wrapper. */
+@theme inline {
+  --font-marker: var(--font-permanent-marker), cursive;
+}
+
 :root {
   --radius: 0.625rem;
 

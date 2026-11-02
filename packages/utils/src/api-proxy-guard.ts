@@ -69,6 +69,13 @@ const USERS_ME_MUTATE_RATE_LIMITS: RateLimitConfig[] = [
   { window: 'day', limit: 240, duration: '1 d' },
 ];
 
+// One NEO DrawAI game sends ~70 guesses over ~6 minutes, peaking ~14/min.
+const NEO_DRAW_AI_MUTATE_RATE_LIMITS: RateLimitConfig[] = [
+  { window: 'minute', limit: 20, duration: '1 m' },
+  { window: 'hour', limit: 150, duration: '1 h' },
+  { window: 'day', limit: 600, duration: '1 d' },
+];
+
 const DEFAULT_MUTATE_RATE_LIMITS: RateLimitConfig[] = [
   { window: 'minute', limit: 12, duration: '1 m' },
   { window: 'hour', limit: 120, duration: '1 h' },
@@ -104,6 +111,14 @@ const DEFAULT_ROUTE_POLICIES: ProxyRoutePolicy[] = [
     rateLimits: {
       get: NO_READ_RATE_LIMITS,
       mutate: USERS_ME_MUTATE_RATE_LIMITS,
+    },
+  },
+  {
+    key: 'neo-draw-ai',
+    matches: (req) => req.nextUrl.pathname.startsWith('/api/neo-draw-ai'),
+    rateLimits: {
+      get: NO_READ_RATE_LIMITS,
+      mutate: NEO_DRAW_AI_MUTATE_RATE_LIMITS,
     },
   },
   {

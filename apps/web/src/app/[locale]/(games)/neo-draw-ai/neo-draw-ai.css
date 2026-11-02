@@ -1,0 +1,184 @@
+/* NEO DrawAI styles, scoped to the layout wrapper. Theme tokens live in
+   @ncthub/ui/globals.css so Tailwind can generate the nct-* utilities. */
+
+.nct-drawai {
+  --radius-nct: 0.875rem;
+  position: relative;
+  isolation: isolate;
+  color-scheme: dark;
+  color: var(--color-nct-ink);
+  /* Angled amber/steel light sources echoing the diagonal slabs of the logo. */
+  background-color: var(--color-nct-900);
+  background-image:
+    radial-gradient(
+      105rem 55rem at 12% -20%,
+      rgba(80, 149, 170, 0.22),
+      transparent 60%
+    ),
+    radial-gradient(
+      80rem 45rem at 108% 8%,
+      rgba(248, 183, 58, 0.16),
+      transparent 58%
+    ),
+    radial-gradient(
+      70rem 60rem at 50% 120%,
+      rgba(31, 40, 68, 0.85),
+      transparent 70%
+    );
+  background-attachment: fixed;
+}
+
+/* Faint diagonal grid — "tech" texture without competing with the canvas. */
+.nct-drawai::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.35;
+  background-image:
+    linear-gradient(rgba(80, 149, 170, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(80, 149, 170, 0.07) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(
+    120rem 80rem at 50% 0%,
+    #000 30%,
+    transparent 78%
+  );
+}
+
+/* --- Reusable brand pieces ------------------------------------------------ */
+
+.nct-panel {
+  background: color-mix(in oklab, var(--color-nct-800) 88%, transparent);
+  border: 1px solid color-mix(in oklab, var(--color-nct-steel) 26%, transparent);
+  border-radius: var(--radius-nct);
+  box-shadow:
+    0 1px 0 0 color-mix(in oklab, var(--color-nct-steel) 14%, transparent) inset,
+    0 18px 40px -24px rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(6px);
+}
+
+/* The logo's signature amber offset, applied to UI blocks. */
+.nct-offset {
+  position: relative;
+}
+.nct-offset::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  translate: 6px 6px;
+  background: var(--color-nct-amber);
+  z-index: -1;
+  opacity: 0.9;
+}
+
+.nct-scoreboard {
+  background: color-mix(in oklab, var(--color-nct-900) 92%, transparent);
+  border: 1px solid color-mix(in oklab, var(--color-nct-steel) 35%, transparent);
+  border-radius: 0.625rem;
+  box-shadow:
+    0 1px 0 0 color-mix(in oklab, var(--color-nct-steel) 10%, transparent) inset,
+    0 2px 8px -4px rgba(0, 0, 0, 0.8) inset;
+}
+
+.nct-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-nct-steel-light);
+}
+
+/* Focus ring in brand amber, visible on every interactive element. */
+.nct-focus:focus-visible {
+  outline: 2px solid var(--color-nct-amber);
+  outline-offset: 2px;
+}
+
+@keyframes nct-pulse-amber {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(248, 183, 58, 0.55);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(248, 183, 58, 0);
+  }
+}
+.nct-pulse {
+  animation: nct-pulse-amber 1.4s ease-out infinite;
+}
+
+@keyframes nct-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.nct-rise {
+  animation: nct-rise 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes nct-round-wipe {
+  0% {
+    transform: translateX(-120%) skewX(-12deg);
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(120%) skewX(-12deg);
+    opacity: 0;
+  }
+}
+.nct-round-wipe {
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    var(--color-nct-steel) 35%,
+    var(--color-nct-amber) 55%,
+    transparent 75%
+  );
+  animation: nct-round-wipe 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes nct-countdown-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  35% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.nct-countdown-pop {
+  animation: nct-countdown-pop 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nct-pulse,
+  .nct-rise,
+  .nct-round-wipe,
+  .nct-countdown-pop {
+    animation: none;
+  }
+}
+
+/* Never let the drawing surface scroll-bounce or select text under a stroke. */
+.nct-canvas {
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: crosshair;
+}

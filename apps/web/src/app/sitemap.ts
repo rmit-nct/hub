@@ -22,6 +22,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/neo-crush', priority: 0.4, changeFrequency: 'yearly' },
     { path: '/neo-chess', priority: 0.4, changeFrequency: 'yearly' },
     { path: '/neo-pacman', priority: 0.4, changeFrequency: 'yearly' },
+    { path: '/neo-draw-ai', priority: 0.4, changeFrequency: 'yearly' },
   ];
 
   const urls: MetadataRoute.Sitemap = [];

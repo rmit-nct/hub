@@ -11,11 +11,11 @@ import {
 } from '@ncthub/ui/card';
 import {
   ArrowRight,
-  Briefcase,
+  Check,
   ExternalLink,
   Heart,
+  Rocket,
   Sparkles,
-  Star,
   Users,
 } from '@ncthub/ui/icons';
 import { motion } from 'framer-motion';
@@ -23,21 +23,21 @@ import Link from 'next/link';
 
 const reasons = [
   {
-    title: 'CLUB DEPARTMENTS',
-    icon: Briefcase,
+    title: 'HANDS-ON EXPERIENCE',
+    icon: Rocket,
     description:
-      'Explore detailed job descriptions for all 4 departments in our comprehensive JD booklet. Find the perfect role that matches your skills, interests, and career goals within NEO Culture Tech.',
+      'Learn by solving and building problems. Work on real projects, join technical workshops, and compete in challenges like Neo League that turn curiosity into real capability.',
     gradient: 'from-yellow-400 to-orange-500',
     features: [
-      'Technology Department',
-      'Finance and Logistic Department',
-      'Human Resources Department',
-      'Marketing & Communications Department',
+      'Real Club Projects',
+      'Technical Workshops',
+      'Competitions & Hackathons',
+      'Portfolio-ready Work',
     ],
-    buttonText: 'View JD Booklet',
-    link: 'https://rmitnct.site/jdbooklet',
-    isExternal: true,
-    badgeText: 'Find Your Role',
+    buttonText: 'See What We Do',
+    link: '/about',
+    isExternal: false,
+    badgeText: 'Learn by Building',
   },
   {
     title: 'NETWORKING',
@@ -69,7 +69,7 @@ const reasons = [
       'Continuous Skill Development',
     ],
     buttonText: 'Join Neo Culture Tech',
-    link: 'https://rmitnct.site/recruitment',
+    link: 'https://www.rmitnct.site/registrationformsemc2026',
     isExternal: true,
     badgeText: 'Inclusive Community',
   },
@@ -79,20 +79,20 @@ export default function WhyUs() {
   return (
     <motion.section
       id="why-us"
-      className="flex flex-col"
+      className="container mx-auto mt-12 flex flex-col p-6 sm:px-8"
       initial={{ opacity: 0, y: 50 }}
       transition={{ duration: 1 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
     >
-      {/* Hero Title */}
-      <div className="mb-16 text-center">
+      {/* Header */}
+      <div className="mb-8 text-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           whileInView={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.2 }}
           viewport={{ once: true }}
-          className="mb-6 inline-flex items-center gap-2"
+          className="mb-4 inline-flex items-center gap-2"
         >
           <Sparkles className="h-6 w-6 text-brand-light-yellow" />
           <Badge
@@ -104,7 +104,7 @@ export default function WhyUs() {
           <Sparkles className="h-6 w-6 text-brand-light-yellow" />
         </motion.div>
 
-        <h2 className="mb-4 pb-4 font-bold text-4xl md:text-6xl lg:text-8xl">
+        <h2 className="mb-3 pb-2 font-bold text-3xl md:text-6xl lg:text-7xl">
           Why{' '}
           <span className="whitespace-nowrap border-brand-light-yellow border-b-4 text-brand-light-blue">
             Us?
@@ -117,8 +117,8 @@ export default function WhyUs() {
         </p>
       </div>
 
-      {/* Cards Grid */}
-      <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+      {/* Cards Grid (no panel) */}
+      <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {reasons.map((reason, index) => (
           <motion.div
             key={reason.title}
@@ -131,7 +131,6 @@ export default function WhyUs() {
           >
             <Card className="h-full border-2 bg-linear-to-br from-background/50 to-background shadow-lg backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-xl">
               <CardHeader className="pb-4 text-center">
-                {/* Icon with gradient background */}
                 <div
                   className={`mx-auto mb-4 h-16 w-16 rounded-full bg-linear-to-r ${reason.gradient} p-0.5 transition-transform duration-300 group-hover:scale-105`}
                 >
@@ -157,11 +156,13 @@ export default function WhyUs() {
                   {reason.description}
                 </CardDescription>
 
-                {/* Feature list */}
                 <div className="mb-6 space-y-2">
-                  {reason.features.map((feature, featureIndex) => (
-                    <div key={featureIndex} className="flex items-center gap-2">
-                      <Star className="h-4 w-4 fill-current text-yellow-400" />
+                  {reason.features.map((feature) => (
+                    <div key={feature} className="flex items-center gap-2">
+                      <Check
+                        aria-hidden="true"
+                        className="h-4 w-4 shrink-0 text-brand-light-blue"
+                      />
                       <span className="text-muted-foreground text-sm">
                         {feature}
                       </span>
@@ -169,7 +170,6 @@ export default function WhyUs() {
                   ))}
                 </div>
 
-                {/* Call to action */}
                 {reason.isExternal ? (
                   <Link
                     href={reason.link}

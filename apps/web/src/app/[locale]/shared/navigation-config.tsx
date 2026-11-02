@@ -11,9 +11,9 @@ import {
   NotebookPen,
   Paintbrush,
   Puzzle,
+  QrCode,
   ScanLine,
   Sparkles,
-  QrCode,
 } from '@ncthub/ui/icons';
 import type { ReactNode } from 'react';
 
@@ -143,6 +143,12 @@ export const useNavigation = (t: any): { categories: NavCategory[] } => {
       label: 'Neo Pacman',
       description: 'Navigate the maze and eat all the ghosts to win.',
       icon: <Gamepad2 />,
+    },
+    {
+      href: '/neo-draw-ai',
+      label: 'Neo DrawAI',
+      description: 'Race the clock while an AI tries to guess your doodle.',
+      icon: <Paintbrush />,
     },
   ] as NavItem[];
 

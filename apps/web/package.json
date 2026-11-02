@@ -39,6 +39,7 @@
     "@formatjs/intl-localematcher": "^0.8.10",
     "@mantine/hooks": "^8.3.18",
     "@marsidev/react-turnstile": "^1.5.3",
+    "@mediapipe/tasks-vision": "1.0.1",
     "@ncthub/ai": "workspace:*",
     "@ncthub/auth": "workspace:*",
     "@ncthub/supabase": "workspace:*",
