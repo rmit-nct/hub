@@ -15,6 +15,8 @@ interface RoundOverlayProps {
   isFinalRound: boolean;
   onNewRound: () => void;
   onKeepDrawing: () => void;
+  /** Replays this round's word with a clean canvas and a fresh clock. */
+  onTryAgain: () => void;
 }
 
 /** End-of-round card, shown over the canvas when the clock runs out. */
@@ -25,6 +27,7 @@ export function RoundOverlay({
   isFinalRound,
   onNewRound,
   onKeepDrawing,
+  onTryAgain,
 }: RoundOverlayProps) {
   // Shown the instant the AI matches the prompt, before the round actually
   // ends — gives the drawer a beat to notice before the reveal card appears.
@@ -103,10 +106,20 @@ export function RoundOverlay({
             <p className="mt-2 text-nct-muted text-sm">
               {result.guessed
                 ? `+${result.pointsAwarded} points`
-                : 'No points this round — try bolder, simpler shapes.'}
+                : 'Try again with bolder, simpler shapes, or move on.'}
             </p>
 
-            <div className="mt-6 flex gap-2">
+            {!result.guessed && (
+              <button
+                type="button"
+                onClick={onTryAgain}
+                className="nct-focus mt-6 w-full rounded-xl bg-nct-amber px-4 py-2.5 font-black text-nct-900 text-sm uppercase tracking-wide transition hover:bg-nct-amber-light"
+              >
+                Try again
+              </button>
+            )}
+
+            <div className={`flex gap-2 ${result.guessed ? 'mt-6' : 'mt-2'}`}>
               <button
                 type="button"
                 onClick={onKeepDrawing}
@@ -117,7 +130,11 @@ export function RoundOverlay({
               <button
                 type="button"
                 onClick={onNewRound}
-                className="nct-focus flex-1 rounded-xl bg-nct-amber px-4 py-2.5 font-black text-nct-900 text-sm uppercase tracking-wide transition hover:bg-nct-amber-light"
+                className={
+                  result.guessed
+                    ? 'nct-focus flex-1 rounded-xl bg-nct-amber px-4 py-2.5 font-black text-nct-900 text-sm uppercase tracking-wide transition hover:bg-nct-amber-light'
+                    : 'nct-focus flex-1 rounded-xl border border-nct-steel/40 px-4 py-2.5 font-bold text-nct-ink text-sm transition hover:bg-nct-700'
+                }
               >
                 {isFinalRound ? 'See results' : 'New round'}
               </button>

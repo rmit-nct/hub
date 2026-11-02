@@ -87,3 +87,13 @@ export function labelMatchesPrompt(label: string, prompt: string): boolean {
   if (!a || !b) return false;
   return a === b || a === `${b}s` || a.split(' ').includes(b);
 }
+
+/** True when the AI made guesses and none of them is the prompt — the same
+ *  "any guess counts" rule the scoring uses, so a win can never read as wrong. */
+export function isWrongGuess(
+  guesses: { label: string }[],
+  prompt: string | null
+): boolean {
+  if (!prompt || guesses.length === 0) return false;
+  return !guesses.some((g) => labelMatchesPrompt(g.label, prompt));
+}

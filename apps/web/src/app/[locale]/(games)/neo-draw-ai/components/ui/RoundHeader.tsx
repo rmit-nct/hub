@@ -12,8 +12,6 @@ interface RoundHeaderProps {
   totalRounds: number;
   isRoundOver: boolean;
   onNewRound: () => void;
-  muted: boolean;
-  onToggleMuted: () => void;
 }
 
 function formatTime(seconds: number) {
@@ -74,8 +72,6 @@ export function RoundHeader({
   totalRounds,
   isRoundOver,
   onNewRound,
-  muted,
-  onToggleMuted,
 }: RoundHeaderProps) {
   const pct = Math.max(0, Math.min(100, (secondsLeft / totalSeconds) * 100));
   const urgent = secondsLeft <= 10 && secondsLeft > 0 && !isRoundOver;
@@ -184,48 +180,6 @@ export function RoundHeader({
               {formatTime(secondsLeft)}
             </div>
           </div>
-
-          <button
-            type="button"
-            onClick={onToggleMuted}
-            aria-pressed={muted}
-            aria-label={muted ? 'Unmute sound' : 'Mute sound'}
-            title={muted ? 'Unmute sound' : 'Mute sound'}
-            data-testid="mute-toggle"
-            className="nct-focus grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-nct-steel/30 text-nct-steel-light transition hover:bg-nct-700"
-          >
-            {muted ? (
-              <svg
-                viewBox="0 0 24 24"
-                className="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M11 5 6 9H3v6h3l5 4V5Z" />
-                <line x1="16" y1="9" x2="22" y2="15" />
-                <line x1="22" y1="9" x2="16" y2="15" />
-              </svg>
-            ) : (
-              <svg
-                viewBox="0 0 24 24"
-                className="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M11 5 6 9H3v6h3l5 4V5Z" />
-                <path d="M15.5 8.5a5 5 0 0 1 0 7" />
-                <path d="M18 6a9 9 0 0 1 0 12" />
-              </svg>
-            )}
-          </button>
 
           <button
             type="button"

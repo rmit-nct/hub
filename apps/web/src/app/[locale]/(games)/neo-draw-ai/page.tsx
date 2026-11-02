@@ -20,7 +20,6 @@ import {
   WebcamGestureLayer,
 } from './components/webcam/WebcamGestureLayer';
 import { useCountdownTimer } from './hooks/useCountdownTimer';
-import { useGameAudio } from './hooks/useGameAudio';
 import { fetchAICapability, requestGuess } from './lib/ai/guessService';
 import { computeStrokeBounds, exportDrawing } from './lib/canvas/drawing';
 import { saveLeaderboardEntry } from './lib/leaderboard';
@@ -55,7 +54,6 @@ const LIVE_GUESS_DEBOUNCE_MS = 2500;
 const MIN_MS_BETWEEN_LIVE_GUESSES = 4000;
 const MIN_NEW_STROKES_PER_GUESS = 2;
 const MAX_LIVE_GUESSES_PER_ROUND = 6;
-const TICKING_START_SECONDS = 8;
 const CORRECT_GUESS_COUNTDOWN_SECONDS = 3;
 const TOTAL_ROUNDS = 10;
 // Caps memory for a round that never budget-limits live guessing (mock mode)
@@ -65,8 +63,6 @@ const GUESS_HISTORY_SNAPSHOT_WIDTH = 160;
 
 export default function Home() {
   const canvasHandle = useRef<DrawingCanvasHandle>(null);
-  const { muted, toggleMuted, playNewRound, startTicking, stopTicking } =
-    useGameAudio();
   // Shared between the canvas's webcam-background layer and the gesture
   // tracker so both render/read the exact same MediaStream, not two cameras.
   const webcamVideoRef = useRef<HTMLVideoElement>(null);
@@ -323,7 +319,6 @@ export default function Home() {
         );
         if (match) {
           if (liveTimer.current) clearTimeout(liveTimer.current);
-          stopTicking();
           pauseRef.current();
 
           const tick = (secondsLeft: number) => {
@@ -359,7 +354,7 @@ export default function Home() {
         setAiLoading(false);
       }
     }
-  }, [completeRound, stopTicking]);
+  }, [completeRound]);
 
   // ----------------------------------------------------------- round flow ---
 
@@ -393,41 +388,66 @@ export default function Home() {
   }, [pause]);
 
   /** Shared reset between advancing to the next round and starting a fresh game. */
-  const resetRoundState = useCallback(() => {
-    if (liveTimer.current) clearTimeout(liveTimer.current);
-    if (correctGuessTimer.current) clearTimeout(correctGuessTimer.current);
-    correctGuessTimer.current = null;
-    inFlight.current?.abort();
-    inFlight.current = null;
+  const resetRoundState = useCallback(
+    ({ keepPrompt = false } = {}) => {
+      if (liveTimer.current) clearTimeout(liveTimer.current);
+      if (correctGuessTimer.current) clearTimeout(correctGuessTimer.current);
+      correctGuessTimer.current = null;
+      inFlight.current?.abort();
+      inFlight.current = null;
 
-    playNewRound();
-    stopTicking();
-    canvasHandle.current?.clear();
-    setPrompt((prev) => getRandomPrompt(prev));
-    setAiResult(null);
-    setAiLoading(false);
-    setRoundResult(null);
-    setCorrectGuessCountdown(null);
-    setGuessHistory([]);
-    setLastRoundInfo(null);
-    setKeepDrawingActive(false);
-    setShowGuessHistoryModal(false);
-    setStrokeCount(0);
-    setCanRedo(false);
+      canvasHandle.current?.clear();
+      if (!keepPrompt) setPrompt((prev) => getRandomPrompt(prev));
+      setAiResult(null);
+      setAiLoading(false);
+      setRoundResult(null);
+      setCorrectGuessCountdown(null);
+      setGuessHistory([]);
+      setLastRoundInfo(null);
+      setKeepDrawingActive(false);
+      setShowGuessHistoryModal(false);
+      setStrokeCount(0);
+      setCanRedo(false);
 
-    // Fresh budget for the new round.
-    strokeCountAtLastGuess.current = 0;
-    lastGuessAt.current = 0;
-    liveGuessesThisRound.current = 0;
-    roundEndedRef.current = false;
-    setLiveBudgetSpent(false);
-    restart(ROUND_SECONDS);
-  }, [restart, playNewRound, stopTicking]);
+      // Fresh budget for the new round.
+      strokeCountAtLastGuess.current = 0;
+      lastGuessAt.current = 0;
+      liveGuessesThisRound.current = 0;
+      roundEndedRef.current = false;
+      setLiveBudgetSpent(false);
+      restart(ROUND_SECONDS);
+    },
+    [restart]
+  );
 
   const newRound = useCallback(() => {
     resetRoundState();
     setRound((r) => r + 1);
   }, [resetRoundState]);
+
+  /** Same word, fresh clock — and this round's failed attempt no longer counts. */
+  const replayRound = useCallback(() => {
+    resetRoundState({ keepPrompt: true });
+    setRoundSummaries((prev) =>
+      prev.filter((s) => s.round !== roundRef.current)
+    );
+  }, [resetRoundState]);
+
+  /**
+   * Mid-round retry: wipes the attempt but leaves the clock and live-guess
+   * budget running, so it can't buy extra time or extra Gemini calls.
+   */
+  const clearAttempt = useCallback(() => {
+    if (liveTimer.current) clearTimeout(liveTimer.current);
+    inFlight.current?.abort();
+    inFlight.current = null;
+
+    canvasHandle.current?.clear();
+    setAiResult(null);
+    setAiLoading(false);
+    setGuessHistory([]);
+    strokeCountAtLastGuess.current = 0;
+  }, []);
 
   /**
    * Stops the game after the round-10 reveal — no more rounds to advance to.
@@ -440,11 +460,10 @@ export default function Home() {
     correctGuessTimer.current = null;
     inFlight.current?.abort();
     inFlight.current = null;
-    stopTicking();
     pauseRef.current();
     saveLeaderboardEntry({ name: playerName, score, roundSummaries });
     setGameOver(true);
-  }, [stopTicking, playerName, score, roundSummaries]);
+  }, [playerName, score, roundSummaries]);
 
   /** Wired to every "advance" control (header + overlay) — ends the game on the last round instead. */
   const advanceRound = useCallback(() => {
@@ -465,9 +484,8 @@ export default function Home() {
   const startGame = useCallback(() => {
     if (!playerName.trim()) return; // StartScreen's button is disabled for this too — belt and suspenders
     setGameStarted(true);
-    playNewRound();
     restart(ROUND_SECONDS);
-  }, [restart, playNewRound, playerName]);
+  }, [restart, playerName]);
 
   const cycleColor = useCallback(() => {
     setColor((prev) => {
@@ -549,10 +567,6 @@ export default function Home() {
 
   const roundOver = roundResult !== null || correctGuessCountdown !== null;
 
-  useEffect(() => {
-    if (secondsLeft === TICKING_START_SECONDS && !roundOver) startTicking();
-  }, [secondsLeft, roundOver, startTicking]);
-
   if (!gameStarted) {
     return (
       <div className="relative z-10 flex min-h-[calc(100dvh-4rem)] flex-col">
@@ -616,8 +630,6 @@ export default function Home() {
         totalRounds={TOTAL_ROUNDS}
         isRoundOver={roundOver}
         onNewRound={advanceRound}
-        muted={muted}
-        onToggleMuted={toggleMuted}
       />
 
       <main className="mx-auto flex w-full max-w-[1400px] flex-1 flex-col gap-4 px-4 py-5 sm:px-6 lg:flex-row lg:gap-6">
@@ -725,6 +737,7 @@ export default function Home() {
                 isFinalRound={round >= TOTAL_ROUNDS}
                 onNewRound={advanceRound}
                 onKeepDrawing={keepDrawing}
+                onTryAgain={replayRound}
               />
 
               {showGuessHistoryModal && (
@@ -753,6 +766,10 @@ export default function Home() {
             canGuess={strokeCount > 0 && !roundOver}
             showHistoryButton={keepDrawingActive && guessHistory.length > 0}
             onShowHistory={() => setShowGuessHistoryModal(true)}
+            canTryAgain={!roundOver && !lastRoundInfo?.guessed}
+            // After "Keep drawing" the clock is already spent, so a retry has
+            // to replay the round for it to be able to score again.
+            onTryAgain={keepDrawingActive ? replayRound : clearAttempt}
           />
         </div>
       </main>

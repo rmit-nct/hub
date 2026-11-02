@@ -1,7 +1,7 @@
 'use client';
 
 import { History, Sparkles } from '@ncthub/ui/icons';
-import { labelMatchesPrompt } from '../../lib/prompts';
+import { isWrongGuess, labelMatchesPrompt } from '../../lib/prompts';
 import type { AIGuessResponse, AIMode } from '../../types';
 
 interface GuessRevealProps {
@@ -20,6 +20,9 @@ interface GuessRevealProps {
   /** Shown only while "Keep drawing" is active and there's a past guess to replay. */
   showHistoryButton: boolean;
   onShowHistory: () => void;
+  /** False once the round is over or was already won — nothing left to retry. */
+  canTryAgain: boolean;
+  onTryAgain: () => void;
 }
 
 export function GuessReveal({
@@ -36,11 +39,18 @@ export function GuessReveal({
   liveBudgetSpent,
   showHistoryButton,
   onShowHistory,
+  canTryAgain,
+  onTryAgain,
 }: GuessRevealProps) {
   // guesses[] is ordered most-likely-first (mock and Gemini both promise
   // this), so the top guess is simply the first entry.
   const top = result?.guesses[0] ?? null;
   const correct = top && prompt ? labelMatchesPrompt(top.label, prompt) : false;
+  // Failed calls fall back to mock guesses, which say nothing about the drawing.
+  const wrong =
+    canTryAgain &&
+    !result?.error &&
+    isWrongGuess(result?.guesses ?? [], prompt);
 
   return (
     <div className="mx-auto flex w-full flex-col items-center gap-3">
@@ -140,6 +150,23 @@ export function GuessReveal({
             {correct && '✓ '}
             {top.label}
           </p>
+        )}
+
+        {!loading && wrong && top && (
+          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
+            <p className="text-center text-nct-muted text-sm">
+              Not quite — that looks like{' '}
+              <span className="font-semibold text-nct-ink">{top.label}</span>,
+              not <span className="font-semibold text-nct-ink">{prompt}</span>.
+            </p>
+            <button
+              type="button"
+              onClick={onTryAgain}
+              className="nct-focus rounded-full border border-nct-amber/60 px-3 py-1 font-bold text-nct-amber text-xs uppercase tracking-wide transition hover:bg-nct-700/70"
+            >
+              Try again
+            </button>
+          </div>
         )}
 
         {!loading && result && !top && !result.error && (
