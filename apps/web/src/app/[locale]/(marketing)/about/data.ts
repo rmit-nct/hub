@@ -194,7 +194,7 @@ export const members: {
     role: 'Technology Manager',
     departments: ['Technology'],
     image: '/members/gen8/dat.jpg',
-    objectPosition: 'center 15%',
+    objectPosition: 'center 30%',
     bio: 'Technology manager with a sharp eye for cyber security, who turns complex problems into clean, secure code. Dat is a CTF competitor who guides our development projects and teaches members to think like an attacker so they can build like a defender.',
     quote:
       'Never settle for borrowed answers. Learn to question, to discover, and to understand for yourself.',

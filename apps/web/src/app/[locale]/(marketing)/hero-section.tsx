@@ -144,19 +144,19 @@ export default function HeroSection() {
             </div>
           </motion.div>
 
-          {/* Center — N logo (large focal mark that overflows the panel).
+          {/* Center — N logo (large focal mark that overflows the panel), desktop only.
               Fits its grid column so it can't squeeze the side cards; -my-[50%]
               keeps it from adding row height. Size knob: lg:scale-[..]. */}
           <motion.div
             {...reveal(0.1)}
-            className="relative mx-auto aspect-square w-72 flex-none sm:w-96 md:w-112 lg:-my-[50%] lg:w-full lg:translate-y-[20%] lg:scale-[1.6]"
+            className="relative mx-auto hidden aspect-square w-full flex-none lg:-my-[50%] lg:block lg:translate-y-[20%] lg:scale-[1.6]"
           >
             <Image
               src={LOGO}
               alt="Neo Culture Tech logo"
               fill
               priority
-              sizes="900px"
+              sizes="(min-width: 2560px) 1400px, (min-width: 1024px) 900px, 1px"
               className="filter-[drop-shadow(22px_22px_0_rgba(0,0,0,0.4))] object-contain"
             />
           </motion.div>

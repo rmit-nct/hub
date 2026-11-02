@@ -5,6 +5,13 @@ import SummarizedDepartments from './summarized-departments';
 import WhoWeAre from './who-we-are';
 import WhyUs from './why-us';
 
+// Spacing, type and container widths are rem-based, so scaling the root font
+// grows the whole landing page on large monitors instead of leaving wide margins.
+const LARGE_SCREEN_CSS = `
+@media (min-width: 2560px) { html { font-size: 150%; } }
+@media (min-width: 3840px) { html { font-size: 225%; } }
+`;
+
 // Visible separator between sections: a gradient rule with a centered brand mark.
 function SectionDivider() {
   return (
@@ -22,6 +29,7 @@ function SectionDivider() {
 export default function MarketingPage() {
   return (
     <>
+      <style>{LARGE_SCREEN_CSS}</style>
       <LandingIntro />
       <HeroSection />
       <WhoWeAre />
