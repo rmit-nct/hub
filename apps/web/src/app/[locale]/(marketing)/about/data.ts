@@ -107,7 +107,7 @@ export const members: {
     departments: ['Executive Board', 'Human Resources'],
     image: '/members/gen8/kim.jpg',
     bio: 'People-focused leader dedicated to building inclusive communities and fostering personal growth. Kim creates opportunities for members to develop both technical and soft skills.',
-    quote: `What you most want is what you most can't have. And what you most can't have is what you already had, and lost.`,
+    quote: `Imagine. Innovate. Inspire.`,
     generation: 8,
     objectPosition: 'center 30%',
     socials: {
