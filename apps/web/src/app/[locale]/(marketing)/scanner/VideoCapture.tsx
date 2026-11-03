@@ -183,13 +183,25 @@ export default function VideoCapture({ onNewStudent }: VideoCaptureProps) {
         try {
           const ocrURL =
             process.env.NEXT_PUBLIC_OCR_SERVICE_URL || 'http://localhost:5000';
-          const response = await fetch(`${ocrURL}/capture`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ image_data: imageData }),
-          });
+          let response: Response | undefined;
+
+          for (let attempt = 0; attempt < 3; attempt += 1) {
+            try {
+              response = await fetch(`${ocrURL}/capture`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ image_data: imageData }),
+              });
+              break;
+            } catch (error) {
+              if (attempt === 2) throw error;
+              await new Promise((resolve) =>
+                setTimeout(resolve, 500 * (attempt + 1))
+              );
+            }
+          }
+
+          if (!response) throw new Error('OCR service did not respond');
 
           if (!response.ok) {
             throw new Error('Failed to process image');
